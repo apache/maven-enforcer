@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.enforcer;
+package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.plugin.MojoExecutionException;
 

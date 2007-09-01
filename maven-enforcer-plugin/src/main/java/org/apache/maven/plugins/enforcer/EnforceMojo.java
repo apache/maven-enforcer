@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.enforcer;
+package org.apache.maven.plugins.enforcer;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -22,15 +22,15 @@ package org.apache.maven.plugin.enforcer;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRule;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
 
 /**
  * This goal executes the defined enforcer-rules once per module.
