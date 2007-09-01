@@ -68,6 +68,16 @@
 				</executions>
 			</plugin>
 		</plugins>
+	    <pluginManagement>
+          <plugins>
+            <plugin>
+              <artifactId>maven-release-plugin</artifactId>
+              <configuration>
+                <tagBase>https://svn.apache.org/repos/asf/maven/enforcer/tags</tagBase>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
 		<resources>
 			<!-- Include super-pom defined main/resources
 			Removing this section will break the build.
@@ -112,9 +122,9 @@
 			<version>2.3</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.maven.shared</groupId>
+            <groupId>org.apache.maven.enforcer</groupId>
             <artifactId>maven-enforcer-rule-api</artifactId>
-			<version>1.0-alpha-2</version>
+			<version>1.0-alpha-3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.beanshell</groupId>

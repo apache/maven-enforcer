@@ -21,32 +21,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>org.apache.maven.shared</groupId>
-		<artifactId>maven-shared-components</artifactId>
-		<version>7</version>
+	    <groupId>org.apache.maven.enforcer</groupId>
+        <artifactId>enforcer</artifactId>
+		<version>1-SNAPSHOT</version>
 	</parent>
-	<groupId>org.apache.maven.shared</groupId>
+	
 	<artifactId>maven-enforcer-rule-api</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0-alpha-3-SNAPSHOT</version>
 
 	<name>Maven Enforcer Rule API</name>
 	<description>This component provides the generic interfaces needed to implement custom rules for the maven-enforcer-plugin.</description>
-	<issueManagement>
-		<system>JIRA</system>
-		<url>http://jira.codehaus.org/browse/MENFORCER</url>
-	</issueManagement> 
-	<developers>
-		<developer>
-			<id>brianf</id>
-			<name>Brian Fox</name>
-			<email>brianf@apache.org</email>
-			<roles>
-				<role>Lead Developer</role>
-			</roles>
-			<timezone>5</timezone>
-		</developer>
-	</developers>
 	<build>
 		<plugins>
 			<plugin>
@@ -68,17 +53,6 @@
 				</executions>
 			</plugin>
 		</plugins>
-		<resources>
-			<!-- Include super-pom defined main/resources
-			Removing this section will break the build.
-			Since we have defined a new build/resources
-			section for the Apache process LICENSE and NOTICE
-			files, this original default section is now
-			required. -->
-			<resource>
-				<directory>${basedir}/src/main/resources</directory>
-			</resource>
-		</resources>
 	</build>
 	<dependencies>
 		<dependency>
@@ -98,9 +72,4 @@
 			<scope>test</scope>
 		</dependency>	
 	</dependencies>
-  <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/shared/trunk/maven-enforcer-rule-api</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/shared/trunk/maven-enforcer-rule-api</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/maven/shared/trunk/maven-enforcer-rule-api</url>
-  </scm>
 </project>
