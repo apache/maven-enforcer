@@ -33,7 +33,7 @@
 							</rules>
 						</configuration>
 						<goals>
-							<goal>enforce-once</goal>
+							<goal>enforce</goal>
 						</goals>
 					</execution>
 				</executions>

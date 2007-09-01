@@ -26,11 +26,11 @@
 		<version>1-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>maven-enforcer-rule-api</artifactId>
+	<artifactId>enforcer-api</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0-alpha-3-SNAPSHOT</version>
 
-	<name>Maven Enforcer Rule API</name>
+	<name>Enforcer API</name>
 	<description>This component provides the generic interfaces needed to implement custom rules for the maven-enforcer-plugin.</description>
 	<build>
 		<plugins>

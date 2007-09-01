@@ -27,13 +27,13 @@
 								<requireMavenVersion>
 									<version>2.0.6</version>
 								</requireMavenVersion>
-								<myCustomRule implementation="org.apache.maven.shared.rule.myCustomRule">
+								<myCustomRule implementation="org.apache.maven.enforcer.rule.myCustomRule">
 									<shouldIfail>false</shouldIfail>
 								</myCustomRule>
 							</rules>
 						</configuration>
 						<goals>
-							<goal>enforce-once</goal>
+							<goal>enforce</goal>
 						</goals>
 					</execution>
 				</executions>

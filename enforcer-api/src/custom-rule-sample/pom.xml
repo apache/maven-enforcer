@@ -11,9 +11,9 @@
 	</build>
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.maven.shared</groupId>
-			<artifactId>maven-enforcer-rule-api</artifactId>
-			<version>1.0-alpha-1</version>
+			<groupId>org.apache.maven.enforcer</groupId>
+			<artifactId>enforcer-api</artifactId>
+			<version>1.0-alpha-3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>

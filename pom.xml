@@ -151,7 +151,8 @@
   </repositories>
   
     <modules>
-	    <module>maven-enforcer-rule-api</module>
+	    <module>enforcer-api</module>
+		<module>enforcer-rules</module>
         <module>maven-enforcer-plugin</module>
    </modules>
   
