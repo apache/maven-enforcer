@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.enforcer;
+package org.apache.maven.plugins.enforcer;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,9 +19,9 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRule;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**

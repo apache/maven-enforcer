@@ -1,4 +1,4 @@
-package org.apache.maven.shared.enforcer.rule.api;
+package org.apache.maven.enforcer.rule.api;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

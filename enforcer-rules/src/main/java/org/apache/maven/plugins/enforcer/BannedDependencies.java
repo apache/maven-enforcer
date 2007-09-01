@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.enforcer;
+package org.apache.maven.plugins.enforcer;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -29,8 +29,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.plugin.enforcer.util.EnforcerUtils;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -138,7 +137,7 @@ public class BannedDependencies
             {
                 try
                 {
-                    result = EnforcerUtils.containsVersion( VersionRange.createFromVersionSpec( exclude[2] ),
+                    result = AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( exclude[2] ),
                                                             new DefaultArtifactVersion( artifact.getVersion() ) );
                 }
                 catch ( InvalidVersionSpecificationException e )

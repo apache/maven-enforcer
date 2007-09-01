@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.enforcer;
+package org.apache.maven.enforcer.rule.api;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,23 +19,27 @@ package org.apache.maven.plugin.enforcer;
  * under the License.
  */
 
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.apache.maven.execution.RuntimeInformation;
+import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
- * Just a mock object hard coded to return version 2.0.5
+ * This is the interface that all helpers will use. This provides access to the
+ * log, session and components to the rules.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * 
+ * @version $Id$
  */
-public class MockRuntimeInformation
-    implements RuntimeInformation
+public interface EnforcerRuleHelper
+    extends ExpressionEvaluator
 {
+    public Log getLog();
 
-    public ArtifactVersion getApplicationVersion()
-    {
-        return new DefaultArtifactVersion( "2.0.5" );
-    }
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper#getRuntimeInformation()
+     */
+    public Object getComponent( Class clazz )
+        throws ComponentLookupException;
 }

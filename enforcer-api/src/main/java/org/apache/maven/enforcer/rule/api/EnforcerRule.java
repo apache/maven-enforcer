@@ -1,4 +1,4 @@
-package org.apache.maven.shared.enforcer.rule.api;
+package org.apache.maven.enforcer.rule.api;
 
 import org.apache.maven.plugin.MojoExecutionException;
 

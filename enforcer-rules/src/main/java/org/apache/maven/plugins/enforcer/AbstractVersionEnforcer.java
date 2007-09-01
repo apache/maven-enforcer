@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.enforcer;
+package org.apache.maven.plugins.enforcer;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -24,9 +24,9 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.Restriction;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -135,7 +135,7 @@ public abstract class AbstractVersionEnforcer
      * 
      * @return true if the version is contained by the range.
      */
-    public boolean containsVersion( VersionRange allowedRange, ArtifactVersion theVersion )
+    public static boolean containsVersion( VersionRange allowedRange, ArtifactVersion theVersion )
     {
         boolean matched = false;
         ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();

@@ -19,48 +19,47 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import junit.framework.TestCase;
 
-import org.apache.maven.artifact.Artifact;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
 /**
- * This rule checks that no snapshots are included.
- * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
  * 
  */
-public class NoSnapshots
-    extends AbstractBanDependencies
+public class TestMavenVersion
+    extends TestCase
 {
-
-    /**
-     * Checks the set of dependencies to see if any
-     * snapshots are included
-     * 
-     * @param dependencies
-     * @return
-     * @throws EnforcerRuleException
-     */
-    protected Set checkDependencies( Set dependencies )
+    public void testRule()
         throws EnforcerRuleException
     {
-        Set foundExcludes = new HashSet();
 
-        Iterator DependencyIter = dependencies.iterator();
-        while ( DependencyIter.hasNext() )
+        RequireMavenVersion rule = new RequireMavenVersion();
+        rule.setVersion( "2.0.5" );
+
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
+
+        // test the singular version
+        rule.execute( helper );
+
+        // exclude this version
+        rule.setVersion( "(2.0.5" );
+
+        try
         {
-            Artifact artifact = (Artifact) DependencyIter.next();
-
-            if ( artifact.isSnapshot() )
-            {
-                foundExcludes.add( artifact );
-            }
+            rule.execute( helper );
+            fail( "Expected an exception." );
+        }
+        catch ( EnforcerRuleException e )
+        {
+            // expected to catch this.
         }
 
-        return foundExcludes;
+        // this shouldn't crash
+        rule.setVersion( SystemUtils.JAVA_VERSION_TRIMMED );
+        rule.execute( helper );
+
     }
 }

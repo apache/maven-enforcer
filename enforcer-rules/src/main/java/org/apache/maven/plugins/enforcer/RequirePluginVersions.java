@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.enforcer;
+package org.apache.maven.plugins.enforcer;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -41,6 +41,9 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.Lifecycle;
 import org.apache.maven.lifecycle.LifecycleExecutionException;
@@ -60,9 +63,6 @@ import org.apache.maven.plugin.version.PluginVersionNotFoundException;
 import org.apache.maven.plugin.version.PluginVersionResolutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRule;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.ReflectionUtils;
@@ -152,7 +152,7 @@ public class RequirePluginVersions
             // hardcoded for now
             Lifecycle lifecycle = getLifecycleForPhase( "deploy" );
 
-            Set allPlugins = getAllPlugins( session, project, lifecycle );
+            Set allPlugins = getAllPlugins( project, lifecycle );
 
             log.debug( "All Plugins: " + allPlugins );
 
@@ -283,13 +283,13 @@ public class RequirePluginVersions
      * Uses borrowed lifecycle code to get a list of all
      * plugins bound to the lifecycle.
      */
-    private Set getAllPlugins ( MavenSession session, MavenProject project, Lifecycle lifecycle )
+    private Set getAllPlugins ( MavenProject project, Lifecycle lifecycle )
         throws PluginNotFoundException, LifecycleExecutionException
 
     {
         HashSet plugins = new HashSet();
         // first, bind those associated with the packaging
-        Map mappings = findMappingsForLifecycle( session, project, lifecycle );
+        Map mappings = findMappingsForLifecycle( project, lifecycle );
 
         Iterator iter = mappings.entrySet().iterator();
         while ( iter.hasNext() )
@@ -304,7 +304,7 @@ public class RequirePluginVersions
             plugins.add( plugin );
         }
 
-        List mojos = findOptionalMojosForLifecycle( session, project, lifecycle );
+        List mojos = findOptionalMojosForLifecycle( project, lifecycle );
         iter = mojos.iterator();
         while ( iter.hasNext() )
         {
@@ -375,7 +375,7 @@ public class RequirePluginVersions
         return lifecycle;
     }
 
-    private Map findMappingsForLifecycle ( MavenSession session, MavenProject project, Lifecycle lifecycle )
+    private Map findMappingsForLifecycle ( MavenProject project, Lifecycle lifecycle )
         throws LifecycleExecutionException, PluginNotFoundException
     {
         String packaging = project.getPackaging();
@@ -423,7 +423,7 @@ public class RequirePluginVersions
         return mappings;
     }
 
-    private List findOptionalMojosForLifecycle ( MavenSession session, MavenProject project, Lifecycle lifecycle )
+    private List findOptionalMojosForLifecycle ( MavenProject project, Lifecycle lifecycle )
         throws LifecycleExecutionException, PluginNotFoundException
     {
         String packaging = project.getPackaging();
