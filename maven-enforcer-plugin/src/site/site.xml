@@ -38,7 +38,7 @@
           <item name="Version Range Specification" href="rules/versionRanges.html"/>
     </menu>
     <menu name="Custom Rules">
-          <item name="Writing a custom rule" href="http://maven.apache.org/enforcer/maven-enforcer-rule-api/writing-a-custom-rule.html"/>
+          <item name="Writing a custom rule" href="http://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html"/>
     </menu>
     <menu name="Resources">
       <item name="Maven 2.0.x Version Range Syntax" href="http://docs.codehaus.org/display/MAVEN/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges" />

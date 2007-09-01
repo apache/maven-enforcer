@@ -45,4 +45,4 @@ Standard Rules
 	* {{{requireProperty.html}requireProperty}} - enforces the existence and values of properties.
 	
 	[]
-    You may also create and inject your own custom rules by following the {{{http://maven.apache.org/shared/maven-enforcer-rule-api/writing-a-custom-rule.html}maven-enforcer-rule-api}} instructions.
+    You may also create and inject your own custom rules by following the {{{http://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html}maven-enforcer-rule-api}} instructions.
