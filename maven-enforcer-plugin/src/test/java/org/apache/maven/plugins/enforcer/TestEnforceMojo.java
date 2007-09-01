@@ -1,4 +1,4 @@
-package org.apache.maven.plugin.enforcer;
+package org.apache.maven.plugins.enforcer;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,8 +21,8 @@ package org.apache.maven.plugin.enforcer;
 
 import junit.framework.TestCase;
 
+import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRule;
 
 /**
  * Exhaustively check the enforcer mojo.
