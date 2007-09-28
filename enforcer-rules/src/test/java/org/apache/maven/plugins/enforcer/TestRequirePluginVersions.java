@@ -26,10 +26,9 @@ import java.util.List;
 
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Parent;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -41,40 +40,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class TestRequirePluginVersions
     extends AbstractMojoTestCase
 {
-    public void testCheckIfModelMatches ()
-    {
-
-        RequirePluginVersions rule = new RequirePluginVersions();
-
-        Model model = new Model();
-        model.setArtifactId( "" );
-        model.setGroupId( "" );
-        model.setVersion( "" );
-
-        // should generate internal NPE on the parent, but
-        // will still
-        // compare the raw values
-        assertTrue( rule.checkIfModelMatches( "", "", "", model ) );
-        assertFalse( rule.checkIfModelMatches( "", "", "1.0", model ) );
-
-        // now setup a parent
-        Parent parent = new Parent();
-        parent.setArtifactId( "foo" );
-        parent.setGroupId( "foo-group" );
-        parent.setVersion( "1.0" );
-        model.setParent( parent );
-
-        // should NOT pickup the parent artifact
-        assertFalse( rule.checkIfModelMatches( "foo-group", "foo", "1.0", model ) );
-
-        // check that the version and group are inherited
-        // from the parent.
-        assertTrue( rule.checkIfModelMatches( "foo-group", "", "1.0", model ) );
-
-        // check handling of nulls
-        assertFalse( rule.checkIfModelMatches( "foo-group", null, "1.0", model ) );
-    }
-
+  
     public void testHasVersionSpecified ()
     {
         Plugin source = new Plugin();
@@ -133,59 +99,7 @@ public class TestRequirePluginVersions
         assertFalse( rule.hasVersionSpecified( source, plugins ) );
     }
 
-    public void testGetModelsRecursivelyBottom ()
-        throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
-    {
-        RequirePluginVersions rule = new RequirePluginVersions();
-        String path = "target/test-classes/requirePluginVersions/getPomRecursively/b/c";
-
-        StringUtils.replace( path, "/", File.separator );
-
-        File pom = new File( getBasedir() + File.separator + path, "pom.xml" );
-
-        List models = rule.getModelsRecursively( "group", "c", "1.0", pom );
-
-        // there should be 3
-        assertEquals( 3, models.size() );
-
-        // now make sure they are all there
-        Model m = new Model();
-        m.setGroupId( "group" );
-        m.setVersion( "1.0" );
-        m.setArtifactId( "c" );
-
-        models.contains( m );
-
-        m.setArtifactId( "b" );
-        models.contains( m );
-
-        m.setArtifactId( "a" );
-        models.contains( m );
-    }
-
-    public void testGetModelsRecursivelyTop ()
-        throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
-    {
-        RequirePluginVersions rule = new RequirePluginVersions();
-        String path = "target/test-classes/requirePluginVersions/getPomRecursively";
-
-        StringUtils.replace( path, "/", File.separator );
-
-        File pom = new File( getBasedir() + File.separator + path, "pom.xml" );
-
-        List models = rule.getModelsRecursively( "group", "a", "1.0", pom );
-
-        // there should be 1
-        assertEquals( 1, models.size() );
-
-        // now make sure they are all there
-        Model m = new Model();
-        m.setGroupId( "group" );
-        m.setVersion( "1.0" );
-        m.setArtifactId( "a" );
-
-        models.contains( m );
-    }
+  
 
     public void testGetAllPlugins ()
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
@@ -203,6 +117,7 @@ public class TestRequirePluginVersions
         project.setVersion( "1.0" );
         project.setBaseDir( projectDir );
 
+        rule.setUtils( new EnforcerRuleUtils(EnforcerTestUtils.getHelper( project )) );
         List plugins = rule.getAllPluginEntries( project );
 
         // there should be 3
