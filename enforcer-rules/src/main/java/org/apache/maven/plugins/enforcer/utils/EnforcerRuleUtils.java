@@ -1,7 +1,6 @@
 package org.apache.maven.plugins.enforcer.utils;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -90,7 +90,7 @@ public class EnforcerRuleUtils
     private Model readModel ( File pom )
         throws IOException, XmlPullParserException
     {
-        Reader reader = new FileReader( pom );
+        Reader reader = ReaderFactory.newXmlReader( pom );
         MavenXpp3Reader xpp3 = new MavenXpp3Reader();
         Model model = null;
         try

@@ -10,7 +10,6 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugins.enforcer.EnforcerTestUtils;
-import org.apache.maven.plugins.enforcer.RequirePluginVersions;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
