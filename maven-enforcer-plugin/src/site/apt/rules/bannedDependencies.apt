@@ -20,7 +20,7 @@
   ------
   Brian Fox
   ------
-  July 2007
+  November 2007
   ------
 
 Banned Dependencies
@@ -44,6 +44,11 @@ Banned Dependencies
         *org.apache.maven:*:1.2
         
         []
+		
+   * includes - a list of artifacts to include. These are exceptions to the excludes. It is meant to allow wide exclusion rules with wildcards and fine tune using includes. If nothing has been excluded, then the includes have no effect. In otherwords, includes only subtract from artifacts that matched an exclude rule.
+   
+   For example, to ban all xerces except xerces-api you would exclude "xerces" (groupId) and include "xerces:xerces-api"   
+   
    * message - an optional message to the user if the rule fails.
    
    []
@@ -73,6 +78,10 @@ Banned Dependencies
                       <exclude>org.apache.maven:badArtifact</exclude>
                       <exclude>*:badArtifact</exclude>
                    </excludes>
+                   <includes>
+                      <!--only 1.0 of badArtifact is allowed-->
+                      <include>org.apache.maven:badArtifact:1.0</include>
+                   </includes>
                 </bannedDependencies>
              </rules>  
             <fail>true</fail>

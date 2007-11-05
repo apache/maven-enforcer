@@ -89,7 +89,7 @@ public abstract class AbstractBanDependencies
 
         // if any are found, fail the check but list all of
         // them
-        if ( !foundExcludes.isEmpty() )
+        if ( foundExcludes !=null && !foundExcludes.isEmpty() )
         {
             StringBuffer buf = new StringBuffer();
             if (message !=null)

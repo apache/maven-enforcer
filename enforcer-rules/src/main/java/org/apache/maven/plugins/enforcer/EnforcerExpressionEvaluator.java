@@ -10,7 +10,7 @@ import org.apache.maven.project.path.PathTranslator;
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a> This class wraps
  *         the PluginParameterExpressionEvaluator because it can't be accessed
- *         directly in 2.0.x so we muct create a new one.
+ *         directly in 2.0.x so we must create a new one.
  */
 public class EnforcerExpressionEvaluator
     extends PluginParameterExpressionEvaluator

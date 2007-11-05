@@ -19,7 +19,6 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -48,88 +47,131 @@ public class BannedDependencies
      * Specify the banned dependencies. This can be a list
      * of artifacts in the format
      * groupId[:artifactId][:version] Any of the sections
-     * can be a wildcard by using '*' (ie group:*:1.0)
+     * can be a wildcard by using '*' (ie group:*:1.0) <br>
+     * The rule will fail if any dependencies match any
+     * exclude, unless it also matches an include rule.
      * 
      * @parameter
      * @required
      */
-    public ArrayList excludes = null;
+    public List excludes = null;
+
+    /**
+     * Specify the allowed dependencies. This can be a list
+     * of artifacts in the format
+     * groupId[:artifactId][:version] Any of the sections
+     * can be a wildcard by using '*' (ie group:*:1.0)
+     * 
+     * <br>
+     * Includes override the exclude rules. It is meant to
+     * allow wide exclusion rules with wildcards and still
+     * allow a smaller set of includes. <br>
+     * For example, to ban all xerces except xerces-api ->
+     * exclude "xerces", include "xerces:xerces-api"
+     * 
+     * @parameter default-value="*"
+     * @required
+     */
+    public List includes = null;
 
     /*
      * (non-Javadoc)
      * 
      * @see org.apache.maven.plugin.enforcer.AbstractBanDependencies#checkDependencies(java.util.Set)
      */
-    protected Set checkDependencies( Set theDependencies )
+    protected Set checkDependencies ( Set theDependencies )
         throws EnforcerRuleException
     {
-        return checkDependencies( theDependencies, excludes );
+        Set excluded = checkDependencies( theDependencies, excludes );
+
+        // anything specifically included should be removed
+        // from the ban list.
+        if ( excluded != null )
+        {
+            Set included = checkDependencies( theDependencies, includes );
+            if ( included != null )
+            {
+                excluded.removeAll( included );
+            }
+        }
+        return excluded;
+
     }
 
     /**
      * Checks the set of dependencies against the list of
-     * excludes
+     * patterns
      * 
+     * @param thePatterns
      * @param dependencies
      * @return
      * @throws EnforcerRuleException
      */
-    private Set checkDependencies( Set dependencies, List theExcludes )
+    private Set checkDependencies ( Set dependencies, List thePatterns )
         throws EnforcerRuleException
     {
-        Set foundExcludes = new HashSet();
+        Set foundMatches = null;
 
-        Iterator iter = theExcludes.iterator();
-        while ( iter.hasNext() )
+        if ( thePatterns != null && thePatterns.size() > 0 )
         {
-            String exclude = (String) iter.next();
 
-            String[] subStrings = exclude.split( ":" );
-            subStrings = StringUtils.stripAll( subStrings );
-
-            Iterator DependencyIter = dependencies.iterator();
-            while ( DependencyIter.hasNext() )
+            Iterator iter = thePatterns.iterator();
+            while ( iter.hasNext() )
             {
-                Artifact artifact = (Artifact) DependencyIter.next();
+                String pattern = (String) iter.next();
 
-                if ( compareDependency( subStrings, artifact ) )
+                String[] subStrings = pattern.split( ":" );
+                subStrings = StringUtils.stripAll( subStrings );
+
+                Iterator DependencyIter = dependencies.iterator();
+                while ( DependencyIter.hasNext() )
                 {
-                    foundExcludes.add( artifact );
+                    Artifact artifact = (Artifact) DependencyIter.next();
+
+                    if ( compareDependency( subStrings, artifact ) )
+                    {
+                        // only create if needed
+                        if ( foundMatches == null )
+                        {
+                            foundMatches = new HashSet();
+                        }
+                        foundMatches.add( artifact );
+                    }
                 }
             }
         }
-        return foundExcludes;
+        return foundMatches;
     }
 
     /**
      * Compares the parsed array of substrings against the
      * artifact
      * 
-     * @param exclude
+     * @param pattern
      * @param artifact
      * @return
      * @throws EnforcerRuleException
      */
-    protected boolean compareDependency( String[] exclude, Artifact artifact )
+    protected boolean compareDependency ( String[] pattern, Artifact artifact )
         throws EnforcerRuleException
     {
 
         boolean result = false;
-        if ( exclude.length > 0 )
+        if ( pattern.length > 0 )
         {
-            result = exclude[0].equals( "*" ) || artifact.getGroupId().equals( exclude[0] );
+            result = pattern[0].equals( "*" ) || artifact.getGroupId().equals( pattern[0] );
         }
 
-        if ( result && exclude.length > 1 )
+        if ( result && pattern.length > 1 )
         {
-            result = exclude[1].equals( "*" ) || artifact.getArtifactId().equals( exclude[1] );
+            result = pattern[1].equals( "*" ) || artifact.getArtifactId().equals( pattern[1] );
         }
 
-        if ( result && exclude.length > 2 )
+        if ( result && pattern.length > 2 )
         {
             // short circuit if the versions are exactly the
             // same
-            if ( exclude[2].equals( "*" ) || artifact.getVersion().equals( exclude[2] ) )
+            if ( pattern[2].equals( "*" ) || artifact.getVersion().equals( pattern[2] ) )
             {
                 result = true;
             }
@@ -137,8 +179,9 @@ public class BannedDependencies
             {
                 try
                 {
-                    result = AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( exclude[2] ),
-                                                            new DefaultArtifactVersion( artifact.getVersion() ) );
+                    result = AbstractVersionEnforcer
+                        .containsVersion( VersionRange.createFromVersionSpec( pattern[2] ),
+                                          new DefaultArtifactVersion( artifact.getVersion() ) );
                 }
                 catch ( InvalidVersionSpecificationException e )
                 {
@@ -154,7 +197,7 @@ public class BannedDependencies
     /**
      * @return the excludes
      */
-    public ArrayList getExcludes()
+    public List getExcludes ()
     {
         return this.excludes;
     }
@@ -162,9 +205,25 @@ public class BannedDependencies
     /**
      * @param theExcludes the excludes to set
      */
-    public void setExcludes( ArrayList theExcludes )
+    public void setExcludes ( List theExcludes )
     {
         this.excludes = theExcludes;
+    }
+
+    /**
+     * @return the includes
+     */
+    public List getIncludes ()
+    {
+        return this.includes;
+    }
+
+    /**
+     * @param theIncludes the includes to set
+     */
+    public void setIncludes ( List theIncludes )
+    {
+        this.includes = theIncludes;
     }
 
 }

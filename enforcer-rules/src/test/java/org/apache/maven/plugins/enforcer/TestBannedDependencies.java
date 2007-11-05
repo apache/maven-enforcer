@@ -122,6 +122,40 @@ public class TestBannedDependencies
         excludes.add( ":::" ); //null entry, won't match anything
         execute( rule, helper, false );
     }
+    
+    public void testIncludes() throws IOException
+    {
+        ArtifactStubFactory factory = new ArtifactStubFactory();
+        MockProject project = new MockProject();
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
+        project.setArtifacts( factory.getMixedArtifacts() );
+        project.setDependencyArtifacts( factory.getScopedArtifacts() );
+        BannedDependencies rule = new BannedDependencies();
+
+        ArrayList excludes = new ArrayList();
+        ArrayList includes = new ArrayList();
+        
+        rule.setSearchTransitive( false );
+        
+        excludes.add( "*" );
+        includes.add( "*" );
+        
+        rule.setExcludes( excludes );
+        rule.setIncludes( includes );
+        
+        execute( rule, helper, false );
+        
+        excludes.clear();
+        excludes.add( "*:runtime" );
+        rule.setExcludes( excludes );
+        
+        execute( rule, helper, false );
+        
+        includes.clear();
+        includes.add( "*:test" );
+        rule.setIncludes( includes );
+        execute( rule, helper, true );
+    }
 
     /**
      * Simpler wrapper to execute and deal with the expected
