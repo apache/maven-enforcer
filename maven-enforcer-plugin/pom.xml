@@ -34,6 +34,12 @@
 		<system>JIRA</system>
 		<url>http://jira.codehaus.org/browse/MENFORCER</url>
 	</issueManagement> 
+    
+	<prerequisites>
+   	   <!--because of the encoding fixes, I need a new plexus-utils. The new plexus utils can only be used in 2.0.6 or later: http://jira.codehaus.org/browse/MNG-2892 -->
+	   <maven>2.0.6</maven>
+    </prerequisites>
+	
 	<developers>
 		<developer>
 			<id>brianf</id>
@@ -94,27 +100,27 @@
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-artifact</artifactId>
-			<version>2.0.5</version>
+			<version>2.0.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
-			<version>2.0.5</version>
+			<version>2.0.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-project</artifactId>
-			<version>2.0.5</version>
+			<version>2.0.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-core</artifactId>
-			<version>2.0.5</version>
+			<version>2.0.7</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.plexus</groupId>
 			<artifactId>plexus-utils</artifactId>
-			<version>1.4.2</version>
+			<version>1.4.6</version>
 		</dependency>
         <dependency>
             <groupId>commons-lang</groupId>
