@@ -24,11 +24,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 /**
  * This goal executes the defined enforcer-rules once per build.
  * 
+ * @deprecated
  * @goal enforce-once
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @phase validate
  * @requiresDependencyResolution test
- * @aggregator
  * @version $Id$
  */
 public class EnforceOnceMojo
@@ -37,6 +37,7 @@ public class EnforceOnceMojo
     public void execute()
         throws MojoExecutionException
     {
+        this.getLog().warn( "enforcer:enforce-once is deprecated. Use enforcer:enforce instead. See MENFORCER-11 for more information." );
         super.execute();
     }
 }
