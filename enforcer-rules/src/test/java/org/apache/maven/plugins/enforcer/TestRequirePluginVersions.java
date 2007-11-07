@@ -123,4 +123,10 @@ public class TestRequirePluginVersions
         // there should be 3
         assertEquals( 3, plugins.size() );
     }
+    
+    public void testId ()
+    {
+        RequirePluginVersions rule = new RequirePluginVersions();
+        rule.getCacheId();
+    }
 }

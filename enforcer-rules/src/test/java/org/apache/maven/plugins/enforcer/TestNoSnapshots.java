@@ -84,4 +84,10 @@ public class TestNoSnapshots
             helper.getLog().debug(e.getMessage());
         }
     }
+    
+    public void testId ()
+    {
+        NoSnapshots rule = new NoSnapshots();
+        rule.getCacheId();
+    }
 }

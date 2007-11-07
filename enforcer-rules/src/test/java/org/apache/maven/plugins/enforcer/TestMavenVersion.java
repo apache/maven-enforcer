@@ -62,4 +62,10 @@ public class TestMavenVersion
         rule.execute( helper );
 
     }
+    
+    public void testId ()
+    {
+        RequireMavenVersion rule = new RequireMavenVersion();
+        rule.getCacheId();
+    }
 }

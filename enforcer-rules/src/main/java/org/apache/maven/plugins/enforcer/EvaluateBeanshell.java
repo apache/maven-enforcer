@@ -64,7 +64,7 @@ public class EvaluateBeanshell
      * @parameter
      */
     public String message;
-
+    
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
@@ -131,6 +131,30 @@ public class EvaluateBeanshell
             log.warn( "Couldn't evaluate condition: " + script, ex );
         }
         return evaluation.booleanValue();
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
+     */
+    public String getCacheId ()
+    {
+        return "" + this.condition.hashCode();
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
+     */
+    public boolean isCacheable ()
+    {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
+     */
+    public boolean isResultValid ( EnforcerRule theCachedRule )
+    {
+        return false;
     }
 
 }

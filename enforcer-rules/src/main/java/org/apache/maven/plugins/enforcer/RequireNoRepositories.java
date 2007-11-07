@@ -108,4 +108,28 @@ public class RequireNoRepositories
         }
         return badModels;
     }
+    
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
+     */
+    public String getCacheId ()
+    {
+        return "0";
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
+     */
+    public boolean isCacheable ()
+    {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
+     */
+    public boolean isResultValid ( EnforcerRule theCachedRule )
+    {
+        return false;
+    }
 }

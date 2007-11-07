@@ -30,7 +30,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 public interface EnforcerRule
 {
     /**
-     * This is the inteface into the rule. This method should throw an exception
+     * This is the interface into the rule. This method should throw an exception
      * containing a reason message if the rule fails the check. The plugin will
      * then decide based on the fail flag if it should stop or just log the
      * message as a warning.
@@ -43,5 +43,32 @@ public interface EnforcerRule
      */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException;
+    
+    /**
+     * This method tells the enforcer if the rule results may be cached. If the result is true,
+     * the results will be remembered for future executions in the same build (ie children). Subsequent
+     * iterations of the rule will be queried to see if they are also cacheable. This will allow the rule to be
+     * uncached further down the tree if needed.
+     *        
+     * @return
+     */
+    public boolean isCacheable();
+    
+    /**
+     * 
+     * @param cachedRule the last cached instance of the rule. This is to be used by the rule to 
+     * potentially determine if the results are still valid (ie if the configuration has been overridden)
+     * @return true if the stored results are valid for the same id.
+     */
+    public boolean isResultValid(EnforcerRule cachedRule);
+    
+    /**
+     * If the rule is to be cached, this id is used as part of the key. This can allow rules to take parameters
+     * that allow multiple results of the same rule to be cached.
+     * @return id to be used by the enforcer to determine uniqueness of cache results. The ids only need to be unique 
+     * within a given rule implementation as the full key will be [classname]-[id]
+     */
+    public String getCacheId();
+    
 
 }

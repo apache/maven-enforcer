@@ -20,6 +20,7 @@ package org.apache.maven.plugins.enforcer;
  */
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
@@ -33,12 +34,15 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
 
 /**
- * This goal executes the defined enforcer-rules once per module.
+ * This goal executes the defined enforcer-rules once per
+ * module.
+ * 
  * @requiresDependencyResolution test
  * @goal enforce
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @phase validate
- * @version $Id$
+ * @version $Id: EnforceMojo.java 571676 2007-09-01
+ *          03:28:56Z brianf $
  */
 public class EnforceMojo
     extends AbstractMojo
@@ -70,26 +74,30 @@ public class EnforceMojo
     /**
      * Flag to fail the build if a version check fails.
      * 
-     * @parameter expression="${enforcer.fail}" default-value="true"
+     * @parameter expression="${enforcer.fail}"
+     *            default-value="true"
      */
     protected boolean fail = true;
 
     /**
      * Flag to easily skip all checks
      * 
-     * @parameter expression="${enforcer.skip}" default-value="false"
+     * @parameter expression="${enforcer.skip}"
+     *            default-value="false"
      */
     protected boolean skip = false;
 
     /**
      * Fail on the first rule that doesn't pass
      * 
-     * @parameter expression="${enforcer.failFast}" default-value="false"
+     * @parameter expression="${enforcer.failFast}"
+     *            default-value="false"
      */
     protected boolean failFast = false;
 
     /**
-     * List of objects that implement the EnforcerRule interface to execute.
+     * Array of objects that implement the EnforcerRule
+     * interface to execute.
      * 
      * @parameter
      * @required
@@ -97,14 +105,20 @@ public class EnforceMojo
     private EnforcerRule[] rules;
     
     /**
-     * True if dependencies are resolved
+     * Use this flag to disable rule result caching. This will cause
+     * all rules to execute on each project even if the rule indicates it can
+     * safely be cached.
+     * @parameter expression="${enforcer.ignoreCache}"
+     *  default-value="false"
      */
-    private boolean dependenciesAreResolved = false;
+     protected boolean ignoreCache = false;
+    
+    protected static Hashtable cache = new Hashtable();
 
     /**
      * Entry point to the mojo
      */
-    public void execute()
+    public void execute ()
         throws MojoExecutionException
     {
         Log log = this.getLog();
@@ -125,13 +139,14 @@ public class EnforceMojo
                 // create my helper
                 EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( session, evaluator, log );
 
-                // if we are only warning, then disable failFast
+                // if we are only warning, then disable
+                // failFast
                 if ( !fail )
                 {
                     failFast = false;
                 }
 
-                // go through each rul
+                // go through each rule
                 for ( int i = 0; i < rules.length; i++ )
                 {
 
@@ -139,17 +154,22 @@ public class EnforceMojo
                     EnforcerRule rule = rules[i];
                     if ( rule != null )
                     {
-                        // store the current rule for logging purposes
+                        // store the current rule for
+                        // logging purposes
                         currentRule = rule.getClass().getName();
                         log.debug( "Executing rule: " + currentRule );
                         try
                         {
-                            // execute the rule
-                            rules[i].execute( helper );
+                            if ( ignoreCache || shouldExecute( rule ) )
+                            {
+                                // execute the rule
+                                rules[i].execute( helper );
+                            }
                         }
                         catch ( EnforcerRuleException e )
                         {
-                            // i can throw an exception because failfast will be
+                            // i can throw an exception
+                            // because failfast will be
                             // false if fail is false.
                             if ( failFast )
                             {
@@ -175,7 +195,8 @@ public class EnforceMojo
                     }
                     if ( fail )
                     {
-                        throw new MojoExecutionException( "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
+                        throw new MojoExecutionException(
+                                                          "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
                     }
                 }
             }
@@ -192,18 +213,47 @@ public class EnforceMojo
     }
 
     /**
+     * This method determines if a rule should execute based
+     * on the cache
+     * 
+     * @param rule
+     * @return
+     */
+    protected boolean shouldExecute ( EnforcerRule rule )
+    {
+        if ( rule.isCacheable() )
+        {
+            Log log = this.getLog();
+            log.debug( "Rule " + rule.getClass().getName() + " is cacheable." );
+            String key = rule.getClass().getName() + " " + rule.getCacheId();
+            if ( EnforceMojo.cache.containsKey( key ) )
+            {
+                log.debug( "Key " + key + " was found in the cache" );
+                if ( rule.isResultValid( (EnforcerRule) cache.get( key ) ) )
+                {
+                    log.info( "The cached results are still valid. Skipping the rule: "+rule.getClass().getName() );
+                    return false;
+                }
+            }
+            
+            //add it to the cache of executed rules
+            EnforceMojo.cache.put( key, rule );
+        }
+        return true;
+    }
+
+    /**
      * @return the fail
      */
-    public boolean isFail()
+    public boolean isFail ()
     {
         return this.fail;
     }
 
     /**
-     * @param theFail
-     *            the fail to set
+     * @param theFail the fail to set
      */
-    public void setFail( boolean theFail )
+    public void setFail ( boolean theFail )
     {
         this.fail = theFail;
     }
@@ -211,16 +261,15 @@ public class EnforceMojo
     /**
      * @return the rules
      */
-    public EnforcerRule[] getRules()
+    public EnforcerRule[] getRules ()
     {
         return this.rules;
     }
 
     /**
-     * @param theRules
-     *            the rules to set
+     * @param theRules the rules to set
      */
-    public void setRules( EnforcerRule[] theRules )
+    public void setRules ( EnforcerRule[] theRules )
     {
         this.rules = theRules;
     }
@@ -228,16 +277,15 @@ public class EnforceMojo
     /**
      * @return the skip
      */
-    public boolean isSkip()
+    public boolean isSkip ()
     {
         return this.skip;
     }
 
     /**
-     * @param theSkip
-     *            the skip to set
+     * @param theSkip the skip to set
      */
-    public void setSkip( boolean theSkip )
+    public void setSkip ( boolean theSkip )
     {
         this.skip = theSkip;
     }
@@ -245,16 +293,15 @@ public class EnforceMojo
     /**
      * @return the failFast
      */
-    public boolean isFailFast()
+    public boolean isFailFast ()
     {
         return this.failFast;
     }
 
     /**
-     * @param theFailFast
-     *            the failFast to set
+     * @param theFailFast the failFast to set
      */
-    public void setFailFast( boolean theFailFast )
+    public void setFailFast ( boolean theFailFast )
     {
         this.failFast = theFailFast;
     }
@@ -262,16 +309,15 @@ public class EnforceMojo
     /**
      * @return the project
      */
-    public MavenProject getProject()
+    public MavenProject getProject ()
     {
         return this.project;
     }
 
     /**
-     * @param theProject
-     *            the project to set
+     * @param theProject the project to set
      */
-    public void setProject( MavenProject theProject )
+    public void setProject ( MavenProject theProject )
     {
         this.project = theProject;
     }
@@ -279,16 +325,15 @@ public class EnforceMojo
     /**
      * @return the session
      */
-    public MavenSession getSession()
+    public MavenSession getSession ()
     {
         return this.session;
     }
 
     /**
-     * @param theSession
-     *            the session to set
+     * @param theSession the session to set
      */
-    public void setSession( MavenSession theSession )
+    public void setSession ( MavenSession theSession )
     {
         this.session = theSession;
     }
@@ -296,33 +341,16 @@ public class EnforceMojo
     /**
      * @return the translator
      */
-    public PathTranslator getTranslator()
+    public PathTranslator getTranslator ()
     {
         return this.translator;
     }
 
     /**
-     * @param theTranslator
-     *            the translator to set
+     * @param theTranslator the translator to set
      */
-    public void setTranslator( PathTranslator theTranslator )
+    public void setTranslator ( PathTranslator theTranslator )
     {
         this.translator = theTranslator;
-    }
-
-    /**
-     * @return the dependenciesAreResolved
-     */
-    public boolean isDependenciesAreResolved ()
-    {
-        return this.dependenciesAreResolved;
-    }
-
-    /**
-     * @param theDependenciesAreResolved the dependenciesAreResolved to set
-     */
-    public void setDependenciesAreResolved ( boolean theDependenciesAreResolved )
-    {
-        this.dependenciesAreResolved = theDependenciesAreResolved;
     }
 }

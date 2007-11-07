@@ -28,13 +28,15 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
  * @author Paul Gier
  * 
  */
-public class TestRequireProperty extends TestCase
+public class TestRequireProperty
+    extends TestCase
 {
-    public void testRule() throws EnforcerRuleException
+    public void testRule ()
+        throws EnforcerRuleException
     {
-    	MockProject project = new MockProject();
-    	project.setProperty("testProp", "This is a test.");
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(project);
+        MockProject project = new MockProject();
+        project.setProperty( "testProp", "This is a test." );
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
 
         RequireProperty rule = new RequireProperty();
         // this property should not be set
@@ -50,29 +52,32 @@ public class TestRequireProperty extends TestCase
             // expected to catch this.
         }
 
-        // this property should be set by the surefire plugin
+        // this property should be set by the surefire
+        // plugin
         rule.property = "testProp";
-        try 
+        try
         {
-        	rule.execute( helper );
-        } 
+            rule.execute( helper );
+        }
         catch ( EnforcerRuleException e )
         {
-        	fail("This should not throw an exception");
+            fail( "This should not throw an exception" );
         }
     }
-    
-    public void testRuleWithRegex() throws EnforcerRuleException
+
+    public void testRuleWithRegex ()
+        throws EnforcerRuleException
     {
-    	MockProject project = new MockProject();
-    	project.setProperty("testProp", "This is a test.");
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(project);
+        MockProject project = new MockProject();
+        project.setProperty( "testProp", "This is a test." );
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
 
         RequireProperty rule = new RequireProperty();
         rule.property = "testProp";
-        // This expression should not match the property value
+        // This expression should not match the property
+        // value
         rule.regex = "[^abc]";
-        
+
         try
         {
             rule.execute( helper );
@@ -85,13 +90,19 @@ public class TestRequireProperty extends TestCase
 
         // this expr should match the property
         rule.regex = "[This].*[.]";
-        try 
+        try
         {
-        	rule.execute( helper );
-        } 
+            rule.execute( helper );
+        }
         catch ( EnforcerRuleException e )
         {
-        	fail("This should not throw an exception");
+            fail( "This should not throw an exception" );
         }
+    }
+
+    public void testId ()
+    {
+        RequireProperty rule = new RequireProperty();
+        rule.getCacheId();
     }
 }

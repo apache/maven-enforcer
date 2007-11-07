@@ -23,6 +23,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This rule checks that certain properties are set.
@@ -98,6 +99,42 @@ public class RequireProperty implements EnforcerRule
     		}
     		throw new EnforcerRuleException(regexMessage);
     	}
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
+     */
+    public String getCacheId ()
+    {
+        //return the hashcodes of all the parameters
+        StringBuffer b = new StringBuffer();
+        if (StringUtils.isNotEmpty( property ))
+        {
+            b.append( property.hashCode() );
+        }
+        if (StringUtils.isNotEmpty( regex ))
+        {
+            b.append( regex.hashCode() );
+        }
+        return b.toString();
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
+     */
+    public boolean isCacheable ()
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
+     */
+    public boolean isResultValid ( EnforcerRule theCachedRule )
+    {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

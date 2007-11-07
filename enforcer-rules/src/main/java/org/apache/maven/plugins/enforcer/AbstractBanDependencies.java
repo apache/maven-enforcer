@@ -151,4 +151,30 @@ public abstract class AbstractBanDependencies
     {
         this.searchTransitive = theSearchTransitive;
     }
+    
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
+     */
+    public String getCacheId ()
+    {
+        return "0";
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
+     */
+    public boolean isCacheable ()
+    {
+        //dependencies change per project, therefore they must always be rerun.
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
+     */
+    public boolean isResultValid ( EnforcerRule theCachedRule )
+    {
+        //dependencies change per project, therefore they must always be rerun.
+        return false;
+    }
 }

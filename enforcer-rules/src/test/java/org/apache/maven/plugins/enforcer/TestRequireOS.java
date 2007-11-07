@@ -44,22 +44,21 @@ public class TestRequireOS
         RequireOS rule = new RequireOS();
         rule.displayOSInfo( log, true );
 
-        Iterator iter = rule.getValidFamilies().iterator();
+        Iterator iter = Os.getValidFamilies().iterator();
         String validFamily = null;
         String invalidFamily = null;
-        while ( iter.hasNext() && ( validFamily == null || invalidFamily == null ) )
+        while ( iter.hasNext())
         {
             String fam = (String) iter.next();
-            if ( Os.isFamily( fam ) )
-            {
-                validFamily = fam;
-            }
-            else
+            if ( !Os.isFamily( fam ) )
             {
                 invalidFamily = fam;
+                break;
             }
         }
 
+        validFamily = Os.OS_FAMILY;
+        
         log.info( "Testing Mojo Using Valid Family: " + validFamily + " Invalid Family: " + invalidFamily );
 
         rule.setFamily( validFamily );
@@ -83,7 +82,7 @@ public class TestRequireOS
         }
 
         rule.setFamily( null );
-        rule.setArch( RequireOS.OS_ARCH );
+        rule.setArch( Os.OS_ARCH );
         assertTrue( rule.isAllowed() );
 
         rule.setArch( "somecrazyarch" );
@@ -94,7 +93,7 @@ public class TestRequireOS
 
         rule.setArch( null );
 
-        rule.setName( RequireOS.OS_NAME );
+        rule.setName( Os.OS_NAME );
         assertTrue( rule.isAllowed() );
 
         rule.setName( "somecrazyname" );
@@ -105,7 +104,7 @@ public class TestRequireOS
 
         rule.setName( null );
 
-        rule.setVersion( RequireOS.OS_VERSION );
+        rule.setVersion( Os.OS_VERSION );
         assertTrue( rule.isAllowed() );
 
         rule.setVersion( "somecrazyversion" );
@@ -113,6 +112,12 @@ public class TestRequireOS
 
         rule.setVersion( "!somecrazyversion" );
         assertTrue( rule.isAllowed() );
+    }
+    
+    public void testId ()
+    {
+        RequireOS rule = new RequireOS();
+        rule.getCacheId();
     }
 
 }

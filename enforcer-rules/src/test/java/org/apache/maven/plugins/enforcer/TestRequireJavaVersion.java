@@ -85,4 +85,10 @@ public class TestRequireJavaVersion
         rule.execute( helper );
 
     }
+    
+    public void testId ()
+    {
+        RequireJavaVersion rule = new RequireJavaVersion();
+        rule.getCacheId();
+    }
 }

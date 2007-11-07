@@ -93,27 +93,9 @@ public class RequireOS
      */
     public boolean display = false;
 
-    private Set validFamilies = null;
-
-    public static final String OS_NAME = System.getProperty( "os.name" ).toLowerCase( Locale.US );
-
-    public static final String OS_ARCH = System.getProperty( "os.arch" ).toLowerCase( Locale.US );
-
-    public static final String OS_VERSION = System.getProperty( "os.version" ).toLowerCase( Locale.US );
-
     public RequireOS()
     {
-        validFamilies = new HashSet();
-        validFamilies.add( "dos" );
-        validFamilies.add( "mac" );
-        validFamilies.add( "netware" );
-        validFamilies.add( "os/2" );
-        validFamilies.add( "tandem" );
-        validFamilies.add( "unix" );
-        validFamilies.add( "windows" );
-        validFamilies.add( "win9x" );
-        validFamilies.add( "z/os" );
-        validFamilies.add( "os/400" );
+
     }
 
     public void execute( EnforcerRuleHelper helper )
@@ -134,8 +116,8 @@ public class RequireOS
             {
                 if ( StringUtils.isEmpty( message ) )
                 {
-                    message = ( "OS Arch: " + RequireOS.OS_ARCH + " Family: " + determineOsFamily() + " Name: "
-                        + RequireOS.OS_NAME + " Version: " + RequireOS.OS_VERSION + " is not allowed by"
+                    message = ( "OS Arch: " + Os.OS_ARCH + " Family: " + Os.OS_FAMILY + " Name: "
+                        + Os.OS_NAME + " Version: " + Os.OS_VERSION + " is not allowed by"
                         + ( arch != null ? " Arch=" + arch : "" ) + ( family != null ? " Family=" + family : "" )
                         + ( name != null ? " Name=" + name : "" ) + ( version != null ? " Version=" + version : "" ) );
                 }
@@ -145,7 +127,7 @@ public class RequireOS
         else
         {
             StringBuffer buffer = new StringBuffer( 50 );
-            Iterator iter = validFamilies.iterator();
+            Iterator iter = Os.getValidFamilies().iterator();
             while ( iter.hasNext() )
             {
                 buffer.append( iter.next() );
@@ -163,8 +145,8 @@ public class RequireOS
      */
     public void displayOSInfo( Log log, boolean info )
     {
-        String string = "OS Info: Arch: " + RequireOS.OS_ARCH + " Family: " + determineOsFamily() + " Name: "
-            + RequireOS.OS_NAME + " Version: " + RequireOS.OS_VERSION;
+        String string = "OS Info: Arch: " + Os.OS_ARCH + " Family: " + Os.OS_FAMILY + " Name: "
+            + Os.OS_NAME + " Version: " + Os.OS_VERSION;
 
         if ( !info )
         {
@@ -176,24 +158,6 @@ public class RequireOS
         }
     }
 
-    /**
-     * Helper method to determine the current OS family.
-     * 
-     * @return name of current OS family.
-     */
-    public String determineOsFamily()
-    {
-        Iterator iter = getValidFamilies().iterator();
-        while ( iter.hasNext() )
-        {
-            String fam = (String) iter.next();
-            if ( Os.isFamily( fam ) )
-            {
-                return fam;
-            }
-        }
-        return null;
-    }
 
     /**
      * Helper method to determine if the current OS is
@@ -296,7 +260,7 @@ public class RequireOS
         // in case they are checking !family
         theFamily = StringUtils.stripStart( theFamily, "!" );
 
-        return ( StringUtils.isEmpty( theFamily ) || validFamilies.contains( theFamily ) );
+        return ( StringUtils.isEmpty( theFamily ) || Os.getValidFamilies().contains( theFamily ) );
     }
 
     /**
@@ -362,21 +326,49 @@ public class RequireOS
     {
         this.version = theVersion;
     }
-
-    /**
-     * @return the validFamilies
+    
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
-    public Set getValidFamilies()
+    public String getCacheId ()
     {
-        return this.validFamilies;
+        //return the hashcodes of all the parameters
+        StringBuffer b = new StringBuffer();
+        if (StringUtils.isNotEmpty( version ))
+        {
+            b.append( version.hashCode() );
+        }
+        if (StringUtils.isNotEmpty( name ))
+        {
+            b.append( name.hashCode() );
+        }
+        if (StringUtils.isNotEmpty( arch ))
+        {
+            b.append( arch.hashCode() );
+        }
+        if (StringUtils.isNotEmpty( family ))
+        {
+            b.append( family.hashCode() );
+        }
+        return b.toString();
     }
 
-    /**
-     * @param theValidFamilies the validFamilies to set
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
-    public void setValidFamilies( Set theValidFamilies )
+    public boolean isCacheable ()
     {
-        this.validFamilies = theValidFamilies;
+        //the os is not going to change between projects in the same build.
+        return true;
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
+     */
+    public boolean isResultValid ( EnforcerRule theCachedRule )
+    {
+        //i will always return the hash of the parameters as my id. If my parameters are the same, this
+        //rule must always have the same result.
+        return true;
+    }
 }

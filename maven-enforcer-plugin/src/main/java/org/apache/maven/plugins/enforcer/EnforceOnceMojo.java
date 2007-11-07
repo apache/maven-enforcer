@@ -37,7 +37,7 @@ public class EnforceOnceMojo
     public void execute()
         throws MojoExecutionException
     {
-        this.getLog().warn( "enforcer:enforce-once is deprecated. Use enforcer:enforce instead. See MENFORCER-11 for more information." );
+        this.getLog().warn( "enforcer:enforce-once is deprecated. Use enforcer:enforce instead. See MENFORCER-11/MENFORCER-12 for more information." );
         super.execute();
     }
 }

@@ -24,6 +24,7 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.Restriction;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -160,6 +161,42 @@ public abstract class AbstractVersionEnforcer
         return matched;
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
+     */
+    public String getCacheId ()
+    {
+        if (StringUtils.isNotEmpty( version ))
+        {
+            //return the hashcodes of the parameter that matters
+            return ""+version.hashCode();
+        }
+        else
+        {
+            return "0";
+        }
+
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
+     */
+    public boolean isCacheable ()
+    {
+        //the maven version is not going to change between projects in the same build.
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
+     */
+    public boolean isResultValid ( EnforcerRule theCachedRule )
+    {
+        //i will always return the hash of the parameters as my id. If my parameters are the same, this
+        //rule must always have the same result.
+        return true;
+    }
+    
     /**
      * @return the version
      */
@@ -176,4 +213,6 @@ public abstract class AbstractVersionEnforcer
     {
         this.version = theVersion;
     }
+    
+    
 }
