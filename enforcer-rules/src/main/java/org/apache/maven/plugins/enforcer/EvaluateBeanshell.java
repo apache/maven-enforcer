@@ -27,6 +27,8 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.StringUtils;
 
 import bsh.EvalError;
@@ -99,9 +101,13 @@ public class EvaluateBeanshell
                 throw new EnforcerRuleException( this.message );
             }
         }
-        catch ( Exception e )
+        catch (ComponentLookupException e)
         {
             throw new EnforcerRuleException( "Unable to lookup a component", e );
+        }
+        catch ( ExpressionEvaluationException e )
+        {
+            throw new EnforcerRuleException( "Unable to evaluate an expression", e );
         }
     }
 
