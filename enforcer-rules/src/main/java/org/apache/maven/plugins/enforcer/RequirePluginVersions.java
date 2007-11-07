@@ -102,6 +102,13 @@ public class RequirePluginVersions
      * @parameter
      */
     public boolean banRelease = true;
+    
+    /**
+     * The comma separated list of phases that should be used to find lifecycle plugin bindings.
+     * The default value is "clean,deploy,site". 
+     * @parameter
+     */
+    public String phases = "clean,deploy,site";
 
     private PluginManager pluginManager;
 
@@ -149,13 +156,37 @@ public class RequirePluginVersions
             // lifecycles list.
             lifecycles = (List) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", life );
 
-            // hardcoded for now
-            Lifecycle lifecycle = getLifecycleForPhase( "deploy" );
-
-            Set allPlugins = getAllPlugins( project, lifecycle );
-
+            Set allPlugins = new HashSet();
+            
+            //lookup the bindings for all the passed in phases
+            String[] lifecyclePhases = this.phases.split( "," );
+            for (int i = 0; i < lifecyclePhases.length;i++)
+            {
+              String lifecyclePhase = lifecyclePhases[i];
+              if (StringUtils.isNotEmpty( lifecyclePhase ))
+              {
+                  try
+                  {
+                  Lifecycle lifecycle = getLifecycleForPhase( lifecyclePhase );   
+                  allPlugins.addAll( getAllPlugins( project, lifecycle ));
+                  }
+                  catch (BuildFailureException e)
+                  {
+                   //i'm going to swallow this because the user may have declared a phase that doesn't
+                   //exist for every module.
+                  }
+              }
+            }
+             
             log.debug( "All Plugins: " + allPlugins );
 
+            //there's nothing to do here
+            if (allPlugins.isEmpty())
+            {
+                log.info( "No plugin bindings found." );
+                return;
+            }
+            
             List plugins = getAllPluginEntries( project );
 
             // now look for the versions that aren't valid
@@ -203,10 +234,6 @@ public class RequirePluginVersions
         {
             throw new EnforcerRuleException( e.getLocalizedMessage() );
         }
-        catch ( BuildFailureException e )
-        {
-            throw new EnforcerRuleException( e.getLocalizedMessage() );
-        }
         catch ( LifecycleExecutionException e )
         {
             throw new EnforcerRuleException( e.getLocalizedMessage() );
@@ -231,7 +258,6 @@ public class RequirePluginVersions
         {
             throw new EnforcerRuleException( e.getLocalizedMessage() );
         }
-
     }
 
     /*
