@@ -26,17 +26,24 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
  * This goal displays the current platform information
  * 
  * @goal display-info
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id: EnforceMojo.java 523156 2007-03-28 03:53:54Z brianf $
+ * @version $Id: EnforceMojo.java 523156 2007-03-28
+ *          03:53:54Z brianf $
  */
 public class DisplayInfoMojo
     extends AbstractMojo
+    implements Contextualizable
 {
 
     /**
@@ -62,16 +69,27 @@ public class DisplayInfoMojo
      */
     protected MavenProject project;
 
+    // set by the contextualize method. Only way to get the
+    // plugin's container in 2.0.x
+    protected PlexusContainer container;
+
+    public void contextualize ( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+
     /**
      * Entry point to the mojo
      */
-    public void execute()
+    public void execute ()
         throws MojoExecutionException
     {
         try
         {
             EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator( session, translator, project );
-            DefaultEnforcementRuleHelper helper = new DefaultEnforcementRuleHelper( session, evaluator, getLog() );
+            DefaultEnforcementRuleHelper helper = new DefaultEnforcementRuleHelper( session, evaluator, getLog(),
+                                                                                    container );
             RuntimeInformation rti = (RuntimeInformation) helper.getComponent( RuntimeInformation.class );
             getLog().info( "Maven Version: " + rti.getApplicationVersion() );
             getLog().info(

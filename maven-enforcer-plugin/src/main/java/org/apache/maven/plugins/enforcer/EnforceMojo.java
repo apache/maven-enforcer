@@ -32,6 +32,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
+import org.codehaus.plexus.PlexusConstants;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
  * This goal executes the defined enforcer-rules once per
@@ -46,6 +51,7 @@ import org.apache.maven.project.path.PathTranslator;
  */
 public class EnforceMojo
     extends AbstractMojo
+    implements Contextualizable
 {
 
     /**
@@ -113,8 +119,22 @@ public class EnforceMojo
      */
      protected boolean ignoreCache = false;
     
-    protected static Hashtable cache = new Hashtable();
+    /**
+     * This is a static variable used to persist the cached results across plugin invocations.
+     */
+     protected static Hashtable cache = new Hashtable();
 
+    
+    // set by the contextualize method. Only way to get the
+    // plugin's container in 2.0.x
+    protected PlexusContainer container;
+
+    public void contextualize ( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    }
+    
     /**
      * Entry point to the mojo
      */
@@ -137,7 +157,7 @@ public class EnforceMojo
                 String currentRule = "Unknown";
 
                 // create my helper
-                EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( session, evaluator, log );
+                EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( session, evaluator, log, container );
 
                 // if we are only warning, then disable
                 // failFast

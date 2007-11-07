@@ -19,27 +19,47 @@ package org.apache.maven.enforcer.rule.api;
  * under the License.
  */
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.plugin.logging.Log;
+import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
- * This is the interface that all helpers will use. This provides access to the
- * log, session and components to the rules.
+ * This is the interface that all helpers will use. This
+ * provides access to the log, session and components to the
+ * rules.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
+ * @version $Id: EnforcerRuleHelper.java 571673 2007-09-01
+ *          03:04:24Z brianf $
  */
 public interface EnforcerRuleHelper
     extends ExpressionEvaluator
 {
-    public Log getLog();
+    public Log getLog ();
 
     /*
      * (non-Javadoc)
      * 
      * @see org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper#getRuntimeInformation()
      */
-    public Object getComponent( Class clazz )
+    public Object getComponent ( Class clazz )
         throws ComponentLookupException;
+
+    public Object getComponent ( String componentKey )
+        throws ComponentLookupException;
+
+    public Object getComponent ( String role, String roleHint )
+        throws ComponentLookupException;
+
+    public Map getComponentMap ( String role )
+        throws ComponentLookupException;
+
+    public List getComponentList ( String role )
+        throws ComponentLookupException;
+    
+    public PlexusContainer getContainer(); 
 }

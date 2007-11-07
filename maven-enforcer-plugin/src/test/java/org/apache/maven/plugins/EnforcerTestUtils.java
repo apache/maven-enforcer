@@ -51,14 +51,14 @@ public class EnforcerTestUtils
         MavenSession session = getMavenSession();
         ExpressionEvaluator eval = new EnforcerExpressionEvaluator( session, new MockPathTranslator(),
                                                                     new MockProject() );
-        return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog() );
+        return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(), session.getContainer() );
     }
     
     public static EnforcerRuleHelper getHelper(MavenProject project) {
         MavenSession session = getMavenSession();
         ExpressionEvaluator eval = new EnforcerExpressionEvaluator( session, new MockPathTranslator(),
         															project );
-        return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog() );
+        return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(),session.getContainer() );
     }
     
     public static Plugin newPlugin(String groupId, String artifactId, String version)
