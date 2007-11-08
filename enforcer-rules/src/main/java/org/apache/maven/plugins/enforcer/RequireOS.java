@@ -19,14 +19,8 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
-import java.util.Set;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Activation;
 import org.apache.maven.model.ActivationOS;
 import org.apache.maven.model.Profile;
@@ -34,6 +28,9 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.profiles.activation.OperatingSystemProfileActivator;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
+import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
 /**
  * This rule checks that the OS is allowed by combinations

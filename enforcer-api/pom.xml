@@ -28,7 +28,7 @@
 	
 	<artifactId>enforcer-api</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0-alpha-3-SNAPSHOT</version>
+	<version>1.0-SNAPSHOT</version>
 
 	<name>Enforcer API</name>
 	<description>This component provides the generic interfaces needed to implement custom rules for the maven-enforcer-plugin.</description>
@@ -58,18 +58,12 @@
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
-			<version>2.0.5</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.plexus</groupId>
 			<artifactId>plexus-container-default</artifactId>
 			<version>1.0-alpha-9</version>
 		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>	
+	
 	</dependencies>
 </project>

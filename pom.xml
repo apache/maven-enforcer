@@ -110,6 +110,11 @@
     <url>http://svn.apache.org/viewcvs.cgi/maven/enforcer/trunk</url>
   </scm>
   
+  <properties>
+    <api.version>1.0-SNAPSHOT</api.version>
+	<rules.version>1.0-SNAPSHOT</rules.version>
+	<maven.version>2.0.6</maven.version>
+  </properties>
   <build>
     <resources>
 			<!-- Include super-pom defined main/resources
@@ -184,25 +189,42 @@
   
   	<dependencyManagement>
 	  <dependencies>
+	     <dependency>
+            <groupId>org.apache.maven.enforcer</groupId>
+            <artifactId>enforcer-api</artifactId>
+			<version>${api.version}</version>
+        </dependency>	
+        <dependency>
+            <groupId>org.apache.maven.enforcer</groupId>
+            <artifactId>enforcer-rules</artifactId>
+			<version>${rules.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.enforcer</groupId>
+            <artifactId>enforcer-rules</artifactId>
+            <version>${rules.version}</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>	
 	  	<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-artifact</artifactId>
-			<version>2.0.7</version>
+			<version>${maven.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
-			<version>2.0.7</version>
+			<version>${maven.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-project</artifactId>
-			<version>2.0.7</version>
+			<version>${maven.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-core</artifactId>
-			<version>2.0.7</version>
+			<version>${maven.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.plexus</groupId>
@@ -220,23 +242,6 @@
           <artifactId>commons-lang</artifactId>
           <version>2.3</version>
         </dependency>
-       <dependency>
-            <groupId>org.apache.maven.enforcer</groupId>
-            <artifactId>enforcer-api</artifactId>
-			<version>1.0-alpha-3-SNAPSHOT</version>
-        </dependency>	
-        <dependency>
-            <groupId>org.apache.maven.enforcer</groupId>
-            <artifactId>enforcer-rules</artifactId>
-			<version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.enforcer</groupId>
-            <artifactId>enforcer-rules</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>	
 		<dependency>
 			<groupId>org.apache.maven.shared</groupId>
 			<artifactId>maven-plugin-testing-harness</artifactId>

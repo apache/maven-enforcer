@@ -29,7 +29,7 @@
 	<packaging>maven-plugin</packaging>
 	<name>Maven Enforcer Plugin</name>
 	<description>The Loving Iron Fist of Maven</description>
-	<version>1.0-alpha-4-SNAPSHOT</version>
+	<version>1.0-SNAPSHOT</version>
 	<issueManagement>
 		<system>JIRA</system>
 		<url>http://jira.codehaus.org/browse/MENFORCER</url>
@@ -123,11 +123,6 @@
             <groupId>org.apache.maven.enforcer</groupId>
             <artifactId>enforcer-rules</artifactId>
             <classifier>tests</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.beanshell</groupId>
-            <artifactId>bsh</artifactId>
-           <version>2.0b4</version>
         </dependency>
         <dependency>
           <groupId>org.apache.maven.shared</groupId>
