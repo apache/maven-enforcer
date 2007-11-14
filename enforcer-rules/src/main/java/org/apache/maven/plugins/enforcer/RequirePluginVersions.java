@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
 
 import org.apache.maven.BuildFailureException;
 import org.apache.maven.artifact.Artifact;
@@ -89,22 +90,22 @@ public class RequirePluginVersions
     public String message;
 
     /**
-     * The message to be printed in case the condition
-     * returns <b>true</b>
-     * 
-     * @required
-     * @parameter
+     * Don't allow the LATEST identifier
      */
     public boolean banLatest = true;
 
     /**
-     * The message to be printed in case the condition
-     * returns <b>true</b>
+     * Don't allow the RELEASE identifier
      * 
      * @required
      * @parameter
      */
     public boolean banRelease = true;
+
+    /**
+     * Don't allow snapshot plugins.
+     */
+    public boolean banSnapshots = true;
 
     /**
      * The comma separated list of phases that should be
@@ -114,15 +115,16 @@ public class RequirePluginVersions
      * @parameter
      */
     public String phases = "clean,deploy,site";
-    
+
     /**
-     * Additional plugins to enforce have versions. These are plugins that may not be
-     * in the poms but are used anyway, like help, eclipse etc.
-     * <br>
-     * The plugins should be specified in the form: group:artifactId.
+     * Additional plugins to enforce have versions. These
+     * are plugins that may not be in the poms but are used
+     * anyway, like help, eclipse etc. <br>
+     * The plugins should be specified in the form:
+     * group:artifactId.
      */
     public List additionalPlugins;
-    
+
     private PluginManager pluginManager;
 
     private Map phaseToLifecycleMap;
@@ -169,9 +171,10 @@ public class RequirePluginVersions
             // specified lifecycles
             Set allPlugins = getBoundPlugins( life, project, phases );
 
-            //insert any additional Plugins specified by the user.
+            // insert any additional Plugins specified by
+            // the user.
             allPlugins = addAdditionalPlugins( allPlugins );
-            
+
             // there's nothing to do here
             if ( allPlugins.isEmpty() )
             {
@@ -214,7 +217,7 @@ public class RequirePluginVersions
                     newMsg.append( plugin.getGroupId() );
                     newMsg.append( ":" );
                     newMsg.append( plugin.getArtifactId() );
-                    
+
                     try
                     {
                         newMsg.append( ". \tThe version currently in use is " );
@@ -232,9 +235,11 @@ public class RequirePluginVersions
                     }
                     catch ( Exception e )
                     {
-                        //lots can go wrong here. Don't allow any issues trying to determine the issue
-                        //stop me
-                        log.debug( "Exception while determining plugin Version.",e );
+                        // lots can go wrong here. Don't
+                        // allow any issues trying to
+                        // determine the issue
+                        // stop me
+                        log.debug( "Exception while determining plugin Version.", e );
                         newMsg.append( ". Unable to determine the plugin version." );
                     }
                     newMsg.append( "\n" );
@@ -291,39 +296,42 @@ public class RequirePluginVersions
 
     /**
      * Add the additional plugins if they don't exist yet
-     * @throws MojoExecutionException 
+     * 
+     * @throws MojoExecutionException
      */
-    public Set addAdditionalPlugins(Set existing) throws MojoExecutionException
+    public Set addAdditionalPlugins ( Set existing )
+        throws MojoExecutionException
     {
-        if (additionalPlugins != null)
+        if ( additionalPlugins != null )
         {
             Iterator iter = additionalPlugins.iterator();
-            while(iter.hasNext())
+            while ( iter.hasNext() )
             {
-                String pluginString = (String)iter.next();
+                String pluginString = (String) iter.next();
                 String[] pluginStrings = pluginString.split( ":" );
-                if (pluginStrings.length == 2)
+                if ( pluginStrings.length == 2 )
                 {
                     Plugin plugin = new Plugin();
                     plugin.setGroupId( pluginStrings[0] );
                     plugin.setArtifactId( pluginStrings[1] );
-                    
-                    //only add this if it's not already there.
-                    if (!existing.contains( plugin ))
+
+                    // only add this if it's not already
+                    // there.
+                    if ( !existing.contains( plugin ) )
                     {
                         existing.add( plugin );
-                    }            
+                    }
                 }
                 else
                 {
-                    throw new MojoExecutionException("Invalid AdditionalPlugin string: "+ pluginString);
+                    throw new MojoExecutionException( "Invalid AdditionalPlugin string: " + pluginString );
                 }
             }
-            
+
         }
         return existing;
     }
-    
+
     /**
      * Given a plugin, this will retrieve the matching
      * plugin artifact from the model.
@@ -448,12 +456,17 @@ public class RequirePluginVersions
                     {
                         return false;
                     }
+
+                    if ( banSnapshots && isSnapshot( plugin.getVersion() ) )
+                    {
+                        return false;
+                    }
                     // the version was specified and not
                     // banned. It's ok.
 
                     status = true;
 
-                    if ( !banRelease && !banLatest )
+                    if ( !banRelease && !banLatest && !banSnapshots )
                     {
                         // no need to keep looking
                         break;
@@ -462,6 +475,11 @@ public class RequirePluginVersions
             }
         }
         return status;
+    }
+
+    protected boolean isSnapshot ( String baseVersion )
+    {
+        return Artifact.VERSION_FILE_PATTERN.matcher( baseVersion ).matches();
     }
 
     /*
