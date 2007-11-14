@@ -208,7 +208,24 @@ public class RequirePluginVersions
             if ( !failures.isEmpty() )
             {
                 StringBuffer newMsg = new StringBuffer();
-                newMsg.append( "Some plugins are missing valid versions:\n" );
+                newMsg.append( "Some plugins are missing valid versions:" );
+                if (banLatest || banRelease || banSnapshots)
+                {
+                    newMsg.append ("(");
+                    if (banLatest)
+                    {
+                        newMsg.append ("LATEST ");   
+                    }
+                    if (banRelease)
+                    {
+                        newMsg.append ("RELEASE ");   
+                    }
+                    if (banSnapshots)
+                    {
+                        newMsg.append ("SNAPSHOT ");   
+                    }
+                    newMsg.append( "are not allowed )\n");
+                }
                 iter = failures.iterator();
                 while ( iter.hasNext() )
                 {
@@ -479,7 +496,7 @@ public class RequirePluginVersions
 
     protected boolean isSnapshot ( String baseVersion )
     {
-        return Artifact.VERSION_FILE_PATTERN.matcher( baseVersion ).matches();
+        return Artifact.VERSION_FILE_PATTERN.matcher( baseVersion ).matches() || baseVersion.endsWith( Artifact.SNAPSHOT_VERSION );
     }
 
     /*
