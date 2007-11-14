@@ -1,5 +1,8 @@
 package org.apache.maven.plugins.enforcer;
 
+import java.util.Iterator;
+
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
@@ -16,6 +19,13 @@ public class RequireReleaseVersion
     implements EnforcerRule
 {
 
+    /**
+     * Specify a friendly message if the rule fails.
+     * 
+     * @parameter
+     */
+    public String message = null;
+
     /*
      * (non-Javadoc)
      * 
@@ -27,10 +37,16 @@ public class RequireReleaseVersion
         try
         {
             MavenProject project = (MavenProject) theHelper.evaluate( "${project}" );
-            
-            if(project.getArtifact().isSnapshot())
+
+            if ( project.getArtifact().isSnapshot() )
             {
-                throw new EnforcerRuleException("This project cannot be a snapshot:"+project.getArtifact().getId());
+                StringBuffer buf = new StringBuffer();
+                if ( message != null )
+                {
+                    buf.append( message + "\n" );
+                }
+                buf.append( "This project cannot be a snapshot:" + project.getArtifact().getId() );
+                throw new EnforcerRuleException( buf.toString() );
             }
         }
         catch ( ExpressionEvaluationException e )

@@ -176,16 +176,6 @@
       <url>scp://people.apache.org/www/maven.apache.org/enforcer/</url>
     </site>
   </distributionManagement>
-  <repositories>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <id>codehaus.snapshots</id>
-      <name>Codehaus Snapshot Development Repository</name>
-      <url>http://snapshots.repository.codehaus.org</url>
-    </repository>
-  </repositories>
   
   	<dependencyManagement>
 	  <dependencies>

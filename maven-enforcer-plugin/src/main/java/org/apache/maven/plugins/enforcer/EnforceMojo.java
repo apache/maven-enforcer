@@ -193,12 +193,12 @@ public class EnforceMojo
                             // false if fail is false.
                             if ( failFast )
                             {
-                                throw new MojoExecutionException( currentRule + " failed with message: "
+                                throw new MojoExecutionException( currentRule + " failed with message:\n"
                                     + e.getMessage(), e );
                             }
                             else
                             {
-                                list.add( "Rule " + i + ": " + currentRule + " failed with message: " + e.getMessage() );
+                                list.add( "Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage() );
                             }
                         }
                     }
