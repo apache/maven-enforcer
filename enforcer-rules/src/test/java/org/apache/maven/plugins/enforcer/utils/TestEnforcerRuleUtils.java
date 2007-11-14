@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
@@ -107,5 +110,33 @@ public class TestEnforcerRuleUtils
         m.setArtifactId( "a" );
 
         models.contains( m );
+    }
+    
+    /**
+     * Simpler wrapper to execute and deal with the expected
+     * result.
+     * 
+     * @param rule
+     * @param helper
+     * @param shouldFail
+     */
+    public static void execute( EnforcerRule rule, EnforcerRuleHelper helper, boolean shouldFail )
+    {
+        try
+        {
+            rule.execute( helper );
+            if ( shouldFail )
+            {
+                fail( "Exception expected." );
+            }
+        }
+        catch ( EnforcerRuleException e )
+        {
+            if ( !shouldFail )
+            {
+                fail( "No Exception expected:" + e.getLocalizedMessage() );
+            }
+            helper.getLog().debug(e.getMessage());
+        }
     }
 }

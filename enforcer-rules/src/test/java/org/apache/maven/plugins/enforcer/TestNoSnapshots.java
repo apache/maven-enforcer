@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
+import org.apache.maven.plugins.enforcer.utils.TestEnforcerRuleUtils;
 
 /**
  * 
@@ -48,43 +49,15 @@ public class TestNoSnapshots
 
         rule.setSearchTransitive( false );
 
-        execute( rule, helper, false );
+        TestEnforcerRuleUtils.execute( rule, helper, false );
 
         rule.setSearchTransitive( true );
 
-        execute( rule, helper, true );
+        TestEnforcerRuleUtils.execute( rule, helper, true );
 
     } 
 
-    /**
-     * Simpler wrapper to execute and deal with the expected
-     * result.
-     * 
-     * @param rule
-     * @param helper
-     * @param shouldFail
-     */
-    private void execute( NoSnapshots rule, EnforcerRuleHelper helper, boolean shouldFail )
-    {
-        try
-        {
-            rule.message = "Test Message";
-            rule.execute( helper );
-            if ( shouldFail )
-            {
-                fail( "Exception expected." );
-            }
-        }
-        catch ( EnforcerRuleException e )
-        {
-            if ( !shouldFail )
-            {
-                fail( "No Exception expected:" + e.getLocalizedMessage() );
-            }
-            helper.getLog().debug(e.getMessage());
-        }
-    }
-    
+   
     public void testId ()
     {
         NoSnapshots rule = new NoSnapshots();
