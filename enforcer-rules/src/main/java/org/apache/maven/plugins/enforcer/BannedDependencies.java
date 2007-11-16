@@ -29,6 +29,7 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -79,7 +80,7 @@ public class BannedDependencies
      * 
      * @see org.apache.maven.plugin.enforcer.AbstractBanDependencies#checkDependencies(java.util.Set)
      */
-    protected Set checkDependencies ( Set theDependencies )
+    protected Set checkDependencies ( Set theDependencies, Log log )
         throws EnforcerRuleException
     {
         Set excluded = checkDependencies( theDependencies, excludes );

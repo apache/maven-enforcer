@@ -26,6 +26,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
@@ -85,7 +86,7 @@ public abstract class AbstractBanDependencies
         }
 
         // look for banned dependencies
-        Set foundExcludes = checkDependencies( dependencies );
+        Set foundExcludes = checkDependencies( dependencies, helper.getLog() );
 
         // if any are found, fail the check but list all of
         // them
@@ -116,7 +117,7 @@ public abstract class AbstractBanDependencies
      * @return
      * @throws EnforcerRuleException
      */
-    abstract protected Set checkDependencies( Set dependencies )
+    abstract protected Set checkDependencies( Set dependencies, Log log )
         throws EnforcerRuleException;
 
     /**

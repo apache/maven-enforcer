@@ -19,19 +19,22 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * This rule is deprecated. Use requireReleaseVersions
+ * This rule checks that no snapshots are included.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
- * @deprecated replaced by {@link #RequireReleaseDeps} 
+ * 
  */
-public class NoSnapshots
+public class RequireReleaseDeps
     extends AbstractBanDependencies
 {
 
@@ -46,8 +49,19 @@ public class NoSnapshots
     protected Set checkDependencies( Set dependencies, Log log )
         throws EnforcerRuleException
     {
-        log.warn( "The \"NoSnapshots\" rule is deprecated. Use \"requireReleaseDeps\" instead" );
-        RequireReleaseDeps rule = new RequireReleaseDeps();
-        return rule.checkDependencies( dependencies, log );
+        Set foundExcludes = new HashSet();
+
+        Iterator DependencyIter = dependencies.iterator();
+        while ( DependencyIter.hasNext() )
+        {
+            Artifact artifact = (Artifact) DependencyIter.next();
+
+            if ( artifact.isSnapshot() )
+            {
+                foundExcludes.add( artifact );
+            }
+        }
+
+        return foundExcludes;
     }
 }
