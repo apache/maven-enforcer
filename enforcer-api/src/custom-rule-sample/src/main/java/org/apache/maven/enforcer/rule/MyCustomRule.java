@@ -1,15 +1,13 @@
 package org.apache.maven.enforcer.rule;
 
-import java.io.File;
-
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
@@ -61,5 +59,43 @@ public class MyCustomRule
         {
             throw new EnforcerRuleException( "Unable to lookup an expression " + e.getLocalizedMessage(), e );
         }
+    }
+
+    /**
+     * If your rule is cacheable, you must return a unique id when parameters or conditions
+     * change that would cause the result to be different. Multiple cached results are stored
+     * based on their id.
+     * 
+     * The easiest way to do this is to return a hash computed from the values of your parameters.
+     * 
+     * If your rule is not cacheable, then the result here is not important, you may return anything.
+     */
+    public String getCacheId()
+    {
+        //no hash on boolean...only parameter so no hash is needed.
+        return ""+this.shouldIfail;
+    }
+
+    /**
+     * This tells the system if the results are cacheable at all. Keep in mind that during
+     * forked builds and other things, a given rule may be executed more than once for the same
+     * project. This means that even things that change from project to project may still 
+     * be cacheable in certain instances.
+     */
+    public boolean isCacheable()
+    {
+        return false;
+    }
+
+    /**
+     * If the rule is cacheable and the same id is found in the cache, the stored results
+     * are passed to this method to allow double checking of the results. Most of the time 
+     * this can be done by generating unique ids, but sometimes the results of objects returned
+     * by the helper need to be queried. You may for example, store certain objects in your rule
+     * and then query them later.
+     */
+    public boolean isResultValid( EnforcerRule arg0 )
+    {
+        return false;
     }
 }

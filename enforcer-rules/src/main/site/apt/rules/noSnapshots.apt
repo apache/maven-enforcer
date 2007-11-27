@@ -16,29 +16,29 @@
 ~~ under the License.    
  
   ------
-  Require Plugin Versions
+  Require Release Dependencies
   ------
   Brian Fox
   ------
-  August 2007
+  November 2007
   ------
 
-Require Plugin Versions
+Require Release Dependencies
 
-   This rule enforces that all plugins have a version defined, either in the plugin or pluginManagement section of the pom or a parent pom.
+  This rule checks the dependencies and fails if any snapshots are found.
+
 
    The following parameters are supported by this rule:
    
+   * searchTransitive - if transitive dependencies should be checked.
+   
    * message - an optional message to the user if the rule fails.
-   
-   * banLatest - disallow any use of "LATEST" as a version for any plugin. Default = true
-   
-   * banRelease - disallow any use of "RELEASE" as a version for any plugin. Default = true
    
    []
 
-   Sample Plugin Configuration:
    
+  Sample Plugin Configuration:
+  
 +---+
 <project>
   [...]
@@ -49,18 +49,17 @@ Require Plugin Versions
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
-            <id>enforce-plugin-versions</id>
+            <id>enforce-no-snapshots</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <requirePluginVersions>
-                   <message>Best Practice is to always define plugin versions!</message>
-                   <banLatest>true</banLatest>
-                   <banRelease>true</banRelease>
-                </requirePluginVersions>
-              </rules>    
+               <requireReleaseDeps>
+                  <message>No Snapshots Allowed!</message>
+               </requireReleaseDeps>
+             </rules>  
+            <fail>true</fail>
             </configuration>
           </execution>
         </executions>
@@ -69,4 +68,4 @@ Require Plugin Versions
   </build>
   [...]
 </project>
-+---+  
++---+

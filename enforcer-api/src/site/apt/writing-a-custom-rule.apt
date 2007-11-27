@@ -20,7 +20,7 @@
   ------
   Brian Fox
   ------
-  Mar 2007
+  Nov 2007
   ------
 
 Writing a custom rule
@@ -34,55 +34,58 @@ Writing a custom rule
   
 +---+
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>your.group</groupId>
-  <artifactId>custom-rule</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0</version>
-  <name>My Custom Rule</name>
-  <description>This is my custom rule.</description>
-  <build>	
-  </build>
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-enforcer-rule-api</artifactId>
-      <version>1.0-alpha-1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
-      <version>2.0.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
-      <version>2.0.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-      <version>2.0.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-      <version>2.0.5</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-9</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>	
-  </dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>custom-rule</groupId>
+	<artifactId>custom-rule-sample</artifactId>
+	<packaging>jar</packaging>
+	<version>1.0</version>
+	<name>My Custom Rule</name>
+	<description>This is my custom rule.</description>
+	<properties>
+	  <api.version>1.0-SNAPSHOT</api.version>
+	  <maven.version>2.0.6</maven.version>
+	</properties>
+	<build>	
+	</build>
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.maven.enforcer</groupId>
+			<artifactId>enforcer-api</artifactId>
+			<version>${api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-project</artifactId>
+			<version>${maven.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-core</artifactId>
+			<version>${maven.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-artifact</artifactId>
+			<version>${maven.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>${maven.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-container-default</artifactId>
+			<version>1.0-alpha-9</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>	
+	</dependencies>
 </project>
 +---+
 
@@ -90,32 +93,35 @@ Writing a custom rule
    The rule can get access to components and the log via the {{{apidocs/index.html}EnforcerRuleHelper}} interface.
    If the rule succeeds, it should just simply return. If the rule fails, it should throw an {{{apidocs/index.html}EnforcerRuleException}} with a descriptive message telling the user why the rule failed.
    
+   There are several methods that must be implemented related to caching.
+   
    Here's a sample class that shows how to access the helper methods and retreive components by class name from the helper:
    
 +---+
-package org.apache.maven.shared.rule;
+package org.apache.maven.enforcer.rule;
 
 import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRule;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a> 
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class MyCustomRule
     implements EnforcerRule
 {
     /**
-     * Simple param. This rule will fail if the value is true. 
+     * Simple param. This rule will fail if the value is true.
      */
     private boolean shouldIfail = false;
-    
+
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
@@ -123,7 +129,7 @@ public class MyCustomRule
 
         try
         {
-             // get the various expressions out of the helper.
+            // get the various expressions out of the helper.
             MavenProject project = (MavenProject) helper.evaluate( "${project}" );
             MavenSession session = (MavenSession) helper.evaluate( "${session}" );
             String target = (String) helper.evaluate( "${project.build.directory}" );
@@ -139,16 +145,58 @@ public class MyCustomRule
             log.info( "Retrieved RuntimeInfo: " + rti );
             log.info( "Retrieved Session: " + session );
             log.info( "Retrieved Resolver: " + resolver );
-            
-            if (this.shouldIfail)
+
+            if ( this.shouldIfail )
             {
-                throw new EnforcerRuleException("Failing because my param said so.");
+                throw new EnforcerRuleException( "Failing because my param said so." );
             }
         }
         catch ( ComponentLookupException e )
         {
-            throw new EnforcerRuleException("Unable to lookup a component",e);
+            throw new EnforcerRuleException( "Unable to lookup a component " + e.getLocalizedMessage(), e );
         }
+        catch ( ExpressionEvaluationException e )
+        {
+            throw new EnforcerRuleException( "Unable to lookup an expression " + e.getLocalizedMessage(), e );
+        }
+    }
+
+    /**
+     * If your rule is cacheable, you must return a unique id when parameters or conditions
+     * change that would cause the result to be different. Multiple cached results are stored
+     * based on their id.
+     * 
+     * The easiest way to do this is to return a hash computed from the values of your parameters.
+     * 
+     * If your rule is not cacheable, then the result here is not important, you may return anything.
+     */
+    public String getCacheId()
+    {
+        //no hash on boolean...only parameter so no hash is needed.
+        return ""+this.shouldIfail;
+    }
+
+    /**
+     * This tells the system if the results are cacheable at all. Keep in mind that during
+     * forked builds and other things, a given rule may be executed more than once for the same
+     * project. This means that even things that change from project to project may still 
+     * be cacheable in certain instances.
+     */
+    public boolean isCacheable()
+    {
+        return false;
+    }
+
+    /**
+     * If the rule is cacheable and the same id is found in the cache, the stored results
+     * are passed to this method to allow double checking of the results. Most of the time 
+     * this can be done by generating unique ids, but sometimes the results of objects returned
+     * by the helper need to be queried. You may for example, store certain objects in your rule
+     * and then query them later.
+     */
+    public boolean isResultValid( EnforcerRule arg0 )
+    {
+        return false;
     }
 }
 +---+   
@@ -167,8 +215,8 @@ public class MyCustomRule
          <artifactId>maven-enforcer-plugin</artifactId>
          <dependencies>
            <dependency>
-             <groupId>your.group</groupId>
-             <artifactId>custom-rule</artifactId>
+             <groupId>custom-rule</groupId>
+             <artifactId>custom-rule-sample</artifactId>
              <version>1.0</version>
            </dependency>
          </dependencies>
@@ -186,7 +234,7 @@ public class MyCustomRule
 +---+
 <configuration>
   <rules>
-    <myCustomRule implementation="org.apache.maven.shared.rule.myCustomRule">
+    <myCustomRule implementation="org.apache.maven.enforcer.rule.MyCustomRule">
       <shouldIfail>true</shouldIfail>
     </myCustomRule>
   </rules>
@@ -196,36 +244,33 @@ public class MyCustomRule
   [[6]] That's it. The full plugin config may look like this:
   
 +---+
-<plugin>
-  <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-enforcer-plugin</artifactId>
-  <dependencies>
-    <dependency>
-      <groupId>your.group</groupId>
-      <artifactId>custom-rule</artifactId>
-      <version>1.0</version>
-    </dependency>
-    </dependencies>
-    <executions>
-      <execution>
-        <id>enforce</id>
-          <configuration>
-            <rules>
-              <requireJavaVersion>
-                <version>[1.3,1.6]</version>
-              </requireJavaVersion>
-              <requireMavenVersion>
-                <version>2.0.6</version>
-              </requireMavenVersion>
-              <myCustomRule implementation="org.apache.maven.shared.rule.myCustomRule">
-                <shouldIfail>true</shouldIfail>
-              </myCustomRule>
-            </rules>
-          </configuration>
-        <goals>
-          <goal>enforce-once</goal>
-        </goals>
-      </execution>
-   </executions>
-</plugin>
+<plugins>
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <dependencies>
+            <dependency>
+                <groupId>custom-rule</groupId>
+                <artifactId>custom-rule-sample</artifactId>
+                <version>1.0</version>
+            </dependency>
+        </dependencies>
+        <executions>
+            <execution>
+                <id>enforce</id>
+                <configuration>
+                    <rules>
+                        <myCustomRule implementation="org.apache.maven.enforcer.rule.MyCustomRule">
+                            <shouldIfail>false</shouldIfail>
+                        </myCustomRule>
+                    </rules>
+                </configuration>
+                <goals>
+                    <goal>enforce</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
+</plugins>
 +---+

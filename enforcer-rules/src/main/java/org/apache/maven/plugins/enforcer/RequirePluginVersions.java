@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
-import java.util.regex.Matcher;
 
 import org.apache.maven.BuildFailureException;
 import org.apache.maven.artifact.Artifact;
@@ -173,7 +172,7 @@ public class RequirePluginVersions
 
             // insert any additional Plugins specified by
             // the user.
-            allPlugins = addAdditionalPlugins( allPlugins );
+            allPlugins = addAdditionalPlugins( allPlugins, additionalPlugins );
 
             // there's nothing to do here
             if ( allPlugins.isEmpty() )
@@ -316,12 +315,12 @@ public class RequirePluginVersions
      * 
      * @throws MojoExecutionException
      */
-    public Set addAdditionalPlugins ( Set existing )
+    public Set addAdditionalPlugins ( Set existing, List additional )
         throws MojoExecutionException
     {
-        if ( additionalPlugins != null )
+        if ( additional != null )
         {
-            Iterator iter = additionalPlugins.iterator();
+            Iterator iter = additional.iterator();
             while ( iter.hasNext() )
             {
                 String pluginString = (String) iter.next();
@@ -334,7 +333,12 @@ public class RequirePluginVersions
 
                     // only add this if it's not already
                     // there.
-                    if ( !existing.contains( plugin ) )
+                    if (existing == null)
+                    {
+                        existing = new HashSet();
+                        existing.add( plugin );
+                    }
+                    else if ( !existing.contains( plugin ) )
                     {
                         existing.add( plugin );
                     }
@@ -896,5 +900,21 @@ public class RequirePluginVersions
     public boolean isResultValid ( EnforcerRule theCachedRule )
     {
         return false;
+    }
+
+    /**
+     * @return the banSnapshots
+     */
+    public boolean isBanSnapshots ()
+    {
+        return this.banSnapshots;
+    }
+
+    /**
+     * @param theBanSnapshots the banSnapshots to set
+     */
+    public void setBanSnapshots ( boolean theBanSnapshots )
+    {
+        this.banSnapshots = theBanSnapshots;
     }
 }
