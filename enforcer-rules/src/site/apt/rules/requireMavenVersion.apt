@@ -16,29 +16,27 @@
 ~~ under the License.    
  
   ------
-  Require Release Dependencies
+  Require Maven Version
   ------
   Brian Fox
   ------
-  November 2007
+  June 2007
   ------
 
-Require Release Dependencies
+Require Maven Version
 
-  This rule checks the dependencies and fails if any snapshots are found.
-
+   This rule enforces certain Maven versions. The rule uses the {{{versionRanges.html}Enforcer version range syntax}} to define allowed versions.
 
    The following parameters are supported by this rule:
    
-   * searchTransitive - if transitive dependencies should be checked.
-   
    * message - an optional message to the user if the rule fails.
+   
+   * {{{../apidocs/org/apache/maven/plugin/enforcer/AbstractVersionEnforcer.html#version}version}} - {{{versionRanges.html}range}} of allowed Maven versions.
    
    []
 
+   Sample Plugin Configuration:
    
-  Sample Plugin Configuration:
-  
 +---+
 <project>
   [...]
@@ -47,19 +45,19 @@ Require Release Dependencies
      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.0</version>
         <executions>
           <execution>
-            <id>enforce-no-snapshots</id>
+            <id>enforce-java</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-               <requireReleaseDeps>
-                  <message>No Snapshots Allowed!</message>
-               </requireReleaseDeps>
-             </rules>  
-            <fail>true</fail>
+                <requireMavenVersion>
+                  <version>2.0.6</version>
+                </requireMavenVersion>
+              </rules>    
             </configuration>
           </execution>
         </executions>
@@ -68,4 +66,4 @@ Require Release Dependencies
   </build>
   [...]
 </project>
-+---+
++---+  

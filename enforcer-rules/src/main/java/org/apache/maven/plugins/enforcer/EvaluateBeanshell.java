@@ -35,12 +35,10 @@ import bsh.EvalError;
 import bsh.Interpreter;
 
 /**
- * @author hugonnem Rule for Maven Enforcer using Beanshell
- *         to evaluate a conditional expression
- * 
+ * @author hugonnem Rule for Maven Enforcer using Beanshell to evaluate a conditional expression
  */
 public class EvaluateBeanshell
-    implements EnforcerRule
+    extends AbstractStandardEnforcerRule
 {
 
     /**
@@ -56,15 +54,6 @@ public class EvaluateBeanshell
      */
     public String condition;
 
-    /**
-     * The message to be printed in case the condition
-     * returns <b>true</b>
-     * 
-     * @required
-     * @parameter
-     */
-    public String message;
-    
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
@@ -101,7 +90,7 @@ public class EvaluateBeanshell
                 throw new EnforcerRuleException( this.message );
             }
         }
-        catch (ComponentLookupException e)
+        catch ( ComponentLookupException e )
         {
             throw new EnforcerRuleException( "Unable to lookup a component", e );
         }
@@ -133,26 +122,32 @@ public class EvaluateBeanshell
         return evaluation.booleanValue();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
-    public String getCacheId ()
+    public String getCacheId()
     {
         return "" + this.condition.hashCode();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
-    public boolean isCacheable ()
+    public boolean isCacheable()
     {
         return false;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
-    public boolean isResultValid ( EnforcerRule theCachedRule )
+    public boolean isResultValid( EnforcerRule theCachedRule )
     {
         return false;
     }

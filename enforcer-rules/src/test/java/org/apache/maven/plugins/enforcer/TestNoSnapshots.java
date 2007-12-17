@@ -23,7 +23,6 @@ import java.io.IOException;
 
 import junit.framework.TestCase;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.TestEnforcerRuleUtils;
@@ -45,8 +44,7 @@ public class TestNoSnapshots
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
         project.setArtifacts( factory.getMixedArtifacts() );
         project.setDependencyArtifacts( factory.getScopedArtifacts() );
-        NoSnapshots rule = new NoSnapshots();
-
+        RequireReleaseDeps rule = new RequireReleaseDeps();
         rule.setSearchTransitive( false );
 
         TestEnforcerRuleUtils.execute( rule, helper, false );
@@ -60,7 +58,7 @@ public class TestNoSnapshots
    
     public void testId ()
     {
-        NoSnapshots rule = new NoSnapshots();
+        RequireReleaseDeps rule = new RequireReleaseDeps();
         rule.getCacheId();
     }
 }

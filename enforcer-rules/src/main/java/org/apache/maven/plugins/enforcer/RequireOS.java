@@ -33,17 +33,14 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
 /**
- * This rule checks that the OS is allowed by combinations
- * of family, name, version and cpu architecture. The
- * behavior is exactly the same as the Maven Os profile
- * activation so the same values are allowed here.
+ * This rule checks that the OS is allowed by combinations of family, name, version and cpu architecture. The behavior
+ * is exactly the same as the Maven Os profile activation so the same values are allowed here.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id: RequireOS.java 524303 2007-03-30 22:59:32Z
- *          brianf $
+ * @version $Id$
  */
 public class RequireOS
-    implements EnforcerRule
+    extends AbstractStandardEnforcerRule
 {
 
     /**
@@ -80,8 +77,7 @@ public class RequireOS
     public String arch = null;
 
     /**
-     * Specify an optional message to the user if the rule
-     * fails.
+     * Specify an optional message to the user if the rule fails.
      */
     public String message = "";
 
@@ -113,10 +109,11 @@ public class RequireOS
             {
                 if ( StringUtils.isEmpty( message ) )
                 {
-                    message = ( "OS Arch: " + Os.OS_ARCH + " Family: " + Os.OS_FAMILY + " Name: "
-                        + Os.OS_NAME + " Version: " + Os.OS_VERSION + " is not allowed by"
-                        + ( arch != null ? " Arch=" + arch : "" ) + ( family != null ? " Family=" + family : "" )
-                        + ( name != null ? " Name=" + name : "" ) + ( version != null ? " Version=" + version : "" ) );
+                    message =
+                        ( "OS Arch: " + Os.OS_ARCH + " Family: " + Os.OS_FAMILY + " Name: " + Os.OS_NAME +
+                            " Version: " + Os.OS_VERSION + " is not allowed by" +
+                            ( arch != null ? " Arch=" + arch : "" ) + ( family != null ? " Family=" + family : "" ) +
+                            ( name != null ? " Name=" + name : "" ) + ( version != null ? " Version=" + version : "" ) );
                 }
                 throw new EnforcerRuleException( message );
             }
@@ -142,8 +139,9 @@ public class RequireOS
      */
     public void displayOSInfo( Log log, boolean info )
     {
-        String string = "OS Info: Arch: " + Os.OS_ARCH + " Family: " + Os.OS_FAMILY + " Name: "
-            + Os.OS_NAME + " Version: " + Os.OS_VERSION;
+        String string =
+            "OS Info: Arch: " + Os.OS_ARCH + " Family: " + Os.OS_FAMILY + " Name: " + Os.OS_NAME + " Version: " +
+                Os.OS_VERSION;
 
         if ( !info )
         {
@@ -155,11 +153,9 @@ public class RequireOS
         }
     }
 
-
     /**
-     * Helper method to determine if the current OS is
-     * allowed based on the injected values for family,
-     * name, version and arch.
+     * Helper method to determine if the current OS is allowed based on the injected values for family, name, version
+     * and arch.
      * 
      * @return true if the version is allowed.
      */
@@ -171,24 +167,20 @@ public class RequireOS
     }
 
     /**
-     * Helper method to check that at least one of family,
-     * name, version or arch is set.
+     * Helper method to check that at least one of family, name, version or arch is set.
      * 
      * @return true if all parameters are empty.
      */
     public boolean allParamsEmpty()
     {
-        return ( StringUtils.isEmpty( family ) && StringUtils.isEmpty( arch ) && StringUtils.isEmpty( name ) && StringUtils
-            .isEmpty( version ) );
+        return ( StringUtils.isEmpty( family ) && StringUtils.isEmpty( arch ) && StringUtils.isEmpty( name ) && StringUtils.isEmpty( version ) );
 
     }
 
     /**
-     * Creates a Profile object that contains the activation
-     * information
+     * Creates a Profile object that contains the activation information
      * 
-     * @return a properly populated profile to be used for
-     *         OS validation.
+     * @return a properly populated profile to be used for OS validation.
      */
     private Profile createProfile()
     {
@@ -198,8 +190,7 @@ public class RequireOS
     }
 
     /**
-     * Creates an Activation object that contains the
-     * ActivationOS information.
+     * Creates an Activation object that contains the ActivationOS information.
      * 
      * @return a properly populated Activation object.
      */
@@ -212,8 +203,7 @@ public class RequireOS
     }
 
     /**
-     * Creates an ActivationOS object containing family,
-     * name, version and arch.
+     * Creates an ActivationOS object containing family, name, version and arch.
      * 
      * @return a properly populated ActivationOS object.
      */
@@ -230,8 +220,7 @@ public class RequireOS
     }
 
     /**
-     * Helper method to check if the given family is in the
-     * following list:
+     * Helper method to check if the given family is in the following list:
      * <ul>
      * <li>dos</li>
      * <li>mac</li>
@@ -244,9 +233,7 @@ public class RequireOS
      * <li>z/os</li>
      * <li>os/400</li>
      * </ul>
-     * 
-     * Note: '!' is allowed at the beginning of the string
-     * and still considered valid.
+     * Note: '!' is allowed at the beginning of the string and still considered valid.
      * 
      * @param theFamily the family to check.
      * @return true if one of the valid families.
@@ -323,49 +310,55 @@ public class RequireOS
     {
         this.version = theVersion;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
-    public String getCacheId ()
+    public String getCacheId()
     {
-        //return the hashcodes of all the parameters
+        // return the hashcodes of all the parameters
         StringBuffer b = new StringBuffer();
-        if (StringUtils.isNotEmpty( version ))
+        if ( StringUtils.isNotEmpty( version ) )
         {
             b.append( version.hashCode() );
         }
-        if (StringUtils.isNotEmpty( name ))
+        if ( StringUtils.isNotEmpty( name ) )
         {
             b.append( name.hashCode() );
         }
-        if (StringUtils.isNotEmpty( arch ))
+        if ( StringUtils.isNotEmpty( arch ) )
         {
             b.append( arch.hashCode() );
         }
-        if (StringUtils.isNotEmpty( family ))
+        if ( StringUtils.isNotEmpty( family ) )
         {
             b.append( family.hashCode() );
         }
         return b.toString();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
-    public boolean isCacheable ()
+    public boolean isCacheable()
     {
-        //the os is not going to change between projects in the same build.
+        // the os is not going to change between projects in the same build.
         return true;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
-    public boolean isResultValid ( EnforcerRule theCachedRule )
+    public boolean isResultValid( EnforcerRule theCachedRule )
     {
-        //i will always return the hash of the parameters as my id. If my parameters are the same, this
-        //rule must always have the same result.
+        // i will always return the hash of the parameters as my id. If my parameters are the same, this
+        // rule must always have the same result.
         return true;
     }
 }

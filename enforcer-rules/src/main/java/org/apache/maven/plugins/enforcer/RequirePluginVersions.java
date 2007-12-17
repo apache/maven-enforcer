@@ -48,8 +48,10 @@ import org.apache.maven.lifecycle.Lifecycle;
 import org.apache.maven.lifecycle.LifecycleExecutionException;
 import org.apache.maven.lifecycle.LifecycleExecutor;
 import org.apache.maven.lifecycle.mapping.LifecycleMapping;
+import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.InvalidPluginException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.PluginManager;
@@ -70,23 +72,11 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
- * 
- * This rule will enforce that all plugins specified in the
- * poms have a version declared.
+ * @version $Id$ This rule will enforce that all plugins specified in the poms have a version declared.
  */
 public class RequirePluginVersions
-    implements EnforcerRule
+    extends AbstractStandardEnforcerRule
 {
-
-    /**
-     * The message to be printed in case the condition
-     * returns <b>true</b>
-     * 
-     * @required
-     * @parameter
-     */
-    public String message;
 
     /**
      * Don't allow the LATEST identifier
@@ -107,20 +97,17 @@ public class RequirePluginVersions
     public boolean banSnapshots = true;
 
     /**
-     * The comma separated list of phases that should be
-     * used to find lifecycle plugin bindings. The default
-     * value is "clean,deploy,site".
+     * The comma separated list of phases that should be used to find lifecycle plugin bindings. The default value is
+     * "clean,deploy,site".
      * 
      * @parameter
      */
     public String phases = "clean,deploy,site";
 
     /**
-     * Additional plugins to enforce have versions. These
-     * are plugins that may not be in the poms but are used
-     * anyway, like help, eclipse etc. <br>
-     * The plugins should be specified in the form:
-     * group:artifactId.
+     * Additional plugins to enforce have versions. These are plugins that may not be in the poms but are used anyway,
+     * like help, eclipse etc. <br>
+     * The plugins should be specified in the form: group:artifactId.
      */
     public List additionalPlugins;
 
@@ -144,7 +131,7 @@ public class RequirePluginVersions
 
     EnforcerRuleUtils utils;
 
-    public void execute ( EnforcerRuleHelper helper )
+    public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
         log = helper.getLog();
@@ -173,6 +160,7 @@ public class RequirePluginVersions
             // insert any additional Plugins specified by
             // the user.
             allPlugins = addAdditionalPlugins( allPlugins, additionalPlugins );
+            allPlugins.addAll( getProfilePlugins( project ) );
 
             // there's nothing to do here
             if ( allPlugins.isEmpty() )
@@ -196,7 +184,7 @@ public class RequirePluginVersions
             while ( iter.hasNext() )
             {
                 Plugin plugin = (Plugin) iter.next();
-                if ( !hasVersionSpecified( plugin, plugins ) )
+                if ( !hasValidVersionSpecified( helper, plugin, plugins ) )
                 {
                     failures.add( plugin );
                 }
@@ -208,22 +196,22 @@ public class RequirePluginVersions
             {
                 StringBuffer newMsg = new StringBuffer();
                 newMsg.append( "Some plugins are missing valid versions:" );
-                if (banLatest || banRelease || banSnapshots)
+                if ( banLatest || banRelease || banSnapshots )
                 {
-                    newMsg.append ("(");
-                    if (banLatest)
+                    newMsg.append( "(" );
+                    if ( banLatest )
                     {
-                        newMsg.append ("LATEST ");   
+                        newMsg.append( "LATEST " );
                     }
-                    if (banRelease)
+                    if ( banRelease )
                     {
-                        newMsg.append ("RELEASE ");   
+                        newMsg.append( "RELEASE " );
                     }
-                    if (banSnapshots)
+                    if ( banSnapshots )
                     {
-                        newMsg.append ("SNAPSHOT ");   
+                        newMsg.append( "SNAPSHOT " );
                     }
-                    newMsg.append( "are not allowed )\n");
+                    newMsg.append( "are not allowed )\n" );
                 }
                 iter = failures.iterator();
                 while ( iter.hasNext() )
@@ -315,7 +303,7 @@ public class RequirePluginVersions
      * 
      * @throws MojoExecutionException
      */
-    public Set addAdditionalPlugins ( Set existing, List additional )
+    public Set addAdditionalPlugins( Set existing, List additional )
         throws MojoExecutionException
     {
         if ( additional != null )
@@ -333,7 +321,7 @@ public class RequirePluginVersions
 
                     // only add this if it's not already
                     // there.
-                    if (existing == null)
+                    if ( existing == null )
                     {
                         existing = new HashSet();
                         existing.add( plugin );
@@ -354,14 +342,43 @@ public class RequirePluginVersions
     }
 
     /**
-     * Given a plugin, this will retrieve the matching
-     * plugin artifact from the model.
+     * Finds the plugins that are listed in active profiles
+     * 
+     * @param project
+     * @return
+     */
+    public Set getProfilePlugins( MavenProject project )
+    {
+        Set result = new HashSet();
+        List profiles = project.getActiveProfiles();
+        if ( profiles != null && !profiles.isEmpty() )
+        {
+            Iterator iter = profiles.iterator();
+            while ( iter.hasNext() )
+            {
+                Profile p = (Profile) iter.next();
+                BuildBase b = p.getBuild();
+                if ( b != null )
+                {
+                    List plugins = b.getPlugins();
+                    if ( plugins != null )
+                    {
+                        result.addAll( plugins );
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Given a plugin, this will retrieve the matching plugin artifact from the model.
      * 
      * @param plugin to lookup
      * @param project to search
      * @return matching plugin, null if not found.
      */
-    protected Plugin findCurrentPlugin ( Plugin plugin, MavenProject project )
+    protected Plugin findCurrentPlugin( Plugin plugin, MavenProject project )
     {
         Plugin found = null;
         try
@@ -383,12 +400,13 @@ public class RequirePluginVersions
         return found;
     }
 
-    protected Plugin resolvePlugin ( Plugin plugin, MavenProject project )
+    protected Plugin resolvePlugin( Plugin plugin, MavenProject project )
     {
 
         List pluginRepositories = project.getPluginArtifactRepositories();
-        Artifact artifact = factory.createPluginArtifact( plugin.getGroupId(), plugin.getArtifactId(), VersionRange
-            .createFromVersion( "LATEST" ) );
+        Artifact artifact =
+            factory.createPluginArtifact( plugin.getGroupId(), plugin.getArtifactId(),
+                                          VersionRange.createFromVersion( "LATEST" ) );
 
         try
         {
@@ -406,7 +424,8 @@ public class RequirePluginVersions
     }
 
     /**
-     * Gets the plugins that are bound to the defined phases
+     * Gets the plugins that are bound to the defined phases. This does not find plugins bound in the pom to a phase
+     * later than the plugin is executing.
      * 
      * @param life
      * @param project
@@ -415,7 +434,7 @@ public class RequirePluginVersions
      * @throws LifecycleExecutionException
      * @throws IllegalAccessException
      */
-    protected Set getBoundPlugins ( LifecycleExecutor life, MavenProject project, String thePhases )
+    protected Set getBoundPlugins( LifecycleExecutor life, MavenProject project, String thePhases )
         throws PluginNotFoundException, LifecycleExecutionException, IllegalAccessException
     {
         // I couldn't find a direct way to get at the
@@ -449,11 +468,10 @@ public class RequirePluginVersions
     }
 
     /*
-     * Checks to see if the version is specified for the
-     * plugin. Can optionally ban "RELEASE" or "LATEST" even
-     * if specified.
+     * Checks to see if the version is specified for the plugin. Can optionally ban "RELEASE" or "LATEST" even if
+     * specified.
      */
-    protected boolean hasVersionSpecified ( Plugin source, List plugins )
+    protected boolean hasValidVersionSpecified( EnforcerRuleHelper helper, Plugin source, List plugins )
     {
         boolean status = false;
         Iterator iter = plugins.iterator();
@@ -461,29 +479,41 @@ public class RequirePluginVersions
         {
             // find the matching plugin entry
             Plugin plugin = (Plugin) iter.next();
-            if ( source.getArtifactId().equals( plugin.getArtifactId() )
-                && source.getGroupId().equals( plugin.getGroupId() ) )
+            if ( source.getArtifactId().equals( plugin.getArtifactId() ) &&
+                source.getGroupId().equals( plugin.getGroupId() ) )
             {
                 // found the entry. now see if the version
                 // is specified
-                if ( StringUtils.isNotEmpty( plugin.getVersion() ) )
+                String version = plugin.getVersion();
+                try
                 {
-                    if ( banRelease && plugin.getVersion().equals( "RELEASE" ) )
+                    version = (String) helper.evaluate( version );
+                }
+                catch ( ExpressionEvaluationException e )
+                {
+                    return false;
+                }
+
+                if ( StringUtils.isNotEmpty( version ) && !StringUtils.isWhitespace( version ) )
+                {
+
+                    if ( banRelease && version.equals( "RELEASE" ) )
                     {
                         return false;
                     }
 
-                    if ( banLatest && plugin.getVersion().equals( "LATEST" ) )
+                    if ( banLatest && version.equals( "LATEST" ) )
                     {
                         return false;
                     }
 
-                    if ( banSnapshots && isSnapshot( plugin.getVersion() ) )
+                    if ( banSnapshots && isSnapshot( version ) )
                     {
                         return false;
                     }
                     // the version was specified and not
-                    // banned. It's ok.
+                    // banned. It's ok. Keep looking through the list to make
+                    // sure it's not using a banned version somewhere else.
 
                     status = true;
 
@@ -498,16 +528,16 @@ public class RequirePluginVersions
         return status;
     }
 
-    protected boolean isSnapshot ( String baseVersion )
+    protected boolean isSnapshot( String baseVersion )
     {
-        return Artifact.VERSION_FILE_PATTERN.matcher( baseVersion ).matches() || baseVersion.endsWith( Artifact.SNAPSHOT_VERSION );
+        return Artifact.VERSION_FILE_PATTERN.matcher( baseVersion ).matches() ||
+            baseVersion.endsWith( Artifact.SNAPSHOT_VERSION );
     }
 
     /*
-     * Uses borrowed lifecycle code to get a list of all
-     * plugins bound to the lifecycle.
+     * Uses borrowed lifecycle code to get a list of all plugins bound to the lifecycle.
      */
-    private Set getAllPlugins ( MavenProject project, Lifecycle lifecycle )
+    private Set getAllPlugins( MavenProject project, Lifecycle lifecycle )
         throws PluginNotFoundException, LifecycleExecutionException
 
     {
@@ -550,12 +580,10 @@ public class RequirePluginVersions
     }
 
     /*
-     * NOTE: All the code following this point was scooped
-     * from the DefaultLifecycleExecutor. There must be a
-     * better way but for now it should work.
-     * 
+     * NOTE: All the code following this point was scooped from the DefaultLifecycleExecutor. There must be a better way
+     * but for now it should work.
      */
-    public Map getPhaseToLifecycleMap ()
+    public Map getPhaseToLifecycleMap()
         throws LifecycleExecutionException
     {
         if ( phaseToLifecycleMap == null )
@@ -573,9 +601,9 @@ public class RequirePluginVersions
                     if ( phaseToLifecycleMap.containsKey( phase ) )
                     {
                         Lifecycle prevLifecycle = (Lifecycle) phaseToLifecycleMap.get( phase );
-                        throw new LifecycleExecutionException( "Phase '" + phase
-                            + "' is defined in more than one lifecycle: '" + lifecycle.getId() + "' and '"
-                            + prevLifecycle.getId() + "'" );
+                        throw new LifecycleExecutionException( "Phase '" + phase +
+                            "' is defined in more than one lifecycle: '" + lifecycle.getId() + "' and '" +
+                            prevLifecycle.getId() + "'" );
                     }
                     else
                     {
@@ -587,7 +615,7 @@ public class RequirePluginVersions
         return phaseToLifecycleMap;
     }
 
-    private Lifecycle getLifecycleForPhase ( String phase )
+    private Lifecycle getLifecycleForPhase( String phase )
         throws BuildFailureException, LifecycleExecutionException
     {
         Lifecycle lifecycle = (Lifecycle) getPhaseToLifecycleMap().get( phase );
@@ -599,14 +627,15 @@ public class RequirePluginVersions
         return lifecycle;
     }
 
-    private Map findMappingsForLifecycle ( MavenProject project, Lifecycle lifecycle )
+    private Map findMappingsForLifecycle( MavenProject project, Lifecycle lifecycle )
         throws LifecycleExecutionException, PluginNotFoundException
     {
         String packaging = project.getPackaging();
         Map mappings = null;
 
-        LifecycleMapping m = (LifecycleMapping) findExtension( project, LifecycleMapping.ROLE, packaging, session
-            .getSettings(), session.getLocalRepository() );
+        LifecycleMapping m =
+            (LifecycleMapping) findExtension( project, LifecycleMapping.ROLE, packaging, session.getSettings(),
+                                              session.getLocalRepository() );
         if ( m != null )
         {
             mappings = m.getPhases( lifecycle.getId() );
@@ -625,8 +654,8 @@ public class RequirePluginVersions
             {
                 if ( defaultMappings == null )
                 {
-                    throw new LifecycleExecutionException( "Cannot find lifecycle mapping for packaging: \'"
-                        + packaging + "\'.", e );
+                    throw new LifecycleExecutionException( "Cannot find lifecycle mapping for packaging: \'" +
+                        packaging + "\'.", e );
                 }
             }
         }
@@ -635,8 +664,8 @@ public class RequirePluginVersions
         {
             if ( defaultMappings == null )
             {
-                throw new LifecycleExecutionException( "Cannot find lifecycle mapping for packaging: \'" + packaging
-                    + "\', and there is no default" );
+                throw new LifecycleExecutionException( "Cannot find lifecycle mapping for packaging: \'" + packaging +
+                    "\', and there is no default" );
             }
             else
             {
@@ -647,14 +676,15 @@ public class RequirePluginVersions
         return mappings;
     }
 
-    private List findOptionalMojosForLifecycle ( MavenProject project, Lifecycle lifecycle )
+    private List findOptionalMojosForLifecycle( MavenProject project, Lifecycle lifecycle )
         throws LifecycleExecutionException, PluginNotFoundException
     {
         String packaging = project.getPackaging();
         List optionalMojos = null;
 
-        LifecycleMapping m = (LifecycleMapping) findExtension( project, LifecycleMapping.ROLE, packaging, session
-            .getSettings(), session.getLocalRepository() );
+        LifecycleMapping m =
+            (LifecycleMapping) findExtension( project, LifecycleMapping.ROLE, packaging, session.getSettings(),
+                                              session.getLocalRepository() );
 
         if ( m != null )
         {
@@ -670,8 +700,8 @@ public class RequirePluginVersions
             }
             catch ( ComponentLookupException e )
             {
-                log.debug( "Error looking up lifecycle mapping to retrieve optional mojos. Lifecycle ID: "
-                    + lifecycle.getId() + ". Error: " + e.getMessage(), e );
+                log.debug( "Error looking up lifecycle mapping to retrieve optional mojos. Lifecycle ID: " +
+                    lifecycle.getId() + ". Error: " + e.getMessage(), e );
             }
         }
 
@@ -683,8 +713,8 @@ public class RequirePluginVersions
         return optionalMojos;
     }
 
-    private Object findExtension ( MavenProject project, String role, String roleHint, Settings settings,
-                                   ArtifactRepository localRepository )
+    private Object findExtension( MavenProject project, String role, String roleHint, Settings settings,
+                                  ArtifactRepository localRepository )
         throws LifecycleExecutionException, PluginNotFoundException
     {
         Object pluginComponent = null;
@@ -711,16 +741,16 @@ public class RequirePluginVersions
                 }
                 catch ( PluginManagerException e )
                 {
-                    throw new LifecycleExecutionException( "Error getting extensions from the plugin '"
-                        + plugin.getKey() + "': " + e.getMessage(), e );
+                    throw new LifecycleExecutionException( "Error getting extensions from the plugin '" +
+                        plugin.getKey() + "': " + e.getMessage(), e );
                 }
             }
         }
         return pluginComponent;
     }
 
-    private PluginDescriptor verifyPlugin ( Plugin plugin, MavenProject project, Settings settings,
-                                            ArtifactRepository localRepository )
+    private PluginDescriptor verifyPlugin( Plugin plugin, MavenProject project, Settings settings,
+                                           ArtifactRepository localRepository )
         throws LifecycleExecutionException, PluginNotFoundException
     {
         PluginDescriptor pluginDescriptor;
@@ -730,8 +760,8 @@ public class RequirePluginVersions
         }
         catch ( PluginManagerException e )
         {
-            throw new LifecycleExecutionException( "Internal error in the plugin manager getting plugin '"
-                + plugin.getKey() + "': " + e.getMessage(), e );
+            throw new LifecycleExecutionException( "Internal error in the plugin manager getting plugin '" +
+                plugin.getKey() + "': " + e.getMessage(), e );
         }
         catch ( PluginVersionResolutionException e )
         {
@@ -761,9 +791,7 @@ public class RequirePluginVersions
     }
 
     /**
-     * Gets all plugin entries in build.plugins or
-     * build.pluginManagement.plugins in this project and
-     * all parents
+     * Gets all plugin entries in build.plugins or build.pluginManagement.plugins in this project and all parents
      * 
      * @param project
      * @return
@@ -772,13 +800,14 @@ public class RequirePluginVersions
      * @throws IOException
      * @throws XmlPullParserException
      */
-    protected List getAllPluginEntries ( MavenProject project )
+    protected List getAllPluginEntries( MavenProject project )
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
     {
         List plugins = new ArrayList();
         // get all the pom models
-        List models = utils.getModelsRecursively( project.getGroupId(), project.getArtifactId(), project.getVersion(),
-                                                  new File( project.getBasedir(), "pom.xml" ) );
+        List models =
+            utils.getModelsRecursively( project.getGroupId(), project.getArtifactId(), project.getVersion(),
+                                        new File( project.getBasedir(), "pom.xml" ) );
 
         // now find all the plugin entries, either in
         // build.plugins or build.pluginManagement.plugins
@@ -811,7 +840,7 @@ public class RequirePluginVersions
     /**
      * @return the banLatest
      */
-    protected boolean isBanLatest ()
+    protected boolean isBanLatest()
     {
         return this.banLatest;
     }
@@ -819,7 +848,7 @@ public class RequirePluginVersions
     /**
      * @param theBanLatest the banLatest to set
      */
-    protected void setBanLatest ( boolean theBanLatest )
+    protected void setBanLatest( boolean theBanLatest )
     {
         this.banLatest = theBanLatest;
     }
@@ -827,7 +856,7 @@ public class RequirePluginVersions
     /**
      * @return the banRelease
      */
-    protected boolean isBanRelease ()
+    protected boolean isBanRelease()
     {
         return this.banRelease;
     }
@@ -835,7 +864,7 @@ public class RequirePluginVersions
     /**
      * @param theBanRelease the banRelease to set
      */
-    protected void setBanRelease ( boolean theBanRelease )
+    protected void setBanRelease( boolean theBanRelease )
     {
         this.banRelease = theBanRelease;
     }
@@ -843,7 +872,7 @@ public class RequirePluginVersions
     /**
      * @return the message
      */
-    protected String getMessage ()
+    protected String getMessage()
     {
         return this.message;
     }
@@ -851,7 +880,7 @@ public class RequirePluginVersions
     /**
      * @param theMessage the message to set
      */
-    protected void setMessage ( String theMessage )
+    protected void setMessage( String theMessage )
     {
         this.message = theMessage;
     }
@@ -859,7 +888,7 @@ public class RequirePluginVersions
     /**
      * @return the utils
      */
-    protected EnforcerRuleUtils getUtils ()
+    protected EnforcerRuleUtils getUtils()
     {
         return this.utils;
     }
@@ -867,7 +896,7 @@ public class RequirePluginVersions
     /**
      * @param theUtils the utils to set
      */
-    protected void setUtils ( EnforcerRuleUtils theUtils )
+    protected void setUtils( EnforcerRuleUtils theUtils )
     {
         this.utils = theUtils;
     }
@@ -877,7 +906,7 @@ public class RequirePluginVersions
      * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
-    public String getCacheId ()
+    public String getCacheId()
     {
         return "0";
     }
@@ -887,7 +916,7 @@ public class RequirePluginVersions
      * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
-    public boolean isCacheable ()
+    public boolean isCacheable()
     {
         return false;
     }
@@ -897,7 +926,7 @@ public class RequirePluginVersions
      * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
-    public boolean isResultValid ( EnforcerRule theCachedRule )
+    public boolean isResultValid( EnforcerRule theCachedRule )
     {
         return false;
     }
@@ -905,7 +934,7 @@ public class RequirePluginVersions
     /**
      * @return the banSnapshots
      */
-    public boolean isBanSnapshots ()
+    public boolean isBanSnapshots()
     {
         return this.banSnapshots;
     }
@@ -913,7 +942,7 @@ public class RequirePluginVersions
     /**
      * @param theBanSnapshots the banSnapshots to set
      */
-    public void setBanSnapshots ( boolean theBanSnapshots )
+    public void setBanSnapshots( boolean theBanSnapshots )
     {
         this.banSnapshots = theBanSnapshots;
     }

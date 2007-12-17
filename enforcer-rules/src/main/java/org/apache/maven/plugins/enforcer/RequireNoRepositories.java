@@ -20,21 +20,12 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * 
  */
 public class RequireNoRepositories
-    implements EnforcerRule
+    extends AbstractStandardEnforcerRule
 {
-    /**
-     * The message to be printed in case the condition
-     * returns <b>true</b>
-     * 
-     * @required
-     * @parameter
-     */
-    public String message;
-    
-    public void execute ( EnforcerRuleHelper helper )
+
+    public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
         EnforcerRuleUtils utils = new EnforcerRuleUtils( helper );
@@ -44,31 +35,33 @@ public class RequireNoRepositories
         {
             project = (MavenProject) helper.evaluate( "${project}" );
 
-            List models = utils.getModelsRecursively( project.getGroupId(), project.getArtifactId(), project
-                .getVersion(), new File( project.getBasedir(), "pom.xml" ) );
+            List models =
+                utils.getModelsRecursively( project.getGroupId(), project.getArtifactId(), project.getVersion(),
+                                            new File( project.getBasedir(), "pom.xml" ) );
 
-           List badModels = checkModels( models );
-           
-           // if anything was found, log it then append the
-           // optional message.
-           if ( !badModels.isEmpty() )
-           {
-               StringBuffer newMsg = new StringBuffer();
-               newMsg.append( "Some poms have repositories defined:\n" );
-               Iterator iter = badModels.iterator();
-               while ( iter.hasNext() )
-               {
-                   Model model = (Model) iter.next();
-                   newMsg.append( model.getGroupId() + ":" + model.getArtifactId() + " version:" + model.getVersion()+ "\n" );
-               }
-               if ( StringUtils.isNotEmpty( message ) )
-               {
-                   newMsg.append( message );
-               }
+            List badModels = checkModels( models );
 
-               throw new EnforcerRuleException( newMsg.toString() );
-           }
-           
+            // if anything was found, log it then append the
+            // optional message.
+            if ( !badModels.isEmpty() )
+            {
+                StringBuffer newMsg = new StringBuffer();
+                newMsg.append( "Some poms have repositories defined:\n" );
+                Iterator iter = badModels.iterator();
+                while ( iter.hasNext() )
+                {
+                    Model model = (Model) iter.next();
+                    newMsg.append( model.getGroupId() + ":" + model.getArtifactId() + " version:" + model.getVersion() +
+                        "\n" );
+                }
+                if ( StringUtils.isNotEmpty( message ) )
+                {
+                    newMsg.append( message );
+                }
+
+                throw new EnforcerRuleException( newMsg.toString() );
+            }
+
         }
         catch ( ExpressionEvaluationException e )
         {
@@ -92,43 +85,49 @@ public class RequireNoRepositories
         }
     }
 
-    private List checkModels ( List models )
+    private List checkModels( List models )
     {
         List badModels = new ArrayList();
-        
+
         Iterator iter = models.iterator();
         while ( iter.hasNext() )
         {
             Model model = (Model) iter.next();
             List repos = model.getRepositories();
-            if (repos != null && !repos.isEmpty())
+            if ( repos != null && !repos.isEmpty() )
             {
                 badModels.add( model );
             }
         }
         return badModels;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
-    public String getCacheId ()
+    public String getCacheId()
     {
         return "0";
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
-    public boolean isCacheable ()
+    public boolean isCacheable()
     {
         return false;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
-    public boolean isResultValid ( EnforcerRule theCachedRule )
+    public boolean isResultValid( EnforcerRule theCachedRule )
     {
         return false;
     }

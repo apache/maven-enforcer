@@ -29,11 +29,11 @@ import org.codehaus.plexus.util.StringUtils;
  * This rule checks that certain properties are set.
  * 
  * @author Paul Gier
- * 
  */
-public class RequireProperty implements EnforcerRule
+public class RequireProperty
+    extends AbstractStandardEnforcerRule
 {
-	
+
     /**
      * Specify the required property.
      * 
@@ -41,22 +41,14 @@ public class RequireProperty implements EnforcerRule
      * @required
      */
     public String property = null;
-	
-    /**
-     * Specify a warning message if the property is not set.
-     * 
-     * @parameter
-     */
-    public String message = null;
 
     /**
-     * Match the property value to a given regular expresssion.
-     * Defaults to null (any value is ok).
+     * Match the property value to a given regular expresssion. Defaults to null (any value is ok).
      * 
      * @parameter
      */
     public String regex = null;
-	
+
     /**
      * Specify a warning message if the regular expression is not matched.
      * 
@@ -70,68 +62,75 @@ public class RequireProperty implements EnforcerRule
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
-    	Object propValue = null;
-    	try 
-    	{
-    		propValue = helper.evaluate("${" + property + "}");
-    	} 
-    	catch (ExpressionEvaluationException eee) 
-    	{
-    		throw new EnforcerRuleException("Unable to evaluate property: " + property, eee);
-    	}
-    	
-    	// Check that the property is not null or empty string
-    	if (propValue==null)
-    	{
-    		if (message==null) 
-    		{
+        Object propValue = null;
+        try
+        {
+            propValue = helper.evaluate( "${" + property + "}" );
+        }
+        catch ( ExpressionEvaluationException eee )
+        {
+            throw new EnforcerRuleException( "Unable to evaluate property: " + property, eee );
+        }
+
+        // Check that the property is not null or empty string
+        if ( propValue == null )
+        {
+            if ( message == null )
+            {
                 message = "Property \"" + property + "\" is required for this build.";
-    		}
-    		throw new EnforcerRuleException(message);
-    	}
-    	// If there is a regex, check that the property matches it
-    	if (regex != null && !propValue.toString().matches(regex))
-    	{
-    		if (regexMessage == null) 
-    		{
-    			regexMessage = "Property \"" + property + "\" evaluates to \"" + propValue + "\".  " +
-	    				"This does not match the regular expression \"" + regex + "\"";
-    		}
-    		throw new EnforcerRuleException(regexMessage);
-    	}
+            }
+            throw new EnforcerRuleException( message );
+        }
+        // If there is a regex, check that the property matches it
+        if ( regex != null && !propValue.toString().matches( regex ) )
+        {
+            if ( regexMessage == null )
+            {
+                regexMessage =
+                    "Property \"" + property + "\" evaluates to \"" + propValue + "\".  " +
+                        "This does not match the regular expression \"" + regex + "\"";
+            }
+            throw new EnforcerRuleException( regexMessage );
+        }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
-    public String getCacheId ()
+    public String getCacheId()
     {
-        //return the hashcodes of all the parameters
+        // return the hashcodes of all the parameters
         StringBuffer b = new StringBuffer();
-        if (StringUtils.isNotEmpty( property ))
+        if ( StringUtils.isNotEmpty( property ) )
         {
             b.append( property.hashCode() );
         }
-        if (StringUtils.isNotEmpty( regex ))
+        if ( StringUtils.isNotEmpty( regex ) )
         {
             b.append( regex.hashCode() );
         }
         return b.toString();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
-    public boolean isCacheable ()
+    public boolean isCacheable()
     {
         // TODO Auto-generated method stub
         return false;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
-    public boolean isResultValid ( EnforcerRule theCachedRule )
+    public boolean isResultValid( EnforcerRule theCachedRule )
     {
         // TODO Auto-generated method stub
         return false;

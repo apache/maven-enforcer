@@ -37,44 +37,32 @@ import org.codehaus.plexus.util.StringUtils;
  * @version $Id$
  */
 public abstract class AbstractVersionEnforcer
+    extends AbstractStandardEnforcerRule
 {
 
     /**
      * Specify the required version. Some examples are
      * <ul>
      * <li><code>2.0.4</code> Version 2.0.4</li>
-     * <li><code>[2.0,2.1)</code> Versions 2.0 (included) to 2.1 (not
-     * included)</li>
+     * <li><code>[2.0,2.1)</code> Versions 2.0 (included) to 2.1 (not included)</li>
      * <li><code>[2.0,2.1]</code> Versions 2.0 to 2.1 (both included)</li>
      * <li><code>[2.0.5,)</code> Versions 2.0.5 and higher</li>
-     * <li><code>(,2.0.5],[2.1.1,)</code> Versions up to 2.0.5 (included) and
-     * 2.1.1 or higher</li>
+     * <li><code>(,2.0.5],[2.1.1,)</code> Versions up to 2.0.5 (included) and 2.1.1 or higher</li>
      * </ul>
      * 
      * @parameter
      * @required
      */
     public String version = null;
-    
+
     /**
-     * Specify an optional message to the user if the rule fails.
-     */
-    public String message = "";
-    
-    /**
-     * Compares the specified version to see if it is allowed by the defined
-     * version range.
+     * Compares the specified version to see if it is allowed by the defined version range.
      * 
      * @param log
-     * @param variableName
-     *            name of variable to use in messages (Example: "Maven" or
-     *            "Java" etc).
-     * @param requiredVersionRange
-     *            range of allowed versions.
-     * @param actualVersion
-     *            the version to be checked.
-     * @throws MojoExecutionException
-     *             if the version is not allowed.
+     * @param variableName name of variable to use in messages (Example: "Maven" or "Java" etc).
+     * @param requiredVersionRange range of allowed versions.
+     * @param actualVersion the version to be checked.
+     * @throws MojoExecutionException if the version is not allowed.
      */
     public void enforceVersion( Log log, String variableName, String requiredVersionRange, ArtifactVersion actualVersion )
         throws EnforcerRuleException
@@ -106,9 +94,9 @@ public abstract class AbstractVersionEnforcer
                     }
                     else
                     {
-                        if (StringUtils.isEmpty( message ))
+                        if ( StringUtils.isEmpty( message ) )
                         {
-                            message = msg + " is not in the allowed range " + vr + ".";    
+                            message = msg + " is not in the allowed range " + vr + ".";
                         }
 
                         throw new EnforcerRuleException( message );
@@ -116,24 +104,20 @@ public abstract class AbstractVersionEnforcer
                 }
                 catch ( InvalidVersionSpecificationException e )
                 {
-                    throw new EnforcerRuleException( "The requested " + variableName + " version "
-                        + requiredVersionRange + " is invalid.", e );
+                    throw new EnforcerRuleException( "The requested " + variableName + " version " +
+                        requiredVersionRange + " is invalid.", e );
                 }
             }
         }
     }
 
     /**
-     * Copied from Artifact.VersionRange. This is tweaked to handle singular
-     * ranges properly. Currently the default containsVersion method assumes a
-     * singular version means allow everything. This method assumes that "2.0.4" ==
+     * Copied from Artifact.VersionRange. This is tweaked to handle singular ranges properly. Currently the default
+     * containsVersion method assumes a singular version means allow everything. This method assumes that "2.0.4" ==
      * "[2.0.4,)"
      * 
-     * @param allowedRange
-     *            range of allowed versions.
-     * @param theVersion
-     *            the version to be checked.
-     * 
+     * @param allowedRange range of allowed versions.
+     * @param theVersion the version to be checked.
      * @return true if the version is contained by the range.
      */
     public static boolean containsVersion( VersionRange allowedRange, ArtifactVersion theVersion )
@@ -161,15 +145,17 @@ public abstract class AbstractVersionEnforcer
         return matched;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
-    public String getCacheId ()
+    public String getCacheId()
     {
-        if (StringUtils.isNotEmpty( version ))
+        if ( StringUtils.isNotEmpty( version ) )
         {
-            //return the hashcodes of the parameter that matters
-            return ""+version.hashCode();
+            // return the hashcodes of the parameter that matters
+            return "" + version.hashCode();
         }
         else
         {
@@ -178,25 +164,29 @@ public abstract class AbstractVersionEnforcer
 
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
-    public boolean isCacheable ()
+    public boolean isCacheable()
     {
-        //the maven version is not going to change between projects in the same build.
+        // the maven version is not going to change between projects in the same build.
         return true;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
-    public boolean isResultValid ( EnforcerRule theCachedRule )
+    public boolean isResultValid( EnforcerRule theCachedRule )
     {
-        //i will always return the hash of the parameters as my id. If my parameters are the same, this
-        //rule must always have the same result.
+        // i will always return the hash of the parameters as my id. If my parameters are the same, this
+        // rule must always have the same result.
         return true;
     }
-    
+
     /**
      * @return the version
      */
@@ -206,13 +196,11 @@ public abstract class AbstractVersionEnforcer
     }
 
     /**
-     * @param theVersion
-     *            the version to set
+     * @param theVersion the version to set
      */
     public void setVersion( String theVersion )
     {
         this.version = theVersion;
     }
-    
-    
+
 }

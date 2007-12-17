@@ -26,12 +26,12 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * 
  */
 public class EnforcerTestUtils
 {
@@ -43,20 +43,35 @@ public class EnforcerTestUtils
 
     public static EnforcerRuleHelper getHelper()
     {
+        return getHelper( new MockProject(), false );
+    }
+
+    public static EnforcerRuleHelper getHelper( boolean mockExpression )
+    {
+        return getHelper( new MockProject(), mockExpression );
+    }
+
+    public static EnforcerRuleHelper getHelper( MavenProject project )
+    {
+        return getHelper( project, false );
+    }
+    
+    public static EnforcerRuleHelper getHelper( MavenProject project, boolean mockExpression )
+    {
         MavenSession session = getMavenSession();
-        ExpressionEvaluator eval = new EnforcerExpressionEvaluator( session, new MockPathTranslator(),
-                                                                    new MockProject() );
+        ExpressionEvaluator eval;
+        if ( mockExpression )
+        {
+            eval = new MockEnforcerExpressionEvaluator( session, new MockPathTranslator(), project );
+        }
+        else
+        {
+            eval = new EnforcerExpressionEvaluator( session, new MockPathTranslator(), project );
+        }
         return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(), null );
     }
-    
-    public static EnforcerRuleHelper getHelper(MavenProject project) {
-        MavenSession session = getMavenSession();
-        ExpressionEvaluator eval = new EnforcerExpressionEvaluator( session, new MockPathTranslator(),
-        															project );
-        return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(),null );
-    }
-    
-    public static Plugin newPlugin(String groupId, String artifactId, String version)
+
+    public static Plugin newPlugin( String groupId, String artifactId, String version )
     {
         Plugin plugin = new Plugin();
         plugin.setArtifactId( artifactId );

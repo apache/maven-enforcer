@@ -16,30 +16,27 @@
 ~~ under the License.    
  
   ------
-  Require Property
+  Require Release Dependencies
   ------
   Brian Fox
   ------
-  June 2007
+  November 2007
   ------
 
-Require Property
+Require Release Dependencies
 
-  This rule can enforce that a declared property is set and optionally evaluate it against a regular expression.
+  This rule checks the dependencies and fails if any snapshots are found.
 
 
    The following parameters are supported by this rule:
    
-   * property - the property to evaluate.
+   * searchTransitive - if transitive dependencies should be checked.
    
-   * message - an optional message to the user if the rule fails. Default is: "Property 'xxx' is required for this build".	
-   
-   * regex - a regular expression used to check the value of the property.
-   
-   * regexMessage - an optional message to the user if the regex check fails.
+   * message - an optional message to the user if the rule fails.
    
    []
 
+   
   Sample Plugin Configuration:
   
 +---+
@@ -50,20 +47,18 @@ Require Property
      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.0</version>
         <executions>
           <execution>
-            <id>enforce-property</id>
+            <id>enforce-no-snapshots</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <requireProperty>
-                  <property>basedir</property>
-                  <message>"You must have a basedir!"</message>
-                  <regex>"\d"</regex>
-                  <regexMessage>"You must have a digit in your baseDir!"</regexMessage>
-                </requireProperty>
+               <requireReleaseDeps>
+                  <message>No Snapshots Allowed!</message>
+               </requireReleaseDeps>
              </rules>  
             <fail>true</fail>
             </configuration>
@@ -75,4 +70,3 @@ Require Property
   [...]
 </project>
 +---+
-  

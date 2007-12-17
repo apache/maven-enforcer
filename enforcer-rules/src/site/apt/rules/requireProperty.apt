@@ -16,27 +16,32 @@
 ~~ under the License.    
  
   ------
-  Require Maven Version
+  Require Property
   ------
   Brian Fox
   ------
   June 2007
   ------
 
-Require Maven Version
+Require Property
 
-   This rule enforces certain Maven versions. The rule uses the {{{versionRanges.html}Enforcer version range syntax}} to define allowed versions.
+  This rule can enforce that a declared property is set and optionally evaluate it against a regular expression.
+
 
    The following parameters are supported by this rule:
    
-   * message - an optional message to the user if the rule fails.
+   * property - the property to evaluate.
    
-   * {{{../apidocs/org/apache/maven/plugin/enforcer/AbstractVersionEnforcer.html#version}version}} - {{{versionRanges.html}range}} of allowed Maven versions.
+   * message - an optional message to the user if the rule fails. Default is: "Property 'xxx' is required for this build".	
+   
+   * regex - a regular expression used to check the value of the property.
+   
+   * regexMessage - an optional message to the user if the regex check fails.
    
    []
 
-   Sample Plugin Configuration:
-   
+  Sample Plugin Configuration:
+  
 +---+
 <project>
   [...]
@@ -45,18 +50,23 @@ Require Maven Version
      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.0</version>
         <executions>
           <execution>
-            <id>enforce-java</id>
+            <id>enforce-property</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <requireMavenVersion>
-                  <version>2.0.6</version>
-                </requireMavenVersion>
-              </rules>    
+                <requireProperty>
+                  <property>basedir</property>
+                  <message>"You must have a basedir!"</message>
+                  <regex>"\d"</regex>
+                  <regexMessage>"You must have a digit in your baseDir!"</regexMessage>
+                </requireProperty>
+             </rules>  
+            <fail>true</fail>
             </configuration>
           </execution>
         </executions>
@@ -65,4 +75,5 @@ Require Maven Version
   </build>
   [...]
 </project>
-+---+  
++---+
+  

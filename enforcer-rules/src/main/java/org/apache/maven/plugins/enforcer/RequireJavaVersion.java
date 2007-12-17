@@ -36,12 +36,10 @@ import org.codehaus.plexus.util.StringUtils;
  * This rule checks that the Java version is allowed.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id: RequireJavaVersion.java 525005 2007-04-03
- *          02:46:44Z brianf $
+ * @version $Id$
  */
 public class RequireJavaVersion
     extends AbstractVersionEnforcer
-    implements EnforcerRule
 {
 
     public void execute( EnforcerRuleHelper helper )
@@ -56,16 +54,15 @@ public class RequireJavaVersion
 
         ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion( java_version );
 
-        log.debug( "Parsed Version: Major: " + detectedJdkVersion.getMajorVersion() + " Minor: "
-            + detectedJdkVersion.getMinorVersion() + " Incremental: " + detectedJdkVersion.getIncrementalVersion()
-            + " Build: " + detectedJdkVersion.getBuildNumber() + " Qualifier: " + detectedJdkVersion.getQualifier() );
+        log.debug( "Parsed Version: Major: " + detectedJdkVersion.getMajorVersion() + " Minor: " +
+            detectedJdkVersion.getMinorVersion() + " Incremental: " + detectedJdkVersion.getIncrementalVersion() +
+            " Build: " + detectedJdkVersion.getBuildNumber() + " Qualifier: " + detectedJdkVersion.getQualifier() );
 
         enforceVersion( helper.getLog(), "JDK", version, detectedJdkVersion );
     }
 
     /**
-     * Converts a jdk string from 1.5.0-11b12 to a single 3
-     * digit version like 1.5.0-11
+     * Converts a jdk string from 1.5.0-11b12 to a single 3 digit version like 1.5.0-11
      * 
      * @param theJdkVersion to be converted.
      * @return the converted string.

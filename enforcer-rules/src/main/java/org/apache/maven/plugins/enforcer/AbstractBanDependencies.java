@@ -35,26 +35,17 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
- * 
  */
 public abstract class AbstractBanDependencies
-    implements EnforcerRule
+    extends AbstractStandardEnforcerRule
 {
 
     /**
-     * Specify if transitive dependencies should be searched
-     * (default) or only look at direct dependencies
+     * Specify if transitive dependencies should be searched (default) or only look at direct dependencies
      * 
      * @parameter
      */
     public boolean searchTransitive = true;
-
-    /**
-     * Specify a friendly message if the rule fails.
-     * 
-     * @parameter
-     */
-    public String message = null;
 
     /**
      * Execute the rule.
@@ -90,12 +81,12 @@ public abstract class AbstractBanDependencies
 
         // if any are found, fail the check but list all of
         // them
-        if ( foundExcludes !=null && !foundExcludes.isEmpty() )
+        if ( foundExcludes != null && !foundExcludes.isEmpty() )
         {
             StringBuffer buf = new StringBuffer();
-            if (message !=null)
+            if ( message != null )
             {
-                buf.append( message +"\n");
+                buf.append( message + "\n" );
             }
             Iterator iter = foundExcludes.iterator();
             while ( iter.hasNext() )
@@ -110,8 +101,7 @@ public abstract class AbstractBanDependencies
     }
 
     /**
-     * Checks the set of dependencies against the list of
-     * excludes
+     * Checks the set of dependencies against the list of excludes
      * 
      * @param dependencies
      * @return
@@ -145,37 +135,42 @@ public abstract class AbstractBanDependencies
     }
 
     /**
-     * @param theSearchTransitive the searchTransitive to
-     *            set
+     * @param theSearchTransitive the searchTransitive to set
      */
     public void setSearchTransitive( boolean theSearchTransitive )
     {
         this.searchTransitive = theSearchTransitive;
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
-    public String getCacheId ()
+    public String getCacheId()
     {
         return "0";
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
-    public boolean isCacheable ()
+    public boolean isCacheable()
     {
-        //dependencies change per project, therefore they must always be rerun.
+        // dependencies change per project, therefore they must always be rerun.
         return false;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
-    public boolean isResultValid ( EnforcerRule theCachedRule )
+    public boolean isResultValid( EnforcerRule theCachedRule )
     {
-        //dependencies change per project, therefore they must always be rerun.
+        // dependencies change per project, therefore they must always be rerun.
         return false;
     }
 }

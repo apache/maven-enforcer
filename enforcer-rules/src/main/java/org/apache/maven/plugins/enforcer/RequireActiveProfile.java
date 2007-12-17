@@ -13,21 +13,11 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * 
- * This rule checks that the current project is not a
- * snapshot
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a> This rule checks that the current project is not a snapshot
  */
 public class RequireActiveProfile
-    implements EnforcerRule
+    extends AbstractStandardEnforcerRule
 {
-
-    /**
-     * Specify a friendly message if the rule fails.
-     * 
-     * @parameter
-     */
-    public String message = null;
 
     /**
      * Comma separated list of profiles to check
@@ -35,8 +25,7 @@ public class RequireActiveProfile
     public String profiles = null;
 
     /**
-     * If all profiles must be active. If false, only one
-     * must be active
+     * If all profiles must be active. If false, only one must be active
      */
     public boolean all = true;
 
@@ -45,7 +34,7 @@ public class RequireActiveProfile
      * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
      */
-    public void execute ( EnforcerRuleHelper theHelper )
+    public void execute( EnforcerRuleHelper theHelper )
         throws EnforcerRuleException
     {
         List missingProfiles = new ArrayList();
@@ -62,24 +51,24 @@ public class RequireActiveProfile
                         missingProfiles.add( profs[i] );
                     }
                 }
-                
+
                 boolean fail = false;
                 if ( !missingProfiles.isEmpty() )
                 {
                     fail = true;
-//                    if (all && missingProfiles.size() != profs.length)
-//                    {
-//                        fail = true;
-//                    }
-//                    else
-//                    {
-//                        if (!all && missingProfiles.size() >= (profs.length -1))
-//                        {
-//                            fail = true;
-//                        }
-//                    }
+                    // if (all && missingProfiles.size() != profs.length)
+                    // {
+                    // fail = true;
+                    // }
+                    // else
+                    // {
+                    // if (!all && missingProfiles.size() >= (profs.length -1))
+                    // {
+                    // fail = true;
+                    // }
+                    // }
                 }
-                
+
                 if ( fail )
                 {
                     StringBuffer buf = new StringBuffer();
@@ -107,7 +96,7 @@ public class RequireActiveProfile
 
     }
 
-    protected boolean isProfileActive ( MavenProject project, String profileName )
+    protected boolean isProfileActive( MavenProject project, String profileName )
     {
         List activeProfiles = project.getActiveProfiles();
         if ( activeProfiles != null && !activeProfiles.isEmpty() )
@@ -130,7 +119,7 @@ public class RequireActiveProfile
      * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
-    public String getCacheId ()
+    public String getCacheId()
     {
         return "0";
     }
@@ -140,7 +129,7 @@ public class RequireActiveProfile
      * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
-    public boolean isCacheable ()
+    public boolean isCacheable()
     {
         return false;
     }
@@ -150,7 +139,7 @@ public class RequireActiveProfile
      * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
-    public boolean isResultValid ( EnforcerRule theCachedRule )
+    public boolean isResultValid( EnforcerRule theCachedRule )
     {
         return false;
     }

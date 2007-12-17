@@ -34,7 +34,6 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  */
 public class RequireMavenVersion
     extends AbstractVersionEnforcer
-    implements EnforcerRule
 {
 
     public void execute( EnforcerRuleHelper helper )

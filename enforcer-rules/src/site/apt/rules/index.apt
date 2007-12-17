@@ -32,7 +32,7 @@ Standard Rules
 
 	* {{{evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
 
-	* {{{noSnapshots.html}noSnapshots}} - enforces that no snapshots are included.
+	* {{{requireReleaseDeps.html}requireReleaseDeps}} - enforces that no snapshots are included as dependencies.
 
 	* {{{requireMavenVersion.html}requireMavenVersion}} - enforces the Maven version.
 	

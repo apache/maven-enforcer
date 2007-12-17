@@ -64,6 +64,7 @@ Banned Dependencies
      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.0</version>
         <executions>
           <execution>
             <id>enforce-banned-dependencies</id>

@@ -28,7 +28,6 @@ import java.util.Set;
 
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -38,15 +37,13 @@ import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
- * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * 
  */
 public class TestRequirePluginVersions
     extends AbstractMojoTestCase
 {
 
-    public void testHasVersionSpecified ()
+    public void testHasVersionSpecified()
     {
         Plugin source = new Plugin();
         source.setArtifactId( "foo" );
@@ -79,39 +76,102 @@ public class TestRequirePluginVersions
         rule.setBanRelease( false );
         rule.setBanSnapshots( false );
 
-        assertTrue( rule.hasVersionSpecified( source, plugins ) );
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
+
+        assertTrue( rule.hasValidVersionSpecified( helper, source, plugins ) );
 
         // check that LATEST is allowed
         source.setArtifactId( "c-artifact" );
-        assertTrue( rule.hasVersionSpecified( source, plugins ) );
+        assertTrue( rule.hasValidVersionSpecified( helper, source, plugins ) );
 
         // check that LATEST is banned
         rule.setBanLatest( true );
-        assertFalse( rule.hasVersionSpecified( source, plugins ) );
+        assertFalse( rule.hasValidVersionSpecified( helper, source, plugins ) );
 
         // check that LATEST is exhausively checked
         rule.setBanSnapshots( false );
         source.setArtifactId( "f-artifact" );
-        assertFalse( rule.hasVersionSpecified( source, plugins ) );
+        assertFalse( rule.hasValidVersionSpecified( helper, source, plugins ) );
 
         rule.setBanLatest( false );
         rule.setBanSnapshots( true );
-        assertFalse( rule.hasVersionSpecified( source, plugins ) );
+        assertFalse( rule.hasValidVersionSpecified( helper, source, plugins ) );
 
         // check that RELEASE is allowed
         source.setArtifactId( "d-artifact" );
-        assertTrue( rule.hasVersionSpecified( source, plugins ) );
+        assertTrue( rule.hasValidVersionSpecified( helper, source, plugins ) );
 
         // check that RELEASE is banned
         rule.setBanRelease( true );
-        assertFalse( rule.hasVersionSpecified( source, plugins ) );
+        assertFalse( rule.hasValidVersionSpecified( helper, source, plugins ) );
 
-        // check that RELEASE is exhausively checked
+        // check that RELEASE is exhaustively checked
         source.setArtifactId( "e-artifact" );
-        assertFalse( rule.hasVersionSpecified( source, plugins ) );
+        assertFalse( rule.hasValidVersionSpecified( helper, source, plugins ) );
     }
 
-    public void testGetAllPlugins ()
+    
+    public void testHasVersionSpecifiedWithProperties()
+    {
+        Plugin source = new Plugin();
+        source.setGroupId( "group" );
+
+        // setup the plugins. 
+        List plugins = new ArrayList();
+        plugins.add( EnforcerTestUtils.newPlugin( "group", "a-artifact", "1.0-${SNAPSHOT}" ) );
+        plugins.add( EnforcerTestUtils.newPlugin( "group", "b-artifact", "${1.0}" ) );
+        plugins.add( EnforcerTestUtils.newPlugin( "group", "c-artifact", "${LATEST}" ) );
+        plugins.add( EnforcerTestUtils.newPlugin( "group", "d-artifact", "${RELEASE}" ) );
+        plugins.add( EnforcerTestUtils.newPlugin( "group", "e-artifact", "${}" ) );
+        plugins.add( EnforcerTestUtils.newPlugin( "group", "f-artifact", "${   }" ) );
+        
+
+        RequirePluginVersions rule = new RequirePluginVersions();
+        rule.setBanLatest( false );
+        rule.setBanRelease( false );
+        rule.setBanSnapshots( false );
+
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(true);
+
+        source.setArtifactId( "a-artifact" );
+        assertTrue( rule.hasValidVersionSpecified( helper, source, plugins ) );
+
+        source.setArtifactId( "b-artifact" );
+        assertTrue( rule.hasValidVersionSpecified( helper, source, plugins ) );
+        
+        source.setArtifactId( "c-artifact" );
+        assertTrue( rule.hasValidVersionSpecified( helper, source, plugins ) );
+        
+        source.setArtifactId( "d-artifact" );
+        assertTrue( rule.hasValidVersionSpecified( helper, source, plugins ) );
+
+        //this one checks empty property values
+        source.setArtifactId( "e-artifact" );
+        assertFalse( rule.hasValidVersionSpecified( helper, source, plugins ) );
+        
+        // this one checks empty property values
+        source.setArtifactId( "f-artifact" );
+        assertFalse( rule.hasValidVersionSpecified( helper, source, plugins ) );
+        
+        rule.setBanLatest( true );
+        source.setArtifactId( "c-artifact" );
+        assertFalse( rule.hasValidVersionSpecified( helper, source, plugins ) );
+        
+        rule.setBanRelease( true );
+        source.setArtifactId( "d-artifact" );
+        assertFalse( rule.hasValidVersionSpecified( helper, source, plugins ) );
+        
+        rule.setBanSnapshots( true );
+        source.setArtifactId( "a-artifact" );
+        assertFalse( rule.hasValidVersionSpecified( helper, source, plugins ) );
+        
+        //release versions should pass everything
+        source.setArtifactId( "b-artifact" );
+        assertTrue( rule.hasValidVersionSpecified( helper, source, plugins ) );
+    }
+
+    
+    public void testGetAllPlugins()
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
     {
         RequirePluginVersions rule = new RequirePluginVersions();
@@ -134,13 +194,14 @@ public class TestRequirePluginVersions
         assertEquals( 3, plugins.size() );
     }
 
-    public void testGetAdditionalPluginsNull () throws MojoExecutionException
+    public void testGetAdditionalPluginsNull()
+        throws MojoExecutionException
     {
         RequirePluginVersions rule = new RequirePluginVersions();
         rule.addAdditionalPlugins( null, null );
     }
-    
-    public void testGetAdditionalPluginsInvalidFormat ()
+
+    public void testGetAdditionalPluginsInvalidFormat()
     {
         RequirePluginVersions rule = new RequirePluginVersions();
 
@@ -173,7 +234,7 @@ public class TestRequirePluginVersions
 
     }
 
-    public void testGetAdditionalPluginsEmptySet ()
+    public void testGetAdditionalPluginsEmptySet()
         throws MojoExecutionException
     {
         RequirePluginVersions rule = new RequirePluginVersions();
@@ -188,7 +249,7 @@ public class TestRequirePluginVersions
         additional.add( "group:another-artifact" );
 
         // make sure a null set can be handled
-        Set results = rule.addAdditionalPlugins( null , additional);
+        Set results = rule.addAdditionalPlugins( null, additional );
 
         assertNotNull( results );
         assertContainsPlugin( "group", "a-artifact", results );
@@ -196,7 +257,7 @@ public class TestRequirePluginVersions
 
     }
 
-    public void testGetAdditionalPlugins ()
+    public void testGetAdditionalPlugins()
         throws MojoExecutionException
     {
         RequirePluginVersions rule = new RequirePluginVersions();
@@ -220,7 +281,7 @@ public class TestRequirePluginVersions
 
     }
 
-    private void assertContainsPlugin ( String group, String artifact, Set theSet )
+    private void assertContainsPlugin( String group, String artifact, Set theSet )
     {
         Plugin p = new Plugin();
         p.setGroupId( group );
@@ -228,7 +289,7 @@ public class TestRequirePluginVersions
         assertTrue( theSet.contains( p ) );
     }
 
-    public void testId ()
+    public void testId()
     {
         RequirePluginVersions rule = new RequirePluginVersions();
         rule.getCacheId();

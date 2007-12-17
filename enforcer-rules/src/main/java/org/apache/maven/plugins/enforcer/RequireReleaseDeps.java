@@ -32,15 +32,13 @@ import org.apache.maven.plugin.logging.Log;
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
- * 
  */
 public class RequireReleaseDeps
     extends AbstractBanDependencies
 {
 
     /**
-     * Checks the set of dependencies to see if any
-     * snapshots are included
+     * Checks the set of dependencies to see if any snapshots are included
      * 
      * @param dependencies
      * @return

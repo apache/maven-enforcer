@@ -54,7 +54,7 @@ Require Java Version
    mvn enforcer:display-info
    ...
    [enforcer:display-info]
-       Maven Version: 2.0.6
+       Maven Version: 2.0.8
        JDK Version: 1.5.0_11 normalized as: 1.5.0-11
        OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
 +---+
@@ -69,6 +69,7 @@ Require Java Version
      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.0</version>
         <executions>
           <execution>
             <id>enforce-java</id>

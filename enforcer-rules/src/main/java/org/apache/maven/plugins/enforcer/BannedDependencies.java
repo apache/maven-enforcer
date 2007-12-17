@@ -33,24 +33,19 @@ import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * This rule checks that lists of dependencies are not
- * included.
+ * This rule checks that lists of dependencies are not included.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
- * 
  */
 public class BannedDependencies
     extends AbstractBanDependencies
 {
 
     /**
-     * Specify the banned dependencies. This can be a list
-     * of artifacts in the format
-     * groupId[:artifactId][:version] Any of the sections
-     * can be a wildcard by using '*' (ie group:*:1.0) <br>
-     * The rule will fail if any dependencies match any
-     * exclude, unless it also matches an include rule.
+     * Specify the banned dependencies. This can be a list of artifacts in the format groupId[:artifactId][:version] Any
+     * of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
+     * The rule will fail if any dependencies match any exclude, unless it also matches an include rule.
      * 
      * @parameter
      * @required
@@ -58,17 +53,11 @@ public class BannedDependencies
     public List excludes = null;
 
     /**
-     * Specify the allowed dependencies. This can be a list
-     * of artifacts in the format
-     * groupId[:artifactId][:version] Any of the sections
-     * can be a wildcard by using '*' (ie group:*:1.0)
-     * 
-     * <br>
-     * Includes override the exclude rules. It is meant to
-     * allow wide exclusion rules with wildcards and still
-     * allow a smaller set of includes. <br>
-     * For example, to ban all xerces except xerces-api ->
-     * exclude "xerces", include "xerces:xerces-api"
+     * Specify the allowed dependencies. This can be a list of artifacts in the format groupId[:artifactId][:version]
+     * Any of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
+     * Includes override the exclude rules. It is meant to allow wide exclusion rules with wildcards and still allow a
+     * smaller set of includes. <br>
+     * For example, to ban all xerces except xerces-api -> exclude "xerces", include "xerces:xerces-api"
      * 
      * @parameter default-value="*"
      * @required
@@ -80,7 +69,7 @@ public class BannedDependencies
      * 
      * @see org.apache.maven.plugin.enforcer.AbstractBanDependencies#checkDependencies(java.util.Set)
      */
-    protected Set checkDependencies ( Set theDependencies, Log log )
+    protected Set checkDependencies( Set theDependencies, Log log )
         throws EnforcerRuleException
     {
         Set excluded = checkDependencies( theDependencies, excludes );
@@ -100,15 +89,14 @@ public class BannedDependencies
     }
 
     /**
-     * Checks the set of dependencies against the list of
-     * patterns
+     * Checks the set of dependencies against the list of patterns
      * 
      * @param thePatterns
      * @param dependencies
      * @return
      * @throws EnforcerRuleException
      */
-    private Set checkDependencies ( Set dependencies, List thePatterns )
+    private Set checkDependencies( Set dependencies, List thePatterns )
         throws EnforcerRuleException
     {
         Set foundMatches = null;
@@ -145,15 +133,14 @@ public class BannedDependencies
     }
 
     /**
-     * Compares the parsed array of substrings against the
-     * artifact
+     * Compares the parsed array of substrings against the artifact
      * 
      * @param pattern
      * @param artifact
      * @return
      * @throws EnforcerRuleException
      */
-    protected boolean compareDependency ( String[] pattern, Artifact artifact )
+    protected boolean compareDependency( String[] pattern, Artifact artifact )
         throws EnforcerRuleException
     {
 
@@ -180,9 +167,9 @@ public class BannedDependencies
             {
                 try
                 {
-                    result = AbstractVersionEnforcer
-                        .containsVersion( VersionRange.createFromVersionSpec( pattern[2] ),
-                                          new DefaultArtifactVersion( artifact.getVersion() ) );
+                    result =
+                        AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( pattern[2] ),
+                                                                 new DefaultArtifactVersion( artifact.getVersion() ) );
                 }
                 catch ( InvalidVersionSpecificationException e )
                 {
@@ -198,7 +185,7 @@ public class BannedDependencies
     /**
      * @return the excludes
      */
-    public List getExcludes ()
+    public List getExcludes()
     {
         return this.excludes;
     }
@@ -206,7 +193,7 @@ public class BannedDependencies
     /**
      * @param theExcludes the excludes to set
      */
-    public void setExcludes ( List theExcludes )
+    public void setExcludes( List theExcludes )
     {
         this.excludes = theExcludes;
     }
@@ -214,7 +201,7 @@ public class BannedDependencies
     /**
      * @return the includes
      */
-    public List getIncludes ()
+    public List getIncludes()
     {
         return this.includes;
     }
@@ -222,7 +209,7 @@ public class BannedDependencies
     /**
      * @param theIncludes the includes to set
      */
-    public void setIncludes ( List theIncludes )
+    public void setIncludes( List theIncludes )
     {
         this.includes = theIncludes;
     }

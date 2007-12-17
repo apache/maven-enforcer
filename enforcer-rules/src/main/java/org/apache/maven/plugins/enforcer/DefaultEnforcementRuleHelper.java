@@ -32,13 +32,11 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
- * Default implementation of the EnforcementRuleHelper
- * interface. This is used to help retreive information from
- * the session and provide usefull elements like the log.
+ * Default implementation of the EnforcementRuleHelper interface. This is used to help retreive information from the
+ * session and provide usefull elements like the log.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id: DefaultEnforcementRuleHelper.java 523141
- *          2007-03-28 02:11:47Z brianf $
+ * @version $Id$
  */
 public class DefaultEnforcementRuleHelper
     implements EnforcerRuleHelper
@@ -57,7 +55,7 @@ public class DefaultEnforcementRuleHelper
         this.evaluator = evaluator;
         this.log = log;
         this.session = session;
-        if (container != null)
+        if ( container != null )
         {
             this.container = container;
         }
@@ -67,7 +65,7 @@ public class DefaultEnforcementRuleHelper
         }
     }
 
-    public Log getLog ()
+    public Log getLog()
     {
         return log;
     }
@@ -77,7 +75,7 @@ public class DefaultEnforcementRuleHelper
      * 
      * @see org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator#alignToBaseDirectory(java.io.File)
      */
-    public File alignToBaseDirectory ( File theFile )
+    public File alignToBaseDirectory( File theFile )
     {
         return evaluator.alignToBaseDirectory( theFile );
     }
@@ -87,7 +85,7 @@ public class DefaultEnforcementRuleHelper
      * 
      * @see org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator#evaluate(java.lang.String)
      */
-    public Object evaluate ( String theExpression )
+    public Object evaluate( String theExpression )
         throws ExpressionEvaluationException
     {
         return evaluator.evaluate( theExpression );
@@ -98,7 +96,7 @@ public class DefaultEnforcementRuleHelper
      * 
      * @see org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper#getRuntimeInformation()
      */
-    public Object getComponent ( Class clazz )
+    public Object getComponent( Class clazz )
         throws ComponentLookupException
     {
         return getComponent( clazz.getName() );
@@ -109,7 +107,7 @@ public class DefaultEnforcementRuleHelper
      * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#lookup(java.lang.String)
      */
-    public Object getComponent ( String theComponentKey )
+    public Object getComponent( String theComponentKey )
         throws ComponentLookupException
     {
         return container.lookup( theComponentKey );
@@ -118,10 +116,9 @@ public class DefaultEnforcementRuleHelper
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#lookup(java.lang.String,
-     *      java.lang.String)
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#lookup(java.lang.String, java.lang.String)
      */
-    public Object getComponent ( String theRole, String theRoleHint )
+    public Object getComponent( String theRole, String theRoleHint )
         throws ComponentLookupException
     {
         return container.lookup( theRole, theRoleHint );
@@ -132,7 +129,7 @@ public class DefaultEnforcementRuleHelper
      * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#lookupList(java.lang.String)
      */
-    public List getComponentList ( String theRole )
+    public List getComponentList( String theRole )
         throws ComponentLookupException
     {
         return container.lookupList( theRole );
@@ -143,16 +140,18 @@ public class DefaultEnforcementRuleHelper
      * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#lookupMap(java.lang.String)
      */
-    public Map getComponentMap ( String theRole )
+    public Map getComponentMap( String theRole )
         throws ComponentLookupException
     {
         return container.lookupMap( theRole );
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#getContainer()
      */
-    public PlexusContainer getContainer ()
+    public PlexusContainer getContainer()
     {
         return container;
     }
