@@ -28,7 +28,7 @@ Writing a custom rule
   Custom rules are easy to make with the <<<maven-enforcer-rule-api>>>. These rules can then be invoked with the 
   {{{http://maven.apache.org/plugins/maven-enforcer-plugin}maven-enforcer-plugin}}. 
   
-  Note: The files shown below may be downloaded here: {{{custom-rule.zip}custom-rule.zip}}
+  Note: The files shown below may be downloaded here: {{{/custom-rule.zip}custom-rule.zip}}
   
   [[1]] First make a new jar project starting with the sample pom below:
   
@@ -248,7 +248,7 @@ public class MyCustomRule
     <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
         <dependencies>
             <dependency>
                 <groupId>custom-rule</groupId>
