@@ -61,7 +61,7 @@
    <distributionManagement>
       <site>
         <id>apache.website</id>
-        <url>scp://people.apache.org/www/maven.apache.org/plugins/</url>
+        <url>scp://people.apache.org/www/maven.apache.org/plugins/maven-enforcer-plugin</url>
       </site>
   </distributionManagement>
 	<build>
