@@ -58,6 +58,12 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+   <distributionManagement>
+      <site>
+        <id>apache.website</id>
+        <url>scp://people.apache.org/www/maven.apache.org/plugins/</url>
+      </site>
+  </distributionManagement>
 	<build>
 		<plugins>
 			<plugin>
