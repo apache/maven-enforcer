@@ -19,17 +19,17 @@
  *
 -->
 <faqs id="FAQ" title="Frequently Asked Questions">
- <part id="General">
-   <faq id="question">
-     <question>Why can't I just use the prerequisites tag in the pom?</question>
-     <answer>
+  <part id="General">
+    <faq id="question">
+      <question>Why can't I just use the prerequisites tag in the pom?</question>
+      <answer>
         <p>
-            The prerequisites tag was designed to be used by tools like plugins. It will work for regular projects, but it isn't
-            inherited to their children. If it is set in a parent reactor, then Maven will do the check. However if one of the
-            children are built, the check is not performed. The enforcer plugin is designed to allow centralized control over the build environment from 
-            a single "super-pom", and to allow greater flexibility in version specification by supporting ranges.
+          The prerequisites tag was designed to be used by tools like plugins. It will work for regular projects, but it isn't
+          inherited to their children. If it is set in a parent reactor, then Maven will do the check. However if one of the
+          children are built, the check is not performed. The enforcer plugin is designed to allow centralized control over the build environment from 
+          a single "super-pom", and to allow greater flexibility in version specification by supporting ranges.
         </p>
-     </answer>
-      </faq>
- </part>
+      </answer>
+    </faq>
+  </part>
 </faqs>

@@ -45,11 +45,11 @@ Usage
    <<<pom.xml>>>. The enforcers execute the configured rules to check for certain constraints. 
    The available standard rules are described {{{rules/index.html}here}}. Besides the rules to execute, these goals support three options:
    
-   * {{{enforce-mojo.html#skip}skip}} - a quick way to skip checks via a profile or using -Denforcer.skip=true from the command line.
+   * {{{enforce-mojo.html#skip}skip}} - a quick way to skip checks via a profile or using <<<-Denforcer.skip=true>>> from the command line.
    
-   * {{{enforce-mojo.html#fail}fail}} - if the goal should fail the build when a rule fails. The default is true. If false, the errors will be logged as warnings.
+   * {{{enforce-mojo.html#fail}fail}} - if the goal should fail the build when a rule fails. The default is <<<true>>>. If false, the errors will be logged as warnings.
    
-   * {{{enforce-mojo.html#failFast}failFast}} - if the goal should stop checking after the first failure. The default is false.
+   * {{{enforce-mojo.html#failFast}failFast}} - if the goal should stop checking after the first failure. The default is <<<false>>>.
    
    []
    
