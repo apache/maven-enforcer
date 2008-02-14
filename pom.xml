@@ -244,6 +244,15 @@
 		</dependency>		
 	  </dependencies>
 	</dependencyManagement>
+    <reporting>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>cobertura-maven-plugin</artifactId>
+          <version>2.0</version>
+        </plugin>
+      </plugins>
+    </reporting>
     <modules>
 	    <module>enforcer-api</module>
 		<module>enforcer-rules</module>
