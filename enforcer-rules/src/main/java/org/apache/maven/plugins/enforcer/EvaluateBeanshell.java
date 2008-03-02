@@ -28,7 +28,6 @@ import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.StringUtils;
 
 import bsh.EvalError;
@@ -61,22 +60,6 @@ public class EvaluateBeanshell
 
         try
         {
-            // get the various expressions out of the
-            // helper.
-            MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-            MavenSession session = (MavenSession) helper.evaluate( "${session}" );
-            String target = (String) helper.evaluate( "${project.build.directory}" );
-            String artifactId = (String) helper.evaluate( "${project.artifactId}" );
-            ArtifactResolver resolver = (ArtifactResolver) helper.getComponent( ArtifactResolver.class );
-            RuntimeInformation rti = (RuntimeInformation) helper.getComponent( RuntimeInformation.class );
-
-            log.debug( "Retrieved Target Folder: " + target );
-            log.debug( "Retrieved ArtifactId: " + artifactId );
-            log.debug( "Retrieved Project: " + project );
-            log.debug( "Retrieved RuntimeInfo: " + rti );
-            log.debug( "Retrieved Session: " + session );
-            log.debug( "Retrieved Resolver: " + resolver );
-
             log.debug( "Echo condition : " + this.condition );
             // Evaluate condition within Plexus Container
             String script = (String) helper.evaluate( this.condition );
@@ -89,10 +72,6 @@ public class EvaluateBeanshell
                 }
                 throw new EnforcerRuleException( this.message );
             }
-        }
-        catch ( ComponentLookupException e )
-        {
-            throw new EnforcerRuleException( "Unable to lookup a component", e );
         }
         catch ( ExpressionEvaluationException e )
         {
