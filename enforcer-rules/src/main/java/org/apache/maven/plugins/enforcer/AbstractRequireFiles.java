@@ -68,8 +68,29 @@ abstract public class AbstractRequireFiles
      */
     public String getCacheId()
     {
+        return Integer.toString( hashCode( files ) );
+    }
 
-        return "" + Arrays.hashCode( files );
+    /**
+     * Calculates a hash code for the specified array as <code>Arrays.hashCode()</code> would do. Unfortunately, the
+     * mentioned method is only available for Java 1.5 and later.
+     * 
+     * @param items The array for which to compute the hash code, may be <code>null</code>.
+     * @return The hash code for the array.
+     */
+    private static int hashCode( Object[] items )
+    {
+        int hash = 0;
+        if ( items != null )
+        {
+            hash = 1;
+            for ( int i = 0; i < items.length; i++ )
+            {
+                Object item = items[i];
+                hash = 31 * hash + ( item == null ? 0 : item.hashCode() );
+            }
+        }
+        return hash;
     }
 
     /**
