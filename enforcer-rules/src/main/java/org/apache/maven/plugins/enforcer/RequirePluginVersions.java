@@ -377,6 +377,7 @@ public class RequirePluginVersions
      * @param plugin to lookup
      * @param project to search
      * @return matching plugin, null if not found.
+     * @return matching plugin, null if not found.
      */
     protected Plugin findCurrentPlugin( Plugin plugin, MavenProject project )
     {
@@ -472,7 +473,8 @@ public class RequirePluginVersions
      * specified.
      */
     protected boolean hasValidVersionSpecified( EnforcerRuleHelper helper, Plugin source, List plugins )
-    {
+    {		
+		boolean found = false;
         boolean status = false;
         Iterator iter = plugins.iterator();
         while ( iter.hasNext() )
@@ -482,6 +484,7 @@ public class RequirePluginVersions
             if ( source.getArtifactId().equals( plugin.getArtifactId() ) &&
                 source.getGroupId().equals( plugin.getGroupId() ) )
             {
+				found = true;
                 // found the entry. now see if the version
                 // is specified
                 String version = plugin.getVersion();
@@ -492,11 +495,11 @@ public class RequirePluginVersions
                 catch ( ExpressionEvaluationException e )
                 {
                     return false;
-                }
+				}
 
                 if ( StringUtils.isNotEmpty( version ) && !StringUtils.isWhitespace( version ) )
                 {
-
+				
                     if ( banRelease && version.equals( "RELEASE" ) )
                     {
                         return false;
@@ -525,6 +528,10 @@ public class RequirePluginVersions
                 }
             }
         }
+		if ( !found )
+		{
+			log.warn( "plugin " + source.getGroupId() + ":" + source.getArtifactId() + " not found" );
+		}
         return status;
     }
 
@@ -791,7 +798,8 @@ public class RequirePluginVersions
     }
 
     /**
-     * Gets all plugin entries in build.plugins or build.pluginManagement.plugins in this project and all parents
+     * Gets all plugin entries in build.plugins or build.pluginManagement.plugins or profile.build.plugins 
+	 * in this project and all parents
      * 
      * @param project
      * @return
@@ -823,6 +831,22 @@ public class RequirePluginVersions
             {
                 // guess there are no plugins here.
             }
+			
+			// Add plugins in profiles
+			Iterator it = model.getProfiles().iterator();
+			while ( it.hasNext() )
+			{
+				Profile profile = (Profile) it.next();
+				try
+				{
+					plugins.addAll( profile.getBuild().getPlugins() );				
+				}
+				catch ( NullPointerException e )
+				{
+					// guess there are no plugins here.
+				}
+				
+			}
 
             try
             {
