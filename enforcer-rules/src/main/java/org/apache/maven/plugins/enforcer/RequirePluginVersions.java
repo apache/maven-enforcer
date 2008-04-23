@@ -97,6 +97,12 @@ public class RequirePluginVersions
     public boolean banSnapshots = true;
 
     /**
+     * Don't allow timestamp snapshot plugins.
+     */
+    public boolean banTimestamps = true;
+	
+	
+    /**
      * The comma separated list of phases that should be used to find lifecycle plugin bindings. The default value is
      * "clean,deploy,site".
      * 
@@ -196,7 +202,7 @@ public class RequirePluginVersions
             {
                 StringBuffer newMsg = new StringBuffer();
                 newMsg.append( "Some plugins are missing valid versions:" );
-                if ( banLatest || banRelease || banSnapshots )
+                if ( banLatest || banRelease || banSnapshots || banTimestamps )
                 {
                     newMsg.append( "(" );
                     if ( banLatest )
@@ -207,7 +213,7 @@ public class RequirePluginVersions
                     {
                         newMsg.append( "RELEASE " );
                     }
-                    if ( banSnapshots )
+                    if ( banSnapshots || banTimestamps )
                     {
                         newMsg.append( "SNAPSHOT " );
                     }
@@ -537,8 +543,15 @@ public class RequirePluginVersions
 
     protected boolean isSnapshot( String baseVersion )
     {
-        return Artifact.VERSION_FILE_PATTERN.matcher( baseVersion ).matches() ||
-            baseVersion.endsWith( Artifact.SNAPSHOT_VERSION );
+		if ( banTimestamps )
+		{
+			return Artifact.VERSION_FILE_PATTERN.matcher( baseVersion ).matches() ||
+				baseVersion.endsWith( Artifact.SNAPSHOT_VERSION );
+		}
+		else
+		{
+			return baseVersion.endsWith( Artifact.SNAPSHOT_VERSION );
+		}
     }
 
     /*
@@ -969,5 +982,22 @@ public class RequirePluginVersions
     public void setBanSnapshots( boolean theBanSnapshots )
     {
         this.banSnapshots = theBanSnapshots;
+    }
+	
+	
+    /**
+     * @return the banTimestamps
+     */
+    public boolean isBanTimestamps()
+    {
+        return this.banTimestamps;
+    }
+
+    /**
+     * @param theBanTimestamps the banTimestamps to set
+     */
+    public void setBanTimestamps( boolean theBanTimestamps )
+    {
+        this.banTimestamps = theBanTimestamps;
     }
 }

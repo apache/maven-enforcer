@@ -36,7 +36,9 @@ Require Plugin Versions
    * banRelease - disallow any use of "RELEASE" as a version for any plugin. Default = true.
    
    * banSnapshots - disallow any use of SNAPSHOT plugins. Default = true.
-   
+
+   * banTimestamps - disallow any use of snapshot plugins with timestamp version (only enabled when banSnapshots is true). Default = true.
+
    * phases - The comma separated list of phases that should be used to find 
      lifecycle plugin bindings. The default value is "clean,deploy,site".
    

@@ -70,6 +70,7 @@ public class TestRequirePluginVersions
         plugins.add( EnforcerTestUtils.newPlugin( "group", "f-artifact", "1.0" ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "f-artifact", "LATEST" ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "f-artifact", "1.0-SNAPSHOT" ) );
+        plugins.add( EnforcerTestUtils.newPlugin( "group", "g-artifact", "1.0-12345678.123456-1" ) );
 
         RequirePluginVersions rule = new RequirePluginVersions();
         rule.setBanLatest( false );
@@ -96,6 +97,11 @@ public class TestRequirePluginVersions
         rule.setBanLatest( false );
         rule.setBanSnapshots( true );
         assertFalse( rule.hasValidVersionSpecified( helper, source, plugins ) );
+
+        // check that TIMESTAMP is allowed
+        rule.setBanTimestamps( false );
+        source.setArtifactId( "g-artifact" );
+        assertTrue( rule.hasValidVersionSpecified( helper, source, plugins ) );
 
         // check that RELEASE is allowed
         source.setArtifactId( "d-artifact" );
