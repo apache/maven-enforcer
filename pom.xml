@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Licensed to the Apache Software Foundation (ASF) under one
   ~ or more contributor license agreements.  See the NOTICE file
@@ -15,10 +16,9 @@
   ~ KIND, either express or implied.  See the License for the
   ~ specific language governing permissions and limitations
   ~ under the License.
-  -->
-
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>maven-parent</artifactId>
@@ -38,25 +38,25 @@
     <url>http://jira.codehaus.org/browse/MENFORCER</url>
   </issueManagement>
   <inceptionYear>2006</inceptionYear>
-  	<licenses>
-		<license>
-			<name>Apache License 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
+  <licenses>
+    <license>
+      <name>Apache License 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
   <developers>
-	<developer>
-		<id>brianf</id>
-		<name>Brian Fox</name>
-		<email>brianf@apache.org</email>
-		<roles>
-			<role>Lead Developer</role>
-		</roles>
-		<timezone>5</timezone>
-	</developer>
-	</developers>
-   <mailingLists>
+    <developer>
+      <id>brianf</id>
+      <name>Brian Fox</name>
+      <email>brianf@apache.org</email>
+      <roles>
+        <role>Lead Developer</role>
+      </roles>
+      <timezone>5</timezone>
+    </developer>
+  </developers>
+  <mailingLists>
     <mailingList>
       <name>Maven User List</name>
       <subscribe>users-subscribe@maven.apache.org</subscribe>
@@ -109,154 +109,151 @@
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/enforcer/trunk/</developerConnection>
     <url>http://svn.apache.org/viewcvs.cgi/maven/enforcer/trunk</url>
   </scm>
-  
   <properties>
     <api.version>1.0-SNAPSHOT</api.version>
-	<rules.version>1.0-SNAPSHOT</rules.version>
-	<maven.version>2.0.6</maven.version>
+    <rules.version>1.0-SNAPSHOT</rules.version>
+    <maven.version>2.0.6</maven.version>
   </properties>
   <build>
     <resources>
-			<!-- Include super-pom defined main/resources
-			Removing this section will break the build.
-			Since we have defined a new build/resources
-			section for the Apache process LICENSE and NOTICE
-			files, this original default section is now
-			required. -->
+      <!-- Include super-pom defined main/resources
+        Removing this section will break the build.
+        Since we have defined a new build/resources
+        section for the Apache process LICENSE and NOTICE
+        files, this original default section is now
+        required. -->
       <resource>
-		<directory>${basedir}/src/main/resources</directory>
-	  </resource>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
     </resources>
     <pluginManagement>
-    <plugins>
-      <plugin>    
-        <artifactId>maven-install-plugin</artifactId>
-        <version>2.2</version>
-      </plugin>
-      <plugin>    
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.0.2</version>
-		<configuration>
-          <source>1.4</source>
-          <target>1.4</target>
-        </configuration>
-      </plugin>
-      <plugin>    
-        <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.3</version>
-      </plugin>
-      <plugin>    
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.1</version>
-      </plugin>
-      <plugin>    
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.3</version>
-      </plugin>
-      <plugin>    
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.3</version>
-      </plugin>
-      <plugin>    
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>2.2</version>
-      </plugin>
-      <plugin>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <tagBase>https://svn.apache.org/repos/asf/maven/enforcer/tags</tagBase>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>2.0-beta-6</version>
-      </plugin>
-    </plugins>
-  </pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>2.0.2</version>
+          <configuration>
+            <source>1.4</source>
+            <target>1.4</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <tagBase>https://svn.apache.org/repos/asf/maven/enforcer/tags</tagBase>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-site-plugin</artifactId>
+          <version>2.0-beta-6</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
-    <distributionManagement>
+  <distributionManagement>
     <site>
       <id>apache.website</id>
       <url>scp://people.apache.org/www/maven.apache.org/enforcer/</url>
     </site>
   </distributionManagement>
-  
-  	<dependencyManagement>
-	  <dependencies>
-	     <dependency>
-            <groupId>org.apache.maven.enforcer</groupId>
-            <artifactId>enforcer-api</artifactId>
-			<version>${api.version}</version>
-        </dependency>	
-        <dependency>
-            <groupId>org.apache.maven.enforcer</groupId>
-            <artifactId>enforcer-rules</artifactId>
-			<version>${rules.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.enforcer</groupId>
-            <artifactId>enforcer-rules</artifactId>
-            <version>${rules.version}</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>	
-	  	<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-artifact</artifactId>
-			<version>${maven.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-plugin-api</artifactId>
-			<version>${maven.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-project</artifactId>
-			<version>${maven.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-core</artifactId>
-			<version>${maven.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.plexus</groupId>
-			<artifactId>plexus-utils</artifactId>
-			<version>1.4.6</version>
-		</dependency>
-	    <dependency>
-		  <groupId>junit</groupId>
-		  <artifactId>junit</artifactId>
-		  <version>3.8.2</version>
-		  <scope>test</scope>
-		</dependency>
-        <dependency>
-          <groupId>commons-lang</groupId>
-          <artifactId>commons-lang</artifactId>
-          <version>2.3</version>
-        </dependency>
-		<dependency>
-			<groupId>org.apache.maven.shared</groupId>
-			<artifactId>maven-plugin-testing-harness</artifactId>
-			<scope>test</scope>
-			<version>1.1</version>
-		</dependency>		
-	  </dependencies>
-	</dependencyManagement>
-    <reporting>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>cobertura-maven-plugin</artifactId>
-          <version>2.0</version>
-        </plugin>
-      </plugins>
-    </reporting>
-    <modules>
-	    <module>enforcer-api</module>
-		<module>enforcer-rules</module>
-        <module>maven-enforcer-plugin</module>
-   </modules>
-  
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.maven.enforcer</groupId>
+        <artifactId>enforcer-api</artifactId>
+        <version>${api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.enforcer</groupId>
+        <artifactId>enforcer-rules</artifactId>
+        <version>${rules.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.enforcer</groupId>
+        <artifactId>enforcer-rules</artifactId>
+        <version>${rules.version}</version>
+        <classifier>tests</classifier>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-artifact</artifactId>
+        <version>${maven.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-plugin-api</artifactId>
+        <version>${maven.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-project</artifactId>
+        <version>${maven.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-core</artifactId>
+        <version>${maven.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-utils</artifactId>
+        <version>1.4.6</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>3.8.2</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-lang</groupId>
+        <artifactId>commons-lang</artifactId>
+        <version>2.3</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven.shared</groupId>
+        <artifactId>maven-plugin-testing-harness</artifactId>
+        <scope>test</scope>
+        <version>1.1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.0</version>
+      </plugin>
+    </plugins>
+  </reporting>
+  <modules>
+    <module>enforcer-api</module>
+    <module>enforcer-rules</module>
+    <module>maven-enforcer-plugin</module>
+  </modules>
 </project>
