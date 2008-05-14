@@ -251,7 +251,7 @@ public class EnforceMojo
                 log.debug( "Key " + key + " was found in the cache" );
                 if ( rule.isResultValid( (EnforcerRule) cache.get( key ) ) )
                 {
-                    log.info( "The cached results are still valid. Skipping the rule: "+rule.getClass().getName() );
+                    log.debug( "The cached results are still valid. Skipping the rule: "+rule.getClass().getName() );
                     return false;
                 }
             }
