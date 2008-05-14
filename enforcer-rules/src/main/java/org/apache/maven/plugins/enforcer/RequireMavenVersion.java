@@ -20,7 +20,6 @@ package org.apache.maven.plugins.enforcer;
  */
 
 import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.RuntimeInformation;

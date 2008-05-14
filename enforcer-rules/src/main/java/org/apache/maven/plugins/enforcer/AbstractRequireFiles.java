@@ -2,7 +2,6 @@ package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
