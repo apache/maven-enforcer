@@ -25,13 +25,13 @@
 
 Require Java Version
 
-   This rule enforces certain Java JDK versions. The rule uses the {{{versionRanges.html}Enforcer version range syntax}} to define allowed versions.
+   This rule enforces certain Java JDK versions. The rule uses the {{{./versionRanges.html}Enforcer version range syntax}} to define allowed versions.
 
    The following parameters are supported by this rule:
    
    * message - an optional message to the user if the rule fails.
    
-   * {{{../apidocs/org/apache/maven/plugin/enforcer/AbstractVersionEnforcer.html#version}version}} - {{{versionRanges.html}range}} of allowed JDKs.
+   * {{{../apidocs/org/apache/maven/plugin/enforcer/AbstractVersionEnforcer.html#version}version}} - {{{./versionRanges.html}range}} of allowed JDKs.
    
    []
 
@@ -51,12 +51,12 @@ Require Java Version
    There is an easy way to see how your current JDK string will be normalized:
      
 +---+
-   mvn enforcer:display-info
-   ...
-   [enforcer:display-info]
-       Maven Version: 2.0.8
-       JDK Version: 1.5.0_11 normalized as: 1.5.0-11
-       OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
+mvn enforcer:display-info
+...
+[enforcer:display-info]
+Maven Version: 2.0.8
+JDK Version: 1.5.0_11 normalized as: 1.5.0-11
+OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
 +---+
   
    Sample Plugin Configuration:
@@ -65,8 +65,8 @@ Require Java Version
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>1.0</version>

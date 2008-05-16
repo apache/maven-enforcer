@@ -35,16 +35,16 @@ Banned Dependencies
    * excludes - a list of artifacts to ban. The format is groupId[:artifactId][:version] where artifactId and version are optional. Wildcards may be used to replace an entire section.
       Examples:
        
-        *org.apache.maven
+        * org.apache.maven
         
-        *org.apache.maven:badArtifact
+        * org.apache.maven:badArtifact
         
-        *org.apache.maven:artifact:badVersion
+        * org.apache.maven:artifact:badVersion
         
-        *org.apache.maven:*:1.2
+        * org.apache.maven:*:1.2
         
         []
-		
+
    * includes - a list of artifacts to include. These are exceptions to the excludes. It is meant to allow wide exclusion rules with wildcards and fine tune using includes. If nothing has been excluded, then the includes have no effect. In otherwords, includes only subtract from artifacts that matched an exclude rule.
    
    For example, to ban all xerces except xerces-api you would exclude "xerces" (groupId) and include "xerces:xerces-api"   
@@ -60,8 +60,8 @@ Banned Dependencies
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>1.0</version>
@@ -74,18 +74,18 @@ Banned Dependencies
             <configuration>
               <rules>
                 <bannedDependencies>
-                   <excludes>
-                      <exclude>org.apache.maven</exclude>
-                      <exclude>org.apache.maven:badArtifact</exclude>
-                      <exclude>*:badArtifact</exclude>
-                   </excludes>
-                   <includes>
-                      <!--only 1.0 of badArtifact is allowed-->
-                      <include>org.apache.maven:badArtifact:1.0</include>
-                   </includes>
+                  <excludes>
+                    <exclude>org.apache.maven</exclude>
+                    <exclude>org.apache.maven:badArtifact</exclude>
+                    <exclude>*:badArtifact</exclude>
+                  </excludes>
+                  <includes>
+                    <!--only 1.0 of badArtifact is allowed-->
+                    <include>org.apache.maven:badArtifact:1.0</include>
+                  </includes>
                 </bannedDependencies>
-             </rules>  
-            <fail>true</fail>
+              </rules>
+              <fail>true</fail>
             </configuration>
           </execution>
         </executions>

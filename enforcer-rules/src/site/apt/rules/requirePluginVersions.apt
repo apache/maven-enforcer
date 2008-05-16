@@ -55,8 +55,8 @@ Require Plugin Versions
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>1.0</version>

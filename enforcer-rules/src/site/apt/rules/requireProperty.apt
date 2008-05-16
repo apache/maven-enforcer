@@ -46,8 +46,8 @@ Require Property
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>1.0</version>
@@ -65,8 +65,8 @@ Require Property
                   <regex>"\d"</regex>
                   <regexMessage>"You must have a digit in your baseDir!"</regexMessage>
                 </requireProperty>
-             </rules>  
-            <fail>true</fail>
+              </rules>
+              <fail>true</fail>
             </configuration>
           </execution>
         </executions>

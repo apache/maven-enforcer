@@ -26,72 +26,72 @@
 Writing a custom rule
  
   Custom rules are easy to make with the <<<maven-enforcer-rule-api>>>. These rules can then be invoked with the 
-  {{{http://maven.apache.org/plugins/maven-enforcer-plugin}maven-enforcer-plugin}}. 
+  {{{http://maven.apache.org/plugins/maven-enforcer-plugin/}maven-enforcer-plugin}}. 
   
-  Note: The files shown below may be downloaded here: {{{/custom-rule.zip}custom-rule.zip}}
+  Note: The files shown below may be downloaded here: {{{./custom-rule.zip}custom-rule.zip}}
   
   [[1]] First make a new jar project starting with the sample pom below:
   
 +---+
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>custom-rule</groupId>
-	<artifactId>custom-rule-sample</artifactId>
-	<packaging>jar</packaging>
-	<version>1.0</version>
-	<name>My Custom Rule</name>
-	<description>This is my custom rule.</description>
-	<properties>
-	  <api.version>1.0-SNAPSHOT</api.version>
-	  <maven.version>2.0.6</maven.version>
-	</properties>
-	<build>	
-	</build>
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.maven.enforcer</groupId>
-			<artifactId>enforcer-api</artifactId>
-			<version>${api.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-project</artifactId>
-			<version>${maven.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-core</artifactId>
-			<version>${maven.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-artifact</artifactId>
-			<version>${maven.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.maven</groupId>
-			<artifactId>maven-plugin-api</artifactId>
-			<version>${maven.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.plexus</groupId>
-			<artifactId>plexus-container-default</artifactId>
-			<version>1.0-alpha-9</version>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>	
-	</dependencies>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>custom-rule</groupId>
+  <artifactId>custom-rule-sample</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0</version>
+  <name>My Custom Rule</name>
+  <description>This is my custom rule.</description>
+  <properties>
+    <api.version>1.0-SNAPSHOT</api.version>
+    <maven.version>2.0.6</maven.version>
+  </properties>
+  <build>
+  </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.enforcer</groupId>
+      <artifactId>enforcer-api</artifactId>
+      <version>${api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+      <version>${maven.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>${maven.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-artifact</artifactId>
+      <version>${maven.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>${maven.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-container-default</artifactId>
+      <version>1.0-alpha-9</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>
 +---+
 
-  [[2]] Create your rule class. The rule must implement the {{{apidocs/index.html}EnforcerRule}} interface.
-   The rule can get access to components and the log via the {{{apidocs/index.html}EnforcerRuleHelper}} interface.
-   If the rule succeeds, it should just simply return. If the rule fails, it should throw an {{{apidocs/index.html}EnforcerRuleException}} with a descriptive message telling the user why the rule failed.
+  [[2]] Create your rule class. The rule must implement the {{{./apidocs/index.html}EnforcerRule}} interface.
+   The rule can get access to components and the log via the {{{./apidocs/index.html}EnforcerRuleHelper}} interface.
+   If the rule succeeds, it should just simply return. If the rule fails, it should throw an {{{./apidocs/index.html}EnforcerRuleException}} with a descriptive message telling the user why the rule failed.
    
    There are several methods that must be implemented related to caching.
    
@@ -208,23 +208,23 @@ public class MyCustomRule
 +---+
 <project>
   ...
-   <build>
-     <plugins>
-       <plugin>
-         <groupId>org.apache.maven.plugins</groupId>
-         <artifactId>maven-enforcer-plugin</artifactId>
-         <dependencies>
-           <dependency>
-             <groupId>custom-rule</groupId>
-             <artifactId>custom-rule-sample</artifactId>
-             <version>1.0</version>
-           </dependency>
-         </dependencies>
-          ...
-       </plugin>   
-     </plugins>  
-   </build>
-   ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <dependencies>
+          <dependency>
+            <groupId>custom-rule</groupId>
+            <artifactId>custom-rule-sample</artifactId>
+            <version>1.0</version>
+          </dependency>
+        </dependencies>
+        ...
+      </plugin>   
+    </plugins>
+  </build>
+  ...
 </project>
 +---+
 
@@ -232,45 +232,53 @@ public class MyCustomRule
  you must add an <<<implementation>>> hint that contains the fully qualified class name:
  
 +---+
-<configuration>
-  <rules>
-    <myCustomRule implementation="org.apache.maven.enforcer.rule.MyCustomRule">
-      <shouldIfail>true</shouldIfail>
-    </myCustomRule>
-  </rules>
-</configuration>
+        ...
+        <configuration>
+          <rules>
+            <myCustomRule implementation="org.apache.maven.enforcer.rule.MyCustomRule">
+              <shouldIfail>true</shouldIfail>
+            </myCustomRule>
+          </rules>
+        </configuration>
+        ...
 +---+
 
   [[6]] That's it. The full plugin config may look like this:
   
 +---+
-<plugins>
-    <plugin>
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>1.0</version>
         <dependencies>
-            <dependency>
-                <groupId>custom-rule</groupId>
-                <artifactId>custom-rule-sample</artifactId>
-                <version>1.0</version>
-            </dependency>
+          <dependency>
+            <groupId>custom-rule</groupId>
+            <artifactId>custom-rule-sample</artifactId>
+            <version>1.0</version>
+          </dependency>
         </dependencies>
         <executions>
-            <execution>
-                <id>enforce</id>
-                <configuration>
-                    <rules>
-                        <myCustomRule implementation="org.apache.maven.enforcer.rule.MyCustomRule">
-                            <shouldIfail>false</shouldIfail>
-                        </myCustomRule>
-                    </rules>
-                </configuration>
-                <goals>
-                    <goal>enforce</goal>
-                </goals>
-            </execution>
+          <execution>
+            <id>enforce</id>
+            <configuration>
+              <rules>
+                <myCustomRule implementation="org.apache.maven.enforcer.rule.MyCustomRule">
+                  <shouldIfail>false</shouldIfail>
+                </myCustomRule>
+              </rules>
+            </configuration>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+          </execution>
         </executions>
-    </plugin>
-</plugins>
+      </plugin>
+    </plugins>
+  </build>
+  ...
+</project>
 +---+

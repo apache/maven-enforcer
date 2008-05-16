@@ -53,8 +53,8 @@ Require No Repositories
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>1.0</version>
@@ -67,15 +67,15 @@ Require No Repositories
             <configuration>
               <rules>
                 <requirePluginVersions>
-                   <message>Best Practice is to always define plugin versions!</message>
-                   <banLatest>true</banLatest>
-                   <banRelease>true</banRelease>
-                   <banSnapshots>true</banSnapshots>
-                   <phases>clean,deploy,site</phases>
-                   <additionalPlugins>
-                     <additionalPlugin>org.apache.maven.plugins:maven-eclipse-plugin</additionalPlugin>
-                     <additionalPlugin>org.apache.maven.plugins:maven-ide-plugin</additionalPlugin>
-                   </additionalPlugins>
+                  <message>Best Practice is to always define plugin versions!</message>
+                  <banLatest>true</banLatest>
+                  <banRelease>true</banRelease>
+                  <banSnapshots>true</banSnapshots>
+                  <phases>clean,deploy,site</phases>
+                  <additionalPlugins>
+                    <additionalPlugin>org.apache.maven.plugins:maven-eclipse-plugin</additionalPlugin>
+                    <additionalPlugin>org.apache.maven.plugins:maven-ide-plugin</additionalPlugin>
+                  </additionalPlugins>
                 </requirePluginVersions>
               </rules>    
             </configuration>

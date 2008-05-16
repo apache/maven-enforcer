@@ -25,7 +25,7 @@
 
 Version Range Specification   
 
-   The {{{requireMavenVersion.html}RequireMavenVersion}} and {{{requireJavaVersion.html}RequireJavaVersion}} rules use the {{{http://docs.codehaus.org/display/MAVEN/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges}standard Maven version range syntax}} with one minor change for ease of use (denoted with *):
+   The {{{./requireMavenVersion.html}RequireMavenVersion}} and {{{./requireJavaVersion.html}RequireJavaVersion}} rules use the {{{http://docs.codehaus.org/display/MAVEN/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges}standard Maven version range syntax}} with one minor change for ease of use (denoted with *):
    
 
 *----------*--------------+

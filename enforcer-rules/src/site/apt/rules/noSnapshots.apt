@@ -43,8 +43,8 @@ Require Release Dependencies
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>1.0</version>
@@ -56,11 +56,11 @@ Require Release Dependencies
             </goals>
             <configuration>
               <rules>
-               <requireReleaseDeps>
+                <requireReleaseDeps>
                   <message>No Snapshots Allowed!</message>
-               </requireReleaseDeps>
-             </rules>  
-            <fail>true</fail>
+                </requireReleaseDeps>
+              </rules>
+              <fail>true</fail>
             </configuration>
           </execution>
         </executions>

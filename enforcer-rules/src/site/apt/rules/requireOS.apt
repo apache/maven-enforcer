@@ -96,12 +96,12 @@ Require OS Version
    information for the current system:
    
 +---+
-   mvn enforcer:display-info
-   ...
-   [enforcer:display-info]
-       Maven Version: 2.0.6
-       JDK Version: 1.5.0_11 normalized as: 1.5.0
-       OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
+mvn enforcer:display-info
+...
+[enforcer:display-info]
+Maven Version: 2.0.6
+JDK Version: 1.5.0_11 normalized as: 1.5.0
+OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
 +---+
   
   Sample Plugin Configuration:
@@ -110,8 +110,8 @@ Require OS Version
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>1.0</version>
@@ -129,8 +129,8 @@ Require OS Version
                   <arch>x86</arch>
                   <version>5.1.2600</version>
                 </requireOS>
-             </rules>  
-            <fail>true</fail>
+              </rules>
+              <fail>true</fail>
             </configuration>
           </execution>
         </executions>
