@@ -29,7 +29,7 @@
   <groupId>org.apache.maven.enforcer</groupId>
   <artifactId>enforcer</artifactId>
   <packaging>pom</packaging>
-  <name>Enforcer Parent</name>
+  <name>Enforcer</name>
   <version>1-SNAPSHOT</version>
   <description>Enforcer is a build rule execution framework.</description>
   <url>http://maven.apache.org/enforcer</url>

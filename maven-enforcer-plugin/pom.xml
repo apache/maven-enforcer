@@ -32,6 +32,7 @@
   <name>Maven Enforcer Plugin</name>
   <description>The Loving Iron Fist of Maven</description>
   <version>1.0-SNAPSHOT</version>
+  <url>http://maven.apache.org/plugins/maven-enforcer-plugin/</url>
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MENFORCER</url>
