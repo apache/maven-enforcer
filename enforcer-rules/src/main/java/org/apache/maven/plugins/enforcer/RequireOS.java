@@ -31,6 +31,7 @@ import org.apache.maven.profiles.activation.OperatingSystemProfileActivator;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * This rule checks that the OS is allowed by combinations of family, name, version and cpu architecture. The behavior
  * is exactly the same as the Maven Os profile activation so the same values are allowed here.
@@ -56,40 +57,38 @@ public class RequireOS
      * <li>win9x</li>
      * <li>z/os</li>
      * <li>os/400</li>
-     * </ul>
+     * </ul>.
      */
     public String family = null;
 
-    /**
-     * Runtime information containing Maven Version.
-     */
+    /** Runtime information containing Maven Version. */
     public String name = null;
 
-    /**
-     * Runtime information containing Maven Version.
-     */
+    /** Runtime information containing Maven Version. */
     public String version = null;
 
-    /**
-     * Runtime information containing Maven Version.
-     */
+    /** Runtime information containing Maven Version. */
     public String arch = null;
 
-    /**
-     * Specify an optional message to the user if the rule fails.
-     */
+    /** Specify an optional message to the user if the rule fails. */
     public String message = "";
 
-    /**
-     * Display detected OS information.
-     */
+    /** Display detected OS information. */
     public boolean display = false;
 
+    /**
+     * Instantiates a new require os.
+     */
     public RequireOS()
     {
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+     */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
@@ -132,9 +131,10 @@ public class RequireOS
     }
 
     /**
-     * Log the current OS information
+     * Log the current OS information.
      * 
-     * @param log
+     * @param log the log
+     * @param info the info
      */
     public void displayOSInfo( Log log, boolean info )
     {
@@ -177,7 +177,7 @@ public class RequireOS
     }
 
     /**
-     * Creates a Profile object that contains the activation information
+     * Creates a Profile object that contains the activation information.
      * 
      * @return a properly populated profile to be used for OS validation.
      */
@@ -247,6 +247,8 @@ public class RequireOS
     }
 
     /**
+     * Gets the arch.
+     * 
      * @return the arch
      */
     public String getArch()
@@ -255,6 +257,8 @@ public class RequireOS
     }
 
     /**
+     * Sets the arch.
+     * 
      * @param theArch the arch to set
      */
     public void setArch( String theArch )
@@ -263,6 +267,8 @@ public class RequireOS
     }
 
     /**
+     * Gets the family.
+     * 
      * @return the family
      */
     public String getFamily()
@@ -271,6 +277,8 @@ public class RequireOS
     }
 
     /**
+     * Sets the family.
+     * 
      * @param theFamily the family to set
      */
     public void setFamily( String theFamily )
@@ -279,6 +287,8 @@ public class RequireOS
     }
 
     /**
+     * Gets the name.
+     * 
      * @return the name
      */
     public String getName()
@@ -287,6 +297,8 @@ public class RequireOS
     }
 
     /**
+     * Sets the name.
+     * 
      * @param theName the name to set
      */
     public void setName( String theName )
@@ -295,6 +307,8 @@ public class RequireOS
     }
 
     /**
+     * Gets the version.
+     * 
      * @return the version
      */
     public String getVersion()
@@ -303,6 +317,8 @@ public class RequireOS
     }
 
     /**
+     * Sets the version.
+     * 
      * @param theVersion the version to set
      */
     public void setVersion( String theVersion )

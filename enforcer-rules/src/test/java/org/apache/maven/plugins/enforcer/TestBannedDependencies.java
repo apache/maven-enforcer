@@ -27,15 +27,21 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class TestBannedDependencies.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * 
  */
 public class TestBannedDependencies
     extends TestCase
 {
 
+    /**
+     * Test rule.
+     * 
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public void testRule()
         throws IOException
     {
@@ -106,23 +112,29 @@ public class TestBannedDependencies
         excludes.clear();
         excludes.add( "*:release:1.2" );
         execute( rule, helper, false );
-        
-        //now check multiple excludes
-        excludes.add( "*:release:*");
+
+        // now check multiple excludes
+        excludes.add( "*:release:*" );
         execute( rule, helper, true );
-        
-        //now check space trimming
+
+        // now check space trimming
         excludes.clear();
         excludes.add( "  testGroupId  :  release   :   1.0    " );
         execute( rule, helper, true );
-        
-        //now check weirdness
+
+        // now check weirdness
         excludes.clear();
-        excludes.add( ":::" ); //null entry, won't match anything
+        excludes.add( ":::" ); // null entry, won't match anything
         execute( rule, helper, false );
     }
-    
-    public void testIncludes() throws IOException
+
+    /**
+     * Test includes.
+     * 
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public void testIncludes()
+        throws IOException
     {
         ArtifactStubFactory factory = new ArtifactStubFactory();
         MockProject project = new MockProject();
@@ -133,23 +145,23 @@ public class TestBannedDependencies
 
         ArrayList excludes = new ArrayList();
         ArrayList includes = new ArrayList();
-        
+
         rule.setSearchTransitive( false );
-        
+
         excludes.add( "*" );
         includes.add( "*" );
-        
+
         rule.setExcludes( excludes );
         rule.setIncludes( includes );
-        
+
         execute( rule, helper, false );
-        
+
         excludes.clear();
         excludes.add( "*:runtime" );
         rule.setExcludes( excludes );
-        
+
         execute( rule, helper, false );
-        
+
         includes.clear();
         includes.add( "*:test" );
         rule.setIncludes( includes );
@@ -157,12 +169,11 @@ public class TestBannedDependencies
     }
 
     /**
-     * Simpler wrapper to execute and deal with the expected
-     * result.
+     * Simpler wrapper to execute and deal with the expected result.
      * 
-     * @param rule
-     * @param helper
-     * @param shouldFail
+     * @param rule the rule
+     * @param helper the helper
+     * @param shouldFail the should fail
      */
     private void execute( BannedDependencies rule, EnforcerRuleHelper helper, boolean shouldFail )
     {
@@ -181,7 +192,7 @@ public class TestBannedDependencies
             {
                 fail( "No Exception expected:" + e.getLocalizedMessage() );
             }
-            //helper.getLog().debug(e.getMessage());
+            // helper.getLog().debug(e.getMessage());
         }
     }
 }

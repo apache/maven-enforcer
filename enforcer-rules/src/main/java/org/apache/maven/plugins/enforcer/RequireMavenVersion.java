@@ -24,6 +24,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.RuntimeInformation;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
+// TODO: Auto-generated Javadoc
 /**
  * This rule checks that the Maven version is allowd.
  * 
@@ -34,6 +35,11 @@ public class RequireMavenVersion
     extends AbstractVersionEnforcer
 {
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+     */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

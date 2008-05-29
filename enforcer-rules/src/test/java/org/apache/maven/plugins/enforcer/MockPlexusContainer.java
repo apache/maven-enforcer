@@ -42,9 +42,11 @@ import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.LoggerManager;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * The Class MockPlexusContainer.
  * 
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class MockPlexusContainer
     implements PlexusContainer
@@ -85,8 +87,7 @@ public class MockPlexusContainer
     /*
      * (non-Javadoc)
      * 
-     * @see org.codehaus.plexus.PlexusContainer#addContextValue(java.lang.Object,
-     *      java.lang.Object)
+     * @see org.codehaus.plexus.PlexusContainer#addContextValue(java.lang.Object, java.lang.Object)
      */
     public void addContextValue( Object theKey, Object theValue )
     {
@@ -133,8 +134,7 @@ public class MockPlexusContainer
     /*
      * (non-Javadoc)
      * 
-     * @see org.codehaus.plexus.PlexusContainer#createChildContainer(java.lang.String,
-     *      java.util.List, java.util.Map)
+     * @see org.codehaus.plexus.PlexusContainer#createChildContainer(java.lang.String, java.util.List, java.util.Map)
      */
     public PlexusContainer createChildContainer( String theName, List theClasspathJars, Map theContext )
         throws PlexusContainerException
@@ -146,8 +146,8 @@ public class MockPlexusContainer
     /*
      * (non-Javadoc)
      * 
-     * @see org.codehaus.plexus.PlexusContainer#createChildContainer(java.lang.String,
-     *      java.util.List, java.util.Map, java.util.List)
+     * @see org.codehaus.plexus.PlexusContainer#createChildContainer(java.lang.String, java.util.List, java.util.Map,
+     *      java.util.List)
      */
     public PlexusContainer createChildContainer( String theName, List theClasspathJars, Map theContext,
                                                  List theDiscoveryListeners )
@@ -315,8 +315,7 @@ public class MockPlexusContainer
     /*
      * (non-Javadoc)
      * 
-     * @see org.codehaus.plexus.PlexusContainer#hasComponent(java.lang.String,
-     *      java.lang.String)
+     * @see org.codehaus.plexus.PlexusContainer#hasComponent(java.lang.String, java.lang.String)
      */
     public boolean hasComponent( String theRole, String theRoleHint )
     {
@@ -361,8 +360,7 @@ public class MockPlexusContainer
     /*
      * (non-Javadoc)
      * 
-     * @see org.codehaus.plexus.PlexusContainer#lookup(java.lang.String,
-     *      java.lang.String)
+     * @see org.codehaus.plexus.PlexusContainer#lookup(java.lang.String, java.lang.String)
      */
     public Object lookup( String theRole, String theRoleHint )
         throws ComponentLookupException

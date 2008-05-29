@@ -26,6 +26,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
+// TODO: Auto-generated Javadoc
 /**
  * Rule to validate the main artifact is within certain size constraints.
  * 
@@ -35,21 +36,21 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 public class RequireSize
     extends AbstractStandardEnforcerRule
 {
-    /**
-     * the max size allowed
-     */
+
+    /** the max size allowed. */
     long maxsize = 10000;
 
-    /**
-     * the max size allowed
-     */
+    /** the max size allowed. */
     long minsize = 0;
 
-    /**
-     * the artifact file to check
-     */
+    /** the artifact file to check. */
     File artifact;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+     */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
@@ -84,12 +85,12 @@ public class RequireSize
             {
 
                 helper.getLog().debug(
-                               artifact +
-                                   " size (" +
-                                   length +
-                                   ") is OK (" +
-                                   ( minsize == maxsize || minsize == 0 ? ( "max. " + maxsize ) : ( "between " +
-                                       minsize + " and " + maxsize ) ) + " byte)." );
+                                       artifact +
+                                           " size (" +
+                                           length +
+                                           ") is OK (" +
+                                           ( minsize == maxsize || minsize == 0 ? ( "max. " + maxsize ) : ( "between " +
+                                               minsize + " and " + maxsize ) ) + " byte)." );
 
             }
         }
@@ -99,16 +100,31 @@ public class RequireSize
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
+     */
     public String getCacheId()
     {
         return "0";
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
+     */
     public boolean isCacheable()
     {
         return false;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
+     */
     public boolean isResultValid( EnforcerRule cachedRule )
     {
         return false;

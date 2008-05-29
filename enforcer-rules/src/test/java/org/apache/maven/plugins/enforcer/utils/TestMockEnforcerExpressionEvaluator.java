@@ -27,10 +27,17 @@ import org.apache.maven.plugins.enforcer.MockPathTranslator;
 import org.apache.maven.plugins.enforcer.MockProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class TestMockEnforcerExpressionEvaluator.
+ */
 public class TestMockEnforcerExpressionEvaluator
     extends TestCase
 {
 
+    /**
+     * Test evaluate.
+     */
     public void testEvaluate()
     {
         MavenSession session = EnforcerTestUtils.getMavenSession();
@@ -44,16 +51,22 @@ public class TestMockEnforcerExpressionEvaluator
         assertMatch( ev, "1.0" );
     }
 
+    /**
+     * Assert match.
+     * 
+     * @param ev the ev
+     * @param exp the exp
+     */
     public void assertMatch( EnforcerExpressionEvaluator ev, String exp )
     {
         // the mock enforcer should return the name of the expression as the value.
         try
         {
-            assertEquals( exp, ev.evaluate( "${" + exp + "}") );
+            assertEquals( exp, ev.evaluate( "${" + exp + "}" ) );
         }
         catch ( ExpressionEvaluationException e )
         {
-            fail(e.getLocalizedMessage());
+            fail( e.getLocalizedMessage() );
         }
     }
 }

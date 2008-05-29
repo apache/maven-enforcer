@@ -29,8 +29,9 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
+// TODO: Auto-generated Javadoc
 /**
- * Abstract Rule for banning dependencies
+ * Abstract Rule for banning dependencies.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
@@ -39,15 +40,15 @@ public abstract class AbstractBanDependencies
     extends AbstractStandardEnforcerRule
 {
 
-    /**
-     * Specify if transitive dependencies should be searched (default) or only look at direct dependencies
-     * 
-     * @parameter
-     */
+    /** Specify if transitive dependencies should be searched (default) or only look at direct dependencies. */
     public boolean searchTransitive = true;
 
     /**
      * Execute the rule.
+     * 
+     * @param helper the helper
+     * 
+     * @throws EnforcerRuleException the enforcer rule exception
      */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
@@ -100,16 +101,21 @@ public abstract class AbstractBanDependencies
     }
 
     /**
-     * Checks the set of dependencies against the list of excludes
+     * Checks the set of dependencies against the list of excludes.
      * 
-     * @param dependencies
-     * @return
-     * @throws EnforcerRuleException
+     * @param dependencies the dependencies
+     * @param log the log
+     * 
+     * @return the sets the
+     * 
+     * @throws EnforcerRuleException the enforcer rule exception
      */
     abstract protected Set checkDependencies( Set dependencies, Log log )
         throws EnforcerRuleException;
 
     /**
+     * Gets the message.
+     * 
      * @return the message
      */
     public String getMessage()
@@ -118,6 +124,8 @@ public abstract class AbstractBanDependencies
     }
 
     /**
+     * Sets the message.
+     * 
      * @param theMessage the message to set
      */
     public void setMessage( String theMessage )
@@ -126,6 +134,8 @@ public abstract class AbstractBanDependencies
     }
 
     /**
+     * Checks if is search transitive.
+     * 
      * @return the searchTransitive
      */
     public boolean isSearchTransitive()
@@ -134,6 +144,8 @@ public abstract class AbstractBanDependencies
     }
 
     /**
+     * Sets the search transitive.
+     * 
      * @param theSearchTransitive the searchTransitive to set
      */
     public void setSearchTransitive( boolean theSearchTransitive )

@@ -30,6 +30,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * Containts the common code to compare a version against a version range.
  * 
@@ -49,20 +50,18 @@ public abstract class AbstractVersionEnforcer
      * <li><code>[2.0.5,)</code> Versions 2.0.5 and higher</li>
      * <li><code>(,2.0.5],[2.1.1,)</code> Versions up to 2.0.5 (included) and 2.1.1 or higher</li>
      * </ul>
-     * 
-     * @parameter
-     * @required
      */
     public String version = null;
 
     /**
      * Compares the specified version to see if it is allowed by the defined version range.
      * 
-     * @param log
+     * @param log the log
      * @param variableName name of variable to use in messages (Example: "Maven" or "Java" etc).
      * @param requiredVersionRange range of allowed versions.
      * @param actualVersion the version to be checked.
      * @throws MojoExecutionException if the version is not allowed.
+     * @throws EnforcerRuleException the enforcer rule exception
      */
     public void enforceVersion( Log log, String variableName, String requiredVersionRange, ArtifactVersion actualVersion )
         throws EnforcerRuleException
@@ -188,6 +187,8 @@ public abstract class AbstractVersionEnforcer
     }
 
     /**
+     * Gets the version.
+     * 
      * @return the version
      */
     public String getVersion()
@@ -196,6 +197,8 @@ public abstract class AbstractVersionEnforcer
     }
 
     /**
+     * Sets the version.
+     * 
      * @param theVersion the version to set
      */
     public void setVersion( String theVersion )

@@ -36,13 +36,21 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class RequireNoRepositories.
+ * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class RequireNoRepositories
     extends AbstractStandardEnforcerRule
 {
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+     */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
@@ -103,6 +111,12 @@ public class RequireNoRepositories
         }
     }
 
+    /**
+     * Check models.
+     * 
+     * @param models the models
+     * @return the list
+     */
     private List checkModels( List models )
     {
         List badModels = new ArrayList();

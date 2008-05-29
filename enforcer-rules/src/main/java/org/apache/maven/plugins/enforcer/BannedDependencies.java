@@ -31,6 +31,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * This rule checks that lists of dependencies are not included.
  * 
@@ -45,9 +46,6 @@ public class BannedDependencies
      * Specify the banned dependencies. This can be a list of artifacts in the format groupId[:artifactId][:version] Any
      * of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
      * The rule will fail if any dependencies match any exclude, unless it also matches an include rule.
-     * 
-     * @parameter
-     * @required
      */
     public List excludes = null;
 
@@ -57,9 +55,6 @@ public class BannedDependencies
      * Includes override the exclude rules. It is meant to allow wide exclusion rules with wildcards and still allow a
      * smaller set of includes. <br>
      * For example, to ban all xerces except xerces-api -> exclude "xerces", include "xerces:xerces-api"
-     * 
-     * @parameter default-value="*"
-     * @required
      */
     public List includes = null;
 
@@ -88,12 +83,12 @@ public class BannedDependencies
     }
 
     /**
-     * Checks the set of dependencies against the list of patterns
+     * Checks the set of dependencies against the list of patterns.
      * 
-     * @param thePatterns
-     * @param dependencies
-     * @return
-     * @throws EnforcerRuleException
+     * @param thePatterns the the patterns
+     * @param dependencies the dependencies
+     * @return the sets the
+     * @throws EnforcerRuleException the enforcer rule exception
      */
     private Set checkDependencies( Set dependencies, List thePatterns )
         throws EnforcerRuleException
@@ -132,12 +127,12 @@ public class BannedDependencies
     }
 
     /**
-     * Compares the parsed array of substrings against the artifact
+     * Compares the parsed array of substrings against the artifact.
      * 
-     * @param pattern
-     * @param artifact
-     * @return
-     * @throws EnforcerRuleException
+     * @param pattern the pattern
+     * @param artifact the artifact
+     * @return true, if compare dependency
+     * @throws EnforcerRuleException the enforcer rule exception
      */
     protected boolean compareDependency( String[] pattern, Artifact artifact )
         throws EnforcerRuleException
@@ -182,6 +177,8 @@ public class BannedDependencies
     }
 
     /**
+     * Gets the excludes.
+     * 
      * @return the excludes
      */
     public List getExcludes()
@@ -190,6 +187,8 @@ public class BannedDependencies
     }
 
     /**
+     * Sets the excludes.
+     * 
      * @param theExcludes the excludes to set
      */
     public void setExcludes( List theExcludes )
@@ -198,6 +197,8 @@ public class BannedDependencies
     }
 
     /**
+     * Gets the includes.
+     * 
      * @return the includes
      */
     public List getIncludes()
@@ -206,6 +207,8 @@ public class BannedDependencies
     }
 
     /**
+     * Sets the includes.
+     * 
      * @param theIncludes the includes to set
      */
     public void setIncludes( List theIncludes )

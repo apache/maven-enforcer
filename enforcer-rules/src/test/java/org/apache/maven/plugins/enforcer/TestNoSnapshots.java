@@ -26,15 +26,21 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.TestEnforcerRuleUtils;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class TestNoSnapshots.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * 
  */
 public class TestNoSnapshots
     extends TestCase
 {
 
+    /**
+     * Test rule.
+     * 
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
     public void testRule()
         throws IOException
     {
@@ -52,10 +58,12 @@ public class TestNoSnapshots
 
         TestEnforcerRuleUtils.execute( rule, helper, true );
 
-    } 
+    }
 
-   
-    public void testId ()
+    /**
+     * Test id.
+     */
+    public void testId()
     {
         RequireReleaseDeps rule = new RequireReleaseDeps();
         rule.getCacheId();

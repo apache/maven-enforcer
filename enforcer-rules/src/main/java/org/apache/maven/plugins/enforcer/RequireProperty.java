@@ -24,6 +24,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.util.StringUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * This rule checks that certain properties are set.
  * 
@@ -33,30 +34,20 @@ public class RequireProperty
     extends AbstractStandardEnforcerRule
 {
 
-    /**
-     * Specify the required property.
-     * 
-     * @parameter
-     * @required
-     */
+    /** Specify the required property. */
     public String property = null;
 
-    /**
-     * Match the property value to a given regular expresssion. Defaults to null (any value is ok).
-     * 
-     * @parameter
-     */
+    /** Match the property value to a given regular expresssion. Defaults to null (any value is ok). */
     public String regex = null;
 
-    /**
-     * Specify a warning message if the regular expression is not matched.
-     * 
-     * @parameter
-     */
+    /** Specify a warning message if the regular expression is not matched. */
     public String regexMessage = null;
 
     /**
      * Execute the rule.
+     * 
+     * @param helper the helper
+     * @throws EnforcerRuleException the enforcer rule exception
      */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException

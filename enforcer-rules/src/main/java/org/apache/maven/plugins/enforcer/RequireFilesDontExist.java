@@ -20,15 +20,29 @@ package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class RequireFilesDontExist.
+ */
 public class RequireFilesDontExist
     extends AbstractRequireFiles
 {
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.plugins.enforcer.AbstractRequireFiles#checkFile(java.io.File)
+     */
     boolean checkFile( File file )
     {
         return !file.exists();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.plugins.enforcer.AbstractRequireFiles#getErrorMsg()
+     */
     String getErrorMsg()
     {
         return "Some files should not exist:\n";

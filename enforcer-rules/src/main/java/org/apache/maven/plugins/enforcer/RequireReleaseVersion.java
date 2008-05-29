@@ -24,7 +24,10 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class RequireReleaseVersion.
+ * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a> This rule checks that the current project is not a snapshot
  */
 public class RequireReleaseVersion

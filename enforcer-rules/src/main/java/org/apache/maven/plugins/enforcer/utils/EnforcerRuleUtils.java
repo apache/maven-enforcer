@@ -42,24 +42,43 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * The Class EnforcerRuleUtils.
  * 
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class EnforcerRuleUtils
 {
+    
+    /** The factory. */
     ArtifactFactory factory;
 
+    /** The resolver. */
     ArtifactResolver resolver;
 
+    /** The local. */
     ArtifactRepository local;
 
+    /** The remote repositories. */
     List remoteRepositories;
 
+    /** The log. */
     Log log;
 
+    /** The project. */
     MavenProject project;
 
+    /**
+     * Instantiates a new enforcer rule utils.
+     * 
+     * @param theFactory the the factory
+     * @param theResolver the the resolver
+     * @param theLocal the the local
+     * @param theRemoteRepositories the the remote repositories
+     * @param project the project
+     * @param theLog the the log
+     */
     public EnforcerRuleUtils( ArtifactFactory theFactory, ArtifactResolver theResolver, ArtifactRepository theLocal,
                               List theRemoteRepositories, MavenProject project, Log theLog )
     {
@@ -72,6 +91,11 @@ public class EnforcerRuleUtils
         this.project = project;
     }
 
+    /**
+     * Instantiates a new enforcer rule utils.
+     * 
+     * @param helper the helper
+     */
     public EnforcerRuleUtils( EnforcerRuleHelper helper )
     {
         // get the various expressions out of the
@@ -100,10 +124,12 @@ public class EnforcerRuleUtils
     /**
      * Gets the pom model for this file.
      * 
-     * @param pom
-     * @return
-     * @throws IOException
-     * @throws XmlPullParserException
+     * @param pom the pom
+     * 
+     * @return the model
+     * 
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws XmlPullParserException the xml pull parser exception
      */
     private Model readModel ( File pom )
         throws IOException, XmlPullParserException
@@ -128,15 +154,17 @@ public class EnforcerRuleUtils
      * Looks first in the filesystem, then tries to get it
      * from the repo.
      * 
-     * @param factory
-     * @param groupId
-     * @param artifactId
-     * @param version
-     * @return
-     * @throws ArtifactResolutionException
-     * @throws ArtifactNotFoundException
-     * @throws XmlPullParserException
-     * @throws IOException
+     * @param groupId the group id
+     * @param artifactId the artifact id
+     * @param version the version
+     * @param pom the pom
+     * 
+     * @return the pom model
+     * 
+     * @throws ArtifactResolutionException the artifact resolution exception
+     * @throws ArtifactNotFoundException the artifact not found exception
+     * @throws XmlPullParserException the xml pull parser exception
+     * @throws IOException Signals that an I/O exception has occurred.
      */
     private Model getPomModel ( String groupId, String artifactId, String version, File pom )
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
@@ -187,14 +215,17 @@ public class EnforcerRuleUtils
      * This method loops through all the parents, getting
      * each pom model and then its parent.
      * 
-     * @param groupId
-     * @param artifactId
-     * @param version
-     * @return
-     * @throws ArtifactResolutionException
-     * @throws ArtifactNotFoundException
-     * @throws IOException
-     * @throws XmlPullParserException
+     * @param groupId the group id
+     * @param artifactId the artifact id
+     * @param version the version
+     * @param pom the pom
+     * 
+     * @return the models recursively
+     * 
+     * @throws ArtifactResolutionException the artifact resolution exception
+     * @throws ArtifactNotFoundException the artifact not found exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws XmlPullParserException the xml pull parser exception
      */
     public List getModelsRecursively ( String groupId, String artifactId, String version, File pom )
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
@@ -231,11 +262,12 @@ public class EnforcerRuleUtils
     /**
      * Make sure the model is the one I'm expecting.
      * 
-     * @param groupId
-     * @param artifactId
-     * @param version
+     * @param groupId the group id
+     * @param artifactId the artifact id
+     * @param version the version
      * @param model Model being checked.
-     * @return
+     * 
+     * @return true, if check if model matches
      */
     protected boolean checkIfModelMatches ( String groupId, String artifactId, String version, Model model )
     {

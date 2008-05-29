@@ -20,14 +20,15 @@ package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class AbstractStandardEnforcerRule.
+ */
 public abstract class AbstractStandardEnforcerRule
     implements EnforcerRule
 {
-    /**
-     * Specify a friendly message if the rule fails.
-     * 
-     * @parameter
-     */
+
+    /** Specify a friendly message if the rule fails. */
     public String message = null;
 
 }

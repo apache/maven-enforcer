@@ -30,6 +30,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
+// TODO: Auto-generated Javadoc
 /**
  * Default implementation of the EnforcementRuleHelper interface. This is used to help retreive information from the
  * session and provide usefull elements like the log.
@@ -40,14 +41,27 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 public class DefaultEnforcementRuleHelper
     implements EnforcerRuleHelper
 {
+
+    /** The log. */
     Log log;
 
+    /** The evaluator. */
     ExpressionEvaluator evaluator;
 
+    /** The session. */
     MavenSession session;
 
+    /** The container. */
     PlexusContainer container;
 
+    /**
+     * Instantiates a new default enforcement rule helper.
+     * 
+     * @param session the session
+     * @param evaluator the evaluator
+     * @param log the log
+     * @param container the container
+     */
     public DefaultEnforcementRuleHelper( MavenSession session, ExpressionEvaluator evaluator, Log log,
                                          PlexusContainer container )
     {
@@ -64,6 +78,11 @@ public class DefaultEnforcementRuleHelper
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#getLog()
+     */
     public Log getLog()
     {
         return log;

@@ -28,13 +28,21 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * The Class TestAbstractVersionEnforcer.
  * 
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestAbstractVersionEnforcer
     extends TestCase
 {
+
+    /**
+     * Test contains version.
+     * 
+     * @throws InvalidVersionSpecificationException the invalid version specification exception
+     */
     public void testContainsVersion()
         throws InvalidVersionSpecificationException
     {
@@ -42,13 +50,17 @@ public class TestAbstractVersionEnforcer
         // test ranges
         assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.5,)" ), version ) );
         assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,)" ), version ) );
-        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,2.0.5]" ), version ) );
-        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,2.0.6]" ), version ) );
-        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,2.0.6)" ), version ) );
+        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,2.0.5]" ),
+                                                             version ) );
+        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,2.0.6]" ),
+                                                             version ) );
+        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,2.0.6)" ),
+                                                             version ) );
         assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0,)" ), version ) );
         assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.0,)" ), version ) );
         // not matching versions
-        assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,2.0.5)" ), version ) );
+        assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,2.0.5)" ),
+                                                              version ) );
         assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.6,)" ), version ) );
         assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "(2.0.5,)" ), version ) );
 
@@ -69,6 +81,15 @@ public class TestAbstractVersionEnforcer
 
     }
 
+    /**
+     * Enforce false.
+     * 
+     * @param rule the rule
+     * @param log the log
+     * @param var the var
+     * @param range the range
+     * @param version the version
+     */
     private void enforceFalse( AbstractVersionEnforcer rule, Log log, String var, String range, ArtifactVersion version )
     {
         try
@@ -90,6 +111,9 @@ public class TestAbstractVersionEnforcer
         }
     }
 
+    /**
+     * Test enforce version.
+     */
     public void testEnforceVersion()
     {
         RequireMavenVersion rule = new RequireMavenVersion();

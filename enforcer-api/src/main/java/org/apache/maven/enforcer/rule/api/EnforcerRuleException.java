@@ -1,5 +1,3 @@
-package org.apache.maven.enforcer.rule.api;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,8 @@ package org.apache.maven.enforcer.rule.api;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.enforcer.rule.api;
+
 
 /**
  * An exception occuring during the execution of a rule. Based off of
@@ -31,20 +31,30 @@ public class EnforcerRuleException
     extends Exception
 {
 
-    /**
-     * serialVersionUID
-     */
+    /** serialVersionUID. */
     private static final long serialVersionUID = 1L;
 
+    /** The source. */
     protected Object source;
 
+    /** The long message. */
     protected String longMessage;
 
+    /**
+     * Gets the long message.
+     * 
+     * @return the long message
+     */
     public String getLongMessage()
     {
         return longMessage;
     }
 
+    /**
+     * Gets the source.
+     * 
+     * @return the source
+     */
     public Object getSource()
     {
         return source;
@@ -54,9 +64,9 @@ public class EnforcerRuleException
      * Construct a new <code>EnforcerRuleException</code> exception providing
      * the source and a short and long message.
      * 
-     * @param source
-     * @param shortMessage
-     * @param longMessage
+     * @param source the source
+     * @param shortMessage the short message
+     * @param longMessage the long message
      */
     public EnforcerRuleException( Object source, String shortMessage, String longMessage )
     {
@@ -70,8 +80,8 @@ public class EnforcerRuleException
      * an underlying <code>Exception</code> and providing a
      * <code>message</code>.
      * 
-     * @param message
-     * @param cause
+     * @param message the message
+     * @param cause the cause
      */
     public EnforcerRuleException( String message, Exception cause )
     {
@@ -83,8 +93,8 @@ public class EnforcerRuleException
      * an underlying <code>Throwable</code> and providing a
      * <code>message</code>.
      * 
-     * @param message
-     * @param cause
+     * @param message the message
+     * @param cause the cause
      */
     public EnforcerRuleException( String message, Throwable cause )
     {
@@ -95,7 +105,7 @@ public class EnforcerRuleException
      * Construct a new <code>EnforcerRuleException</code> exception providing
      * a <code>message</code>.
      * 
-     * @param message
+     * @param message the message
      */
     public EnforcerRuleException( String message )
     {

@@ -22,16 +22,21 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.execution.RuntimeInformation;
 
+// TODO: Auto-generated Javadoc
 /**
  * Just a mock object hard coded to return version 2.0.5
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * 
  */
 public class MockRuntimeInformation
     implements RuntimeInformation
 {
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.execution.RuntimeInformation#getApplicationVersion()
+     */
     public ArtifactVersion getApplicationVersion()
     {
         return new DefaultArtifactVersion( "2.0.5" );

@@ -1,5 +1,3 @@
-package org.apache.maven.enforcer.rule.api;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.enforcer.rule.api;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.enforcer.rule.api;
 
 import java.util.List;
 import java.util.Map;
@@ -27,6 +26,7 @@ import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
+
 /**
  * This is the interface that all helpers will use. This
  * provides access to the log, session and components to the
@@ -34,11 +34,17 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id: EnforcerRuleHelper.java 571673 2007-09-01
- *          03:04:24Z brianf $
+ * 03:04:24Z brianf $
  */
 public interface EnforcerRuleHelper
     extends ExpressionEvaluator
 {
+    
+    /**
+     * Gets the log.
+     * 
+     * @return the log
+     */
     public Log getLog ();
 
     /*
@@ -46,20 +52,71 @@ public interface EnforcerRuleHelper
      * 
      * @see org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper#getRuntimeInformation()
      */
+    /**
+     * Gets the component.
+     * 
+     * @param clazz the clazz
+     * 
+     * @return the component
+     * 
+     * @throws ComponentLookupException the component lookup exception
+     */
     public Object getComponent ( Class clazz )
         throws ComponentLookupException;
 
+    /**
+     * Gets the component.
+     * 
+     * @param componentKey the component key
+     * 
+     * @return the component
+     * 
+     * @throws ComponentLookupException the component lookup exception
+     */
     public Object getComponent ( String componentKey )
         throws ComponentLookupException;
 
+    /**
+     * Gets the component.
+     * 
+     * @param role the role
+     * @param roleHint the role hint
+     * 
+     * @return the component
+     * 
+     * @throws ComponentLookupException the component lookup exception
+     */
     public Object getComponent ( String role, String roleHint )
         throws ComponentLookupException;
 
+    /**
+     * Gets the component map.
+     * 
+     * @param role the role
+     * 
+     * @return the component map
+     * 
+     * @throws ComponentLookupException the component lookup exception
+     */
     public Map getComponentMap ( String role )
         throws ComponentLookupException;
 
+    /**
+     * Gets the component list.
+     * 
+     * @param role the role
+     * 
+     * @return the component list
+     * 
+     * @throws ComponentLookupException the component lookup exception
+     */
     public List getComponentList ( String role )
         throws ComponentLookupException;
     
+    /**
+     * Gets the container.
+     * 
+     * @return the container
+     */
     public PlexusContainer getContainer(); 
 }

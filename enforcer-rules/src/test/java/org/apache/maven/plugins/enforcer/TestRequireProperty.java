@@ -23,14 +23,22 @@ import junit.framework.TestCase;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author Paul Gier
+ * The Class TestRequireProperty.
  * 
+ * @author Paul Gier
  */
 public class TestRequireProperty
     extends TestCase
 {
-    public void testRule ()
+
+    /**
+     * Test rule.
+     * 
+     * @throws EnforcerRuleException the enforcer rule exception
+     */
+    public void testRule()
         throws EnforcerRuleException
     {
         MockProject project = new MockProject();
@@ -64,7 +72,12 @@ public class TestRequireProperty
         }
     }
 
-    public void testRuleWithRegex ()
+    /**
+     * Test rule with regex.
+     * 
+     * @throws EnforcerRuleException the enforcer rule exception
+     */
+    public void testRuleWithRegex()
         throws EnforcerRuleException
     {
         MockProject project = new MockProject();
@@ -99,7 +112,10 @@ public class TestRequireProperty
         }
     }
 
-    public void testId ()
+    /**
+     * Test id.
+     */
+    public void testId()
     {
         RequireProperty rule = new RequireProperty();
         rule.getCacheId();

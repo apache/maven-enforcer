@@ -27,38 +27,49 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.TestEnforcerRuleUtils;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class TestRequireReleaseVersion.
+ * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- *
  */
 public class TestRequireReleaseVersion
     extends TestCase
 {
-    public void testMojo() throws IOException
+
+    /**
+     * Test mojo.
+     * 
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public void testMojo()
+        throws IOException
     {
         ArtifactStubFactory factory = new ArtifactStubFactory();
         MockProject project = new MockProject();
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
-        
+
         project.setArtifact( factory.getReleaseArtifact() );
-        
+
         EnforcerRule rule = new RequireReleaseVersion();
-        
+
         TestEnforcerRuleUtils.execute( rule, helper, false );
-        
+
         project.setArtifact( factory.getSnapshotArtifact() );
-        
+
         TestEnforcerRuleUtils.execute( rule, helper, true );
-        
+
     }
-    
+
+    /**
+     * Test cache.
+     */
     public void testCache()
     {
         EnforcerRule rule = new RequireReleaseVersion();
         assertFalse( rule.isCacheable() );
-        assertFalse(rule.isResultValid(null));
-        assertEquals( "0", rule.getCacheId() );   
+        assertFalse( rule.isResultValid( null ) );
+        assertEquals( "0", rule.getCacheId() );
     }
-    
 
 }

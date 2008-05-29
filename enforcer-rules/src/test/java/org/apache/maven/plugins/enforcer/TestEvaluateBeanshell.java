@@ -23,7 +23,9 @@ import junit.framework.TestCase;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class TestEvaluateBeanshell.
  * 
  * @author hugonnem
  */
@@ -31,6 +33,11 @@ public class TestEvaluateBeanshell
     extends TestCase
 {
 
+    /**
+     * Test rule.
+     * 
+     * @throws EnforcerRuleException the enforcer rule exception
+     */
     public void testRule()
         throws EnforcerRuleException
     {
@@ -45,7 +52,6 @@ public class TestEvaluateBeanshell
 
         rule.execute( helper );
 
-
         // this property should be set by the surefire
         // plugin
         rule.condition = "${env} == null";
@@ -56,7 +62,7 @@ public class TestEvaluateBeanshell
         }
         catch ( EnforcerRuleException e )
         {
-            System.out.println("Caught expected exception:"+e.getLocalizedMessage());
+            System.out.println( "Caught expected exception:" + e.getLocalizedMessage() );
         }
     }
 

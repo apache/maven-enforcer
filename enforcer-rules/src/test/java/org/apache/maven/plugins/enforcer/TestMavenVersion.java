@@ -24,13 +24,21 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * The Class TestMavenVersion.
  * 
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestMavenVersion
     extends TestCase
 {
+
+    /**
+     * Test rule.
+     * 
+     * @throws EnforcerRuleException the enforcer rule exception
+     */
     public void testRule()
         throws EnforcerRuleException
     {
@@ -61,8 +69,11 @@ public class TestMavenVersion
         rule.execute( helper );
 
     }
-    
-    public void testId ()
+
+    /**
+     * Test id.
+     */
+    public void testId()
     {
         RequireMavenVersion rule = new RequireMavenVersion();
         rule.getCacheId();

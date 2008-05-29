@@ -25,7 +25,10 @@ import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class EnforcerExpressionEvaluator.
+ * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a> This class wraps the PluginParameterExpressionEvaluator
  *         because it can't be accessed directly in 2.0.x so we must create a new one.
  */
@@ -34,10 +37,11 @@ public class EnforcerExpressionEvaluator
 {
 
     /**
-     * @param theContext
-     * @param theMojoExecution
-     * @param thePathTranslator
-     * @param theProject
+     * The Constructor.
+     * 
+     * @param theContext the the context
+     * @param thePathTranslator the the path translator
+     * @param theProject the the project
      */
     public EnforcerExpressionEvaluator( MavenSession theContext, PathTranslator thePathTranslator,
                                         MavenProject theProject )

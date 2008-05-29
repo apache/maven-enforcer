@@ -28,26 +28,27 @@ import org.codehaus.plexus.util.StringUtils;
 import bsh.EvalError;
 import bsh.Interpreter;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class EvaluateBeanshell.
+ * 
  * @author hugonnem Rule for Maven Enforcer using Beanshell to evaluate a conditional expression
  */
 public class EvaluateBeanshell
     extends AbstractStandardEnforcerRule
 {
 
-    /**
-     * Beanshell interpreter
-     */
+    /** Beanshell interpreter. */
     private static final Interpreter bsh = new Interpreter();
 
-    /**
-     * The condition to be evaluated.
-     * 
-     * @parameter
-     * @required
-     */
+    /** The condition to be evaluated. */
     public String condition;
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+     */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
@@ -75,7 +76,7 @@ public class EvaluateBeanshell
     }
 
     /**
-     * Evaluate expression using Beanshell
+     * Evaluate expression using Beanshell.
      * 
      * @param script the expression to be evaluated
      * @param log the logger

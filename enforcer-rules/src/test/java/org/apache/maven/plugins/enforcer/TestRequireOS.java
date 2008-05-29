@@ -27,15 +27,19 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.codehaus.plexus.util.Os;
 
+// TODO: Auto-generated Javadoc
 /**
  * Exhaustively check the OS mojo.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * 
  */
 public class TestRequireOS
     extends TestCase
 {
+
+    /**
+     * Test os.
+     */
     public void testOS()
     {
         Log log = new SystemStreamLog();
@@ -46,7 +50,7 @@ public class TestRequireOS
         Iterator iter = Os.getValidFamilies().iterator();
         String validFamily = null;
         String invalidFamily = null;
-        while ( iter.hasNext())
+        while ( iter.hasNext() )
         {
             String fam = (String) iter.next();
             if ( !Os.isFamily( fam ) )
@@ -57,7 +61,7 @@ public class TestRequireOS
         }
 
         validFamily = Os.OS_FAMILY;
-        
+
         log.info( "Testing Mojo Using Valid Family: " + validFamily + " Invalid Family: " + invalidFamily );
 
         rule.setFamily( validFamily );
@@ -112,8 +116,11 @@ public class TestRequireOS
         rule.setVersion( "!somecrazyversion" );
         assertTrue( rule.isAllowed() );
     }
-    
-    public void testId ()
+
+    /**
+     * Test id.
+     */
+    public void testId()
     {
         RequireOS rule = new RequireOS();
         rule.getCacheId();

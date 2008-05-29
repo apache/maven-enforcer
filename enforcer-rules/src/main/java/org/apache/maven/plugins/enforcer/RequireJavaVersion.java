@@ -30,6 +30,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * This rule checks that the Java version is allowed.
  * 
@@ -40,6 +41,11 @@ public class RequireJavaVersion
     extends AbstractVersionEnforcer
 {
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+     */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

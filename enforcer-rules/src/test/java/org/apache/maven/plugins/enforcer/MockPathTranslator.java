@@ -23,9 +23,11 @@ import java.io.File;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.path.PathTranslator;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * The Class MockPathTranslator.
  * 
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class MockPathTranslator
     implements PathTranslator
@@ -44,8 +46,7 @@ public class MockPathTranslator
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.maven.project.path.PathTranslator#alignToBaseDirectory(java.lang.String,
-     *      java.io.File)
+     * @see org.apache.maven.project.path.PathTranslator#alignToBaseDirectory(java.lang.String, java.io.File)
      */
     public String alignToBaseDirectory( String thePath, File theBasedir )
     {
@@ -65,8 +66,7 @@ public class MockPathTranslator
     /*
      * (non-Javadoc)
      * 
-     * @see org.apache.maven.project.path.PathTranslator#unalignFromBaseDirectory(java.lang.String,
-     *      java.io.File)
+     * @see org.apache.maven.project.path.PathTranslator#unalignFromBaseDirectory(java.lang.String, java.io.File)
      */
     public String unalignFromBaseDirectory( String theDirectory, File theBasedir )
     {

@@ -30,21 +30,20 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.util.StringUtils;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class RequireActiveProfile.
+ * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a> This rule checks that the current project is not a snapshot
  */
 public class RequireActiveProfile
     extends AbstractStandardEnforcerRule
 {
 
-    /**
-     * Comma separated list of profiles to check
-     */
+    /** Comma separated list of profiles to check. */
     public String profiles = null;
 
-    /**
-     * If all profiles must be active. If false, only one must be active
-     */
+    /** If all profiles must be active. If false, only one must be active */
     public boolean all = true;
 
     /*
@@ -114,6 +113,13 @@ public class RequireActiveProfile
 
     }
 
+    /**
+     * Checks if is profile active.
+     * 
+     * @param project the project
+     * @param profileName the profile name
+     * @return true, if is profile active
+     */
     protected boolean isProfileActive( MavenProject project, String profileName )
     {
         List activeProfiles = project.getActiveProfiles();

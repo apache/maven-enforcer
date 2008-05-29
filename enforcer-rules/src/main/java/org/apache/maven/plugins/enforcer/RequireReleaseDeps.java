@@ -26,6 +26,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
 
+// TODO: Auto-generated Javadoc
 /**
  * This rule checks that no snapshots are included.
  * 
@@ -37,11 +38,12 @@ public class RequireReleaseDeps
 {
 
     /**
-     * Checks the set of dependencies to see if any snapshots are included
+     * Checks the set of dependencies to see if any snapshots are included.
      * 
-     * @param dependencies
-     * @return
-     * @throws EnforcerRuleException
+     * @param dependencies the dependencies
+     * @param log the log
+     * @return the sets the
+     * @throws EnforcerRuleException the enforcer rule exception
      */
     protected Set checkDependencies( Set dependencies, Log log )
         throws EnforcerRuleException

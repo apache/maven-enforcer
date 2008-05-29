@@ -24,10 +24,21 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class MockEnforcerExpressionEvaluator.
+ */
 public class MockEnforcerExpressionEvaluator
     extends EnforcerExpressionEvaluator
 {
 
+    /**
+     * Instantiates a new mock enforcer expression evaluator.
+     * 
+     * @param theContext the the context
+     * @param thePathTranslator the the path translator
+     * @param theProject the the project
+     */
     public MockEnforcerExpressionEvaluator( MavenSession theContext, PathTranslator thePathTranslator,
                                             MavenProject theProject )
     {
@@ -35,19 +46,23 @@ public class MockEnforcerExpressionEvaluator
         // TODO Auto-generated constructor stub
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.plugin.PluginParameterExpressionEvaluator#evaluate(java.lang.String)
+     */
     public Object evaluate( String expr )
         throws ExpressionEvaluationException
     {
-        if (expr !=null)
+        if ( expr != null )
         {
-        //just remove the ${ } and return the name as the value
-        return expr.replaceAll( "\\$\\{|}", "" );
+            // just remove the ${ } and return the name as the value
+            return expr.replaceAll( "\\$\\{|}", "" );
         }
         else
         {
             return expr;
         }
     }
-    
 
 }

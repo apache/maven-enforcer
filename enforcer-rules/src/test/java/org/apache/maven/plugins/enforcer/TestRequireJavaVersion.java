@@ -24,13 +24,19 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * The Class TestRequireJavaVersion.
  * 
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestRequireJavaVersion
     extends TestCase
 {
+
+    /**
+     * Test fix jdk version.
+     */
     public void testFixJDKVersion()
     {
         // test that we only take the first 3 versions for
@@ -53,6 +59,11 @@ public class TestRequireJavaVersion
         assertEquals( "1.6.0-2", RequireJavaVersion.normalizeJDKVersion( "1.6.0-dp2" ) );
     }
 
+    /**
+     * Test rule.
+     * 
+     * @throws EnforcerRuleException the enforcer rule exception
+     */
     public void testRule()
         throws EnforcerRuleException
     {
@@ -84,8 +95,11 @@ public class TestRequireJavaVersion
         rule.execute( helper );
 
     }
-    
-    public void testId ()
+
+    /**
+     * Test id.
+     */
+    public void testId()
     {
         RequireJavaVersion rule = new RequireJavaVersion();
         rule.getCacheId();

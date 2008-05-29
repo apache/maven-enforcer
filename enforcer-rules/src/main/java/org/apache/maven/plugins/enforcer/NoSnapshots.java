@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
 
+// TODO: Auto-generated Javadoc
 /**
  * This rule is deprecated. Use requireReleaseVersions
  * 
@@ -35,11 +36,12 @@ public class NoSnapshots
 {
 
     /**
-     * Checks the set of dependencies to see if any snapshots are included
+     * Checks the set of dependencies to see if any snapshots are included.
      * 
-     * @param dependencies
-     * @return
-     * @throws EnforcerRuleException
+     * @param dependencies the dependencies
+     * @param log the log
+     * @return the sets the
+     * @throws EnforcerRuleException the enforcer rule exception
      */
     protected Set checkDependencies( Set dependencies, Log log )
         throws EnforcerRuleException

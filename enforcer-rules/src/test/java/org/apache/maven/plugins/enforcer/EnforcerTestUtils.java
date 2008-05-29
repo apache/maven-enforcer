@@ -29,32 +29,65 @@ import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class EnforcerTestUtils.
+ * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class EnforcerTestUtils
 {
+
+    /**
+     * Gets the maven session.
+     * 
+     * @return the maven session
+     */
     public static MavenSession getMavenSession()
     {
         return new MavenSession( new MockPlexusContainer(), null, null, null, null, null, null, new Properties(),
                                  new Date() );
     }
 
+    /**
+     * Gets the helper.
+     * 
+     * @return the helper
+     */
     public static EnforcerRuleHelper getHelper()
     {
         return getHelper( new MockProject(), false );
     }
 
+    /**
+     * Gets the helper.
+     * 
+     * @param mockExpression the mock expression
+     * @return the helper
+     */
     public static EnforcerRuleHelper getHelper( boolean mockExpression )
     {
         return getHelper( new MockProject(), mockExpression );
     }
 
+    /**
+     * Gets the helper.
+     * 
+     * @param project the project
+     * @return the helper
+     */
     public static EnforcerRuleHelper getHelper( MavenProject project )
     {
         return getHelper( project, false );
     }
-    
+
+    /**
+     * Gets the helper.
+     * 
+     * @param project the project
+     * @param mockExpression the mock expression
+     * @return the helper
+     */
     public static EnforcerRuleHelper getHelper( MavenProject project, boolean mockExpression )
     {
         MavenSession session = getMavenSession();
@@ -70,6 +103,14 @@ public class EnforcerTestUtils
         return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(), null );
     }
 
+    /**
+     * New plugin.
+     * 
+     * @param groupId the group id
+     * @param artifactId the artifact id
+     * @param version the version
+     * @return the plugin
+     */
     public static Plugin newPlugin( String groupId, String artifactId, String version )
     {
         Plugin plugin = new Plugin();

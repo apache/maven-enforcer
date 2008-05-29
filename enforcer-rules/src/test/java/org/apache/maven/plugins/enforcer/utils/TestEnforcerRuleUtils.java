@@ -34,14 +34,20 @@ import org.apache.maven.plugins.enforcer.EnforcerTestUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+// TODO: Auto-generated Javadoc
 /**
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * The Class TestEnforcerRuleUtils.
  * 
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestEnforcerRuleUtils
     extends AbstractMojoTestCase
 {
-    public void testCheckIfModelMatches ()
+
+    /**
+     * Test check if model matches.
+     */
+    public void testCheckIfModelMatches()
     {
 
         EnforcerRuleUtils utils = new EnforcerRuleUtils( EnforcerTestUtils.getHelper() );
@@ -75,7 +81,15 @@ public class TestEnforcerRuleUtils
         assertFalse( utils.checkIfModelMatches( "foo-group", null, "1.0", model ) );
     }
 
-    public void testGetModelsRecursivelyBottom ()
+    /**
+     * Test get models recursively bottom.
+     * 
+     * @throws ArtifactResolutionException the artifact resolution exception
+     * @throws ArtifactNotFoundException the artifact not found exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws XmlPullParserException the xml pull parser exception
+     */
+    public void testGetModelsRecursivelyBottom()
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
     {
         String path = "target/test-classes/requirePluginVersions/getPomRecursively/b/c";
@@ -83,7 +97,7 @@ public class TestEnforcerRuleUtils
         StringUtils.replace( path, "/", File.separator );
 
         File pom = new File( getBasedir() + File.separator + path, "pom.xml" );
-        
+
         EnforcerRuleUtils utils = new EnforcerRuleUtils( EnforcerTestUtils.getHelper() );
         List models = utils.getModelsRecursively( "group", "c", "1.0", pom );
 
@@ -105,7 +119,15 @@ public class TestEnforcerRuleUtils
         models.contains( m );
     }
 
-    public void testGetModelsRecursivelyTop ()
+    /**
+     * Test get models recursively top.
+     * 
+     * @throws ArtifactResolutionException the artifact resolution exception
+     * @throws ArtifactNotFoundException the artifact not found exception
+     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws XmlPullParserException the xml pull parser exception
+     */
+    public void testGetModelsRecursivelyTop()
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
     {
         String path = "target/test-classes/requirePluginVersions/getPomRecursively";
@@ -115,7 +137,7 @@ public class TestEnforcerRuleUtils
         File pom = new File( getBasedir() + File.separator + path, "pom.xml" );
 
         EnforcerRuleUtils utils = new EnforcerRuleUtils( EnforcerTestUtils.getHelper() );
-        
+
         List models = utils.getModelsRecursively( "group", "a", "1.0", pom );
 
         // there should be 1
@@ -129,14 +151,13 @@ public class TestEnforcerRuleUtils
 
         models.contains( m );
     }
-    
+
     /**
-     * Simpler wrapper to execute and deal with the expected
-     * result.
+     * Simpler wrapper to execute and deal with the expected result.
      * 
-     * @param rule
-     * @param helper
-     * @param shouldFail
+     * @param rule the rule
+     * @param helper the helper
+     * @param shouldFail the should fail
      */
     public static void execute( EnforcerRule rule, EnforcerRuleHelper helper, boolean shouldFail )
     {
@@ -154,7 +175,7 @@ public class TestEnforcerRuleUtils
             {
                 fail( "No Exception expected:" + e.getLocalizedMessage() );
             }
-            helper.getLog().debug(e.getMessage());
+            helper.getLog().debug( e.getMessage() );
         }
     }
 }

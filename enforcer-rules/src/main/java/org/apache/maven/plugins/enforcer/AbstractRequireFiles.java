@@ -26,23 +26,41 @@ import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class AbstractRequireFiles.
+ * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 abstract public class AbstractRequireFiles
     extends AbstractStandardEnforcerRule
 {
-    /**
-     * Array of files to check.
-     */
+
+    /** Array of files to check. */
     File[] files;
 
-    //check the file for the specific condition
-    abstract boolean checkFile(File file);
-    
-    //retun standard error message
+    // check the file for the specific condition
+    /**
+     * Check file.
+     * 
+     * @param file the file
+     * @return true, if successful
+     */
+    abstract boolean checkFile( File file );
+
+    // retun standard error message
+    /**
+     * Gets the error msg.
+     * 
+     * @return the error msg
+     */
     abstract String getErrorMsg();
-    
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+     */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
@@ -50,9 +68,9 @@ abstract public class AbstractRequireFiles
         ArrayList failures = new ArrayList();
         for ( int i = 0; i < files.length; i++ )
         {
-            if ( !checkFile(files[i]) )
+            if ( !checkFile( files[i] ) )
             {
-                failures.add( files[i]);
+                failures.add( files[i] );
             }
         }
 
@@ -70,7 +88,7 @@ abstract public class AbstractRequireFiles
             Iterator iter = failures.iterator();
             while ( iter.hasNext() )
             {
-                buf.append( ((File)(iter.next())).getAbsolutePath()+ "\n" );
+                buf.append( ( (File) ( iter.next() ) ).getAbsolutePath() + "\n" );
             }
 
             throw new EnforcerRuleException( buf.toString() );
@@ -82,6 +100,8 @@ abstract public class AbstractRequireFiles
      * result to be different. Multiple cached results are stored based on their id. The easiest way to do this is to
      * return a hash computed from the values of your parameters. If your rule is not cacheable, then the result here is
      * not important, you may return anything.
+     * 
+     * @return the cache id
      */
     public String getCacheId()
     {
@@ -114,6 +134,8 @@ abstract public class AbstractRequireFiles
      * This tells the system if the results are cacheable at all. Keep in mind that during forked builds and other
      * things, a given rule may be executed more than once for the same project. This means that even things that change
      * from project to project may still be cacheable in certain instances.
+     * 
+     * @return true, if checks if is cacheable
      */
     public boolean isCacheable()
     {
@@ -125,6 +147,9 @@ abstract public class AbstractRequireFiles
      * allow double checking of the results. Most of the time this can be done by generating unique ids, but sometimes
      * the results of objects returned by the helper need to be queried. You may for example, store certain objects in
      * your rule and then query them later.
+     * 
+     * @param arg0 the arg0
+     * @return true, if checks if is result valid
      */
     public boolean isResultValid( EnforcerRule arg0 )
     {
