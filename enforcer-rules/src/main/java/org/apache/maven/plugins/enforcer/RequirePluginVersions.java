@@ -78,7 +78,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  *          specified in the poms have a version declared.
  */
 public class RequirePluginVersions
-    extends AbstractStandardEnforcerRule
+    extends AbstractNonCacheableEnforcerRule
 {
 
     /** Don't allow the LATEST identifier. */
@@ -1044,36 +1044,6 @@ public class RequirePluginVersions
     protected void setUtils( EnforcerRuleUtils theUtils )
     {
         this.utils = theUtils;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
-     */
-    public String getCacheId()
-    {
-        return "0";
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
-     */
-    public boolean isCacheable()
-    {
-        return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
-     */
-    public boolean isResultValid( EnforcerRule theCachedRule )
-    {
-        return false;
     }
 
     /**

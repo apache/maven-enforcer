@@ -18,7 +18,6 @@
  */
 package org.apache.maven.plugins.enforcer;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
@@ -35,7 +34,7 @@ import bsh.Interpreter;
  * @author hugonnem Rule for Maven Enforcer using Beanshell to evaluate a conditional expression
  */
 public class EvaluateBeanshell
-    extends AbstractStandardEnforcerRule
+    extends AbstractNonCacheableEnforcerRule
 {
 
     /** Beanshell interpreter. */
@@ -96,35 +95,4 @@ public class EvaluateBeanshell
         }
         return evaluation.booleanValue();
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
-     */
-    public String getCacheId()
-    {
-        return "" + this.condition.hashCode();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
-     */
-    public boolean isCacheable()
-    {
-        return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
-     */
-    public boolean isResultValid( EnforcerRule theCachedRule )
-    {
-        return false;
-    }
-
 }

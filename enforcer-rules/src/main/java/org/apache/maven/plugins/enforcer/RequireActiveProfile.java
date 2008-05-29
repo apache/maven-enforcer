@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Profile;
@@ -37,7 +36,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a> This rule checks that the current project is not a snapshot
  */
 public class RequireActiveProfile
-    extends AbstractStandardEnforcerRule
+    extends AbstractNonCacheableEnforcerRule
 {
 
     /** Comma separated list of profiles to check. */
@@ -137,35 +136,4 @@ public class RequireActiveProfile
 
         return false;
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
-     */
-    public String getCacheId()
-    {
-        return "0";
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
-     */
-    public boolean isCacheable()
-    {
-        return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
-     */
-    public boolean isResultValid( EnforcerRule theCachedRule )
-    {
-        return false;
-    }
-
 }

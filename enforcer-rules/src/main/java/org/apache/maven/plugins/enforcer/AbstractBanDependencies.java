@@ -37,7 +37,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * @version $Id$
  */
 public abstract class AbstractBanDependencies
-    extends AbstractStandardEnforcerRule
+    extends AbstractNonCacheableEnforcerRule
 {
 
     /** Specify if transitive dependencies should be searched (default) or only look at direct dependencies. */
@@ -47,7 +47,6 @@ public abstract class AbstractBanDependencies
      * Execute the rule.
      * 
      * @param helper the helper
-     * 
      * @throws EnforcerRuleException the enforcer rule exception
      */
     public void execute( EnforcerRuleHelper helper )
@@ -105,9 +104,7 @@ public abstract class AbstractBanDependencies
      * 
      * @param dependencies the dependencies
      * @param log the log
-     * 
      * @return the sets the
-     * 
      * @throws EnforcerRuleException the enforcer rule exception
      */
     abstract protected Set checkDependencies( Set dependencies, Log log )
@@ -153,35 +150,4 @@ public abstract class AbstractBanDependencies
         this.searchTransitive = theSearchTransitive;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
-     */
-    public String getCacheId()
-    {
-        return "0";
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
-     */
-    public boolean isCacheable()
-    {
-        // dependencies change per project, therefore they must always be rerun.
-        return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
-     */
-    public boolean isResultValid( EnforcerRule theCachedRule )
-    {
-        // dependencies change per project, therefore they must always be rerun.
-        return false;
-    }
 }

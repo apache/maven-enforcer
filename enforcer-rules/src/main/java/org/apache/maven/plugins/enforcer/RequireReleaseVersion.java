@@ -18,7 +18,6 @@
  */
 package org.apache.maven.plugins.enforcer;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.project.MavenProject;
@@ -31,7 +30,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a> This rule checks that the current project is not a snapshot
  */
 public class RequireReleaseVersion
-    extends AbstractStandardEnforcerRule
+    extends AbstractNonCacheableEnforcerRule
 {
 
     /*
@@ -63,35 +62,4 @@ public class RequireReleaseVersion
         }
 
     }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
-     */
-    public String getCacheId()
-    {
-        return "0";
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
-     */
-    public boolean isCacheable()
-    {
-        return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
-     */
-    public boolean isResultValid( EnforcerRule theCachedRule )
-    {
-        return false;
-    }
-
 }
