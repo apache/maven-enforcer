@@ -23,18 +23,18 @@ import java.io.File;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
-// TODO: Auto-generated Javadoc
 /**
  * Rule to validate the main artifact is within certain size constraints.
  * 
  * @author brianf
  * @author Roman Stumm
  */
-public class RequireSize
-    extends AbstractStandardEnforcerRule
+public class RequireFileSize
+    extends AbstractRequireFiles
 {
 
     /** the max size allowed. */
@@ -43,8 +43,11 @@ public class RequireSize
     /** the max size allowed. */
     long minsize = 0;
 
-    /** the artifact file to check. */
-    File artifact;
+    /** The error msg. */
+    private String errorMsg;
+
+    /** The log. */
+    private Log log;
 
     /*
      * (non-Javadoc)
@@ -54,14 +57,18 @@ public class RequireSize
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
-        // if the artifact is already defined, use that. Otherwise get the main artifact.
-        if ( artifact == null )
+        // if the file is already defined, use that. Otherwise get the main artifact.
+        if ( files.length == 0 )
         {
             try
             {
                 MavenProject project = (MavenProject) helper.evaluate( "${project}" );
 
-                artifact = project.getArtifact().getFile();
+                files[0] = project.getArtifact().getFile();
+
+                this.log = helper.getLog();
+
+                super.execute( helper );
             }
             catch ( ExpressionEvaluationException e )
             {
@@ -69,45 +76,6 @@ public class RequireSize
             }
         }
 
-        // check the file now
-        if ( artifact.exists() )
-        {
-            long length = artifact.length();
-            if ( length < minsize )
-            {
-                throw new EnforcerRuleException( artifact + " size (" + length + ") too small. Min. is " + minsize );
-            }
-            else if ( length > maxsize )
-            {
-                throw new EnforcerRuleException( artifact + " size (" + length + ") too large. Max. is " + maxsize );
-            }
-            else
-            {
-
-                helper.getLog().debug(
-                                       artifact +
-                                           " size (" +
-                                           length +
-                                           ") is OK (" +
-                                           ( minsize == maxsize || minsize == 0 ? ( "max. " + maxsize ) : ( "between " +
-                                               minsize + " and " + maxsize ) ) + " byte)." );
-
-            }
-        }
-        else
-        {
-            throw new EnforcerRuleException( artifact + " does not exist!" );
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
-     */
-    public String getCacheId()
-    {
-        return "0";
     }
 
     /*
@@ -128,5 +96,52 @@ public class RequireSize
     public boolean isResultValid( EnforcerRule cachedRule )
     {
         return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.maven.plugins.enforcer.AbstractRequireFiles#checkFile(java.io.File)
+     */
+    boolean checkFile( File file )
+    {
+        // check the file now
+        if ( file.exists() )
+        {
+            long length = file.length();
+            if ( length < minsize )
+            {
+                this.errorMsg = ( file + " size (" + length + ") too small. Min. is " + minsize );
+                return false;
+            }
+            else if ( length > maxsize )
+            {
+                this.errorMsg = ( file + " size (" + length + ") too large. Max. is " + maxsize );
+                return false;
+            }
+            else
+            {
+
+                this.log.debug( file +
+                    " size (" +
+                    length +
+                    ") is OK (" +
+                    ( minsize == maxsize || minsize == 0 ? ( "max. " + maxsize )
+                                    : ( "between " + minsize + " and " + maxsize ) ) + " byte)." );
+
+                return true;
+            }
+        }
+        else
+        {
+            this.errorMsg = ( file + " does not exist!" );
+            return false;
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.apache.maven.plugins.enforcer.AbstractRequireFiles#getErrorMsg()
+     */
+    String getErrorMsg()
+    {
+        return this.errorMsg;
     }
 }
