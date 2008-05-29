@@ -24,7 +24,10 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -38,7 +41,47 @@ public class RequireReleaseDeps
 {
 
     /**
-     * Checks the set of dependencies to see if any snapshots are included.
+     * Allows this rule to execute only when this project is a release.
+     * 
+     * @parameter
+     */
+    public boolean onlyWhenRelease = false;
+
+    /**
+     * Override parent to allow optional ignore of this rule.
+     */
+    public void execute( EnforcerRuleHelper helper )
+        throws EnforcerRuleException
+    {
+    	boolean callSuper;
+    	if ( onlyWhenRelease )
+    	{
+            // get the project
+            MavenProject project = null;
+            try
+            {
+                project = (MavenProject) helper.evaluate( "${project}" );
+            }
+            catch ( ExpressionEvaluationException eee )
+            {
+                throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
+            }
+
+            // only call super if this project is a release
+            callSuper = !project.getArtifact().isSnapshot();
+    	}
+    	else
+    	{
+    		callSuper = true;
+    	}
+    	if ( callSuper )
+    	{
+    		super.execute(helper);
+    	}
+    }
+	
+    /**
+     * Checks the set of dependencies to see if any snapshots are included
      * 
      * @param dependencies the dependencies
      * @param log the log

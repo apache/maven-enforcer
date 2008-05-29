@@ -58,7 +58,20 @@ public class TestNoSnapshots
 
         TestEnforcerRuleUtils.execute( rule, helper, true );
 
-    }
+        // test onlyWhenRelease in each case
+        
+        project.setArtifact( factory.getSnapshotArtifact() );
+        
+        TestEnforcerRuleUtils.execute( rule, helper, true );
+        
+        rule.onlyWhenRelease = true;
+
+        TestEnforcerRuleUtils.execute( rule, helper, false );
+
+        project.setArtifact( factory.getReleaseArtifact() );
+        
+        TestEnforcerRuleUtils.execute( rule, helper, true );
+    } 
 
     /**
      * Test id.
