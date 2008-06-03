@@ -21,7 +21,6 @@ under the License.
   <body>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
-      <item name="Standard Rules" href="rules/index.html"/>
       <item name="Rule API" href="http://maven.apache.org/enforcer/enforcer-api/"/>
       <item name="Maven Enforcer Plugin" href="http://maven.apache.org/plugins/maven-enforcer-plugin/"/>
     </menu>
