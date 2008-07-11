@@ -31,9 +31,9 @@ import org.codehaus.plexus.util.StringUtils;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class RequireActiveProfile.
+ * This rule checks that some profiles are active.
  * 
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a> This rule checks that the current project is not a snapshot
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class RequireActiveProfile
     extends AbstractNonCacheableEnforcerRule
@@ -113,11 +113,11 @@ public class RequireActiveProfile
     }
 
     /**
-     * Checks if is profile active.
+     * Checks if profile is active.
      * 
      * @param project the project
      * @param profileName the profile name
-     * @return true, if is profile active
+     * @return <code>true</code> if profile is active
      */
     protected boolean isProfileActive( MavenProject project, String profileName )
     {

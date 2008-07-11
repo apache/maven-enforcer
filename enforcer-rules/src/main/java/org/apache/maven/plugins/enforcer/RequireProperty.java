@@ -18,11 +18,9 @@
  */
 package org.apache.maven.plugins.enforcer;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.util.StringUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -37,7 +35,7 @@ public class RequireProperty
     /** Specify the required property. */
     public String property = null;
 
-    /** Match the property value to a given regular expresssion. Defaults to null (any value is ok). */
+    /** Match the property value to a given regular expression. Defaults to <code>null</code> (any value is ok). */
     public String regex = null;
 
     /** Specify a warning message if the regular expression is not matched. */

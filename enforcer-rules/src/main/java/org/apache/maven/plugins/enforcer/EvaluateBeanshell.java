@@ -29,9 +29,9 @@ import bsh.Interpreter;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class EvaluateBeanshell.
+ * Rule for Maven Enforcer using Beanshell to evaluate a conditional expression.
  * 
- * @author hugonnem Rule for Maven Enforcer using Beanshell to evaluate a conditional expression
+ * @author hugonnem
  */
 public class EvaluateBeanshell
     extends AbstractNonCacheableEnforcerRule

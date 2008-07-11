@@ -39,7 +39,6 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
@@ -71,11 +70,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class RequirePluginVersions.
+ *  This rule will enforce that all plugins specified in the poms have a version declared.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$ This rule will enforce that all plugins
- *          specified in the poms have a version declared.
+ * @version $Id$
  */
 public class RequirePluginVersions
     extends AbstractNonCacheableEnforcerRule
@@ -102,7 +100,7 @@ public class RequirePluginVersions
     /**
      * Additional plugins to enforce have versions. These are plugins that may not be in the poms but are used anyway,
      * like help, eclipse etc. <br>
-     * The plugins should be specified in the form: group:artifactId.
+     * The plugins should be specified in the form: <code>group:artifactId</code>.
      */
     public List additionalPlugins;
 
@@ -149,8 +147,7 @@ public class RequirePluginVersions
         MavenProject project;
         try
         {
-            // get the various expressions out of the
-            // helper.
+            // get the various expressions out of the helper.
             project = (MavenProject) helper.evaluate( "${project}" );
             LifecycleExecutor life;
             life = (LifecycleExecutor) helper.getComponent( LifecycleExecutor.class );
@@ -163,12 +160,10 @@ public class RequirePluginVersions
 
             utils = new EnforcerRuleUtils( helper );
 
-            // get all the plugins that are bound to the
-            // specified lifecycles
+            // get all the plugins that are bound to the specified lifecycles
             Set allPlugins = getBoundPlugins( life, project, phases );
 
-            // insert any additional Plugins specified by
-            // the user.
+            // insert any additional plugins specified by the user.
             allPlugins = addAdditionalPlugins( allPlugins, additionalPlugins );
             allPlugins.addAll( getProfilePlugins( project ) );
 
@@ -183,12 +178,10 @@ public class RequirePluginVersions
                 log.debug( "All Plugins in use: " + allPlugins );
             }
 
-            // get all the plugins that are mentioned in the
-            // pom (and parents)
+            // get all the plugins that are mentioned in the pom (and parents)
             List plugins = getAllPluginEntries( project );
 
-            // now look for the versions that aren't valid
-            // and add to a list.
+            // now look for the versions that aren't valid and add to a list.
             ArrayList failures = new ArrayList();
             Iterator iter = allPlugins.iterator();
             while ( iter.hasNext() )
@@ -200,8 +193,7 @@ public class RequirePluginVersions
                 }
             }
 
-            // if anything was found, log it then append the
-            // optional message.
+            // if anything was found, log it then append the optional message.
             if ( !failures.isEmpty() )
             {
                 StringBuffer newMsg = new StringBuffer();
@@ -249,10 +241,8 @@ public class RequirePluginVersions
                     }
                     catch ( Exception e )
                     {
-                        // lots can go wrong here. Don't
-                        // allow any issues trying to
-                        // determine the issue
-                        // stop me
+                        // lots can go wrong here. Don't allow any issues trying to
+                        // determine the issue stop me
                         log.debug( "Exception while determining plugin Version.", e );
                         newMsg.append( ". Unable to determine the plugin version." );
                     }
@@ -332,8 +322,7 @@ public class RequirePluginVersions
                     plugin.setGroupId( pluginStrings[0] );
                     plugin.setArtifactId( pluginStrings[1] );
 
-                    // only add this if it's not already
-                    // there.
+                    // only add this if it's not already there.
                     if ( existing == null )
                     {
                         existing = new HashSet();
@@ -387,9 +376,9 @@ public class RequirePluginVersions
     /**
      * Given a plugin, this will retrieve the matching plugin artifact from the model.
      * 
-     * @param plugin to lookup
-     * @param project to search
-     * @return matching plugin, null if not found. matching plugin, null if not found.
+     * @param plugin plugin to lookup
+     * @param project project to search
+     * @return matching plugin, <code>null</code> if not found.
      */
     protected Plugin findCurrentPlugin( Plugin plugin, MavenProject project )
     {
@@ -458,8 +447,7 @@ public class RequirePluginVersions
     protected Set getBoundPlugins( LifecycleExecutor life, MavenProject project, String thePhases )
         throws PluginNotFoundException, LifecycleExecutionException, IllegalAccessException
     {
-        // I couldn't find a direct way to get at the
-        // lifecycles list.
+        // I couldn't find a direct way to get at the lifecycles list.
         lifecycles = (List) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", life );
 
         Set allPlugins = new HashSet();
@@ -480,8 +468,7 @@ public class RequirePluginVersions
                 {
                     // i'm going to swallow this because the
                     // user may have declared a phase that
-                    // doesn't
-                    // exist for every module.
+                    // doesn't exist for every module.
                 }
             }
         }
@@ -513,8 +500,7 @@ public class RequirePluginVersions
                 source.getGroupId().equals( plugin.getGroupId() ) )
             {
                 found = true;
-                // found the entry. now see if the version
-                // is specified
+                // found the entry. now see if the version is specified
                 String version = plugin.getVersion();
                 try
                 {

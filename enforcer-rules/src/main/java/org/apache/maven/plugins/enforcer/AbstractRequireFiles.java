@@ -28,7 +28,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class AbstractRequireFiles.
+ * Contains the common code to compare an array of files against a requirement.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
@@ -41,10 +41,10 @@ abstract public class AbstractRequireFiles
 
     // check the file for the specific condition
     /**
-     * Check file.
+     * Check one file.
      * 
      * @param file the file
-     * @return true, if successful
+     * @return <code>true</code> if successful
      */
     abstract boolean checkFile( File file );
 
@@ -74,8 +74,7 @@ abstract public class AbstractRequireFiles
             }
         }
 
-        // if anything was found, log it then append the
-        // optional message.
+        // if anything was found, log it with the optional message.
         if ( !failures.isEmpty() )
         {
             StringBuffer buf = new StringBuffer();
@@ -135,7 +134,7 @@ abstract public class AbstractRequireFiles
      * things, a given rule may be executed more than once for the same project. This means that even things that change
      * from project to project may still be cacheable in certain instances.
      * 
-     * @return true, if checks if is cacheable
+     * @return <code>true</code> if rule is cacheable
      */
     public boolean isCacheable()
     {
@@ -148,10 +147,10 @@ abstract public class AbstractRequireFiles
      * the results of objects returned by the helper need to be queried. You may for example, store certain objects in
      * your rule and then query them later.
      * 
-     * @param arg0 the arg0
-     * @return true, if checks if is result valid
+     * @param cachedRule the cached rule
+     * @return <code>true</code> if the stored results are valid for the same id.
      */
-    public boolean isResultValid( EnforcerRule arg0 )
+    public boolean isResultValid( EnforcerRule cachedRule )
     {
         return true;
     }

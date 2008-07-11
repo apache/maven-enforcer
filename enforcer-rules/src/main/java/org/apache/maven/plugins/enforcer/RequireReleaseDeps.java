@@ -81,11 +81,11 @@ public class RequireReleaseDeps
     }
 
     /**
-     * Checks the set of dependencies to see if any snapshots are included
+     * Checks the set of dependencies to see if any snapshots are included.
      * 
-     * @param dependencies the dependencies
+     * @param dependencies the dependencies to check
      * @param log the log
-     * @return the sets the
+     * @return a set containing snapshot artifacts found
      * @throws EnforcerRuleException the enforcer rule exception
      */
     protected Set checkDependencies( Set dependencies, Log log )
@@ -93,10 +93,10 @@ public class RequireReleaseDeps
     {
         Set foundExcludes = new HashSet();
 
-        Iterator DependencyIter = dependencies.iterator();
-        while ( DependencyIter.hasNext() )
+        Iterator dependencyIter = dependencies.iterator();
+        while ( dependencyIter.hasNext() )
         {
-            Artifact artifact = (Artifact) DependencyIter.next();
+            Artifact artifact = (Artifact) dependencyIter.next();
 
             if ( artifact.isSnapshot() )
             {

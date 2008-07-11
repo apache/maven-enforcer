@@ -43,14 +43,14 @@ public class BannedDependencies
 {
 
     /**
-     * Specify the banned dependencies. This can be a list of artifacts in the format groupId[:artifactId][:version] Any
-     * of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
-     * The rule will fail if any dependencies match any exclude, unless it also matches an include rule.
+     * Specify the banned dependencies. This can be a list of artifacts in the format <code>groupId[:artifactId][:version]</code>.
+     * Any of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
+     * The rule will fail if any dependency matches any exclude, unless it also matches an include rule.
      */
     public List excludes = null;
 
     /**
-     * Specify the allowed dependencies. This can be a list of artifacts in the format groupId[:artifactId][:version]
+     * Specify the allowed dependencies. This can be a list of artifacts in the format <code>groupId[:artifactId][:version]</code>.
      * Any of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
      * Includes override the exclude rules. It is meant to allow wide exclusion rules with wildcards and still allow a
      * smaller set of includes. <br>
@@ -85,9 +85,9 @@ public class BannedDependencies
     /**
      * Checks the set of dependencies against the list of patterns.
      * 
-     * @param thePatterns the the patterns
+     * @param thePatterns the patterns
      * @param dependencies the dependencies
-     * @return the sets the
+     * @return a set containing artifacts matching one of the patterns or <code>null</code>
      * @throws EnforcerRuleException the enforcer rule exception
      */
     private Set checkDependencies( Set dependencies, List thePatterns )
@@ -106,10 +106,10 @@ public class BannedDependencies
                 String[] subStrings = pattern.split( ":" );
                 subStrings = StringUtils.stripAll( subStrings );
 
-                Iterator DependencyIter = dependencies.iterator();
-                while ( DependencyIter.hasNext() )
+                Iterator dependencyIter = dependencies.iterator();
+                while ( dependencyIter.hasNext() )
                 {
-                    Artifact artifact = (Artifact) DependencyIter.next();
+                    Artifact artifact = (Artifact) dependencyIter.next();
 
                     if ( compareDependency( subStrings, artifact ) )
                     {
@@ -129,9 +129,9 @@ public class BannedDependencies
     /**
      * Compares the parsed array of substrings against the artifact.
      * 
-     * @param pattern the pattern
+     * @param pattern the array of patterns
      * @param artifact the artifact
-     * @return true, if compare dependency
+     * @return <code>true</code> if the artifact matches one of the patterns
      * @throws EnforcerRuleException the enforcer rule exception
      */
     protected boolean compareDependency( String[] pattern, Artifact artifact )
@@ -151,8 +151,7 @@ public class BannedDependencies
 
         if ( result && pattern.length > 2 )
         {
-            // short circuit if the versions are exactly the
-            // same
+            // short circuit if the versions are exactly the same
             if ( pattern[2].equals( "*" ) || artifact.getVersion().equals( pattern[2] ) )
             {
                 result = true;
@@ -173,7 +172,6 @@ public class BannedDependencies
         }
 
         return result;
-
     }
 
     /**

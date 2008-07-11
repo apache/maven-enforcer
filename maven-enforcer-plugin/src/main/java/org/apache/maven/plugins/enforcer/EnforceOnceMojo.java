@@ -26,9 +26,9 @@ import org.apache.maven.plugin.MojoExecutionException;
  * 
  * @deprecated
  * @goal enforce-once
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @phase validate
  * @requiresDependencyResolution test
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
 public class EnforceOnceMojo

@@ -32,7 +32,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 // TODO: Auto-generated Javadoc
 /**
- * Containts the common code to compare a version against a version range.
+ * Contains the common code to compare a version against a version range.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
@@ -42,9 +42,9 @@ public abstract class AbstractVersionEnforcer
 {
 
     /**
-     * Specify the required version. Some examples are
+     * Specify the required version. Some examples are:
      * <ul>
-     * <li><code>2.0.4</code> Version 2.0.4</li>
+     * <li><code>2.0.4</code> Version 2.0.4 and higher (different from Maven meaning)</li>
      * <li><code>[2.0,2.1)</code> Versions 2.0 (included) to 2.1 (not included)</li>
      * <li><code>[2.0,2.1]</code> Versions 2.0 to 2.1 (both included)</li>
      * <li><code>[2.0.5,)</code> Versions 2.0.5 and higher</li>
@@ -76,7 +76,7 @@ public abstract class AbstractVersionEnforcer
             VersionRange vr;
             String msg = "Detected " + variableName + " Version: " + actualVersion;
 
-            // stort circuit check if the strings are exactly equal
+            // short circuit check if the strings are exactly equal
             if ( actualVersion.toString().equals( requiredVersionRange ) )
             {
                 log.debug( msg + " is allowed in the range " + requiredVersionRange + "." );
@@ -187,9 +187,9 @@ public abstract class AbstractVersionEnforcer
     }
 
     /**
-     * Gets the version.
+     * Gets the required version.
      * 
-     * @return the version
+     * @return the required version
      */
     public String getVersion()
     {
@@ -197,9 +197,9 @@ public abstract class AbstractVersionEnforcer
     }
 
     /**
-     * Sets the version.
+     * Sets the required version.
      * 
-     * @param theVersion the version to set
+     * @param theVersion the required version to set
      */
     public void setVersion( String theVersion )
     {

@@ -32,8 +32,8 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 
 // TODO: Auto-generated Javadoc
 /**
- * Default implementation of the EnforcementRuleHelper interface. This is used to help retreive information from the
- * session and provide usefull elements like the log.
+ * Default implementation of the EnforcementRuleHelper interface. This is used to help retrieve information from the
+ * session and provide useful elements like the log.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$

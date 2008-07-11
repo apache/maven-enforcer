@@ -20,7 +20,7 @@ package org.apache.maven.enforcer.rule.api;
 
 
 /**
- * An exception occuring during the execution of a rule. Based off of
+ * An exception occurring during the execution of a rule. Based off of
  * EnforcerRuleException, but separated to keep the rule dependencies to a
  * minimum.
  * 

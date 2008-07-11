@@ -25,7 +25,7 @@ import org.apache.maven.plugin.logging.Log;
 
 // TODO: Auto-generated Javadoc
 /**
- * This rule is deprecated. Use requireReleaseVersions
+ * This rule is deprecated. Use requireReleaseVersions.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$

@@ -26,7 +26,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 
 // TODO: Auto-generated Javadoc
 /**
- * This rule checks that the Maven version is allowd.
+ * This rule checks that the Maven version is allowed.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$

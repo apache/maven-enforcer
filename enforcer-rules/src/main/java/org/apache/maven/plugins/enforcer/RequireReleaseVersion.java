@@ -25,9 +25,9 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class RequireReleaseVersion.
+ * This rule checks that the current project is not a snapshot.
  * 
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a> This rule checks that the current project is not a snapshot
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class RequireReleaseVersion
     extends AbstractNonCacheableEnforcerRule

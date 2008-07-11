@@ -34,12 +34,11 @@ import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
- * This goal displays the current platform information
+ * This goal displays the current platform information.
  * 
  * @goal display-info
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id: EnforceMojo.java 523156 2007-03-28
- *          03:53:54Z brianf $
+ * @version $Id$
  */
 public class DisplayInfoMojo
     extends AbstractMojo
@@ -92,8 +91,7 @@ public class DisplayInfoMojo
                                                                                     container );
             RuntimeInformation rti = (RuntimeInformation) helper.getComponent( RuntimeInformation.class );
             getLog().info( "Maven Version: " + rti.getApplicationVersion() );
-            getLog().info(
-                           "JDK Version: " + SystemUtils.JAVA_VERSION + " normalized as: "
+            getLog().info( "JDK Version: " + SystemUtils.JAVA_VERSION + " normalized as: "
                                + RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
             RequireOS os = new RequireOS();
             os.displayOSInfo( getLog(), true );

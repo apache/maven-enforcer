@@ -45,7 +45,7 @@ public class RequireOS
 
     /**
      * The OS family type desired<br />
-     * Possible values:<br />
+     * Possible values:
      * <ul>
      * <li>dos</li>
      * <li>mac</li>
@@ -57,17 +57,17 @@ public class RequireOS
      * <li>win9x</li>
      * <li>z/os</li>
      * <li>os/400</li>
-     * </ul>.
+     * </ul>
      */
     public String family = null;
 
-    /** Runtime information containing Maven Version. */
+    /** The OS name desired. */
     public String name = null;
 
-    /** Runtime information containing Maven Version. */
+    /** The OS version desired. */
     public String version = null;
 
-    /** Runtime information containing Maven Version. */
+    /** The OS architecture desired. */
     public String arch = null;
 
     /** Specify an optional message to the user if the rule fails. */
@@ -77,7 +77,7 @@ public class RequireOS
     public boolean display = false;
 
     /**
-     * Instantiates a new require os.
+     * Instantiates a new RequireOS.
      */
     public RequireOS()
     {
@@ -97,8 +97,7 @@ public class RequireOS
 
         if ( allParamsEmpty() )
         {
-            throw new EnforcerRuleException(
-                                             "All parameters can not be empty. You must pick at least one of (family, name, version, arch) or use -Denforcer.os.display=true to see the current OS information." );
+            throw new EnforcerRuleException( "All parameters can not be empty. You must pick at least one of (family, name, version, arch) or use -Denforcer.os.display=true to see the current OS information." );
         }
 
         if ( isValidFamily( this.family ) )

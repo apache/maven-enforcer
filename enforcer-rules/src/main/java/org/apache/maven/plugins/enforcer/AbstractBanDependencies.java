@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
@@ -78,8 +77,7 @@ public abstract class AbstractBanDependencies
         // look for banned dependencies
         Set foundExcludes = checkDependencies( dependencies, helper.getLog() );
 
-        // if any are found, fail the check but list all of
-        // them
+        // if any are found, fail the check but list all of them
         if ( foundExcludes != null && !foundExcludes.isEmpty() )
         {
             StringBuffer buf = new StringBuffer();

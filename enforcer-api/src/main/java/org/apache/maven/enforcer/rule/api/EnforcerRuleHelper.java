@@ -33,13 +33,12 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  * rules.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id: EnforcerRuleHelper.java 571673 2007-09-01
- * 03:04:24Z brianf $
+ * @version $Id$
  */
 public interface EnforcerRuleHelper
     extends ExpressionEvaluator
 {
-    
+
     /**
      * Gets the log.
      * 
@@ -112,7 +111,7 @@ public interface EnforcerRuleHelper
      */
     public List getComponentList ( String role )
         throws ComponentLookupException;
-    
+
     /**
      * Gets the container.
      * 

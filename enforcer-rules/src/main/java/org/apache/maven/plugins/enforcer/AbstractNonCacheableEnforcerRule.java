@@ -24,7 +24,8 @@ import org.apache.maven.enforcer.rule.api.EnforcerRule;
  * The Class AbstractNonCacheableEnforcerRule. This is to be used by rules
  * that don't need caching...it saves implementing a bunch of methods.
  * 
- * @author brianf
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id: $
  */
 abstract public class AbstractNonCacheableEnforcerRule
     extends AbstractStandardEnforcerRule

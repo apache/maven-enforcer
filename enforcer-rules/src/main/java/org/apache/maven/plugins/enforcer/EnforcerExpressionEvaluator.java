@@ -27,10 +27,10 @@ import org.apache.maven.project.path.PathTranslator;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class EnforcerExpressionEvaluator.
+ * The Class EnforcerExpressionEvaluator. This class wraps the PluginParameterExpressionEvaluator
+ * because it can't be accessed directly in 2.0.x so we must create a new one.
  * 
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a> This class wraps the PluginParameterExpressionEvaluator
- *         because it can't be accessed directly in 2.0.x so we must create a new one.
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class EnforcerExpressionEvaluator
     extends PluginParameterExpressionEvaluator

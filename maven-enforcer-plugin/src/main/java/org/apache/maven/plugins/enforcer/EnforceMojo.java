@@ -44,10 +44,9 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
  * 
  * @requiresDependencyResolution test
  * @goal enforce
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @phase validate
- * @version $Id: EnforceMojo.java 571676 2007-09-01
- *          03:28:56Z brianf $
+ * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @version $Id$
  */
 public class EnforceMojo
     extends AbstractMojo

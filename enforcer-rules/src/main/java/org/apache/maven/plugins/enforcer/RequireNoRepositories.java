@@ -37,7 +37,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 // TODO: Auto-generated Javadoc
 /**
- * The Class RequireNoRepositories.
+ * This rule checks that this pom or its parents don't define a repository.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
