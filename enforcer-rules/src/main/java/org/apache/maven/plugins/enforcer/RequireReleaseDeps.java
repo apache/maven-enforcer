@@ -53,9 +53,9 @@ public class RequireReleaseDeps
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
-    	boolean callSuper;
-    	if ( onlyWhenRelease )
-    	{
+        boolean callSuper;
+        if ( onlyWhenRelease )
+        {
             // get the project
             MavenProject project = null;
             try
@@ -69,17 +69,17 @@ public class RequireReleaseDeps
 
             // only call super if this project is a release
             callSuper = !project.getArtifact().isSnapshot();
-    	}
-    	else
-    	{
-    		callSuper = true;
-    	}
-    	if ( callSuper )
-    	{
-    		super.execute(helper);
-    	}
+        }
+        else
+        {
+            callSuper = true;
+        }
+        if ( callSuper )
+        {
+            super.execute(helper);
+        }
     }
-	
+
     /**
      * Checks the set of dependencies to see if any snapshots are included
      * 
