@@ -46,6 +46,8 @@ Require Plugin Versions
      are plugins that may not be in the poms but are used anyway, like help, eclipse etc.
      The plugins should be specified in the form: group:artifactId.  
      
+   * uncheckedPlugins - A list of plugins to skip version checking. Ie allow no version, or snapshots, etc. The plugins should be specified in the form: group:artifactId  
+     
    
    []
 

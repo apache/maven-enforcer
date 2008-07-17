@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,7 +71,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 // TODO: Auto-generated Javadoc
 /**
- *  This rule will enforce that all plugins specified in the poms have a version declared.
+ * This rule will enforce that all plugins specified in the poms have a version declared.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
@@ -103,6 +104,12 @@ public class RequirePluginVersions
      * The plugins should be specified in the form: <code>group:artifactId</code>.
      */
     public List additionalPlugins;
+
+    /**
+     * Plugins to skip for version enforcement. The plugins should be specified in the form:
+     * <code>group:artifactId</code>.
+     */
+    public List unCheckedPlugins;
 
     /** The plugin manager. */
     private PluginManager pluginManager;
@@ -166,6 +173,9 @@ public class RequirePluginVersions
             // insert any additional plugins specified by the user.
             allPlugins = addAdditionalPlugins( allPlugins, additionalPlugins );
             allPlugins.addAll( getProfilePlugins( project ) );
+
+            // pull out any we should skip
+            allPlugins = (Set) removeUncheckedPlugins( unCheckedPlugins, allPlugins );
 
             // there's nothing to do here
             if ( allPlugins.isEmpty() )
@@ -299,6 +309,28 @@ public class RequirePluginVersions
     }
 
     /**
+     * Remove the plugins that the user doesn't want to check.
+     * 
+     * @param uncheckedPlugins
+     * @param plugins
+     * @return
+     * @throws MojoExecutionException 
+     */
+    public Collection removeUncheckedPlugins( Collection uncheckedPlugins, Collection plugins ) throws MojoExecutionException
+    {
+        if ( uncheckedPlugins != null && !uncheckedPlugins.isEmpty() )
+        {
+            Iterator iter = uncheckedPlugins.iterator();
+            while ( iter.hasNext() )
+            {
+                Plugin plugin = parsePluginString( (String) iter.next() );
+                plugins.remove( plugin );
+            }
+        }
+        return plugins;
+    }
+
+    /**
      * Add the additional plugins if they don't exist yet.
      * 
      * @param existing the existing
@@ -315,32 +347,53 @@ public class RequirePluginVersions
             while ( iter.hasNext() )
             {
                 String pluginString = (String) iter.next();
-                String[] pluginStrings = pluginString.split( ":" );
-                if ( pluginStrings.length == 2 )
-                {
-                    Plugin plugin = new Plugin();
-                    plugin.setGroupId( pluginStrings[0] );
-                    plugin.setArtifactId( pluginStrings[1] );
+                Plugin plugin = parsePluginString( pluginString );
 
-                    // only add this if it's not already there.
-                    if ( existing == null )
-                    {
-                        existing = new HashSet();
-                        existing.add( plugin );
-                    }
-                    else if ( !existing.contains( plugin ) )
-                    {
-                        existing.add( plugin );
-                    }
-                }
-                else
+                if ( existing == null )
                 {
-                    throw new MojoExecutionException( "Invalid AdditionalPlugin string: " + pluginString );
+                    existing = new HashSet();
+                    existing.add( plugin );
+                }
+                else if ( !existing.contains( plugin ) )
+                {
+                    existing.add( plugin );
                 }
             }
-
         }
         return existing;
+    }
+
+    /**
+     * Helper method to parse and inject a Plugin.
+     * 
+     * @param pluginString
+     * @return
+     * @throws MojoExecutionException
+     */
+    protected Plugin parsePluginString( String pluginString )
+        throws MojoExecutionException
+    {
+        if ( pluginString != null )
+        {
+            String[] pluginStrings = pluginString.split( ":" );
+            if ( pluginStrings.length == 2 )
+            {
+                Plugin plugin = new Plugin();
+                plugin.setGroupId( pluginStrings[0] );
+                plugin.setArtifactId( pluginStrings[1] );
+
+                return plugin;
+            }
+            else
+            {
+                throw new MojoExecutionException( "Invalid AdditionalPlugin string: " + pluginString );
+            }
+        }
+        else
+        {
+            throw new MojoExecutionException( "Invalid AdditionalPlugin string: " + pluginString );
+        }
+
     }
 
     /**
@@ -1070,5 +1123,15 @@ public class RequirePluginVersions
     public void setBanTimestamps( boolean theBanTimestamps )
     {
         this.banTimestamps = theBanTimestamps;
+    }
+
+    public List getUnCheckedPlugins()
+    {
+        return unCheckedPlugins;
+    }
+
+    public void setUnCheckedPlugins( List unCheckedPlugins )
+    {
+        this.unCheckedPlugins = unCheckedPlugins;
     }
 }

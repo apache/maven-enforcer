@@ -2,7 +2,7 @@
   
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.enforcer.its</groupId>
-  <artifactId>requirePlugins1</artifactId>
+  <artifactId>requirePluginsUnchecked</artifactId>
   <packaging>jar</packaging>
   <version>testing</version>
     
@@ -24,13 +24,17 @@
         <version>1.0-SNAPSHOT</version>
         <executions>
           <execution>
-            <id>enforce</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <requirePluginVersions><phases>site</phases></requirePluginVersions>
+                <requirePluginVersions>
+                  <phases>site</phases>
+                  <unCheckedPlugins>
+                    <unCheckedPlugin>org.apache.maven.plugins:maven-enforcer-plugin</unCheckedPlugin>
+                  </unCheckedPlugins>
+                </requirePluginVersions>
               </rules>
             </configuration>
           <!--  <dependencies>

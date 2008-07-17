@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -319,13 +320,43 @@ public class TestRequirePluginVersions
     }
 
     /**
+     * Test remove Unchecked plugins.
+     * 
+     * @throws MojoExecutionException the mojo execution exception
+     */
+    public void testGetUncheckedPlugins()
+        throws MojoExecutionException
+    {
+        RequirePluginVersions rule = new RequirePluginVersions();
+
+        Set plugins = new HashSet();
+        plugins.add( EnforcerTestUtils.newPlugin( "group", "a-artifact", "1.0" ) );
+        plugins.add( EnforcerTestUtils.newPlugin( "group", "foo", null ) );
+        plugins.add( EnforcerTestUtils.newPlugin( "group", "foo2", "" ) );
+
+        List unchecked = new ArrayList();
+        unchecked.add( "group:a-artifact" );
+
+        Collection results = rule.removeUncheckedPlugins( unchecked, plugins );
+        
+
+        // make sure only one new plugin has been added
+        assertNotNull( results );
+        assertEquals( 2, results.size() );
+        assertContainsPlugin( "group", "foo", results );
+        assertContainsPlugin( "group", "foo2", results );
+        assertNotContainPlugin( "group", "a-artifact", plugins );
+
+    }
+    
+    /**
      * Assert contains plugin.
      * 
      * @param group the group
      * @param artifact the artifact
      * @param theSet the the set
      */
-    private void assertContainsPlugin( String group, String artifact, Set theSet )
+    private void assertContainsPlugin( String group, String artifact, Collection theSet )
     {
         Plugin p = new Plugin();
         p.setGroupId( group );
@@ -333,6 +364,21 @@ public class TestRequirePluginVersions
         assertTrue( theSet.contains( p ) );
     }
 
+    /**
+     * Assert doesn't contain plugin.
+     * 
+     * @param group the group
+     * @param artifact the artifact
+     * @param theSet the the set
+     */
+    private void assertNotContainPlugin( String group, String artifact, Collection theSet )
+    {
+        Plugin p = new Plugin();
+        p.setGroupId( group );
+        p.setArtifactId( artifact );
+        assertFalse( theSet.contains( p ) );
+    }
+    
     /**
      * Test id.
      */
