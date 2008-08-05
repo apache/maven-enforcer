@@ -61,6 +61,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.version.PluginVersionNotFoundException;
 import org.apache.maven.plugin.version.PluginVersionResolutionException;
 import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtils;
+import org.apache.maven.plugins.enforcer.utils.PluginWrapper;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
@@ -189,7 +190,7 @@ public class RequirePluginVersions
             }
 
             // get all the plugins that are mentioned in the pom (and parents)
-            List plugins = getAllPluginEntries( project );
+            List pluginWrappers = getAllPluginEntries( project );
 
             // now look for the versions that aren't valid and add to a list.
             ArrayList failures = new ArrayList();
@@ -197,7 +198,8 @@ public class RequirePluginVersions
             while ( iter.hasNext() )
             {
                 Plugin plugin = (Plugin) iter.next();
-                if ( !hasValidVersionSpecified( helper, plugin, plugins ) )
+            
+                if ( !hasValidVersionSpecified( helper, plugin, pluginWrappers ) )
                 {
                     failures.add( plugin );
                 }
@@ -313,6 +315,7 @@ public class RequirePluginVersions
      * 
      * @param uncheckedPlugins
      * @param plugins
+     * @param field
      * @return
      * @throws MojoExecutionException 
      */
@@ -323,7 +326,7 @@ public class RequirePluginVersions
             Iterator iter = uncheckedPlugins.iterator();
             while ( iter.hasNext() )
             {
-                Plugin plugin = parsePluginString( (String) iter.next() );
+                Plugin plugin = parsePluginString( (String) iter.next(), "UncheckedPlugins" );
                 plugins.remove( plugin );
             }
         }
@@ -347,7 +350,7 @@ public class RequirePluginVersions
             while ( iter.hasNext() )
             {
                 String pluginString = (String) iter.next();
-                Plugin plugin = parsePluginString( pluginString );
+                Plugin plugin = parsePluginString( pluginString, "AdditionalPlugins" );
 
                 if ( existing == null )
                 {
@@ -370,7 +373,7 @@ public class RequirePluginVersions
      * @return
      * @throws MojoExecutionException
      */
-    protected Plugin parsePluginString( String pluginString )
+    protected Plugin parsePluginString( String pluginString, String field )
         throws MojoExecutionException
     {
         if ( pluginString != null )
@@ -386,12 +389,12 @@ public class RequirePluginVersions
             }
             else
             {
-                throw new MojoExecutionException( "Invalid AdditionalPlugin string: " + pluginString );
+                throw new MojoExecutionException( "Invalid "+field+" string: " + pluginString );
             }
         }
         else
         {
-            throw new MojoExecutionException( "Invalid AdditionalPlugin string: " + pluginString );
+            throw new MojoExecutionException( "Invalid "+field+" string: " + pluginString );
         }
 
     }
@@ -537,18 +540,18 @@ public class RequirePluginVersions
      * 
      * @param helper the helper
      * @param source the source
-     * @param plugins the plugins
+     * @param pluginWrappers the plugins
      * @return true, if successful
      */
-    protected boolean hasValidVersionSpecified( EnforcerRuleHelper helper, Plugin source, List plugins )
+    protected boolean hasValidVersionSpecified( EnforcerRuleHelper helper, Plugin source, List pluginWrappers )
     {
         boolean found = false;
         boolean status = false;
-        Iterator iter = plugins.iterator();
+        Iterator iter = pluginWrappers.iterator();
         while ( iter.hasNext() )
         {
             // find the matching plugin entry
-            Plugin plugin = (Plugin) iter.next();
+            PluginWrapper plugin = (PluginWrapper) iter.next();
             if ( source.getArtifactId().equals( plugin.getArtifactId() ) &&
                 source.getGroupId().equals( plugin.getGroupId() ) )
             {
@@ -597,7 +600,7 @@ public class RequirePluginVersions
         }
         if ( !found )
         {
-            log.warn( "plugin " + source.getGroupId() + ":" + source.getArtifactId() + " not found" );
+            log.debug( "plugin " + source.getGroupId() + ":" + source.getArtifactId() + " not found" );
         }
         return status;
     }
@@ -942,11 +945,11 @@ public class RequirePluginVersions
     }
 
     /**
-     * Gets all plugin entries in build.plugins or build.pluginManagement.plugins or profile.build.plugins in this
+     * Gets all plugin entries in build.plugins, build.pluginManagement.plugins, profile.build.plugins, reporting and profile.reporting in this
      * project and all parents
      * 
      * @param project the project
-     * @return the all plugin entries
+     * @return the all plugin entries wrapped in a PluginWrapper Object
      * @throws ArtifactResolutionException the artifact resolution exception
      * @throws ArtifactNotFoundException the artifact not found exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -962,20 +965,39 @@ public class RequirePluginVersions
                                         new File( project.getBasedir(), "pom.xml" ) );
 
         // now find all the plugin entries, either in
-        // build.plugins or build.pluginManagement.plugins
+        // build.plugins or build.pluginManagement.plugins, profiles.plugins and reporting
         Iterator iter = models.iterator();
         while ( iter.hasNext() )
         {
             Model model = (Model) iter.next();
             try
             {
-                plugins.addAll( model.getBuild().getPlugins() );
+                plugins.addAll( PluginWrapper.addAll(model.getBuild().getPlugins(),model.getId()+".build.plugins" ));
             }
             catch ( NullPointerException e )
             {
                 // guess there are no plugins here.
             }
+            
+            try
+            {
+                //add the reporting plugins
+                plugins.addAll( PluginWrapper.addAll(model.getReporting().getPlugins(),model.getId()+".reporting" ));              
+            }
+            catch (NullPointerException e)
+            {
+             // guess there are no plugins here.
+            }
 
+            try
+            {
+                plugins.addAll( PluginWrapper.addAll(model.getBuild().getPluginManagement().getPlugins(),model.getId()+".build.pluginManagement.plugins" ));              
+            }
+            catch ( NullPointerException e )
+            {
+                // guess there are no plugins here.
+            }
+            
             // Add plugins in profiles
             Iterator it = model.getProfiles().iterator();
             while ( it.hasNext() )
@@ -983,22 +1005,31 @@ public class RequirePluginVersions
                 Profile profile = (Profile) it.next();
                 try
                 {
-                    plugins.addAll( profile.getBuild().getPlugins() );
+                    plugins.addAll( PluginWrapper.addAll(profile.getBuild().getPlugins(),model.getId()+".profiles.profile["+profile.getId()+"].build.plugins" ));
                 }
                 catch ( NullPointerException e )
                 {
                     // guess there are no plugins here.
                 }
-
-            }
-
-            try
-            {
-                plugins.addAll( model.getBuild().getPluginManagement().getPlugins() );
-            }
-            catch ( NullPointerException e )
-            {
-                // guess there are no plugins here.
+                
+                try
+                {
+                    //add the reporting plugins
+                    plugins.addAll( PluginWrapper.addAll(profile.getReporting().getPlugins(),model.getId()+"profile["+profile.getId()+"].reporting.plugins" ));               
+                }
+                catch (NullPointerException e)
+                {
+                 // guess there are no plugins here.
+                }
+                try
+                {
+                    //add the reporting plugins
+                    plugins.addAll( PluginWrapper.addAll(profile.getBuild().getPluginManagement().getPlugins(),model.getId()+"profile["+profile.getId()+"].build.pluginManagement.plugins" ));                
+                }
+                catch (NullPointerException e)
+                {
+                 // guess there are no plugins here.
+                }
             }
         }
 

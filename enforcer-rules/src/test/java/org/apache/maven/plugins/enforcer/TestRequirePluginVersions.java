@@ -33,6 +33,7 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtils;
+import org.apache.maven.plugins.enforcer.utils.PluginWrapper;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -78,6 +79,9 @@ public class TestRequirePluginVersions
         plugins.add( EnforcerTestUtils.newPlugin( "group", "f-artifact", "1.0-SNAPSHOT" ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "g-artifact", "1.0-12345678.123456-1" ) );
 
+        
+        plugins = PluginWrapper.addAll( plugins, "unit" );
+        
         RequirePluginVersions rule = new RequirePluginVersions();
         rule.setBanLatest( false );
         rule.setBanRelease( false );
@@ -139,6 +143,8 @@ public class TestRequirePluginVersions
         plugins.add( EnforcerTestUtils.newPlugin( "group", "e-artifact", "${}" ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "f-artifact", "${   }" ) );
 
+        plugins = PluginWrapper.addAll( plugins, "unit" );
+        
         RequirePluginVersions rule = new RequirePluginVersions();
         rule.setBanLatest( false );
         rule.setBanRelease( false );
