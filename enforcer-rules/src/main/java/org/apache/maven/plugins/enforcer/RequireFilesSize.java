@@ -33,7 +33,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * @author brianf
  * @author Roman Stumm
  */
-public class RequireFileSize
+public class RequireFilesSize
     extends AbstractRequireFiles
 {
 

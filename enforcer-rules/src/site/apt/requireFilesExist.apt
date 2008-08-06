@@ -16,28 +16,23 @@
 ~~ under the License.    
  
   ------
-  Require Release Version
+  Require Files Exist
   ------
   Brian Fox
   ------
   August 2008
   ------
 
-Require Release Dependencies
+Require Files Exist
 
-  This rule checks the dependencies and fails if any snapshots are found.
+  This rule checks that the specified list of files exist.
 
 
    The following parameters are supported by this rule:
    
-   * searchTransitive - if transitive dependencies should be checked. Default: true
-   
    * message - an optional message to the user if the rule fails.
+   * files - A list of files to check.
    
-   * onlyWhenRelease - if this rule should only be executed when the version is a non-SNAPSHOT version. Default: false
-   
-   * failWhenParentIsSnapshot - if the parent should be checked. Default: true 
-
    []
 
    
@@ -60,9 +55,12 @@ Require Release Dependencies
             </goals>
             <configuration>
               <rules>
-                <requireReleaseDeps>
-                  <message>No Snapshots Allowed!</message>
-                </requireReleaseDeps>
+                <requireFilesExist>
+                  <files>
+                   <file>${project.outputDirectory}/foo.txt</file>
+                   <file>${project.outputDirectory}/foo2.txt</file>
+                  </files>
+                </requireFilesExist>
               </rules>
               <fail>true</fail>
             </configuration>

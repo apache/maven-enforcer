@@ -16,29 +16,16 @@
 ~~ under the License.    
  
   ------
-  Require Release Version
+  AlwaysPass
   ------
   Brian Fox
   ------
   August 2008
   ------
 
-Require Release Dependencies
+Always Pass
 
-  This rule checks the dependencies and fails if any snapshots are found.
-
-
-   The following parameters are supported by this rule:
-   
-   * searchTransitive - if transitive dependencies should be checked. Default: true
-   
-   * message - an optional message to the user if the rule fails.
-   
-   * onlyWhenRelease - if this rule should only be executed when the version is a non-SNAPSHOT version. Default: false
-   
-   * failWhenParentIsSnapshot - if the parent should be checked. Default: true 
-
-   []
+  This rule will always succeed. It is useful for testing proper plugin configuration.
 
    
   Sample Plugin Configuration:
@@ -60,9 +47,7 @@ Require Release Dependencies
             </goals>
             <configuration>
               <rules>
-                <requireReleaseDeps>
-                  <message>No Snapshots Allowed!</message>
-                </requireReleaseDeps>
+                <AlwaysPass/>
               </rules>
               <fail>true</fail>
             </configuration>

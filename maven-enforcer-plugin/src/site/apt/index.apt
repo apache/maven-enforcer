@@ -25,15 +25,13 @@
 
 Maven Enforcer Plugin - The Loving Iron Fist of Maven\x99
 
-  The Enforcer plugin provides goals to control certain environmental constraints such as Maven version, JDK version and OS family.
+  The Enforcer plugin provides goals to control certain environmental constraints such as Maven version, JDK version and OS family along with many more standard rules and user created rules.
 
 * Goals Overview
 
-  The Enforcer plugin has three goals:
+  The Enforcer plugin has two goals:
 
   *{{{enforce-mojo.html}enforcer:enforce}} executes rules for each project in a multi-project build.
-  
-  *{{{enforce-once-mojo.html}enforcer:enforce-once}} executes rules once per build.
   
   *{{{display-info-mojo.html}enforcer:display-info}} display the current information as detected by the standard rules.
 

@@ -16,29 +16,16 @@
 ~~ under the License.    
  
   ------
-  Require Release Version
+  Always Fail
   ------
   Brian Fox
   ------
   August 2008
   ------
 
-Require Release Dependencies
+Always Fail
 
-  This rule checks the dependencies and fails if any snapshots are found.
-
-
-   The following parameters are supported by this rule:
-   
-   * searchTransitive - if transitive dependencies should be checked. Default: true
-   
-   * message - an optional message to the user if the rule fails.
-   
-   * onlyWhenRelease - if this rule should only be executed when the version is a non-SNAPSHOT version. Default: false
-   
-   * failWhenParentIsSnapshot - if the parent should be checked. Default: true 
-
-   []
+  This rule will always fail. It is useful for testing proper plugin configuration.
 
    
   Sample Plugin Configuration:
@@ -54,15 +41,13 @@ Require Release Dependencies
         <version>1.0</version>
         <executions>
           <execution>
-            <id>enforce-no-snapshots</id>
+            <id>enforce</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <requireReleaseDeps>
-                  <message>No Snapshots Allowed!</message>
-                </requireReleaseDeps>
+                <AlwaysFail/>
               </rules>
               <fail>true</fail>
             </configuration>
