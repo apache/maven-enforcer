@@ -23,17 +23,19 @@
   November 2007
   ------
 
-Require Release Dependencies
+Require Release Version
 
-  This rule checks the dependencies and fails if any snapshots are found.
+  This rule checks that the current project is not a snapshot.
 
 
    The following parameters are supported by this rule:
    
-   * searchTransitive - if transitive dependencies should be checked.
-   
    * message - an optional message to the user if the rule fails.
    
+   * onlyWhenRelease - if this rule should only be executed when the version is a non-SNAPSHOT version. Default: false
+   
+   * failWhenParentIsSnapshot - if the parent should be checked. Default: true 
+
    []
 
    
@@ -56,9 +58,9 @@ Require Release Dependencies
             </goals>
             <configuration>
               <rules>
-                <requireReleaseDeps>
+                <requireReleaseVersion>
                   <message>No Snapshots Allowed!</message>
-                </requireReleaseDeps>
+                </requireReleaseVersion>
               </rules>
               <fail>true</fail>
             </configuration>

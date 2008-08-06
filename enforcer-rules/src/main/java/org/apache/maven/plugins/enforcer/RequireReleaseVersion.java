@@ -18,6 +18,7 @@
  */
 package org.apache.maven.plugins.enforcer;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.project.MavenProject;
@@ -33,6 +34,13 @@ public class RequireReleaseVersion
     extends AbstractNonCacheableEnforcerRule
 {
 
+    /**
+     * Allows this rule to fail when the parent is defined as a snapshot.
+     * 
+     * @parameter
+     */
+    public boolean failWhenParentIsSnapshot = true;
+
     /*
      * (non-Javadoc)
      * 
@@ -41,25 +49,55 @@ public class RequireReleaseVersion
     public void execute( EnforcerRuleHelper theHelper )
         throws EnforcerRuleException
     {
-        try
-        {
-            MavenProject project = (MavenProject) theHelper.evaluate( "${project}" );
 
-            if ( project.getArtifact().isSnapshot() )
+        MavenProject project = getProject( theHelper );
+
+        if ( project.getArtifact().isSnapshot() )
+        {
+            StringBuffer buf = new StringBuffer();
+            if ( message != null )
             {
-                StringBuffer buf = new StringBuffer();
-                if ( message != null )
-                {
-                    buf.append( message + "\n" );
-                }
-                buf.append( "This project cannot be a snapshot:" + project.getArtifact().getId() );
-                throw new EnforcerRuleException( buf.toString() );
+                buf.append( message + "\n" );
+            }
+            buf.append( "This project cannot be a snapshot:" + project.getArtifact().getId() );
+            throw new EnforcerRuleException( buf.toString() );
+        }
+        if ( failWhenParentIsSnapshot )
+        {
+            Artifact parentArtifact = project.getParentArtifact();
+            if ( parentArtifact != null && parentArtifact.isSnapshot() )
+            {
+                throw new EnforcerRuleException( "Parent Cannot be a snapshot: " + parentArtifact.getId() );
             }
         }
-        catch ( ExpressionEvaluationException e )
-        {
-            throw new EnforcerRuleException( "Unable to retrieve the project.", e );
-        }
 
+    }
+
+    /**
+     * @param helper
+     * @return
+     * @throws EnforcerRuleException
+     */
+    private MavenProject getProject( EnforcerRuleHelper helper )
+        throws EnforcerRuleException
+    {
+        try
+        {
+            return (MavenProject) helper.evaluate( "${project}" );
+        }
+        catch ( ExpressionEvaluationException eee )
+        {
+            throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
+        }
+    }
+
+    public boolean isFailWhenParentIsSnapshot()
+    {
+        return failWhenParentIsSnapshot;
+    }
+
+    public void setFailWhenParentIsSnapshot( boolean failWhenParentIsSnapshot )
+    {
+        this.failWhenParentIsSnapshot = failWhenParentIsSnapshot;
     }
 }

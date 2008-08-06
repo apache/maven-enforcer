@@ -48,24 +48,24 @@ public class RequireReleaseDeps
     public boolean onlyWhenRelease = false;
 
     /**
+     * Allows this rule to fail when the parent is defined as a snapshot.
+     * 
+     * @parameter
+     */
+    public boolean failWhenParentIsSnapshot = true;
+
+    /**
      * Override parent to allow optional ignore of this rule.
      */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
         boolean callSuper;
+        MavenProject project = null;
         if ( onlyWhenRelease )
         {
             // get the project
-            MavenProject project = null;
-            try
-            {
-                project = (MavenProject) helper.evaluate( "${project}" );
-            }
-            catch ( ExpressionEvaluationException eee )
-            {
-                throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
-            }
+            project = getProject( helper );
 
             // only call super if this project is a release
             callSuper = !project.getArtifact().isSnapshot();
@@ -76,16 +76,46 @@ public class RequireReleaseDeps
         }
         if ( callSuper )
         {
-            super.execute(helper);
+            super.execute( helper );
+            if ( failWhenParentIsSnapshot )
+            {
+                if ( project == null )
+                {
+                    project = getProject( helper );
+                }
+                Artifact parentArtifact = project.getParentArtifact();
+                if ( parentArtifact != null && parentArtifact.isSnapshot() )
+                {
+                    throw new EnforcerRuleException( "Parent Cannot be a snapshot: " + parentArtifact.getId() );
+                }
+            }
         }
     }
 
     /**
-     * Checks the set of dependencies to see if any snapshots are included.
+     * @param helper
+     * @return
+     * @throws EnforcerRuleException
+     */
+    private MavenProject getProject( EnforcerRuleHelper helper )
+        throws EnforcerRuleException
+    {
+        try
+        {
+            return (MavenProject) helper.evaluate( "${project}" );
+        }
+        catch ( ExpressionEvaluationException eee )
+        {
+            throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
+        }
+    }
+
+    /**
+     * Checks the set of dependencies to see if any snapshots are included
      * 
-     * @param dependencies the dependencies to check
+     * @param dependencies the dependencies
      * @param log the log
-     * @return a set containing snapshot artifacts found
+     * @return the sets the
      * @throws EnforcerRuleException the enforcer rule exception
      */
     protected Set checkDependencies( Set dependencies, Log log )
@@ -93,10 +123,10 @@ public class RequireReleaseDeps
     {
         Set foundExcludes = new HashSet();
 
-        Iterator dependencyIter = dependencies.iterator();
-        while ( dependencyIter.hasNext() )
+        Iterator DependencyIter = dependencies.iterator();
+        while ( DependencyIter.hasNext() )
         {
-            Artifact artifact = (Artifact) dependencyIter.next();
+            Artifact artifact = (Artifact) DependencyIter.next();
 
             if ( artifact.isSnapshot() )
             {
@@ -105,5 +135,25 @@ public class RequireReleaseDeps
         }
 
         return foundExcludes;
+    }
+    
+    public boolean isOnlyWhenRelease()
+    {
+        return onlyWhenRelease;
+    }
+
+    public void setOnlyWhenRelease( boolean onlyWhenRelease )
+    {
+        this.onlyWhenRelease = onlyWhenRelease;
+    }
+
+    public boolean isFailWhenParentIsSnapshot()
+    {
+        return failWhenParentIsSnapshot;
+    }
+
+    public void setFailWhenParentIsSnapshot( boolean failWhenParentIsSnapshot )
+    {
+        this.failWhenParentIsSnapshot = failWhenParentIsSnapshot;
     }
 }

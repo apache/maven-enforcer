@@ -44,6 +44,7 @@ public class TestNoSnapshots
     public void testRule()
         throws IOException
     {
+        
         ArtifactStubFactory factory = new ArtifactStubFactory();
         MockProject project = new MockProject();
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
@@ -71,6 +72,19 @@ public class TestNoSnapshots
         project.setArtifact( factory.getReleaseArtifact() );
         
         TestEnforcerRuleUtils.execute( rule, helper, true );
+        
+        MockProject parent = new MockProject();
+        parent.setArtifact( factory.getSnapshotArtifact() );
+        project.setParent( parent );
+        helper = EnforcerTestUtils.getHelper(project);
+         
+        rule.setFailWhenParentIsSnapshot( true );
+        TestEnforcerRuleUtils.execute( rule, helper, true );
+        
+        rule.setFailWhenParentIsSnapshot( false );
+        TestEnforcerRuleUtils.execute( rule, helper, false );
+        
+        
     } 
 
     /**
