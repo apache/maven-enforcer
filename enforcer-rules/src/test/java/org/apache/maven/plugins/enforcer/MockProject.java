@@ -1490,7 +1490,13 @@ public class MockProject
      */
     public Artifact getParentArtifact()
     {
-        return null;
+        if (parent !=null)
+        {
+            return parent.getArtifact();    
+        }
+        else
+            return null;
+        
     }
 
     /*

@@ -76,6 +76,8 @@ public class TestNoSnapshots
         MockProject parent = new MockProject();
         parent.setArtifact( factory.getSnapshotArtifact() );
         project.setParent( parent );
+        project.setArtifacts( null );
+        project.setDependencyArtifacts( null );
         helper = EnforcerTestUtils.getHelper(project);
          
         rule.setFailWhenParentIsSnapshot( true );
