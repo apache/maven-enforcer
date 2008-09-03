@@ -79,6 +79,11 @@ public class TestAbstractVersionEnforcer
         assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[1.5.0,)" ), version ) );
         assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[1.5,1.6)" ), version ) );
 
+        //MENFORCER-50
+        version = new DefaultArtifactVersion ("2.1.0-M1-RC12");
+        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.1.0-M1-RC12,)" ), version ) );
+        assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.1.0-M1,)" ), version ) );
+        
     }
 
     /**
