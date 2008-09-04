@@ -39,7 +39,7 @@
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MENFORCER</url>
   </issueManagement>
-  <inceptionYear>2006</inceptionYear>
+  <inceptionYear>2007</inceptionYear>
   <licenses>
     <license>
       <name>Apache License 2.0</name>
@@ -112,9 +112,9 @@
     <url>http://svn.apache.org/viewcvs.cgi/maven/enforcer/trunk</url>
   </scm>
   <properties>
-    <api.version>1.0-SNAPSHOT</api.version>
-    <rules.version>1.0-SNAPSHOT</rules.version>
-    <maven.version>2.0.6</maven.version>
+    <api.version>1.0-alpha-4-SNAPSHOT</api.version>
+    <rules.version>1.0-alpha-4-SNAPSHOT</rules.version>
+    <maven.version>2.0.9</maven.version>
   </properties>
   <build>
     <resources>
