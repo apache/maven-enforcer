@@ -8,8 +8,8 @@
 	<name>My Custom Rule</name>
 	<description>This is my custom rule.</description>
 	<properties>
-	  <api.version>1.0-SNAPSHOT</api.version>
-	  <maven.version>2.0.6</maven.version>
+	  <api.version>1.0-alpha-4</api.version>
+	  <maven.version>2.0.9</maven.version>
 	</properties>
 	<build>	
 	</build>

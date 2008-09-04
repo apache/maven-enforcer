@@ -1,0 +1,13 @@
+<assembly>
+  <id>sample</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+      <directory>src/custom-rule-sample</directory>
+      <outputDirectory>/custom-rule-sample</outputDirectory>
+    </fileSet>
+  </fileSets>
+</assembly>
