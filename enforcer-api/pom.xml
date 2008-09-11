@@ -23,11 +23,11 @@
   <parent>
     <groupId>org.apache.maven.enforcer</groupId>
     <artifactId>enforcer</artifactId>
-    <version>2-SNAPSHOT</version>
+    <version>1-SNAPSHOT</version>
   </parent>
   <artifactId>enforcer-api</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-alpha-5-SNAPSHOT</version>
+  <version>1.0-alpha-4-SNAPSHOT</version>
   <name>Enforcer API</name>
   <description>
     This component provides the generic interfaces needed to implement custom rules for the maven-enforcer-plugin.

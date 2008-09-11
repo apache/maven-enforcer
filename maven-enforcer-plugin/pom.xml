@@ -23,14 +23,14 @@
   <parent>
     <groupId>org.apache.maven.enforcer</groupId>
     <artifactId>enforcer</artifactId>
-    <version>2-SNAPSHOT</version>
+    <version>1-SNAPSHOT</version>
   </parent>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-enforcer-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Enforcer Plugin</name>
   <description>The Loving Iron Fist of Maven</description>
-  <version>1.0-alpha-5-SNAPSHOT</version>
+  <version>1.0-alpha-4-SNAPSHOT</version>
   <url>http://maven.apache.org/plugins/maven-enforcer-plugin/</url>
   <issueManagement>
     <system>JIRA</system>
@@ -61,7 +61,7 @@
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scp://people.apache.org/www/maven.apache.org/plugins/maven-enforcer-plugin</url>
+      <url>${site.deploy.url}/plugins/maven-enforcer-plugin</url>
     </site>
   </distributionManagement>
   <build>
@@ -69,7 +69,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
-        <version>2.0</version>
         <executions>
           <execution>
             <phase>clean</phase>
@@ -86,6 +85,18 @@
             scp://people.apache.org/www/maven.apache.org/plugins/${project.artifactId}-${project.version}
           </stagingSiteURL>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generated-helpmojo</id>
+            <goals>
+              <goal>helpmojo</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <resources>
@@ -143,4 +154,13 @@
       <artifactId>maven-plugin-testing-harness</artifactId>
     </dependency>
   </dependencies>
+  <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-plugin-plugin</artifactId>
+            <version>${maven.plugin.plugin.version}</version>
+          </plugin>
+        </plugins>
+      </reporting>
 </project>

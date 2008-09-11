@@ -22,7 +22,7 @@ import org.apache.maven.plugin.MojoExecutionException;
  */
 
 /**
- * This goal executes the defined enforcer-rules once per build.
+ * This goal has been deprecated.
  * 
  * @deprecated
  * @goal enforce-once

@@ -23,13 +23,12 @@
     <artifactId>maven-parent</artifactId>
     <groupId>org.apache.maven</groupId>
     <version>9</version>
-    <relativePath>../pom/maven/pom.xml</relativePath>
   </parent>
   <groupId>org.apache.maven.enforcer</groupId>
   <artifactId>enforcer</artifactId>
   <packaging>pom</packaging>
   <name>Enforcer</name>
-  <version>2-SNAPSHOT</version>
+  <version>1-SNAPSHOT</version>
   <description>Enforcer is a build rule execution framework.</description>
   <url>http://maven.apache.org/enforcer</url>
   <prerequisites>
@@ -115,6 +114,8 @@
     <api.version>1.0-alpha-4-SNAPSHOT</api.version>
     <rules.version>1.0-alpha-4-SNAPSHOT</rules.version>
     <maven.version>2.0.9</maven.version>
+    <maven.plugin.plugin.version>2.4.3</maven.plugin.plugin.version>
+    <site.deploy.url>scp://people.apache.org/www/maven.apache.org</site.deploy.url>
   </properties>
   <build>
     <resources>
@@ -131,36 +132,15 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>2.2</version>
-        </plugin>
-        <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>2.0.2</version>
           <configuration>
             <source>1.4</source>
             <target>1.4</target>
           </configuration>
         </plugin>
         <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.3</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>2.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.3</version>
-        </plugin>
-        <plugin>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>2.3</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>2.2</version>
+          <version>${maven.plugin.plugin.version}</version>
         </plugin>
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
@@ -168,17 +148,13 @@
             <tagBase>https://svn.apache.org/repos/asf/maven/enforcer/tags</tagBase>
           </configuration>
         </plugin>
-        <plugin>
-          <artifactId>maven-site-plugin</artifactId>
-          <version>2.0-beta-7</version>
-        </plugin>
       </plugins>
     </pluginManagement>
   </build>
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scp://people.apache.org/www/maven.apache.org/enforcer/</url>
+      <url>${site.deploy.url}/enforcer/</url>
     </site>
   </distributionManagement>
   <dependencyManagement>
@@ -186,17 +162,17 @@
       <dependency>
         <groupId>org.apache.maven.enforcer</groupId>
         <artifactId>enforcer-api</artifactId>
-        <version>1.0-alpha-5-SNAPSHOT</version>
+        <version>${api.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.enforcer</groupId>
         <artifactId>enforcer-rules</artifactId>
-        <version>1.0-alpha-5-SNAPSHOT</version>
+        <version>${rules.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.enforcer</groupId>
         <artifactId>enforcer-rules</artifactId>
-        <version>1.0-alpha-5-SNAPSHOT</version>
+        <version>${rules.version}</version>
         <classifier>tests</classifier>
         <scope>test</scope>
       </dependency>
@@ -249,8 +225,27 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
-        <version>2.0</version>
+        <version>2.2</version>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.5</version>
+        <configuration>
+           <tagletArtifacts>
+             <tagletArtifact>
+                <groupId>org.apache.maven.plugin-tools</groupId>
+                <artifactId>maven-plugin-tools-javadoc</artifactId>
+                <version>2.4.3</version>
+             </tagletArtifact>
+             <tagletArtifact>
+               <groupId>org.codehaus.plexus</groupId>
+               <artifactId>plexus-javadoc</artifactId>
+               <version>1.0</version>
+             </tagletArtifact>
+           </tagletArtifacts>
+          </configuration>
+       </plugin>
     </plugins>
   </reporting>
   <modules>
