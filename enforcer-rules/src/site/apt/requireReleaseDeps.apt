@@ -20,15 +20,17 @@
   ------
   Brian Fox
   ------
-  November 2007
+  Auguest 2008
   ------
 
-Require Release Version
+Require Release Dependencies
 
-  This rule checks that the current project is not a snapshot.
+  This rule checks the dependencies and fails if any snapshots are found.
 
 
    The following parameters are supported by this rule:
+   
+   * searchTransitive - if transitive dependencies should be checked. Default: true
    
    * message - an optional message to the user if the rule fails.
    
@@ -58,9 +60,9 @@ Require Release Version
             </goals>
             <configuration>
               <rules>
-                <requireReleaseVersion>
+                <requireReleaseDeps>
                   <message>No Snapshots Allowed!</message>
-                </requireReleaseVersion>
+                </requireReleaseDeps>
               </rules>
               <fail>true</fail>
             </configuration>
@@ -72,3 +74,4 @@ Require Release Version
   [...]
 </project>
 +---+
+
