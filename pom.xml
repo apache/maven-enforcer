@@ -28,7 +28,7 @@
   <artifactId>enforcer</artifactId>
   <packaging>pom</packaging>
   <name>Enforcer</name>
-  <version>1-SNAPSHOT</version>
+  <version>1</version>
   <description>Enforcer is a build rule execution framework.</description>
   <url>http://maven.apache.org/enforcer</url>
   <prerequisites>
@@ -106,9 +106,9 @@
     </mailingList>
   </mailingLists>
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/enforcer/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/enforcer/trunk/</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/maven/enforcer/trunk</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/enforcer/tags/enforcer-1.0-alpha-4</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/enforcer/tags/enforcer-1.0-alpha-4</developerConnection>
+    <url>http://svn.apache.org/viewcvs.cgi/maven/enforcer/tags/enforcer-1.0-alpha-4</url>
   </scm>
   <properties>
     <api.version>1.0-alpha-4-SNAPSHOT</api.version>
@@ -162,17 +162,17 @@
       <dependency>
         <groupId>org.apache.maven.enforcer</groupId>
         <artifactId>enforcer-api</artifactId>
-        <version>${api.version}</version>
+        <version>1.0-alpha-4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.enforcer</groupId>
         <artifactId>enforcer-rules</artifactId>
-        <version>${rules.version}</version>
+        <version>1.0-alpha-4</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.enforcer</groupId>
         <artifactId>enforcer-rules</artifactId>
-        <version>${rules.version}</version>
+        <version>1.0-alpha-4</version>
         <classifier>tests</classifier>
         <scope>test</scope>
       </dependency>
