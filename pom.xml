@@ -23,6 +23,7 @@
     <artifactId>maven-parent</artifactId>
     <groupId>org.apache.maven</groupId>
     <version>9</version>
+    <relativePath>../pom/maven/pom.xml</relativePath>
   </parent>
   <groupId>org.apache.maven.enforcer</groupId>
   <artifactId>enforcer</artifactId>
