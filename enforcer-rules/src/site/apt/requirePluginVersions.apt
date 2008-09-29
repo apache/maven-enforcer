@@ -13,8 +13,8 @@
 ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 ~~ KIND, either express or implied.  See the License for the
 ~~ specific language governing permissions and limitations
-~~ under the License.    
- 
+~~ under the License.
+
   ------
   Require Plugin Versions
   ------
@@ -28,31 +28,31 @@ Require Plugin Versions
    This rule enforces that all plugins have a version defined, either in the plugin or pluginManagement section of the pom or a parent pom.
 
    The following parameters are supported by this rule:
-   
+
    * message - an optional message to the user if the rule fails.
-   
+
    * banLatest - disallow any use of "LATEST" as a version for any plugin. Default = true.
-   
+
    * banRelease - disallow any use of "RELEASE" as a version for any plugin. Default = true.
-   
+
    * banSnapshots - disallow any use of SNAPSHOT plugins. Default = true.
 
    * banTimestamps - disallow any use of snapshot plugins with timestamp version (only enabled when banSnapshots is true). Default = true.
 
    * phases - The comma separated list of phases that should be used to find 
      lifecycle plugin bindings. The default value is "clean,deploy,site".
-   
+
    * additionalPlugins - A list of additional plugins to enforce have versions. These
      are plugins that may not be in the poms but are used anyway, like help, eclipse etc.
-     The plugins should be specified in the form: group:artifactId.  
-     
-   * uncheckedPlugins - A list of plugins to skip version checking. Ie allow no version, or snapshots, etc. The plugins should be specified in the form: group:artifactId  
-     
-   
+     The plugins should be specified in the form: group:artifactId.
+
+   * unCheckedPlugins - A list of plugins to skip version checking. Ie allow no version, or snapshots, etc. The plugins should be specified in the form: group:artifactId.
+
+
    []
 
    Sample Plugin Configuration (showing some defaults, defaults can be skipped):
-   
+
 +---+
 <project>
   [...]
@@ -81,7 +81,7 @@ Require Plugin Versions
                      <additionalPlugin>org.apache.maven.plugins:maven-ide-plugin</additionalPlugin>
                    </additionalPlugins>
                 </requirePluginVersions>
-              </rules>    
+              </rules>
             </configuration>
           </execution>
         </executions>
@@ -90,4 +90,4 @@ Require Plugin Versions
   </build>
   [...]
 </project>
-+---+  
++---+
