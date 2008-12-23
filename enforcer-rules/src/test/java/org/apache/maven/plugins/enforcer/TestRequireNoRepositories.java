@@ -19,7 +19,11 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import java.util.Collections;
+
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.codehaus.plexus.PlexusTestCase;
 
 /**
  * Test the "require no repositories" rule.
@@ -27,15 +31,159 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class TestRequireNoRepositories
-    extends AbstractMojoTestCase
+    extends PlexusTestCase
 {
-    // TODO!
-    // test default (all banned)
-    // test all plugin repos allowed
-    // test all repos allowed
-    // test allowance of some plugin repos
-    // test allowance of some repos
-    
+    private EnforcerRuleHelper helper;
+
+    private RequireNoRepositories rule;
+
+    private MockProject project;
+
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+
+        rule = new RequireNoRepositories();
+        rule.message = "my message";
+
+        project = new MockProject();
+        project.setGroupId( "org.apache.maven.plugins.enforcer.test" );
+        project.setVersion( "1.0-SNAPSHOT" );
+
+        helper = EnforcerTestUtils.getHelper( project );
+    }
+
+    public void testAllBannedNoRepositories()
+        throws EnforcerRuleException
+    {
+        project.setArtifactId( "no-repositories-child" );
+        project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/no-repositories/child" ) );
+
+        rule.execute( helper );
+    }
+
+    public void testAllBannedWithRepositories()
+        throws EnforcerRuleException
+    {
+        project.setArtifactId( "with-repositories-child" );
+        project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/with-repositories/child" ) );
+
+        try
+        {
+            rule.execute( helper );
+            fail( "Should have exception" );
+        }
+        catch ( EnforcerRuleException e )
+        {
+            assertTrue( true );
+        }
+    }
+
+    public void testAllBannedWithAllowedRepositories()
+        throws EnforcerRuleException
+    {
+        rule.allowedRepositories = Collections.singletonList( "repo" );
+
+        project.setArtifactId( "with-repositories-child" );
+        project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/with-repositories/child" ) );
+
+        rule.execute( helper );
+    }
+
+    public void testAllBannedWithAllowedPluginRepositories()
+        throws EnforcerRuleException
+    {
+        rule.allowedPluginRepositories = Collections.singletonList( "repo" );
+
+        project.setArtifactId( "with-plugin-repositories-child" );
+        project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/with-plugin-repositories/child" ) );
+
+        rule.execute( helper );
+    }
+
+    public void testReposNotBannedNoRepositories()
+        throws EnforcerRuleException
+    {
+        rule.banRepositories = false;
+
+        project.setArtifactId( "no-repositories-child" );
+        project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/no-repositories/child" ) );
+
+        rule.execute( helper );
+    }
+
+    public void testReposNotBannedWithRepositories()
+        throws EnforcerRuleException
+    {
+        rule.banRepositories = false;
+
+        project.setArtifactId( "with-repositories-child" );
+        project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/with-repositories/child" ) );
+
+        rule.execute( helper );
+    }
+
+    public void testReposNotBannedWithPluginRepositories()
+        throws EnforcerRuleException
+    {
+        rule.banRepositories = false;
+
+        project.setArtifactId( "with-plugin-repositories-child" );
+        project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/with-plugin-repositories/child" ) );
+
+        try
+        {
+            rule.execute( helper );
+            fail( "Should have exception" );
+        }
+        catch ( EnforcerRuleException e )
+        {
+            assertTrue( true );
+        }
+    }
+
+    public void testPluginReposNotBannedNoRepositories()
+        throws EnforcerRuleException
+    {
+        rule.banPluginRepositories = false;
+
+        project.setArtifactId( "no-repositories-child" );
+        project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/no-repositories/child" ) );
+
+        rule.execute( helper );
+    }
+
+    public void testPluginReposNotBannedWithRepositories()
+        throws EnforcerRuleException
+    {
+        rule.banPluginRepositories = false;
+
+        project.setArtifactId( "with-repositories-child" );
+        project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/with-repositories/child" ) );
+
+        try
+        {
+            rule.execute( helper );
+            fail( "Should have exception" );
+        }
+        catch ( EnforcerRuleException e )
+        {
+            assertTrue( true );
+        }
+    }
+
+    public void testPluginReposNotBannedWithPluginRepositories()
+        throws EnforcerRuleException
+    {
+        rule.banPluginRepositories = false;
+
+        project.setArtifactId( "with-plugin-repositories-child" );
+        project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/with-plugin-repositories/child" ) );
+
+        rule.execute( helper );
+    }
+
     /**
      * Test id.
      */

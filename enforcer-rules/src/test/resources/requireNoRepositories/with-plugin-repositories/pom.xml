@@ -1,0 +1,11 @@
+<project>
+  <groupId>org.apache.maven.plugins.enforcer.test</groupId>
+  <artifactId>with-plugin-repositories</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>repo</id>
+      <url>http://example.com/repo</url>
+    </pluginRepository>
+  </pluginRepositories>
+</project>

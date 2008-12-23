@@ -1,0 +1,5 @@
+<project>
+  <groupId>org.apache.maven.plugins.enforcer.test</groupId>
+  <artifactId>no-repositories</artifactId>
+  <version>1.0-SNAPSHOT</version>
+</project>
