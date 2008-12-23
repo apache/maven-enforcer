@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,11 +18,11 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,13 +31,13 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Repository;
 import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-// TODO: Auto-generated Javadoc
 /**
  * This rule checks that this pom or its parents don't define a repository.
  * 
@@ -44,11 +46,30 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class RequireNoRepositories
     extends AbstractNonCacheableEnforcerRule
 {
+    /**
+     * Whether to ban non-plugin repositories. By default they are banned.
+     */
+    public boolean banRepositories = true;
+
+    /**
+     * Whether to ban plugin repositories. By default they are banned.
+     */
+    public boolean banPluginRepositories = true;
+
+    /**
+     * Specify explicitly allowed non-plugin repositories. This is a list of ids.
+     */
+    public List allowedRepositories = Collections.EMPTY_LIST;
+
+    /**
+     * Specify explicitly allowed plugin repositories. This is a list of ids.
+     */
+    public List allowedPluginRepositories = Collections.EMPTY_LIST;
 
     /*
      * (non-Javadoc)
-     * 
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+     * @see
+     * org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
      */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
@@ -63,22 +84,48 @@ public class RequireNoRepositories
             List models =
                 utils.getModelsRecursively( project.getGroupId(), project.getArtifactId(), project.getVersion(),
                                             new File( project.getBasedir(), "pom.xml" ) );
+            List badModels = new ArrayList();
 
-            List badModels = checkModels( models );
+            StringBuffer newMsg = new StringBuffer();
+            newMsg.append( "Some poms have repositories defined:\n" );
+
+            for ( Iterator i = models.iterator(); i.hasNext(); )
+            {
+                Model model = (Model) i.next();
+                if ( banRepositories )
+                {
+                    List repos = model.getRepositories();
+                    if ( repos != null && !repos.isEmpty() )
+                    {
+                        List bannedRepos = findBannedRepositories( repos, allowedRepositories );
+                        if ( !bannedRepos.isEmpty() )
+                        {
+                            badModels.add( model );
+                            newMsg.append( model.getGroupId() + ":" + model.getArtifactId() + " version:"
+                                + model.getVersion() + " has repositories " + bannedRepos );
+                        }
+                    }
+                }
+                if ( banPluginRepositories )
+                {
+                    List repos = model.getPluginRepositories();
+                    if ( repos != null && !repos.isEmpty() )
+                    {
+                        List bannedRepos = findBannedRepositories( repos, allowedPluginRepositories );
+                        if ( !bannedRepos.isEmpty() )
+                        {
+                            badModels.add( model );
+                            newMsg.append( model.getGroupId() + ":" + model.getArtifactId() + " version:"
+                                + model.getVersion() + " has plugin repositories " + bannedRepos );
+                        }
+                    }
+                }
+            }
 
             // if anything was found, log it then append the
             // optional message.
             if ( !badModels.isEmpty() )
             {
-                StringBuffer newMsg = new StringBuffer();
-                newMsg.append( "Some poms have repositories defined:\n" );
-                Iterator iter = badModels.iterator();
-                while ( iter.hasNext() )
-                {
-                    Model model = (Model) iter.next();
-                    newMsg.append( model.getGroupId() + ":" + model.getArtifactId() + " version:" + model.getVersion() +
-                        "\n" );
-                }
                 if ( StringUtils.isNotEmpty( message ) )
                 {
                     newMsg.append( message );
@@ -110,26 +157,17 @@ public class RequireNoRepositories
         }
     }
 
-    /**
-     * Check models.
-     * 
-     * @param models the models
-     * @return the list
-     */
-    private List checkModels( List models )
+    private static List findBannedRepositories( List repos, List allowedRepos )
     {
-        List badModels = new ArrayList();
-
-        Iterator iter = models.iterator();
-        while ( iter.hasNext() )
+        List bannedRepos = new ArrayList( allowedRepos.size() );
+        for ( Iterator i = repos.iterator(); i.hasNext(); )
         {
-            Model model = (Model) iter.next();
-            List repos = model.getRepositories();
-            if ( repos != null && !repos.isEmpty() )
+            Repository r = (Repository) i.next();
+            if ( !allowedRepos.contains( r.getId() ) )
             {
-                badModels.add( model );
+                bannedRepos.add( r.getId() );
             }
         }
-        return badModels;
+        return bannedRepos;
     }
 }
