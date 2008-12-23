@@ -165,7 +165,7 @@ public class TestEnforcerRuleUtils
         // bit backwards - the project here should really be the one read in the first stage of getModelsRecursively
         MockProject parent = new MockProject();
         parent.setGroupId( "org.apache.maven.plugins.enforcer.test" );
-        parent.setArtifactId( "child" );
+        parent.setArtifactId( "parent" );
         parent.setVersion( "1.0-SNAPSHOT" );
         
         MockProject project = new MockProject();
@@ -175,6 +175,60 @@ public class TestEnforcerRuleUtils
 
         List models =
             utils.getModelsRecursively( "org.apache.maven.plugins.enforcer.test", "child", "1.0-SNAPSHOT", pom );
+
+        // there should be 1
+        assertEquals( 2, models.size() );
+    }
+
+    public void testGetModelsRecursivelyParentRelativePath()
+        throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
+    {
+        String path = "target/test-classes/requirePluginVersions/parentRelativePath";
+
+        StringUtils.replace( path, "/", File.separator );
+
+        File pom = new File( getBasedir() + File.separator + path, "pom.xml" );
+
+        // bit backwards - the project here should really be the one read in the first stage of getModelsRecursively
+        MockProject parent = new MockProject();
+        parent.setGroupId( "org.apache.maven.plugins.enforcer.test" );
+        parent.setArtifactId( "parent" );
+        parent.setVersion( "1.0-SNAPSHOT" );
+
+        MockProject project = new MockProject();
+        project.setParent( parent );
+
+        EnforcerRuleUtils utils = new EnforcerRuleUtils( EnforcerTestUtils.getHelper( project ) );
+
+        List models =
+            utils.getModelsRecursively( "org.apache.maven.plugins.enforcer.test", "aggregate", "1.0-SNAPSHOT", pom );
+
+        // there should be 1
+        assertEquals( 2, models.size() );
+    }
+
+    public void testGetModelsRecursivelyParentRelativePathDirectory()
+        throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
+    {
+        String path = "target/test-classes/requirePluginVersions/parentRelativePathDirectory";
+
+        StringUtils.replace( path, "/", File.separator );
+
+        File pom = new File( getBasedir() + File.separator + path, "pom.xml" );
+
+        // bit backwards - the project here should really be the one read in the first stage of getModelsRecursively
+        MockProject parent = new MockProject();
+        parent.setGroupId( "org.apache.maven.plugins.enforcer.test" );
+        parent.setArtifactId( "parent" );
+        parent.setVersion( "1.0-SNAPSHOT" );
+
+        MockProject project = new MockProject();
+        project.setParent( parent );
+
+        EnforcerRuleUtils utils = new EnforcerRuleUtils( EnforcerTestUtils.getHelper( project ) );
+
+        List models =
+            utils.getModelsRecursively( "org.apache.maven.plugins.enforcer.test", "aggregate", "1.0-SNAPSHOT", pom );
 
         // there should be 1
         assertEquals( 2, models.size() );

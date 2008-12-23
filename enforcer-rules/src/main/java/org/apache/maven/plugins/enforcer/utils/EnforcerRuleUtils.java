@@ -249,6 +249,12 @@ public class EnforcerRuleUtils
             }
             // calculate the recursive path
             File parentPom = new File( pom.getParent(), relativePath );
+            
+            // if relative path is a directory, append pom.xml
+            if ( parentPom.isDirectory() )
+            {
+                parentPom = new File( parentPom, "pom.xml" );
+            }
 
             models = getModelsRecursively( parent.getGroupId(), parent.getArtifactId(), parent.getVersion(), parentPom );
         }
