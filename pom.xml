@@ -198,7 +198,7 @@
         <groupId>org.apache.maven.enforcer</groupId>
         <artifactId>enforcer-rules</artifactId>
         <version>1.0-alpha-5-SNAPSHOT</version>
-        <classifier>tests</classifier>
+        <type>test-jar</type>
         <scope>test</scope>
       </dependency>
       <dependency>
