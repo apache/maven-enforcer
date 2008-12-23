@@ -20,26 +20,22 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.apache.maven.enforcer</groupId>
     <artifactId>enforcer</artifactId>
     <version>2-SNAPSHOT</version>
   </parent>
+
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-enforcer-plugin</artifactId>
+  <version>1.0-alpha-5-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
+
   <name>Maven Enforcer Plugin</name>
   <description>The Loving Iron Fist of Maven</description>
-  <version>1.0-alpha-5-SNAPSHOT</version>
   <url>http://maven.apache.org/plugins/maven-enforcer-plugin/</url>
-  <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MENFORCER</url>
-  </issueManagement>
-  <prerequisites>
-    <!--because of the encoding fixes, I need a new plexus-utils. The new plexus utils can only be used in 2.0.6 or later: http://jira.codehaus.org/browse/MNG-2892 -->
-    <maven>2.0.6</maven>
-  </prerequisites>
+
   <developers>
     <developer>
       <id>brianf</id>
@@ -51,19 +47,67 @@
       <timezone>5</timezone>
     </developer>
   </developers>
-  <licenses>
-    <license>
-      <name>Apache License 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
+
+  <prerequisites>
+    <!--because of the encoding fixes, I need a new plexus-utils. The new plexus utils can only be used in 2.0.6 or later: http://jira.codehaus.org/browse/MNG-2892 -->
+    <maven>2.0.6</maven>
+  </prerequisites>
+
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/MENFORCER</url>
+  </issueManagement>
   <distributionManagement>
     <site>
       <id>apache.website</id>
       <url>${site.deploy.url}/plugins/maven-enforcer-plugin</url>
     </site>
   </distributionManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-artifact</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.enforcer</groupId>
+      <artifactId>enforcer-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.enforcer</groupId>
+      <artifactId>enforcer-rules</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.enforcer</groupId>
+      <artifactId>enforcer-rules</artifactId>
+      <type>test-jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-plugin-testing-harness</artifactId>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -111,56 +155,14 @@
       </resource>
     </resources>
   </build>
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.enforcer</groupId>
-      <artifactId>enforcer-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.enforcer</groupId>
-      <artifactId>enforcer-rules</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.enforcer</groupId>
-      <artifactId>enforcer-rules</artifactId>
-      <type>test-jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-plugin-testing-harness</artifactId>
-    </dependency>
-  </dependencies>
+
   <reporting>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-plugin-plugin</artifactId>
-            <version>${maven.plugin.plugin.version}</version>
-          </plugin>
-        </plugins>
-      </reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>${maven.plugin.plugin.version}</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>

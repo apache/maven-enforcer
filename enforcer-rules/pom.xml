@@ -20,59 +20,20 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.apache.maven.enforcer</groupId>
     <artifactId>enforcer</artifactId>
     <version>2-SNAPSHOT</version>
   </parent>
+
   <artifactId>enforcer-rules</artifactId>
-  <packaging>jar</packaging>
   <version>1.0-alpha-5-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
   <name>Enforcer Rules</name>
   <description>This component contains the standard Enforcer Rules</description>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-     <!--plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>shitty-maven-plugin</artifactId>
-        <version>1.0-alpha-2</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>clean</goal>
-              <goal>install</goal>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <parallel>false</parallel>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin-->    
-    </plugins>
-  </build>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -121,4 +82,48 @@
       <artifactId>easymock</artifactId>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>descriptor</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+     <!--plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>shitty-maven-plugin</artifactId>
+        <version>1.0-alpha-2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>clean</goal>
+              <goal>install</goal>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <parallel>false</parallel>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin-->    
+    </plugins>
+  </build>
 </project>

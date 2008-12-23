@@ -19,34 +19,24 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <artifactId>maven-parent</artifactId>
     <groupId>org.apache.maven</groupId>
-    <version>9</version>
+    <version>10</version>
     <relativePath>../pom/maven/pom.xml</relativePath>
   </parent>
+
   <groupId>org.apache.maven.enforcer</groupId>
   <artifactId>enforcer</artifactId>
-  <packaging>pom</packaging>
-  <name>Enforcer</name>
   <version>2-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Enforcer</name>
   <description>Enforcer is a build rule execution framework.</description>
   <url>http://maven.apache.org/enforcer</url>
-  <prerequisites>
-    <maven>2.0.6</maven>
-  </prerequisites>
-  <issueManagement>
-    <system>jira</system>
-    <url>http://jira.codehaus.org/browse/MENFORCER</url>
-  </issueManagement>
   <inceptionYear>2007</inceptionYear>
-  <licenses>
-    <license>
-      <name>Apache License 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
+
   <developers>
     <developer>
       <id>brianf</id>
@@ -58,6 +48,7 @@
       <timezone>5</timezone>
     </developer>
   </developers>
+
   <mailingLists>
     <mailingList>
       <name>Maven User List</name>
@@ -130,11 +121,33 @@
       </otherArchives>
     </mailingList>
   </mailingLists>
+
+  <prerequisites>
+    <maven>2.0.6</maven>
+  </prerequisites>
+
+  <modules>
+    <module>enforcer-api</module>
+    <module>enforcer-rules</module>
+    <module>maven-enforcer-plugin</module>
+  </modules>
+
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/enforcer/trunk/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/enforcer/trunk/</developerConnection>
     <url>http://svn.apache.org/viewcvs.cgi/maven/enforcer/trunk</url>
   </scm>
+  <issueManagement>
+    <system>jira</system>
+    <url>http://jira.codehaus.org/browse/MENFORCER</url>
+  </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>${site.deploy.url}/enforcer/</url>
+    </site>
+  </distributionManagement>
+
   <properties>
     <api.version>1.0-alpha-4-SNAPSHOT</api.version>
     <rules.version>1.0-alpha-4-SNAPSHOT</rules.version>
@@ -142,46 +155,7 @@
     <maven.plugin.plugin.version>2.4.3</maven.plugin.plugin.version>
     <site.deploy.url>scp://people.apache.org/www/maven.apache.org</site.deploy.url>
   </properties>
-  <build>
-    <resources>
-      <!-- Include super-pom defined main/resources
-        Removing this section will break the build.
-        Since we have defined a new build/resources
-        section for the Apache process LICENSE and NOTICE
-        files, this original default section is now
-        required. -->
-      <resource>
-        <directory>${basedir}/src/main/resources</directory>
-      </resource>
-    </resources>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>1.4</source>
-            <target>1.4</target>
-          </configuration>
-        </plugin>
-        <plugin>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>${maven.plugin.plugin.version}</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-release-plugin</artifactId>
-          <configuration>
-            <tagBase>https://svn.apache.org/repos/asf/maven/enforcer/tags</tagBase>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-  <distributionManagement>
-    <site>
-      <id>apache.website</id>
-      <url>${site.deploy.url}/enforcer/</url>
-    </site>
-  </distributionManagement>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -251,6 +225,42 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <build>
+    <resources>
+      <!-- Include super-pom defined main/resources
+        Removing this section will break the build.
+        Since we have defined a new build/resources
+        section for the Apache process LICENSE and NOTICE
+        files, this original default section is now
+        required. -->
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.4</source>
+            <target>1.4</target>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>${maven.plugin.plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-release-plugin</artifactId>
+          <configuration>
+            <tagBase>https://svn.apache.org/repos/asf/maven/enforcer/tags</tagBase>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
   <reporting>
     <plugins>
       <plugin>
@@ -279,9 +289,4 @@
        </plugin>
     </plugins>
   </reporting>
-  <modules>
-    <module>enforcer-api</module>
-    <module>enforcer-rules</module>
-    <module>maven-enforcer-plugin</module>
-  </modules>
 </project>
