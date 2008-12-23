@@ -87,7 +87,15 @@ abstract public class AbstractRequireFiles
             Iterator iter = failures.iterator();
             while ( iter.hasNext() )
             {
-                buf.append( ( (File) ( iter.next() ) ).getAbsolutePath() + "\n" );
+                File file = (File) iter.next();
+                if ( file != null )
+                {
+                    buf.append( file.getAbsolutePath() + "\n" );
+                }
+                else
+                {
+                    buf.append( "(an empty filename was given)\n" );
+                }
             }
 
             throw new EnforcerRuleException( buf.toString() );

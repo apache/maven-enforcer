@@ -49,6 +49,22 @@ public class TestRequireFilesExist
         f.delete();
     }
 
+    public void testEmptyFile()
+        throws EnforcerRuleException, IOException
+    {
+        rule.files = new File[] { null };
+
+        try
+        {
+            rule.execute( EnforcerTestUtils.getHelper() );
+            fail( "Should get exception" );
+        }
+        catch ( EnforcerRuleException e )
+        {
+            assertTrue( true );
+        }
+    }
+
     public void testFileDoesNotExist()
         throws EnforcerRuleException, IOException
     {
