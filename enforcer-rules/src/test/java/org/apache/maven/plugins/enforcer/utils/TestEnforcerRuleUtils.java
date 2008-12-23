@@ -31,6 +31,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugins.enforcer.EnforcerTestUtils;
+import org.apache.maven.plugins.enforcer.MockProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -150,6 +151,33 @@ public class TestEnforcerRuleUtils
         m.setArtifactId( "a" );
 
         models.contains( m );
+    }
+
+    public void testGetModelsRecursivelyParentExpression()
+        throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
+    {
+        String path = "target/test-classes/requirePluginVersions/parentExpression/child";
+
+        StringUtils.replace( path, "/", File.separator );
+
+        File pom = new File( getBasedir() + File.separator + path, "pom.xml" );
+
+        // bit backwards - the project here should really be the one read in the first stage of getModelsRecursively
+        MockProject parent = new MockProject();
+        parent.setGroupId( "org.apache.maven.plugins.enforcer.test" );
+        parent.setArtifactId( "child" );
+        parent.setVersion( "1.0-SNAPSHOT" );
+        
+        MockProject project = new MockProject();
+        project.setParent( parent );
+        
+        EnforcerRuleUtils utils = new EnforcerRuleUtils( EnforcerTestUtils.getHelper( project ) );
+
+        List models =
+            utils.getModelsRecursively( "org.apache.maven.plugins.enforcer.test", "child", "1.0-SNAPSHOT", pom );
+
+        // there should be 1
+        assertEquals( 2, models.size() );
     }
 
     /**

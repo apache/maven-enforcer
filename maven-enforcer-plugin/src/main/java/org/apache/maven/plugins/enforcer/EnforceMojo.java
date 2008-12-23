@@ -198,6 +198,7 @@ public class EnforceMojo
                             else
                             {
                                 list.add( "Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage() );
+                                log.debug( "Adding failure due to exception", e );
                             }
                         }
                     }

@@ -69,6 +69,8 @@ public class EnforcerRuleUtils
     /** The project. */
     MavenProject project;
 
+    private EnforcerRuleHelper helper;
+
     /**
      * Instantiates a new enforcer rule utils.
      * 
@@ -107,6 +109,7 @@ public class EnforcerRuleUtils
             resolver = (ArtifactResolver) helper.getComponent( ArtifactResolver.class );
             local = (ArtifactRepository) helper.evaluate( "${localRepository}" );
             project = (MavenProject) helper.evaluate( "${project}" );
+            this.helper = helper;
             remoteRepositories = project.getRemoteArtifactRepositories();
         }
         catch ( ComponentLookupException e )
@@ -281,10 +284,18 @@ public class EnforcerRuleUtils
             {
                 modelGroup = model.getParent().getGroupId();
             }
+            else
+            {
+                modelGroup = (String) helper.evaluate( modelGroup );
+            }
 
             if ( StringUtils.isEmpty( modelVersion ) )
             {
                 modelVersion = model.getParent().getVersion();
+            }
+            else
+            {
+                modelVersion = (String) helper.evaluate( modelVersion );
             }
         }
         catch ( NullPointerException e )
@@ -294,6 +305,10 @@ public class EnforcerRuleUtils
             // parent????
             // lets see if it's what we're looking for
             // anyway.
+        }
+        catch ( ExpressionEvaluationException e )
+        {
+            // as above
         }
         return ( StringUtils.equals( groupId, modelGroup ) && StringUtils.equals( version, modelVersion ) && StringUtils
             .equals( artifactId, model.getArtifactId() ) );
