@@ -22,8 +22,10 @@ import junit.framework.TestCase;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+import org.easymock.MockControl;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TestEvaluateBeanshell.
  * 
@@ -32,38 +34,111 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 public class TestEvaluateBeanshell
     extends TestCase
 {
+    private MockProject project;
+
+    public void setUp()
+    {
+        project = new MockProject();
+        project.setProperty( "env", "\"This is a test.\"" );
+    }
 
     /**
      * Test rule.
-     * 
-     * @throws EnforcerRuleException the enforcer rule exception
      */
-    public void testRule()
-        throws EnforcerRuleException
+    public void testRulePass()
+        throws EnforcerRuleException, ExpressionEvaluationException
     {
-        MockProject project = new MockProject();
-        project.setProperty( "env", "\"This is a test.\"" );
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
-
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should not be set
         rule.condition = "${env} == \"This is a test.\"";
         rule.message = "We have a variable : ${env}";
 
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
         rule.execute( helper );
+    }
 
+    public void testRuleFail()
+        throws EnforcerRuleException, ExpressionEvaluationException
+    {
+        EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should be set by the surefire
         // plugin
         rule.condition = "${env} == null";
+        rule.message = "We have a variable : ${env}";
+
         try
         {
+            EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
             rule.execute( helper );
             fail( "Expected an exception." );
         }
         catch ( EnforcerRuleException e )
         {
-            System.out.println( "Caught expected exception:" + e.getLocalizedMessage() );
+            assertEquals( e.getLocalizedMessage(), rule.message );
         }
     }
 
+    public void testRuleFailNoMessage()
+        throws EnforcerRuleException, ExpressionEvaluationException
+    {
+        EvaluateBeanshell rule = new EvaluateBeanshell();
+        // this property should be set by the surefire
+        // plugin
+        rule.condition = "${env} == null";
+        try
+        {
+            EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
+            rule.execute( helper );
+            fail( "Expected an exception." );
+        }
+        catch ( EnforcerRuleException e )
+        {
+            assertEquals( e.getLocalizedMessage(), rule.message );
+            assertTrue( e.getLocalizedMessage().length() > 0 );
+        }
+    }
+
+    public void testRuleInvalidExpression()
+        throws EnforcerRuleException, ExpressionEvaluationException
+    {
+        EvaluateBeanshell rule = new EvaluateBeanshell();
+        rule.condition = "${env} == null";
+        rule.message = "We have a variable : ${env}";
+        MockControl evalControl = MockControl.createControl( ExpressionEvaluator.class );
+        try
+        {
+            ExpressionEvaluator eval = (ExpressionEvaluator) evalControl.getMock();
+            eval.evaluate( rule.condition );
+            evalControl.expectAndDefaultThrow( null, new ExpressionEvaluationException( "expected error" ) );
+            evalControl.replay();
+
+            EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project, eval );
+            rule.execute( helper );
+            fail( "Expected an exception." );
+        }
+        catch ( EnforcerRuleException e )
+        {
+            assertFalse( e.getLocalizedMessage().equals( rule.message ) );
+        }
+
+        evalControl.verify();
+    }
+
+    public void testRuleInvalidBeanshell()
+        throws EnforcerRuleException, ExpressionEvaluationException
+    {
+        EvaluateBeanshell rule = new EvaluateBeanshell();
+        rule.condition = "this is not valid beanshell";
+        rule.message = "We have a variable : ${env}";
+        try
+        {
+            EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
+            rule.execute( helper );
+            fail( "Expected an exception." );
+        }
+        catch ( EnforcerRuleException e )
+        {
+            assertFalse( e.getLocalizedMessage().equals( rule.message ) );
+        }
+    }
 }

@@ -35,9 +35,8 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class EnforcerTestUtils
+public final class EnforcerTestUtils
 {
-
     /**
      * Gets the maven session.
      * 
@@ -100,6 +99,19 @@ public class EnforcerTestUtils
         {
             eval = new EnforcerExpressionEvaluator( session, new MockPathTranslator(), project );
         }
+        return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(), null );
+    }
+
+    /**
+     * Gets the helper.
+     * 
+     * @param project the project
+     * @param eval the expression evaluator to use
+     * @return the helper
+     */
+    public static EnforcerRuleHelper getHelper( MavenProject project, ExpressionEvaluator eval )
+    {
+        MavenSession session = getMavenSession();
         return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(), null );
     }
 

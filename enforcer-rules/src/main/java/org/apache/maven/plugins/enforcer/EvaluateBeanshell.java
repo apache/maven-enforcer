@@ -27,7 +27,6 @@ import org.codehaus.plexus.util.StringUtils;
 import bsh.EvalError;
 import bsh.Interpreter;
 
-// TODO: Auto-generated Javadoc
 /**
  * Rule for Maven Enforcer using Beanshell to evaluate a conditional expression.
  * 
@@ -70,7 +69,7 @@ public class EvaluateBeanshell
         }
         catch ( ExpressionEvaluationException e )
         {
-            throw new EnforcerRuleException( "Unable to evaluate an expression", e );
+            throw new EnforcerRuleException( "Unable to evaluate an expression '" + condition + "'", e );
         }
     }
 
@@ -80,8 +79,10 @@ public class EvaluateBeanshell
      * @param script the expression to be evaluated
      * @param log the logger
      * @return boolean the evaluation of the expression
+     * @throws EnforcerRuleException if the script could not be evaluated
      */
     protected boolean evaluateCondition( String script, Log log )
+        throws EnforcerRuleException
     {
         Boolean evaluation = Boolean.FALSE;
         try
@@ -91,7 +92,7 @@ public class EvaluateBeanshell
         }
         catch ( EvalError ex )
         {
-            log.warn( "Couldn't evaluate condition: " + script, ex );
+            throw new EnforcerRuleException( "Couldn't evaluate condition: " + script, ex );
         }
         return evaluation.booleanValue();
     }
