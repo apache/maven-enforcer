@@ -26,12 +26,13 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.TestEnforcerRuleUtils;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class TestNoSnapshots.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class TestNoSnapshots
+public class TestRequireReleaseDeps
     extends TestCase
 {
 
@@ -49,7 +50,7 @@ public class TestNoSnapshots
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
         project.setArtifacts( factory.getMixedArtifacts() );
         project.setDependencyArtifacts( factory.getScopedArtifacts() );
-        NoSnapshots rule = new NoSnapshots();
+        RequireReleaseDeps rule = new RequireReleaseDeps();
         rule.setSearchTransitive( false );
 
         TestEnforcerRuleUtils.execute( rule, helper, false );
@@ -58,9 +59,34 @@ public class TestNoSnapshots
 
         TestEnforcerRuleUtils.execute( rule, helper, true );
 
+        // test onlyWhenRelease in each case
+        
         project.setArtifact( factory.getSnapshotArtifact() );
         
         TestEnforcerRuleUtils.execute( rule, helper, true );
+        
+        rule.onlyWhenRelease = true;
+
+        TestEnforcerRuleUtils.execute( rule, helper, false );
+
+        project.setArtifact( factory.getReleaseArtifact() );
+        
+        TestEnforcerRuleUtils.execute( rule, helper, true );
+        
+        MockProject parent = new MockProject();
+        parent.setArtifact( factory.getSnapshotArtifact() );
+        project.setParent( parent );
+        project.setArtifacts( null );
+        project.setDependencyArtifacts( null );
+        helper = EnforcerTestUtils.getHelper(project);
+         
+        rule.setFailWhenParentIsSnapshot( true );
+        TestEnforcerRuleUtils.execute( rule, helper, true );
+        
+        rule.setFailWhenParentIsSnapshot( false );
+        TestEnforcerRuleUtils.execute( rule, helper, false );
+        
+        
     } 
 
     /**
@@ -68,7 +94,7 @@ public class TestNoSnapshots
      */
     public void testId()
     {
-        NoSnapshots rule = new NoSnapshots();
+        RequireReleaseDeps rule = new RequireReleaseDeps();
         rule.getCacheId();
     }
 }
