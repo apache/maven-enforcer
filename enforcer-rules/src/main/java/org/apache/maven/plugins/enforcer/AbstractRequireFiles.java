@@ -38,6 +38,9 @@ abstract public class AbstractRequireFiles
 
     /** Array of files to check. */
     File[] files;
+    
+    //if null file handles should be allowed. If they are allowed, it means treat it as a success.
+    boolean allowNulls = false;
 
     // check the file for the specific condition
     /**
@@ -64,11 +67,20 @@ abstract public class AbstractRequireFiles
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
+    	
+    	if (!allowNulls && files.length == 0)
+    	{
+    		throw new EnforcerRuleException("The file list is empty and Null files are disabled.");
+    	}
 
         ArrayList failures = new ArrayList();
         for ( int i = 0; i < files.length; i++ )
         {
-            if ( !checkFile( files[i] ) )
+        	if (!allowNulls && files[i] == null)
+        	{
+        		failures.add(files[i]);
+        	}
+        	else if ( !checkFile( files[i] ) )
             {
                 failures.add( files[i] );
             }
@@ -94,7 +106,7 @@ abstract public class AbstractRequireFiles
                 }
                 else
                 {
-                    buf.append( "(an empty filename was given)\n" );
+                    buf.append( "(an empty filename was given and allowNulls is false)\n" );
                 }
             }
 

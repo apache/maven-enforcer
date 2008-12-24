@@ -40,7 +40,7 @@ public class RequireFilesSize
     /** the max size allowed. */
     long maxsize = 10000;
 
-    /** the max size allowed. */
+    /** the min size allowed. */
     long minsize = 0;
 
     /** The error msg. */
@@ -57,16 +57,16 @@ public class RequireFilesSize
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
+        this.log = helper.getLog();
+        
         // if the file is already defined, use that. Otherwise get the main artifact.
         if ( files.length == 0 )
         {
             try
             {
                 MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-
+                files = new File[1];
                 files[0] = project.getArtifact().getFile();
-
-                this.log = helper.getLog();
 
                 super.execute( helper );
             }
@@ -74,6 +74,10 @@ public class RequireFilesSize
             {
                 throw new EnforcerRuleException( "Unable to retrieve the project.", e );
             }
+        }
+        else
+        {
+            super.execute( helper );
         }
 
     }
@@ -103,6 +107,12 @@ public class RequireFilesSize
      */
     boolean checkFile( File file )
     {
+        if (file == null)
+        {
+            //if we get here and it's null, treat it as a success.
+            return true;
+        }
+        
         // check the file now
         if ( file.exists() )
         {

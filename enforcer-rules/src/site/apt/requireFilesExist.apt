@@ -32,6 +32,7 @@ Require Files Exist
    
    * message - an optional message to the user if the rule fails.
    * files - A list of files to check.
+   * allowNulls - If null files should be allowed. If allowed, they will be treated as if they do exist. Default is false.
    
    []
 

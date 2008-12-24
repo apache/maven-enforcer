@@ -35,7 +35,8 @@ public class RequireFilesExist
      */
     boolean checkFile( File file )
     {
-        return file == null ? false : file.exists();
+    	//if we get here and the handle is null, treat it as a success
+        return file == null ? true : file.exists();
     }
 
     /*
