@@ -156,9 +156,25 @@ public class RequirePluginVersions
         try
         {
             // get the various expressions out of the helper.
+            
             project = (MavenProject) helper.evaluate( "${project}" );
             LifecycleExecutor life;
             life = (LifecycleExecutor) helper.getComponent( LifecycleExecutor.class );
+            try
+            {
+              lifecycles = (List) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", life );
+            }
+            catch (Exception e)
+            {
+                log.warn( "This rule is not compatible with the current version of Maven. The rule is not able to perform any checks.");
+                /*
+                 * 
+                 * NOTE: If this happens, we're bailing out right away.
+                 * 
+                 * 
+                 */
+                return;
+            }    
             session = (MavenSession) helper.evaluate( "${session}" );
             pluginManager = (PluginManager) helper.getComponent( PluginManager.class );
             factory = (ArtifactFactory) helper.getComponent( ArtifactFactory.class );
@@ -198,7 +214,7 @@ public class RequirePluginVersions
             while ( iter.hasNext() )
             {
                 Plugin plugin = (Plugin) iter.next();
-            
+
                 if ( !hasValidVersionSpecified( helper, plugin, pluginWrappers ) )
                 {
                     failures.add( plugin );
@@ -317,9 +333,10 @@ public class RequirePluginVersions
      * @param plugins
      * @param field
      * @return
-     * @throws MojoExecutionException 
+     * @throws MojoExecutionException
      */
-    public Collection removeUncheckedPlugins( Collection uncheckedPlugins, Collection plugins ) throws MojoExecutionException
+    public Collection removeUncheckedPlugins( Collection uncheckedPlugins, Collection plugins )
+        throws MojoExecutionException
     {
         if ( uncheckedPlugins != null && !uncheckedPlugins.isEmpty() )
         {
@@ -389,12 +406,12 @@ public class RequirePluginVersions
             }
             else
             {
-                throw new MojoExecutionException( "Invalid "+field+" string: " + pluginString );
+                throw new MojoExecutionException( "Invalid " + field + " string: " + pluginString );
             }
         }
         else
         {
-            throw new MojoExecutionException( "Invalid "+field+" string: " + pluginString );
+            throw new MojoExecutionException( "Invalid " + field + " string: " + pluginString );
         }
 
     }
@@ -503,9 +520,7 @@ public class RequirePluginVersions
     protected Set getBoundPlugins( LifecycleExecutor life, MavenProject project, String thePhases )
         throws PluginNotFoundException, LifecycleExecutionException, IllegalAccessException
     {
-        // I couldn't find a direct way to get at the lifecycles list.
-        lifecycles = (List) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", life );
-
+       
         Set allPlugins = new HashSet();
 
         // lookup the bindings for all the passed in phases
@@ -552,8 +567,8 @@ public class RequirePluginVersions
         {
             // find the matching plugin entry
             PluginWrapper plugin = (PluginWrapper) iter.next();
-            if ( source.getArtifactId().equals( plugin.getArtifactId() ) &&
-                source.getGroupId().equals( plugin.getGroupId() ) )
+            if ( source.getArtifactId().equals( plugin.getArtifactId() )
+                && source.getGroupId().equals( plugin.getGroupId() ) )
             {
                 found = true;
                 // found the entry. now see if the version is specified
@@ -615,8 +630,8 @@ public class RequirePluginVersions
     {
         if ( banTimestamps )
         {
-            return Artifact.VERSION_FILE_PATTERN.matcher( baseVersion ).matches() ||
-                baseVersion.endsWith( Artifact.SNAPSHOT_VERSION );
+            return Artifact.VERSION_FILE_PATTERN.matcher( baseVersion ).matches()
+                || baseVersion.endsWith( Artifact.SNAPSHOT_VERSION );
         }
         else
         {
@@ -706,9 +721,9 @@ public class RequirePluginVersions
                     if ( phaseToLifecycleMap.containsKey( phase ) )
                     {
                         Lifecycle prevLifecycle = (Lifecycle) phaseToLifecycleMap.get( phase );
-                        throw new LifecycleExecutionException( "Phase '" + phase +
-                            "' is defined in more than one lifecycle: '" + lifecycle.getId() + "' and '" +
-                            prevLifecycle.getId() + "'" );
+                        throw new LifecycleExecutionException( "Phase '" + phase
+                            + "' is defined in more than one lifecycle: '" + lifecycle.getId() + "' and '"
+                            + prevLifecycle.getId() + "'" );
                     }
                     else
                     {
@@ -776,8 +791,8 @@ public class RequirePluginVersions
             {
                 if ( defaultMappings == null )
                 {
-                    throw new LifecycleExecutionException( "Cannot find lifecycle mapping for packaging: \'" +
-                        packaging + "\'.", e );
+                    throw new LifecycleExecutionException( "Cannot find lifecycle mapping for packaging: \'"
+                        + packaging + "\'.", e );
                 }
             }
         }
@@ -786,8 +801,8 @@ public class RequirePluginVersions
         {
             if ( defaultMappings == null )
             {
-                throw new LifecycleExecutionException( "Cannot find lifecycle mapping for packaging: \'" + packaging +
-                    "\', and there is no default" );
+                throw new LifecycleExecutionException( "Cannot find lifecycle mapping for packaging: \'" + packaging
+                    + "\', and there is no default" );
             }
             else
             {
@@ -831,8 +846,8 @@ public class RequirePluginVersions
             }
             catch ( ComponentLookupException e )
             {
-                log.debug( "Error looking up lifecycle mapping to retrieve optional mojos. Lifecycle ID: " +
-                    lifecycle.getId() + ". Error: " + e.getMessage(), e );
+                log.debug( "Error looking up lifecycle mapping to retrieve optional mojos. Lifecycle ID: "
+                    + lifecycle.getId() + ". Error: " + e.getMessage(), e );
             }
         }
 
@@ -884,8 +899,8 @@ public class RequirePluginVersions
                 }
                 catch ( PluginManagerException e )
                 {
-                    throw new LifecycleExecutionException( "Error getting extensions from the plugin '" +
-                        plugin.getKey() + "': " + e.getMessage(), e );
+                    throw new LifecycleExecutionException( "Error getting extensions from the plugin '"
+                        + plugin.getKey() + "': " + e.getMessage(), e );
                 }
             }
         }
@@ -914,8 +929,8 @@ public class RequirePluginVersions
         }
         catch ( PluginManagerException e )
         {
-            throw new LifecycleExecutionException( "Internal error in the plugin manager getting plugin '" +
-                plugin.getKey() + "': " + e.getMessage(), e );
+            throw new LifecycleExecutionException( "Internal error in the plugin manager getting plugin '"
+                + plugin.getKey() + "': " + e.getMessage(), e );
         }
         catch ( PluginVersionResolutionException e )
         {
@@ -945,8 +960,8 @@ public class RequirePluginVersions
     }
 
     /**
-     * Gets all plugin entries in build.plugins, build.pluginManagement.plugins, profile.build.plugins, reporting and profile.reporting in this
-     * project and all parents
+     * Gets all plugin entries in build.plugins, build.pluginManagement.plugins, profile.build.plugins, reporting and
+     * profile.reporting in this project and all parents
      * 
      * @param project the project
      * @return the all plugin entries wrapped in a PluginWrapper Object
@@ -972,32 +987,33 @@ public class RequirePluginVersions
             Model model = (Model) iter.next();
             try
             {
-                plugins.addAll( PluginWrapper.addAll(model.getBuild().getPlugins(),model.getId()+".build.plugins" ));
+                plugins.addAll( PluginWrapper.addAll( model.getBuild().getPlugins(), model.getId() + ".build.plugins" ) );
             }
             catch ( NullPointerException e )
             {
                 // guess there are no plugins here.
-            }
-            
-            try
-            {
-                //add the reporting plugins
-                plugins.addAll( PluginWrapper.addAll(model.getReporting().getPlugins(),model.getId()+".reporting" ));              
-            }
-            catch (NullPointerException e)
-            {
-             // guess there are no plugins here.
             }
 
             try
             {
-                plugins.addAll( PluginWrapper.addAll(model.getBuild().getPluginManagement().getPlugins(),model.getId()+".build.pluginManagement.plugins" ));              
+                // add the reporting plugins
+                plugins.addAll( PluginWrapper.addAll( model.getReporting().getPlugins(), model.getId() + ".reporting" ) );
             }
             catch ( NullPointerException e )
             {
                 // guess there are no plugins here.
             }
-            
+
+            try
+            {
+                plugins.addAll( PluginWrapper.addAll( model.getBuild().getPluginManagement().getPlugins(),
+                                                      model.getId() + ".build.pluginManagement.plugins" ) );
+            }
+            catch ( NullPointerException e )
+            {
+                // guess there are no plugins here.
+            }
+
             // Add plugins in profiles
             Iterator it = model.getProfiles().iterator();
             while ( it.hasNext() )
@@ -1005,30 +1021,34 @@ public class RequirePluginVersions
                 Profile profile = (Profile) it.next();
                 try
                 {
-                    plugins.addAll( PluginWrapper.addAll(profile.getBuild().getPlugins(),model.getId()+".profiles.profile["+profile.getId()+"].build.plugins" ));
+                    plugins.addAll( PluginWrapper.addAll( profile.getBuild().getPlugins(), model.getId()
+                        + ".profiles.profile[" + profile.getId() + "].build.plugins" ) );
                 }
                 catch ( NullPointerException e )
                 {
                     // guess there are no plugins here.
                 }
-                
+
                 try
                 {
-                    //add the reporting plugins
-                    plugins.addAll( PluginWrapper.addAll(profile.getReporting().getPlugins(),model.getId()+"profile["+profile.getId()+"].reporting.plugins" ));               
+                    // add the reporting plugins
+                    plugins.addAll( PluginWrapper.addAll( profile.getReporting().getPlugins(), model.getId()
+                        + "profile[" + profile.getId() + "].reporting.plugins" ) );
                 }
-                catch (NullPointerException e)
+                catch ( NullPointerException e )
                 {
-                 // guess there are no plugins here.
+                    // guess there are no plugins here.
                 }
                 try
                 {
-                    //add the reporting plugins
-                    plugins.addAll( PluginWrapper.addAll(profile.getBuild().getPluginManagement().getPlugins(),model.getId()+"profile["+profile.getId()+"].build.pluginManagement.plugins" ));                
+                    // add the reporting plugins
+                    plugins.addAll( PluginWrapper.addAll( profile.getBuild().getPluginManagement().getPlugins(),
+                                                          model.getId() + "profile[" + profile.getId()
+                                                              + "].build.pluginManagement.plugins" ) );
                 }
-                catch (NullPointerException e)
+                catch ( NullPointerException e )
                 {
-                 // guess there are no plugins here.
+                    // guess there are no plugins here.
                 }
             }
         }
