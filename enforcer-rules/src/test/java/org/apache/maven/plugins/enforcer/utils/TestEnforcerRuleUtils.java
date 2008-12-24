@@ -176,7 +176,7 @@ public class TestEnforcerRuleUtils
         List models =
             utils.getModelsRecursively( "org.apache.maven.plugins.enforcer.test", "child", "1.0-SNAPSHOT", pom );
 
-        // there should be 1
+        // there should be 2
         assertEquals( 2, models.size() );
     }
 
@@ -203,7 +203,7 @@ public class TestEnforcerRuleUtils
         List models =
             utils.getModelsRecursively( "org.apache.maven.plugins.enforcer.test", "aggregate", "1.0-SNAPSHOT", pom );
 
-        // there should be 1
+        // there should be 2
         assertEquals( 2, models.size() );
     }
 
@@ -230,7 +230,7 @@ public class TestEnforcerRuleUtils
         List models =
             utils.getModelsRecursively( "org.apache.maven.plugins.enforcer.test", "aggregate", "1.0-SNAPSHOT", pom );
 
-        // there should be 1
+        // there should be 2
         assertEquals( 2, models.size() );
     }
 

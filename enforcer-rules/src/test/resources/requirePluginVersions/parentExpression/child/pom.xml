@@ -9,4 +9,5 @@
   <groupId>${project.parent.groupId}</groupId>
   <artifactId>child</artifactId>
   <version>${project.parent.version}</version>
+  <description>MENFORCER-30</description>
 </project>

@@ -100,16 +100,16 @@ public class EnforcerRuleUtils
      */
     public EnforcerRuleUtils( EnforcerRuleHelper helper )
     {
-        // get the various expressions out of the
+     
+    	this.helper = helper;
+    	// get the various expressions out of the
         // helper.
-
-        try
+    	try
         {
             factory = (ArtifactFactory) helper.getComponent( ArtifactFactory.class );
             resolver = (ArtifactResolver) helper.getComponent( ArtifactResolver.class );
             local = (ArtifactRepository) helper.evaluate( "${localRepository}" );
             project = (MavenProject) helper.evaluate( "${project}" );
-            this.helper = helper;
             remoteRepositories = project.getRemoteArtifactRepositories();
         }
         catch ( ComponentLookupException e )
@@ -292,6 +292,7 @@ public class EnforcerRuleUtils
             }
             else
             {
+            	//MENFORCER-30, handle cases where the value is a property like ${project.parent.groupId}
                 modelGroup = (String) helper.evaluate( modelGroup );
             }
 
@@ -301,6 +302,7 @@ public class EnforcerRuleUtils
             }
             else
             {
+            	//MENFORCER-30, handle cases where the value is a property like ${project.parent.version}
                 modelVersion = (String) helper.evaluate( modelVersion );
             }
         }
