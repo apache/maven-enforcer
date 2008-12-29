@@ -25,6 +25,11 @@ under the License.
     <version>1.1-SNAPSHOT</version>
   </skin>
   <body>
+    <breadcrumbs>
+      <!-- TODO: This breadcrumb should be removed when it has been solved in the parent -->
+      <item name="Maven" href="http://maven.apache.org/index.html" />
+      <item name="Enforcer" href="http://maven.apache.org/enforcer/index.html" />
+    </breadcrumbs>
     <menu ref="modules" />
   </body>
 </project>
