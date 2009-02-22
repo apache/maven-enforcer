@@ -28,7 +28,7 @@
   </parent>
 
   <artifactId>enforcer-api</artifactId>
-  <version>1.0-alpha-5-SNAPSHOT</version>
+  <version>1.0-beta-1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Enforcer API</name>

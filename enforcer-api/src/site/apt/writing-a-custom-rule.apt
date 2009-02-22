@@ -43,7 +43,7 @@ Writing a custom rule
   <name>My Custom Rule</name>
   <description>This is my custom rule.</description>
   <properties>
-    <api.version>1.0-alpha-4</api.version>
+    <api.version>1.0-beta-1</api.version>
     <maven.version>2.0.9</maven.version>
   </properties>
   <build>
@@ -253,7 +253,7 @@ public class MyCustomRule
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.0-alpha-4</version>
+        <version>1.0-beta-1</version>
         <dependencies>
           <dependency>
             <groupId>custom-rule</groupId>
