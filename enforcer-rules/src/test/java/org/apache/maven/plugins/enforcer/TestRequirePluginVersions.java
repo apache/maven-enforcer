@@ -341,7 +341,8 @@ public class TestRequirePluginVersions
         plugins.add( EnforcerTestUtils.newPlugin( "group", "foo2", "" ) );
 
         List unchecked = new ArrayList();
-        unchecked.add( "group:a-artifact" );
+        //intentionally inserting spaces to make sure they are handled correctly.
+        unchecked.add( "group : a-artifact" );
 
         Collection results = rule.removeUncheckedPlugins( unchecked, plugins );
         
@@ -351,9 +352,130 @@ public class TestRequirePluginVersions
         assertEquals( 2, results.size() );
         assertContainsPlugin( "group", "foo", results );
         assertContainsPlugin( "group", "foo2", results );
-        assertNotContainPlugin( "group", "a-artifact", plugins );
+        assertNotContainPlugin( "group", "a-artifact", results );
 
     }
+    
+    /**
+     * Test combining values from both lists
+     */
+    public void testCombinePlugins()
+    {
+        RequirePluginVersions rule = new RequirePluginVersions();
+
+        Set plugins = new HashSet();
+        plugins.add( "group:a-artifact" );
+        plugins.add( "group:foo" );
+        plugins.add( "group:foo2" );
+
+        Collection results = rule.combineUncheckedPlugins( plugins, "group2:a,group3:b" ); 
+
+        // make sure only one new plugin has been added
+        assertNotNull( results );
+        assertEquals( 5, results.size() );
+        assertTrue( results.contains( "group:foo") );
+        assertTrue( results.contains( "group:foo2") );
+        assertTrue( results.contains( "group:a-artifact") );
+        assertTrue( results.contains( "group2:a") );
+        assertTrue( results.contains( "group3:b") );
+    }
+    
+    /**
+     * Test combining with an empty list
+     */
+    public void testCombinePlugins1()
+    {
+        RequirePluginVersions rule = new RequirePluginVersions();
+
+        Set plugins = new HashSet();
+        Collection results = rule.combineUncheckedPlugins( plugins, "group2:a,group3:b" ); 
+        
+
+        // make sure only one new plugin has been added
+        assertNotNull( results );
+        assertEquals( 2, results.size() );
+        assertTrue( results.contains( "group2:a") );
+        assertTrue( results.contains( "group3:b") );
+    }
+
+    /**
+     * Test combining with a null list
+     */
+    public void testCombinePlugins2()
+    {
+        RequirePluginVersions rule = new RequirePluginVersions();
+
+        Collection results = rule.combineUncheckedPlugins( null, "group2:a,group3:b" ); 
+        
+
+        // make sure only one new plugin has been added
+        assertNotNull( results );
+        assertEquals( 2, results.size() );
+        assertTrue( results.contains( "group2:a") );
+        assertTrue( results.contains( "group3:b") );
+    }
+
+    /**
+     * Test combining with an empty string
+     */
+    public void testCombinePlugins3()
+    {
+        RequirePluginVersions rule = new RequirePluginVersions();
+
+        Set plugins = new HashSet();
+        plugins.add( "group:a-artifact" );
+        plugins.add( "group:foo" );
+        plugins.add( "group:foo2" );
+                     
+        Collection results = rule.combineUncheckedPlugins( plugins, "" ); 
+        assertNotNull( results );
+        assertEquals( 3, results.size() );
+        assertTrue( results.contains( "group:foo") );
+        assertTrue( results.contains( "group:foo2") );
+        assertTrue( results.contains( "group:a-artifact") );
+    }
+
+    /**
+     * Test combining with a null string
+     */
+    public void testCombinePlugins4()
+    {
+        RequirePluginVersions rule = new RequirePluginVersions();
+
+        Set plugins = new HashSet();
+        plugins.add( "group:a-artifact" );
+        plugins.add( "group:foo" );
+        plugins.add( "group:foo2" );
+                     
+        Collection results = rule.combineUncheckedPlugins( plugins, null ); 
+        assertNotNull( results );
+        assertEquals( 3, results.size() );   
+        assertTrue( results.contains( "group:foo") );
+        assertTrue( results.contains( "group:foo2") );
+        assertTrue( results.contains( "group:a-artifact") );
+    } 
+
+    /**
+     * Test combining with an invalid plugin string
+     */
+    public void testCombinePlugins5()
+    {
+        RequirePluginVersions rule = new RequirePluginVersions();
+
+        Set plugins = new HashSet();
+        plugins.add( "group:a-artifact" );
+        plugins.add( "group:foo" );
+        plugins.add( "group:foo2" );
+        
+        Collection results = rule.combineUncheckedPlugins( plugins, "a" ); 
+        assertNotNull( results );
+        assertEquals( 4, results.size() ); 
+        assertTrue( results.contains( "group:foo") );
+        assertTrue( results.contains( "group:foo2") );
+        //this should be here, the checking of a valid plugin string happens in another method.
+        assertTrue( results.contains( "a") );
+    }
+
     
     /**
      * Assert contains plugin.
