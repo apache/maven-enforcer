@@ -95,7 +95,7 @@ Writing a custom rule
    
    There are several methods that must be implemented related to caching.
    
-   Here's a sample class that shows how to access the helper methods and retreive components by class name from the helper:
+   Here's a sample class that shows how to access the helper methods and retrieve components by class name from the helper:
    
 +---+
 package org.apache.maven.enforcer.rule;
@@ -135,7 +135,7 @@ public class MyCustomRule
             String target = (String) helper.evaluate( "${project.build.directory}" );
             String artifactId = (String) helper.evaluate( "${project.artifactId}" );
 
-            // retreive any component out of the session directly
+            // retrieveany component out of the session directly
             ArtifactResolver resolver = (ArtifactResolver) helper.getComponent( ArtifactResolver.class );
             RuntimeInformation rti = (RuntimeInformation) helper.getComponent( RuntimeInformation.class );
 
