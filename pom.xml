@@ -29,7 +29,7 @@
 
   <groupId>org.apache.maven.enforcer</groupId>
   <artifactId>enforcer</artifactId>
-  <version>2-SNAPSHOT</version>
+  <version>1.0-beta-1</version>
   <packaging>pom</packaging>
 
   <name>Enforcer</name>
@@ -133,9 +133,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/enforcer/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/enforcer/trunk/</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/maven/enforcer/trunk</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/enforcer/tags/enforcer-1.0-beta-1</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/enforcer/tags/enforcer-1.0-beta-1</developerConnection>
+    <url>http://svn.apache.org/viewcvs.cgi/maven/enforcer/tags/enforcer-1.0-beta-1</url>
   </scm>
   <issueManagement>
     <system>jira</system>
@@ -149,8 +149,6 @@
   </distributionManagement>
 
   <properties>
-    <api.version>1.0-alpha-4-SNAPSHOT</api.version>
-    <rules.version>1.0-alpha-4-SNAPSHOT</rules.version>
     <maven.version>2.0.9</maven.version>
     <maven.plugin.plugin.version>2.4.3</maven.plugin.plugin.version>
     <site.deploy.url>scp://people.apache.org/www/maven.apache.org</site.deploy.url>
@@ -161,17 +159,17 @@
       <dependency>
         <groupId>org.apache.maven.enforcer</groupId>
         <artifactId>enforcer-api</artifactId>
-        <version>1.0-alpha-5-SNAPSHOT</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.enforcer</groupId>
         <artifactId>enforcer-rules</artifactId>
-        <version>1.0-alpha-5-SNAPSHOT</version>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.enforcer</groupId>
         <artifactId>enforcer-rules</artifactId>
-        <version>1.0-alpha-5-SNAPSHOT</version>
+        <version>${project.version}</version>
         <type>test-jar</type>
         <scope>test</scope>
       </dependency>
@@ -198,7 +196,7 @@
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-utils</artifactId>
-        <version>1.5.1</version>
+        <version>1.5.8</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>

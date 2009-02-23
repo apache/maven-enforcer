@@ -58,7 +58,7 @@ Maven Version: 2.0.8
 JDK Version: 1.5.0_11 normalized as: 1.5.0-11
 OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
 +---+
-  
+ 
    Sample Plugin Configuration:
    
 +---+
@@ -92,3 +92,4 @@ OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
 </project>
 +---+
   
+  If you would like to enforce a certain vendor string for the JDK, you would use the {{{./requireProperty.html}RequireProperty}} rule, and check the java.vendor property with a regular expression.

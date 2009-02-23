@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,6 +67,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.codehaus.plexus.util.CollectionUtils;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -108,9 +110,16 @@ public class RequirePluginVersions
 
     /**
      * Plugins to skip for version enforcement. The plugins should be specified in the form:
-     * <code>group:artifactId</code>.
+     * <code>group:artifactId</code>. NOTE: This is deprecated, use unCheckedPluginList instead.
+     * @deprecated
      */
     public List unCheckedPlugins;
+    
+    /**
+     * Same as unCheckedPlugins but as a comma list to better support properties. Sample form:
+     * <code>group:artifactId,group2:artifactId2</code>
+     */
+    public String unCheckedPluginList;
 
     /** The plugin manager. */
     private PluginManager pluginManager;
@@ -191,8 +200,9 @@ public class RequirePluginVersions
             allPlugins = addAdditionalPlugins( allPlugins, additionalPlugins );
             allPlugins.addAll( getProfilePlugins( project ) );
 
+            
             // pull out any we should skip
-            allPlugins = (Set) removeUncheckedPlugins( unCheckedPlugins, allPlugins );
+            allPlugins = (Set) removeUncheckedPlugins( combineUncheckedPlugins( unCheckedPlugins, unCheckedPluginList ), allPlugins );
 
             // there's nothing to do here
             if ( allPlugins.isEmpty() )
@@ -351,6 +361,32 @@ public class RequirePluginVersions
     }
 
     /**
+     * Combines the old Collection with the new comma separated list.
+     * @param uncheckedPlugins
+     * @param uncheckedPluginsList
+     * @return
+     */
+    public Collection combineUncheckedPlugins( Collection uncheckedPlugins, String uncheckedPluginsList )
+    {
+        //if the comma list is empty, then there's nothing to do here.
+        if ( StringUtils.isNotEmpty( uncheckedPluginsList ) )
+        {
+            //make sure there is a collection to add to.
+            if ( uncheckedPlugins == null )
+            {
+                uncheckedPlugins = new HashSet();
+            }
+            else if (!uncheckedPlugins.isEmpty() && log != null)
+            {
+                log.warn( "The parameter 'unCheckedPlugins' is deprecated. Use 'unCheckedPluginList' instead" );
+            }
+
+            uncheckedPlugins.addAll( Arrays.asList( uncheckedPluginsList.split( "," ) ) );
+        }
+        return uncheckedPlugins;
+    }
+    
+    /**
      * Add the additional plugins if they don't exist yet.
      * 
      * @param existing the existing
@@ -399,8 +435,8 @@ public class RequirePluginVersions
             if ( pluginStrings.length == 2 )
             {
                 Plugin plugin = new Plugin();
-                plugin.setGroupId( pluginStrings[0] );
-                plugin.setArtifactId( pluginStrings[1] );
+                plugin.setGroupId( StringUtils.strip( pluginStrings[0] ) );
+                plugin.setArtifactId( StringUtils.strip( pluginStrings[1] ) );
 
                 return plugin;
             }
