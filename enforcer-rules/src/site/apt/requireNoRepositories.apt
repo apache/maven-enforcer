@@ -60,7 +60,7 @@ Require No Repositories
         <version>1.0</version>
         <executions>
           <execution>
-            <id>enforce-plugin-versions</id>
+            <id>enforce-no-repos</id>
             <goals>
               <goal>enforce</goal>
             </goals>

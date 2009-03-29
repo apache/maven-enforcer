@@ -51,7 +51,7 @@ Require File Size
         <version>1.0</version>
         <executions>
           <execution>
-            <id>enforce-no-snapshots</id>
+            <id>enforce-file-size</id>
             <goals>
               <goal>enforce</goal>
             </goals>
