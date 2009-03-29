@@ -29,7 +29,7 @@
 
   <groupId>org.apache.maven.enforcer</groupId>
   <artifactId>enforcer</artifactId>
-  <version>1.0-beta-2</version>
+  <version>1.0-beta-3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Enforcer</name>
@@ -133,9 +133,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/enforcer/tags/enforcer-1.0-beta-2</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/enforcer/tags/enforcer-1.0-beta-2</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/maven/enforcer/tags/enforcer-1.0-beta-2</url>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/enforcer/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/enforcer/trunk/</developerConnection>
+    <url>http://svn.apache.org/viewcvs.cgi/maven/enforcer/trunk</url>
   </scm>
   <issueManagement>
     <system>jira</system>
