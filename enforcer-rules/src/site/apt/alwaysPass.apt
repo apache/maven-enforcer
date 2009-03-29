@@ -41,7 +41,7 @@ Always Pass
         <version>1.0</version>
         <executions>
           <execution>
-            <id>enforce-no-snapshots</id>
+            <id>enforce</id>
             <goals>
               <goal>enforce</goal>
             </goals>

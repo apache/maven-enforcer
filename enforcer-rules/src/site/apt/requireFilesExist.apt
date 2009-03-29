@@ -50,7 +50,7 @@ Require Files Exist
         <version>1.0</version>
         <executions>
           <execution>
-            <id>enforce-no-snapshots</id>
+            <id>enforce-files-exist</id>
             <goals>
               <goal>enforce</goal>
             </goals>

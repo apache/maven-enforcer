@@ -48,7 +48,7 @@ Require Maven Version
         <version>1.0</version>
         <executions>
           <execution>
-            <id>enforce-java</id>
+            <id>enforce-maven</id>
             <goals>
               <goal>enforce</goal>
             </goals>
