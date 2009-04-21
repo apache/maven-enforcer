@@ -64,6 +64,7 @@ public class EnforceMojo
      * The MavenSession
      * 
      * @parameter expression="${session}"
+     * @readonly
      */
     protected MavenSession session;
 
