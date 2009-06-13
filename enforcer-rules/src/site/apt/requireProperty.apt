@@ -61,9 +61,9 @@ Require Property
               <rules>
                 <requireProperty>
                   <property>basedir</property>
-                  <message>"You must have a basedir!"</message>
-                  <regex>"\d"</regex>
-                  <regexMessage>"You must have a digit in your baseDir!"</regexMessage>
+                  <message>You must have a basedir!</message>
+                  <regex>\d</regex>
+                  <regexMessage>You must have a digit in your baseDir!</regexMessage>
                 </requireProperty>
               </rules>
               <fail>true</fail>
