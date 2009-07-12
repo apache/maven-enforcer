@@ -65,10 +65,11 @@ Usage
 <project>
   [...]
   <build>
-   <plugins>
-     <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <id>enforce-versions</id>
@@ -85,7 +86,7 @@ Usage
                 </requireJavaVersion>
                 <requireOS>
                   <family>unix</family>
-                </requireOS>		
+                </requireOS>
               </rules>
             </configuration>
           </execution>
