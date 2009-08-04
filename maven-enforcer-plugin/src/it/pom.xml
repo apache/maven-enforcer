@@ -74,6 +74,11 @@
 								<exclude>org.apache.maven</exclude>
 								</excludes>
 								</bannedDependencies>
+								<bannedPlugins>
+								<excludes>
+								<exclude>com.acme</exclude>
+								</excludes>
+								</bannedPlugins>
 								<requirePluginVersions/>
 							</rules>
 						</configuration>

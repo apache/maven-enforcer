@@ -33,6 +33,8 @@ Standard Rules
  
   * {{{./bannedDependencies.html}bannedDependencies}} - enforces that excluded dependencies aren't included.
 
+  * bannedPlugins - enforces that excluded plugins aren't included.
+
   * {{{./evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
 
   * {{{./requireReleaseDeps.html}requireReleaseDeps}} - enforces that no snapshots are included as dependencies.

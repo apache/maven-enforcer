@@ -31,7 +31,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 // TODO: Auto-generated Javadoc
 /**
  * Abstract Rule for banning dependencies.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -44,7 +44,7 @@ public abstract class AbstractBanDependencies
 
     /**
      * Execute the rule.
-     * 
+     *
      * @param helper the helper
      * @throws EnforcerRuleException the enforcer rule exception
      */
@@ -64,15 +64,7 @@ public abstract class AbstractBanDependencies
         }
 
         // get the correct list of dependencies
-        Set dependencies = null;
-        if ( searchTransitive )
-        {
-            dependencies = project.getArtifacts();
-        }
-        else
-        {
-            dependencies = project.getDependencyArtifacts();
-        }
+        Set dependencies = getDependenciesToCheck( project );
 
         // look for banned dependencies
         Set foundExcludes = checkDependencies( dependencies, helper.getLog() );
@@ -88,7 +80,8 @@ public abstract class AbstractBanDependencies
             Iterator iter = foundExcludes.iterator();
             while ( iter.hasNext() )
             {
-                buf.append( "Found Banned Dependency: " + ( (Artifact) iter.next() ).getId() + "\n" );
+                Artifact artifact = (Artifact) iter.next();
+                buf.append( getErrorMessage( artifact ) );
             }
             message = buf.toString();
 
@@ -97,9 +90,28 @@ public abstract class AbstractBanDependencies
 
     }
 
+    protected CharSequence getErrorMessage( Artifact artifact )
+    {
+        return "Found Banned Dependency: " + artifact.getId() + "\n";
+    }
+
+    protected Set getDependenciesToCheck( MavenProject project )
+    {
+        Set dependencies = null;
+        if ( searchTransitive )
+        {
+            dependencies = project.getArtifacts();
+        }
+        else
+        {
+            dependencies = project.getDependencyArtifacts();
+        }
+        return dependencies;
+    }
+
     /**
      * Checks the set of dependencies against the list of excludes.
-     * 
+     *
      * @param dependencies the dependencies
      * @param log the log
      * @return the sets the
@@ -110,7 +122,7 @@ public abstract class AbstractBanDependencies
 
     /**
      * Gets the message.
-     * 
+     *
      * @return the message
      */
     public String getMessage()
@@ -120,7 +132,7 @@ public abstract class AbstractBanDependencies
 
     /**
      * Sets the message.
-     * 
+     *
      * @param theMessage the message to set
      */
     public void setMessage( String theMessage )
@@ -130,7 +142,7 @@ public abstract class AbstractBanDependencies
 
     /**
      * Checks if is search transitive.
-     * 
+     *
      * @return the searchTransitive
      */
     public boolean isSearchTransitive()
@@ -140,7 +152,7 @@ public abstract class AbstractBanDependencies
 
     /**
      * Sets the search transitive.
-     * 
+     *
      * @param theSearchTransitive the searchTransitive to set
      */
     public void setSearchTransitive( boolean theSearchTransitive )
