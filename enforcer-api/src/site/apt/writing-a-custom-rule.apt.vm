@@ -48,7 +48,7 @@ Writing a custom rule
   <description>This is my custom rule.</description>
 
   <properties>
-    <api.version>1.0-beta-1</api.version>
+    <api.version>${project.version}</api.version>
     <maven.version>2.0.9</maven.version>
   </properties>
 
@@ -137,12 +137,12 @@ public class MyCustomRule
         try
         {
             // get the various expressions out of the helper.
-            MavenProject project = (MavenProject) helper.evaluate( "${project}" );
+            MavenProject project = (MavenProject) helper.evaluate( "\${project}" );
             MavenSession session = (MavenSession) helper.evaluate( "${session}" );
-            String target = (String) helper.evaluate( "${project.build.directory}" );
-            String artifactId = (String) helper.evaluate( "${project.artifactId}" );
+            String target = (String) helper.evaluate( "\${project.build.directory}" );
+            String artifactId = (String) helper.evaluate( "\${project.artifactId}" );
 
-            // retrieveany component out of the session directly
+            // retrieve any component out of the session directly
             ArtifactResolver resolver = (ArtifactResolver) helper.getComponent( ArtifactResolver.class );
             RuntimeInformation rti = (RuntimeInformation) helper.getComponent( RuntimeInformation.class );
 
@@ -220,6 +220,7 @@ public class MyCustomRule
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.0-beta-1</version>
         <dependencies>
           <dependency>
             <groupId>custom-rule</groupId>
