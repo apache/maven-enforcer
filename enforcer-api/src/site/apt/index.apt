@@ -28,5 +28,5 @@ Maven Enforcer Rule API - Extending The Loving Iron Fist of Maven\x99
   Custom rules are easy to make with the <<<maven-enforcer-rule-api>>>. These rules can then be invoked with the 
   {{{../../plugins/maven-enforcer-plugin/}maven-enforcer-plugin}}. 
   
-  See {{{./writing-a-custom-rule.html}here}} for instructions on how to make your own rule.
+  See {{{./writing-a-custom-rule.html}Writing a Custom Rule}} for instructions on how to make your own rule.
  
