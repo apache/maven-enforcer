@@ -58,8 +58,8 @@ Require File Size
             <configuration>
               <rules>
                 <requireFilesSize>
-                  <maxSize>10000</maxSize>
-                  <minSize>90</minsize>
+                  <maxsize>10000</maxsize>
+                  <minsize>90</minsize>
                   <files>
                    <file>${project.outputDirectory}/foo.txt</file>
                    <file>${project.outputDirectory}/foo2.txt</file>
