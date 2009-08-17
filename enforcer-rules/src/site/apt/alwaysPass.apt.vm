@@ -16,25 +16,16 @@
 ~~ under the License.    
  
   ------
-  Require Files Exist
+  AlwaysPass
   ------
   Brian Fox
   ------
   August 2008
   ------
 
-Require Files Exist
+Always Pass
 
-  This rule checks that the specified list of files exist.
-
-
-   The following parameters are supported by this rule:
-   
-   * message - an optional message to the user if the rule fails.
-   * files - A list of files to check.
-   * allowNulls - If null files should be allowed. If allowed, they will be treated as if they do exist. Default is false.
-   
-   []
+  This rule will always succeed. It is useful for testing proper plugin configuration.
 
    
   Sample Plugin Configuration:
@@ -47,21 +38,16 @@ Require Files Exist
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
-            <id>enforce-files-exist</id>
+            <id>enforce</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <requireFilesExist>
-                  <files>
-                   <file>${project.outputDirectory}/foo.txt</file>
-                   <file>${project.outputDirectory}/foo2.txt</file>
-                  </files>
-                </requireFilesExist>
+                <AlwaysPass/>
               </rules>
               <fail>true</fail>
             </configuration>

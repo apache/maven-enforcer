@@ -16,29 +16,27 @@
 ~~ under the License.    
  
   ------
-  Beanshell
+  Require Maven Version
   ------
   Brian Fox
   ------
   June 2007
   ------
 
-Beanshell
+Require Maven Version
 
-  This rule can execute a beanshell script and evaluate the result.
-
+   This rule enforces certain Maven versions. The rule uses the {{{./versionRanges.html}Enforcer version range syntax}} to define allowed versions.
 
    The following parameters are supported by this rule:
    
-   * condition - the beanshell statement to evaluate.
-   
    * message - an optional message to the user if the rule fails.
+   
+   * {{{../apidocs/org/apache/maven/plugin/enforcer/AbstractVersionEnforcer.html#version}version}} - {{{./versionRanges.html}range}} of allowed Maven versions.
    
    []
 
+   Sample Plugin Configuration:
    
-  Sample Plugin Configuration:
-  
 +---+
 <project>
   [...]
@@ -47,20 +45,19 @@ Beanshell
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
-            <id>enforce-beanshell</id>
+            <id>enforce-maven</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <evaluateBeanshell>
-                  <condition>${project.artifactId} == foo</condition>
-                </evaluateBeanshell>
-              </rules>
-              <fail>true</fail>
+                <requireMavenVersion>
+                  <version>2.0.6</version>
+                </requireMavenVersion>
+              </rules>    
             </configuration>
           </execution>
         </executions>
@@ -69,12 +66,4 @@ Beanshell
   </build>
   [...]
 </project>
-+---+
-  
-  The condition can be a complex script or a simple expression. As long as it results in True, the rule will succeed. This means code can be executed as long as the last line results in true.
-  
-+---+
-  <evaluateBeanshell>
-    <condition>for (int i = 0;i!=10;i++){print ("Hello World "+i);};1==1</condition>
-  </evaluateBeanshell>
-+---+
++---+  

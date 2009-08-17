@@ -16,16 +16,25 @@
 ~~ under the License.    
  
   ------
-  AlwaysPass
+  Require Release Dependencies
   ------
   Brian Fox
   ------
-  August 2008
+  November 2007
   ------
 
-Always Pass
+Require Release Dependencies
 
-  This rule will always succeed. It is useful for testing proper plugin configuration.
+  This rule checks the dependencies and fails if any snapshots are found.
+
+
+   The following parameters are supported by this rule:
+   
+   * searchTransitive - if transitive dependencies should be checked.
+   
+   * message - an optional message to the user if the rule fails.
+   
+   []
 
    
   Sample Plugin Configuration:
@@ -38,16 +47,18 @@ Always Pass
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
-            <id>enforce</id>
+            <id>enforce-no-snapshots</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <AlwaysPass/>
+                <requireReleaseDeps>
+                  <message>No Snapshots Allowed!</message>
+                </requireReleaseDeps>
               </rules>
               <fail>true</fail>
             </configuration>

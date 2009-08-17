@@ -16,16 +16,29 @@
 ~~ under the License.    
  
   ------
-  Always Fail
+  Require Release Dependencies
   ------
   Brian Fox
   ------
-  August 2008
+  Auguest 2008
   ------
 
-Always Fail
+Require Release Dependencies
 
-  This rule will always fail. It is useful for testing proper plugin configuration.
+  This rule checks the dependencies and fails if any snapshots are found.
+
+
+   The following parameters are supported by this rule:
+   
+   * searchTransitive - if transitive dependencies should be checked. Default: true
+   
+   * message - an optional message to the user if the rule fails.
+   
+   * onlyWhenRelease - if this rule should only be executed when the version is a non-SNAPSHOT version. Default: false
+   
+   * failWhenParentIsSnapshot - if the parent should be checked. Default: true 
+
+   []
 
    
   Sample Plugin Configuration:
@@ -38,16 +51,18 @@ Always Fail
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
-            <id>enforce</id>
+            <id>enforce-no-snapshots</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <AlwaysFail/>
+                <requireReleaseDeps>
+                  <message>No Snapshots Allowed!</message>
+                </requireReleaseDeps>
               </rules>
               <fail>true</fail>
             </configuration>
@@ -59,3 +74,4 @@ Always Fail
   [...]
 </project>
 +---+
+

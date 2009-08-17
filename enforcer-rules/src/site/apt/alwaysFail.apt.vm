@@ -16,27 +16,20 @@
 ~~ under the License.    
  
   ------
-  Require Maven Version
+  Always Fail
   ------
   Brian Fox
   ------
-  June 2007
+  August 2008
   ------
 
-Require Maven Version
+Always Fail
 
-   This rule enforces certain Maven versions. The rule uses the {{{./versionRanges.html}Enforcer version range syntax}} to define allowed versions.
+  This rule will always fail. It is useful for testing proper plugin configuration.
 
-   The following parameters are supported by this rule:
    
-   * message - an optional message to the user if the rule fails.
-   
-   * {{{../apidocs/org/apache/maven/plugin/enforcer/AbstractVersionEnforcer.html#version}version}} - {{{./versionRanges.html}range}} of allowed Maven versions.
-   
-   []
-
-   Sample Plugin Configuration:
-   
+  Sample Plugin Configuration:
+  
 +---+
 <project>
   [...]
@@ -45,19 +38,18 @@ Require Maven Version
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
-            <id>enforce-maven</id>
+            <id>enforce</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <requireMavenVersion>
-                  <version>2.0.6</version>
-                </requireMavenVersion>
-              </rules>    
+                <AlwaysFail/>
+              </rules>
+              <fail>true</fail>
             </configuration>
           </execution>
         </executions>
@@ -66,4 +58,4 @@ Require Maven Version
   </build>
   [...]
 </project>
-+---+  
++---+

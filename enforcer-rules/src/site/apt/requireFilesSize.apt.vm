@@ -16,26 +16,25 @@
 ~~ under the License.    
  
   ------
-  Require Release Version
+  Require File Size
   ------
   Brian Fox
   ------
   August 2008
   ------
 
-Require Release Version
+Require File Size
 
-  This rule checks that the current project is not a snapshot.
+  This rule checks that the specified list of files exist and are within the specified size range.
 
 
    The following parameters are supported by this rule:
    
    * message - an optional message to the user if the rule fails.
-   
-   * onlyWhenRelease - if this rule should only be executed when the version is a non-SNAPSHOT version. Default: false
-   
-   * failWhenParentIsSnapshot - if the parent should be checked. Default: true 
-
+   * files - A list of files to check. If this list is empty, the main project artifact will be checked.
+   * maxsize - maximum size in bytes for this file
+   * minsize - minimum size in bytes for this file
+   * allowNulls - If null files should be allowed. If allowed, they will be treated as if they do exist. Default is false.
    []
 
    
@@ -49,18 +48,23 @@ Require Release Version
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.0</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
-            <id>enforce-no-snapshots</id>
+            <id>enforce-file-size</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <requireReleaseVersion>
-                  <message>No Snapshots Allowed!</message>
-                </requireReleaseVersion>
+                <requireFilesSize>
+                  <maxsize>10000</maxsize>
+                  <minsize>90</minsize>
+                  <files>
+                   <file>${project.outputDirectory}/foo.txt</file>
+                   <file>${project.outputDirectory}/foo2.txt</file>
+                  </files>
+                </requireFilesSize>
               </rules>
               <fail>true</fail>
             </configuration>
