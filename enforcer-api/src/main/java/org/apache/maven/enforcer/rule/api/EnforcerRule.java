@@ -1,3 +1,5 @@
+package org.apache.maven.enforcer.rule.api;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,13 +18,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.enforcer.rule.api;
-
-import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * Interface to be implemented by any rules executed by the enforcer.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -34,15 +33,15 @@ public interface EnforcerRule
      * containing a reason message if the rule fails the check. The plugin will
      * then decide based on the fail flag if it should stop or just log the
      * message as a warning.
-     * 
+     *
      * @param helper The helper provides access to the log, MavenSession and has
      * helpers to get common components. It is also able to lookup components
      * by class name.
-     * 
+     *
      * @throws MojoExecutionException
      * @throws EnforcerRuleException the enforcer rule exception
      */
-    public void execute( EnforcerRuleHelper helper )
+    void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException;
 
     /**
@@ -50,28 +49,28 @@ public interface EnforcerRule
      * the results will be remembered for future executions in the same build (ie children). Subsequent
      * iterations of the rule will be queried to see if they are also cacheable. This will allow the rule to be
      * uncached further down the tree if needed.
-     * 
+     *
      * @return <code>true</code> if rule is cacheable
      */
-    public boolean isCacheable();
+    boolean isCacheable();
 
     /**
      * Checks if cached result is valid.
-     * 
+     *
      * @param cachedRule the last cached instance of the rule. This is to be used by the rule to
      * potentially determine if the results are still valid (ie if the configuration has been overridden)
-     * 
+     *
      * @return <code>true</code> if the stored results are valid for the same id.
      */
-    public boolean isResultValid(EnforcerRule cachedRule);
+    boolean isResultValid( EnforcerRule cachedRule );
 
     /**
      * If the rule is to be cached, this id is used as part of the key. This can allow rules to take parameters
      * that allow multiple results of the same rule to be cached.
-     * 
+     *
      * @return id to be used by the enforcer to determine uniqueness of cache results. The ids only need to be unique
      * within a given rule implementation as the full key will be [classname]-[id]
      */
-    public String getCacheId();
+    String getCacheId();
 
 }

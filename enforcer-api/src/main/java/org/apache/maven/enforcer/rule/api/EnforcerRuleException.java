@@ -1,3 +1,5 @@
+package org.apache.maven.enforcer.rule.api;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,14 +18,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.enforcer.rule.api;
-
 
 /**
  * An exception occurring during the execution of a rule. Based off of
  * EnforcerRuleException, but separated to keep the rule dependencies to a
  * minimum.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -42,7 +42,7 @@ public class EnforcerRuleException
 
     /**
      * Gets the long message.
-     * 
+     *
      * @return the long message
      */
     public String getLongMessage()
@@ -52,7 +52,7 @@ public class EnforcerRuleException
 
     /**
      * Gets the source.
-     * 
+     *
      * @return the source
      */
     public Object getSource()
@@ -63,7 +63,7 @@ public class EnforcerRuleException
     /**
      * Construct a new <code>EnforcerRuleException</code> exception providing
      * the source and a short and long message.
-     * 
+     *
      * @param source the source
      * @param shortMessage the short message
      * @param longMessage the long message
@@ -79,7 +79,7 @@ public class EnforcerRuleException
      * Construct a new <code>EnforcerRuleException</code> exception wrapping
      * an underlying <code>Exception</code> and providing a
      * <code>message</code>.
-     * 
+     *
      * @param message the message
      * @param cause the cause
      */
@@ -92,7 +92,7 @@ public class EnforcerRuleException
      * Construct a new <code>EnforcerRuleException</code> exception wrapping
      * an underlying <code>Throwable</code> and providing a
      * <code>message</code>.
-     * 
+     *
      * @param message the message
      * @param cause the cause
      */
@@ -104,7 +104,7 @@ public class EnforcerRuleException
     /**
      * Construct a new <code>EnforcerRuleException</code> exception providing
      * a <code>message</code>.
-     * 
+     *
      * @param message the message
      */
     public EnforcerRuleException( String message )
