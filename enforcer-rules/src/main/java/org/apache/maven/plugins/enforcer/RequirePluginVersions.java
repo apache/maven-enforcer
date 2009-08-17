@@ -67,15 +67,13 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.util.CollectionUtils;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-// TODO: Auto-generated Javadoc
 /**
  * This rule will enforce that all plugins specified in the poms have a version declared.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -114,10 +112,11 @@ public class RequirePluginVersions
      * @deprecated
      */
     public List unCheckedPlugins;
-    
+
     /**
      * Same as unCheckedPlugins but as a comma list to better support properties. Sample form:
      * <code>group:artifactId,group2:artifactId2</code>
+     * @since 1.0-beta-1
      */
     public String unCheckedPluginList;
 
@@ -153,7 +152,7 @@ public class RequirePluginVersions
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
      */
     public void execute( EnforcerRuleHelper helper )
@@ -165,7 +164,7 @@ public class RequirePluginVersions
         try
         {
             // get the various expressions out of the helper.
-            
+
             project = (MavenProject) helper.evaluate( "${project}" );
             LifecycleExecutor life;
             life = (LifecycleExecutor) helper.getComponent( LifecycleExecutor.class );
@@ -177,13 +176,13 @@ public class RequirePluginVersions
             {
                 log.warn( "This rule is not compatible with the current version of Maven. The rule is not able to perform any checks.");
                 /*
-                 * 
+                 *
                  * NOTE: If this happens, we're bailing out right away.
-                 * 
-                 * 
+                 *
+                 *
                  */
                 return;
-            }    
+            }
             session = (MavenSession) helper.evaluate( "${session}" );
             pluginManager = (PluginManager) helper.getComponent( PluginManager.class );
             factory = (ArtifactFactory) helper.getComponent( ArtifactFactory.class );
@@ -200,7 +199,7 @@ public class RequirePluginVersions
             allPlugins = addAdditionalPlugins( allPlugins, additionalPlugins );
             allPlugins.addAll( getProfilePlugins( project ) );
 
-            
+
             // pull out any we should skip
             allPlugins = (Set) removeUncheckedPlugins( combineUncheckedPlugins( unCheckedPlugins, unCheckedPluginList ), allPlugins );
 
@@ -338,7 +337,7 @@ public class RequirePluginVersions
 
     /**
      * Remove the plugins that the user doesn't want to check.
-     * 
+     *
      * @param uncheckedPlugins
      * @param plugins
      * @param field
@@ -385,10 +384,10 @@ public class RequirePluginVersions
         }
         return uncheckedPlugins;
     }
-    
+
     /**
      * Add the additional plugins if they don't exist yet.
-     * 
+     *
      * @param existing the existing
      * @param additional the additional
      * @return the sets the
@@ -421,7 +420,7 @@ public class RequirePluginVersions
 
     /**
      * Helper method to parse and inject a Plugin.
-     * 
+     *
      * @param pluginString
      * @return
      * @throws MojoExecutionException
@@ -454,7 +453,7 @@ public class RequirePluginVersions
 
     /**
      * Finds the plugins that are listed in active profiles.
-     * 
+     *
      * @param project the project
      * @return the profile plugins
      */
@@ -484,7 +483,7 @@ public class RequirePluginVersions
 
     /**
      * Given a plugin, this will retrieve the matching plugin artifact from the model.
-     * 
+     *
      * @param plugin plugin to lookup
      * @param project project to search
      * @return matching plugin, <code>null</code> if not found.
@@ -513,7 +512,7 @@ public class RequirePluginVersions
 
     /**
      * Resolve plugin.
-     * 
+     *
      * @param plugin the plugin
      * @param project the project
      * @return the plugin
@@ -544,7 +543,7 @@ public class RequirePluginVersions
     /**
      * Gets the plugins that are bound to the defined phases. This does not find plugins bound in the pom to a phase
      * later than the plugin is executing.
-     * 
+     *
      * @param life the life
      * @param project the project
      * @param thePhases the the phases
@@ -556,7 +555,7 @@ public class RequirePluginVersions
     protected Set getBoundPlugins( LifecycleExecutor life, MavenProject project, String thePhases )
         throws PluginNotFoundException, LifecycleExecutionException, IllegalAccessException
     {
-       
+
         Set allPlugins = new HashSet();
 
         // lookup the bindings for all the passed in phases
@@ -588,7 +587,7 @@ public class RequirePluginVersions
      */
     /**
      * Checks for valid version specified.
-     * 
+     *
      * @param helper the helper
      * @param source the source
      * @param pluginWrappers the plugins
@@ -658,7 +657,7 @@ public class RequirePluginVersions
 
     /**
      * Checks if is snapshot.
-     * 
+     *
      * @param baseVersion the base version
      * @return true, if is snapshot
      */
@@ -680,7 +679,7 @@ public class RequirePluginVersions
      */
     /**
      * Gets the all plugins.
-     * 
+     *
      * @param project the project
      * @param lifecycle the lifecycle
      * @return the all plugins
@@ -735,7 +734,7 @@ public class RequirePluginVersions
      */
     /**
      * Gets the phase to lifecycle map.
-     * 
+     *
      * @return the phase to lifecycle map
      * @throws LifecycleExecutionException the lifecycle execution exception
      */
@@ -773,7 +772,7 @@ public class RequirePluginVersions
 
     /**
      * Gets the lifecycle for phase.
-     * 
+     *
      * @param phase the phase
      * @return the lifecycle for phase
      * @throws BuildFailureException the build failure exception
@@ -793,7 +792,7 @@ public class RequirePluginVersions
 
     /**
      * Find mappings for lifecycle.
-     * 
+     *
      * @param project the project
      * @param lifecycle the lifecycle
      * @return the map
@@ -851,7 +850,7 @@ public class RequirePluginVersions
 
     /**
      * Find optional mojos for lifecycle.
-     * 
+     *
      * @param project the project
      * @param lifecycle the lifecycle
      * @return the list
@@ -897,7 +896,7 @@ public class RequirePluginVersions
 
     /**
      * Find extension.
-     * 
+     *
      * @param project the project
      * @param role the role
      * @param roleHint the role hint
@@ -945,7 +944,7 @@ public class RequirePluginVersions
 
     /**
      * Verify plugin.
-     * 
+     *
      * @param plugin the plugin
      * @param project the project
      * @param settings the settings
@@ -998,7 +997,7 @@ public class RequirePluginVersions
     /**
      * Gets all plugin entries in build.plugins, build.pluginManagement.plugins, profile.build.plugins, reporting and
      * profile.reporting in this project and all parents
-     * 
+     *
      * @param project the project
      * @return the all plugin entries wrapped in a PluginWrapper Object
      * @throws ArtifactResolutionException the artifact resolution exception
@@ -1094,7 +1093,7 @@ public class RequirePluginVersions
 
     /**
      * Checks if is ban latest.
-     * 
+     *
      * @return the banLatest
      */
     protected boolean isBanLatest()
@@ -1104,7 +1103,7 @@ public class RequirePluginVersions
 
     /**
      * Sets the ban latest.
-     * 
+     *
      * @param theBanLatest the banLatest to set
      */
     protected void setBanLatest( boolean theBanLatest )
@@ -1114,7 +1113,7 @@ public class RequirePluginVersions
 
     /**
      * Checks if is ban release.
-     * 
+     *
      * @return the banRelease
      */
     protected boolean isBanRelease()
@@ -1124,7 +1123,7 @@ public class RequirePluginVersions
 
     /**
      * Sets the ban release.
-     * 
+     *
      * @param theBanRelease the banRelease to set
      */
     protected void setBanRelease( boolean theBanRelease )
@@ -1134,7 +1133,7 @@ public class RequirePluginVersions
 
     /**
      * Gets the message.
-     * 
+     *
      * @return the message
      */
     protected String getMessage()
@@ -1144,7 +1143,7 @@ public class RequirePluginVersions
 
     /**
      * Sets the message.
-     * 
+     *
      * @param theMessage the message to set
      */
     protected void setMessage( String theMessage )
@@ -1154,7 +1153,7 @@ public class RequirePluginVersions
 
     /**
      * Gets the utils.
-     * 
+     *
      * @return the utils
      */
     protected EnforcerRuleUtils getUtils()
@@ -1164,7 +1163,7 @@ public class RequirePluginVersions
 
     /**
      * Sets the utils.
-     * 
+     *
      * @param theUtils the utils to set
      */
     protected void setUtils( EnforcerRuleUtils theUtils )
@@ -1174,7 +1173,7 @@ public class RequirePluginVersions
 
     /**
      * Checks if is ban snapshots.
-     * 
+     *
      * @return the banSnapshots
      */
     public boolean isBanSnapshots()
@@ -1184,7 +1183,7 @@ public class RequirePluginVersions
 
     /**
      * Sets the ban snapshots.
-     * 
+     *
      * @param theBanSnapshots the banSnapshots to set
      */
     public void setBanSnapshots( boolean theBanSnapshots )
@@ -1194,7 +1193,7 @@ public class RequirePluginVersions
 
     /**
      * Checks if is ban timestamps.
-     * 
+     *
      * @return the banTimestamps
      */
     public boolean isBanTimestamps()
@@ -1204,7 +1203,7 @@ public class RequirePluginVersions
 
     /**
      * Sets the ban timestamps.
-     * 
+     *
      * @param theBanTimestamps the banTimestamps to set
      */
     public void setBanTimestamps( boolean theBanTimestamps )
