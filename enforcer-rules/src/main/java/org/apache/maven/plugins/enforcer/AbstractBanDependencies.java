@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -28,7 +29,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
-// TODO: Auto-generated Javadoc
 /**
  * Abstract Rule for banning dependencies.
  *
@@ -40,7 +40,7 @@ public abstract class AbstractBanDependencies
 {
 
     /** Specify if transitive dependencies should be searched (default) or only look at direct dependencies. */
-    public boolean searchTransitive = true;
+    private boolean searchTransitive = true;
 
     /**
      * Execute the rule.

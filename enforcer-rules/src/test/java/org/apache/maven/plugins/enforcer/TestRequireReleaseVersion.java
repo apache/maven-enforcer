@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.io.IOException;
 
@@ -30,7 +31,7 @@ import org.apache.maven.plugins.enforcer.utils.TestEnforcerRuleUtils;
 // TODO: Auto-generated Javadoc
 /**
  * The Class TestRequireReleaseVersion.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestRequireReleaseVersion
@@ -39,7 +40,7 @@ public class TestRequireReleaseVersion
 
     /**
      * Test mojo.
-     * 
+     *
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void testMojo()
@@ -58,17 +59,17 @@ public class TestRequireReleaseVersion
         project.setArtifact( factory.getSnapshotArtifact() );
 
         TestEnforcerRuleUtils.execute( rule, helper, true );
-    
+
         project.setArtifact( factory.getReleaseArtifact() );
-        
+
         MockProject parent = new MockProject();
         parent.setArtifact( factory.getSnapshotArtifact() );
         project.setParent( parent );
         helper = EnforcerTestUtils.getHelper(project);
-         
+
         ( (RequireReleaseVersion) rule ).setFailWhenParentIsSnapshot( true );
         TestEnforcerRuleUtils.execute( rule, helper, true );
-        
+
         ( (RequireReleaseVersion) rule ).setFailWhenParentIsSnapshot( false );
         TestEnforcerRuleUtils.execute( rule, helper, false );
 

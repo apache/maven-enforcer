@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -29,10 +30,9 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.util.StringUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * This rule checks that some profiles are active.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class RequireActiveProfile
@@ -47,7 +47,7 @@ public class RequireActiveProfile
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
      */
     public void execute( EnforcerRuleHelper theHelper )
@@ -114,7 +114,7 @@ public class RequireActiveProfile
 
     /**
      * Checks if profile is active.
-     * 
+     *
      * @param project the project
      * @param profileName the profile name
      * @return <code>true</code> if profile is active

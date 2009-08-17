@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ import org.apache.maven.plugin.testing.ArtifactStubFactory;
 // TODO: Auto-generated Javadoc
 /**
  * The Class TestBannedDependencies.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestBannedDependencies
@@ -39,7 +40,7 @@ public class TestBannedDependencies
 
     /**
      * Test rule.
-     * 
+     *
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void testRule()
@@ -130,7 +131,7 @@ public class TestBannedDependencies
 
     /**
      * Test includes.
-     * 
+     *
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void testIncludes()
@@ -170,7 +171,7 @@ public class TestBannedDependencies
 
     /**
      * Simpler wrapper to execute and deal with the expected result.
-     * 
+     *
      * @param rule the rule
      * @param helper the helper
      * @param shouldFail the should fail

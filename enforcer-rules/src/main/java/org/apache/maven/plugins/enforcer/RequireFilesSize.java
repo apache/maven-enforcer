@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
 
@@ -29,7 +30,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 
 /**
  * Rule to validate the main artifact is within certain size constraints.
- * 
+ *
  * @author brianf
  * @author Roman Stumm
  */
@@ -51,14 +52,14 @@ public class RequireFilesSize
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
      */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
         this.log = helper.getLog();
-        
+
         // if the file is already defined, use that. Otherwise get the main artifact.
         if ( files.length == 0 )
         {
@@ -84,7 +85,7 @@ public class RequireFilesSize
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
     public boolean isCacheable()
@@ -94,7 +95,7 @@ public class RequireFilesSize
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
     public boolean isResultValid( EnforcerRule cachedRule )
@@ -112,7 +113,7 @@ public class RequireFilesSize
             //if we get here and it's null, treat it as a success.
             return true;
         }
-        
+
         // check the file now
         if ( file.exists() )
         {

@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,24 +18,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 
 /**
  * The Class AbstractNonCacheableEnforcerRule. This is to be used by rules
- * that don't need caching...it saves implementing a bunch of methods.
- * 
+ * that don't need caching... it saves implementing a bunch of methods.
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id: $
+ * @version $Id$
  */
-abstract public class AbstractNonCacheableEnforcerRule
+public abstract class AbstractNonCacheableEnforcerRule
     extends AbstractStandardEnforcerRule
 {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
     public String getCacheId()
@@ -43,7 +44,7 @@ abstract public class AbstractNonCacheableEnforcerRule
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
     public boolean isCacheable()
@@ -53,7 +54,7 @@ abstract public class AbstractNonCacheableEnforcerRule
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
     public boolean isResultValid( EnforcerRule cachedRule )

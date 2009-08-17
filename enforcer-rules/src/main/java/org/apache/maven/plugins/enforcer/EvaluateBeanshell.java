@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
@@ -29,7 +30,7 @@ import bsh.Interpreter;
 
 /**
  * Rule for Maven Enforcer using Beanshell to evaluate a conditional expression.
- * 
+ *
  * @author hugonnem
  */
 public class EvaluateBeanshell
@@ -44,7 +45,7 @@ public class EvaluateBeanshell
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
      */
     public void execute( EnforcerRuleHelper helper )
@@ -75,7 +76,7 @@ public class EvaluateBeanshell
 
     /**
      * Evaluate expression using Beanshell.
-     * 
+     *
      * @param script the expression to be evaluated
      * @param log the logger
      * @return boolean the evaluation of the expression

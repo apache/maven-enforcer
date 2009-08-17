@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer.utils;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer.utils;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugins.enforcer.EnforcerExpressionEvaluator;
@@ -34,7 +35,7 @@ public class MockEnforcerExpressionEvaluator
 
     /**
      * Instantiates a new mock enforcer expression evaluator.
-     * 
+     *
      * @param theContext the the context
      * @param thePathTranslator the the path translator
      * @param theProject the the project
@@ -48,7 +49,7 @@ public class MockEnforcerExpressionEvaluator
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.plugin.PluginParameterExpressionEvaluator#evaluate(java.lang.String)
      */
     public Object evaluate( String expr )

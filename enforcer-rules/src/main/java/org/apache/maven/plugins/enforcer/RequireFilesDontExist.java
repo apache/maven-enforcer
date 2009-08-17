@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,11 +18,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class RequireFilesDontExist.
  */
@@ -30,18 +30,18 @@ public class RequireFilesDontExist
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.plugins.enforcer.AbstractRequireFiles#checkFile(java.io.File)
      */
     boolean checkFile( File file )
     {
     	//if we get here and the handle is null, treat it as a success
-    	return file == null ? true : !file.exists();
+        return file == null ? true : !file.exists();
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.plugins.enforcer.AbstractRequireFiles#getErrorMsg()
      */
     String getErrorMsg()

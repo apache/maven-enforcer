@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
 import java.io.Reader;
@@ -45,7 +46,7 @@ import org.codehaus.plexus.logging.LoggerManager;
 // TODO: Auto-generated Javadoc
 /**
  * The Class MockPlexusContainer.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class MockPlexusContainer
@@ -54,7 +55,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#lookup(java.lang.String)
      */
     public Object lookup( String theComponentKey )
@@ -74,7 +75,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#addComponentDescriptor(org.codehaus.plexus.component.repository.ComponentDescriptor)
      */
     public void addComponentDescriptor( ComponentDescriptor theComponentDescriptor )
@@ -86,7 +87,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#addContextValue(java.lang.Object, java.lang.Object)
      */
     public void addContextValue( Object theKey, Object theValue )
@@ -97,7 +98,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#addJarRepository(java.io.File)
      */
     public void addJarRepository( File theRepository )
@@ -108,7 +109,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#addJarResource(java.io.File)
      */
     public void addJarResource( File theResource )
@@ -120,7 +121,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#composeComponent(java.lang.Object,
      *      org.codehaus.plexus.component.repository.ComponentDescriptor)
      */
@@ -133,7 +134,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#createChildContainer(java.lang.String, java.util.List, java.util.Map)
      */
     public PlexusContainer createChildContainer( String theName, List theClasspathJars, Map theContext )
@@ -145,7 +146,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#createChildContainer(java.lang.String, java.util.List, java.util.Map,
      *      java.util.List)
      */
@@ -159,7 +160,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#createComponentInstance(org.codehaus.plexus.component.repository.ComponentDescriptor)
      */
     public Object createComponentInstance( ComponentDescriptor theComponentDescriptor )
@@ -171,7 +172,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#dispose()
      */
     public void dispose()
@@ -182,7 +183,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#getChildContainer(java.lang.String)
      */
     public PlexusContainer getChildContainer( String theName )
@@ -193,7 +194,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#getComponentDescriptor(java.lang.String)
      */
     public ComponentDescriptor getComponentDescriptor( String theComponentKey )
@@ -204,7 +205,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#getComponentDescriptorList(java.lang.String)
      */
     public List getComponentDescriptorList( String theRole )
@@ -215,7 +216,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#getComponentDescriptorMap(java.lang.String)
      */
     public Map getComponentDescriptorMap( String theRole )
@@ -226,7 +227,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#getComponentRealm(java.lang.String)
      */
     public ClassRealm getComponentRealm( String theComponentKey )
@@ -237,7 +238,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#getContainerRealm()
      */
     public ClassRealm getContainerRealm()
@@ -248,7 +249,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#getContext()
      */
     public Context getContext()
@@ -259,7 +260,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#getCreationDate()
      */
     public Date getCreationDate()
@@ -270,7 +271,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#getLogger()
      */
     public Logger getLogger()
@@ -281,7 +282,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#getLoggerManager()
      */
     public LoggerManager getLoggerManager()
@@ -292,7 +293,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#hasChildContainer(java.lang.String)
      */
     public boolean hasChildContainer( String theName )
@@ -303,7 +304,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#hasComponent(java.lang.String)
      */
     public boolean hasComponent( String theComponentKey )
@@ -314,7 +315,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#hasComponent(java.lang.String, java.lang.String)
      */
     public boolean hasComponent( String theRole, String theRoleHint )
@@ -325,7 +326,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#initialize()
      */
     public void initialize()
@@ -337,7 +338,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#isInitialized()
      */
     public boolean isInitialized()
@@ -348,7 +349,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#isStarted()
      */
     public boolean isStarted()
@@ -359,7 +360,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#lookup(java.lang.String, java.lang.String)
      */
     public Object lookup( String theRole, String theRoleHint )
@@ -371,7 +372,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#lookupList(java.lang.String)
      */
     public List lookupList( String theRole )
@@ -383,7 +384,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#lookupMap(java.lang.String)
      */
     public Map lookupMap( String theRole )
@@ -395,7 +396,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#registerComponentDiscoveryListener(org.codehaus.plexus.component.discovery.ComponentDiscoveryListener)
      */
     public void registerComponentDiscoveryListener( ComponentDiscoveryListener theListener )
@@ -406,7 +407,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#release(java.lang.Object)
      */
     public void release( Object theComponent )
@@ -418,7 +419,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#releaseAll(java.util.Map)
      */
     public void releaseAll( Map theComponents )
@@ -430,7 +431,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#releaseAll(java.util.List)
      */
     public void releaseAll( List theComponents )
@@ -442,7 +443,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#removeChildContainer(java.lang.String)
      */
     public void removeChildContainer( String theName )
@@ -453,7 +454,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#removeComponentDiscoveryListener(org.codehaus.plexus.component.discovery.ComponentDiscoveryListener)
      */
     public void removeComponentDiscoveryListener( ComponentDiscoveryListener theListener )
@@ -464,7 +465,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#resume(java.lang.Object)
      */
     public void resume( Object theComponent )
@@ -476,7 +477,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#setConfigurationResource(java.io.Reader)
      */
     public void setConfigurationResource( Reader theConfiguration )
@@ -488,7 +489,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#setLoggerManager(org.codehaus.plexus.logging.LoggerManager)
      */
     public void setLoggerManager( LoggerManager theLoggerManager )
@@ -499,7 +500,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#setParentPlexusContainer(org.codehaus.plexus.PlexusContainer)
      */
     public void setParentPlexusContainer( PlexusContainer theParentContainer )
@@ -510,7 +511,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#start()
      */
     public void start()
@@ -522,7 +523,7 @@ public class MockPlexusContainer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.PlexusContainer#suspend(java.lang.Object)
      */
     public void suspend( Object theComponent )

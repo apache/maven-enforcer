@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,16 +18,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.execution.RuntimeInformation;
 
-// TODO: Auto-generated Javadoc
 /**
  * Just a mock object hard coded to return version 2.0.5
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class MockRuntimeInformation
@@ -34,7 +34,7 @@ public class MockRuntimeInformation
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.execution.RuntimeInformation#getApplicationVersion()
      */
     public ArtifactVersion getApplicationVersion()

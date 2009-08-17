@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import junit.framework.TestCase;
 
@@ -31,7 +32,7 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 // TODO: Auto-generated Javadoc
 /**
  * The Class TestAbstractVersionEnforcer.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestAbstractVersionEnforcer
@@ -40,7 +41,7 @@ public class TestAbstractVersionEnforcer
 
     /**
      * Test contains version.
-     * 
+     *
      * @throws InvalidVersionSpecificationException the invalid version specification exception
      */
     public void testContainsVersion()
@@ -83,12 +84,12 @@ public class TestAbstractVersionEnforcer
         version = new DefaultArtifactVersion ("2.1.0-M1-RC12");
         assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.1.0-M1-RC12,)" ), version ) );
         assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.1.0-M1,)" ), version ) );
-        
+
     }
 
     /**
      * Enforce false.
-     * 
+     *
      * @param rule the rule
      * @param log the log
      * @param var the var

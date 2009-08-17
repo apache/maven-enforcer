@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.util.Date;
 import java.util.Properties;
@@ -32,14 +33,14 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator
 // TODO: Auto-generated Javadoc
 /**
  * The Class EnforcerTestUtils.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public final class EnforcerTestUtils
 {
     /**
      * Gets the maven session.
-     * 
+     *
      * @return the maven session
      */
     public static MavenSession getMavenSession()
@@ -50,7 +51,7 @@ public final class EnforcerTestUtils
 
     /**
      * Gets the helper.
-     * 
+     *
      * @return the helper
      */
     public static EnforcerRuleHelper getHelper()
@@ -60,7 +61,7 @@ public final class EnforcerTestUtils
 
     /**
      * Gets the helper.
-     * 
+     *
      * @param mockExpression the mock expression
      * @return the helper
      */
@@ -71,7 +72,7 @@ public final class EnforcerTestUtils
 
     /**
      * Gets the helper.
-     * 
+     *
      * @param project the project
      * @return the helper
      */
@@ -82,7 +83,7 @@ public final class EnforcerTestUtils
 
     /**
      * Gets the helper.
-     * 
+     *
      * @param project the project
      * @param mockExpression the mock expression
      * @return the helper
@@ -104,7 +105,7 @@ public final class EnforcerTestUtils
 
     /**
      * Gets the helper.
-     * 
+     *
      * @param project the project
      * @param eval the expression evaluator to use
      * @return the helper
@@ -117,7 +118,7 @@ public final class EnforcerTestUtils
 
     /**
      * New plugin.
-     * 
+     *
      * @param groupId the group id
      * @param artifactId the artifact id
      * @param version the version

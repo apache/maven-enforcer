@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.io.IOException;
 
@@ -28,7 +29,7 @@ import org.apache.maven.plugins.enforcer.utils.TestEnforcerRuleUtils;
 
 /**
  * The Class TestNoSnapshots.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestNoSnapshots
@@ -37,13 +38,13 @@ public class TestNoSnapshots
 
     /**
      * Test rule.
-     * 
+     *
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void testRule()
         throws IOException
     {
-        
+
         ArtifactStubFactory factory = new ArtifactStubFactory();
         MockProject project = new MockProject();
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
@@ -59,9 +60,9 @@ public class TestNoSnapshots
         TestEnforcerRuleUtils.execute( rule, helper, true );
 
         project.setArtifact( factory.getSnapshotArtifact() );
-        
+
         TestEnforcerRuleUtils.execute( rule, helper, true );
-    } 
+    }
 
     /**
      * Test id.

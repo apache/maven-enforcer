@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.util.Iterator;
 
@@ -31,11 +32,10 @@ import org.apache.maven.profiles.activation.OperatingSystemProfileActivator;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * This rule checks that the OS is allowed by combinations of family, name, version and cpu architecture. The behavior
  * is exactly the same as the Maven Os profile activation so the same values are allowed here.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -86,7 +86,7 @@ public class RequireOS
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
      */
     public void execute( EnforcerRuleHelper helper )
@@ -131,7 +131,7 @@ public class RequireOS
 
     /**
      * Log the current OS information.
-     * 
+     *
      * @param log the log
      * @param info the info
      */
@@ -154,7 +154,7 @@ public class RequireOS
     /**
      * Helper method to determine if the current OS is allowed based on the injected values for family, name, version
      * and arch.
-     * 
+     *
      * @return true if the version is allowed.
      */
     public boolean isAllowed()
@@ -166,7 +166,7 @@ public class RequireOS
 
     /**
      * Helper method to check that at least one of family, name, version or arch is set.
-     * 
+     *
      * @return true if all parameters are empty.
      */
     public boolean allParamsEmpty()
@@ -177,7 +177,7 @@ public class RequireOS
 
     /**
      * Creates a Profile object that contains the activation information.
-     * 
+     *
      * @return a properly populated profile to be used for OS validation.
      */
     private Profile createProfile()
@@ -189,7 +189,7 @@ public class RequireOS
 
     /**
      * Creates an Activation object that contains the ActivationOS information.
-     * 
+     *
      * @return a properly populated Activation object.
      */
     private Activation createActivation()
@@ -202,7 +202,7 @@ public class RequireOS
 
     /**
      * Creates an ActivationOS object containing family, name, version and arch.
-     * 
+     *
      * @return a properly populated ActivationOS object.
      */
     private ActivationOS createOsBean()
@@ -232,7 +232,7 @@ public class RequireOS
      * <li>os/400</li>
      * </ul>
      * Note: '!' is allowed at the beginning of the string and still considered valid.
-     * 
+     *
      * @param theFamily the family to check.
      * @return true if one of the valid families.
      */
@@ -247,7 +247,7 @@ public class RequireOS
 
     /**
      * Gets the arch.
-     * 
+     *
      * @return the arch
      */
     public String getArch()
@@ -257,7 +257,7 @@ public class RequireOS
 
     /**
      * Sets the arch.
-     * 
+     *
      * @param theArch the arch to set
      */
     public void setArch( String theArch )
@@ -267,7 +267,7 @@ public class RequireOS
 
     /**
      * Gets the family.
-     * 
+     *
      * @return the family
      */
     public String getFamily()
@@ -277,7 +277,7 @@ public class RequireOS
 
     /**
      * Sets the family.
-     * 
+     *
      * @param theFamily the family to set
      */
     public void setFamily( String theFamily )
@@ -287,7 +287,7 @@ public class RequireOS
 
     /**
      * Gets the name.
-     * 
+     *
      * @return the name
      */
     public String getName()
@@ -297,7 +297,7 @@ public class RequireOS
 
     /**
      * Sets the name.
-     * 
+     *
      * @param theName the name to set
      */
     public void setName( String theName )
@@ -307,7 +307,7 @@ public class RequireOS
 
     /**
      * Gets the version.
-     * 
+     *
      * @return the version
      */
     public String getVersion()
@@ -317,7 +317,7 @@ public class RequireOS
 
     /**
      * Sets the version.
-     * 
+     *
      * @param theVersion the version to set
      */
     public void setVersion( String theVersion )
@@ -327,7 +327,7 @@ public class RequireOS
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
     public String getCacheId()
@@ -355,7 +355,7 @@ public class RequireOS
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
     public boolean isCacheable()
@@ -366,7 +366,7 @@ public class RequireOS
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
     public boolean isResultValid( EnforcerRule theCachedRule )

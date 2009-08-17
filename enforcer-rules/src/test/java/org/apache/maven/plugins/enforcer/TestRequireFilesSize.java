@@ -23,20 +23,16 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
-import org.codehaus.plexus.PlexusTestCase;
 
 import junit.framework.TestCase;
 
 /**
  * Test the "require files exist" rule.
- * 
+ *
  * @author <a href="brianf@apache.org">Brian Fox</a>
  */
 public class TestRequireFilesSize
@@ -99,14 +95,14 @@ public class TestRequireFilesSize
         ArtifactStubFactory factory = new ArtifactStubFactory();
         Artifact a = factory.getReleaseArtifact();
         a.setFile( f );
-        
+
         project.setArtifact(a);
 
         // sanity check the mockProject
         assertSame( f, project.getArtifact().getFile() );
 
         rule.execute( EnforcerTestUtils.getHelper(project) );
-        
+
     }
 
     public void testFileDoesNotExist()

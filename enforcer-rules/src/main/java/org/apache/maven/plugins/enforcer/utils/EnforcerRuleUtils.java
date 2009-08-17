@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer.utils;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,12 +46,12 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 // TODO: Auto-generated Javadoc
 /**
  * The Class EnforcerRuleUtils.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class EnforcerRuleUtils
 {
-    
+
     /** The factory. */
     ArtifactFactory factory;
 
@@ -73,7 +74,7 @@ public class EnforcerRuleUtils
 
     /**
      * Instantiates a new enforcer rule utils.
-     * 
+     *
      * @param theFactory the the factory
      * @param theResolver the the resolver
      * @param theLocal the the local
@@ -95,12 +96,12 @@ public class EnforcerRuleUtils
 
     /**
      * Instantiates a new enforcer rule utils.
-     * 
+     *
      * @param helper the helper
      */
     public EnforcerRuleUtils( EnforcerRuleHelper helper )
     {
-     
+
     	this.helper = helper;
     	// get the various expressions out of the
         // helper.
@@ -126,11 +127,11 @@ public class EnforcerRuleUtils
 
     /**
      * Gets the pom model for this file.
-     * 
+     *
      * @param pom the pom
-     * 
+     *
      * @return the model
-     * 
+     *
      * @throws IOException Signals that an I/O exception has occurred.
      * @throws XmlPullParserException the xml pull parser exception
      */
@@ -156,14 +157,14 @@ public class EnforcerRuleUtils
      * This method gets the model for the defined artifact.
      * Looks first in the filesystem, then tries to get it
      * from the repo.
-     * 
+     *
      * @param groupId the group id
      * @param artifactId the artifact id
      * @param version the version
      * @param pom the pom
-     * 
+     *
      * @return the pom model
-     * 
+     *
      * @throws ArtifactResolutionException the artifact resolution exception
      * @throws ArtifactNotFoundException the artifact not found exception
      * @throws XmlPullParserException the xml pull parser exception
@@ -217,14 +218,14 @@ public class EnforcerRuleUtils
     /**
      * This method loops through all the parents, getting
      * each pom model and then its parent.
-     * 
+     *
      * @param groupId the group id
      * @param artifactId the artifact id
      * @param version the version
      * @param pom the pom
-     * 
+     *
      * @return the models recursively
-     * 
+     *
      * @throws ArtifactResolutionException the artifact resolution exception
      * @throws ArtifactNotFoundException the artifact not found exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -249,7 +250,7 @@ public class EnforcerRuleUtils
             }
             // calculate the recursive path
             File parentPom = new File( pom.getParent(), relativePath );
-            
+
             // if relative path is a directory, append pom.xml
             if ( parentPom.isDirectory() )
             {
@@ -270,12 +271,12 @@ public class EnforcerRuleUtils
 
     /**
      * Make sure the model is the one I'm expecting.
-     * 
+     *
      * @param groupId the group id
      * @param artifactId the artifact id
      * @param version the version
      * @param model Model being checked.
-     * 
+     *
      * @return true, if check if model matches
      */
     protected boolean checkIfModelMatches ( String groupId, String artifactId, String version, Model model )

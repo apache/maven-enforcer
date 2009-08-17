@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -30,10 +31,9 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * This rule checks that the Java version is allowed.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -43,7 +43,7 @@ public class RequireJavaVersion
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
      */
     public void execute( EnforcerRuleHelper helper )
@@ -67,7 +67,7 @@ public class RequireJavaVersion
 
     /**
      * Converts a jdk string from 1.5.0-11b12 to a single 3 digit version like 1.5.0-11
-     * 
+     *
      * @param theJdkVersion to be converted.
      * @return the converted string.
      */

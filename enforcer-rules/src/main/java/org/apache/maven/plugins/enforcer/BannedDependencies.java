@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,10 +32,9 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * This rule checks that lists of dependencies are not included.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -60,7 +60,7 @@ public class BannedDependencies
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.plugin.enforcer.AbstractBanDependencies#checkDependencies(java.util.Set)
      */
     protected Set checkDependencies( Set theDependencies, Log log )
@@ -84,7 +84,7 @@ public class BannedDependencies
 
     /**
      * Checks the set of dependencies against the list of patterns.
-     * 
+     *
      * @param thePatterns the patterns
      * @param dependencies the dependencies
      * @return a set containing artifacts matching one of the patterns or <code>null</code>
@@ -128,7 +128,7 @@ public class BannedDependencies
 
     /**
      * Compares the parsed array of substrings against the artifact.
-     * 
+     *
      * @param pattern the array of patterns
      * @param artifact the artifact
      * @return <code>true</code> if the artifact matches one of the patterns
@@ -176,7 +176,7 @@ public class BannedDependencies
 
     /**
      * Gets the excludes.
-     * 
+     *
      * @return the excludes
      */
     public List getExcludes()
@@ -186,7 +186,7 @@ public class BannedDependencies
 
     /**
      * Sets the excludes.
-     * 
+     *
      * @param theExcludes the excludes to set
      */
     public void setExcludes( List theExcludes )
@@ -196,7 +196,7 @@ public class BannedDependencies
 
     /**
      * Gets the includes.
-     * 
+     *
      * @return the includes
      */
     public List getIncludes()
@@ -206,7 +206,7 @@ public class BannedDependencies
 
     /**
      * Sets the includes.
-     * 
+     *
      * @param theIncludes the includes to set
      */
     public void setIncludes( List theIncludes )

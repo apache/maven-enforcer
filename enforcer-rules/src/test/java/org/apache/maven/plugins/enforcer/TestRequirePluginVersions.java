@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +41,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 // TODO: Auto-generated Javadoc
 /**
  * The Class TestRequirePluginVersions.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestRequirePluginVersions
@@ -79,9 +80,9 @@ public class TestRequirePluginVersions
         plugins.add( EnforcerTestUtils.newPlugin( "group", "f-artifact", "1.0-SNAPSHOT" ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "g-artifact", "1.0-12345678.123456-1" ) );
 
-        
+
         plugins = PluginWrapper.addAll( plugins, "unit" );
-        
+
         RequirePluginVersions rule = new RequirePluginVersions();
         rule.setBanLatest( false );
         rule.setBanRelease( false );
@@ -144,7 +145,7 @@ public class TestRequirePluginVersions
         plugins.add( EnforcerTestUtils.newPlugin( "group", "f-artifact", "${   }" ) );
 
         plugins = PluginWrapper.addAll( plugins, "unit" );
-        
+
         RequirePluginVersions rule = new RequirePluginVersions();
         rule.setBanLatest( false );
         rule.setBanRelease( false );
@@ -191,7 +192,7 @@ public class TestRequirePluginVersions
 
     /**
      * Test get all plugins.
-     * 
+     *
      * @throws ArtifactResolutionException the artifact resolution exception
      * @throws ArtifactNotFoundException the artifact not found exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -222,7 +223,7 @@ public class TestRequirePluginVersions
 
     /**
      * Test get additional plugins null.
-     * 
+     *
      * @throws MojoExecutionException the mojo execution exception
      */
     public void testGetAdditionalPluginsNull()
@@ -270,7 +271,7 @@ public class TestRequirePluginVersions
 
     /**
      * Test get additional plugins empty set.
-     * 
+     *
      * @throws MojoExecutionException the mojo execution exception
      */
     public void testGetAdditionalPluginsEmptySet()
@@ -298,7 +299,7 @@ public class TestRequirePluginVersions
 
     /**
      * Test get additional plugins.
-     * 
+     *
      * @throws MojoExecutionException the mojo execution exception
      */
     public void testGetAdditionalPlugins()
@@ -327,7 +328,7 @@ public class TestRequirePluginVersions
 
     /**
      * Test remove Unchecked plugins.
-     * 
+     *
      * @throws MojoExecutionException the mojo execution exception
      */
     public void testGetUncheckedPlugins()
@@ -345,7 +346,7 @@ public class TestRequirePluginVersions
         unchecked.add( "group : a-artifact" );
 
         Collection results = rule.removeUncheckedPlugins( unchecked, plugins );
-        
+
 
         // make sure only one new plugin has been added
         assertNotNull( results );
@@ -355,7 +356,7 @@ public class TestRequirePluginVersions
         assertNotContainPlugin( "group", "a-artifact", results );
 
     }
-    
+
     /**
      * Test combining values from both lists
      */
@@ -368,7 +369,7 @@ public class TestRequirePluginVersions
         plugins.add( "group:foo" );
         plugins.add( "group:foo2" );
 
-        Collection results = rule.combineUncheckedPlugins( plugins, "group2:a,group3:b" ); 
+        Collection results = rule.combineUncheckedPlugins( plugins, "group2:a,group3:b" );
 
         // make sure only one new plugin has been added
         assertNotNull( results );
@@ -379,7 +380,7 @@ public class TestRequirePluginVersions
         assertTrue( results.contains( "group2:a") );
         assertTrue( results.contains( "group3:b") );
     }
-    
+
     /**
      * Test combining with an empty list
      */
@@ -388,8 +389,8 @@ public class TestRequirePluginVersions
         RequirePluginVersions rule = new RequirePluginVersions();
 
         Set plugins = new HashSet();
-        Collection results = rule.combineUncheckedPlugins( plugins, "group2:a,group3:b" ); 
-        
+        Collection results = rule.combineUncheckedPlugins( plugins, "group2:a,group3:b" );
+
 
         // make sure only one new plugin has been added
         assertNotNull( results );
@@ -405,8 +406,8 @@ public class TestRequirePluginVersions
     {
         RequirePluginVersions rule = new RequirePluginVersions();
 
-        Collection results = rule.combineUncheckedPlugins( null, "group2:a,group3:b" ); 
-        
+        Collection results = rule.combineUncheckedPlugins( null, "group2:a,group3:b" );
+
 
         // make sure only one new plugin has been added
         assertNotNull( results );
@@ -426,8 +427,8 @@ public class TestRequirePluginVersions
         plugins.add( "group:a-artifact" );
         plugins.add( "group:foo" );
         plugins.add( "group:foo2" );
-                     
-        Collection results = rule.combineUncheckedPlugins( plugins, "" ); 
+
+        Collection results = rule.combineUncheckedPlugins( plugins, "" );
         assertNotNull( results );
         assertEquals( 3, results.size() );
         assertTrue( results.contains( "group:foo") );
@@ -446,14 +447,14 @@ public class TestRequirePluginVersions
         plugins.add( "group:a-artifact" );
         plugins.add( "group:foo" );
         plugins.add( "group:foo2" );
-                     
-        Collection results = rule.combineUncheckedPlugins( plugins, null ); 
+
+        Collection results = rule.combineUncheckedPlugins( plugins, null );
         assertNotNull( results );
-        assertEquals( 3, results.size() );   
+        assertEquals( 3, results.size() );
         assertTrue( results.contains( "group:foo") );
         assertTrue( results.contains( "group:foo2") );
         assertTrue( results.contains( "group:a-artifact") );
-    } 
+    }
 
     /**
      * Test combining with an invalid plugin string
@@ -466,20 +467,20 @@ public class TestRequirePluginVersions
         plugins.add( "group:a-artifact" );
         plugins.add( "group:foo" );
         plugins.add( "group:foo2" );
-        
-        Collection results = rule.combineUncheckedPlugins( plugins, "a" ); 
+
+        Collection results = rule.combineUncheckedPlugins( plugins, "a" );
         assertNotNull( results );
-        assertEquals( 4, results.size() ); 
+        assertEquals( 4, results.size() );
         assertTrue( results.contains( "group:foo") );
         assertTrue( results.contains( "group:foo2") );
         //this should be here, the checking of a valid plugin string happens in another method.
         assertTrue( results.contains( "a") );
     }
 
-    
+
     /**
      * Assert contains plugin.
-     * 
+     *
      * @param group the group
      * @param artifact the artifact
      * @param theSet the the set
@@ -494,7 +495,7 @@ public class TestRequirePluginVersions
 
     /**
      * Assert doesn't contain plugin.
-     * 
+     *
      * @param group the group
      * @param artifact the artifact
      * @param theSet the the set
@@ -506,7 +507,7 @@ public class TestRequirePluginVersions
         p.setArtifactId( artifact );
         assertFalse( theSet.contains( p ) );
     }
-    
+
     /**
      * Test id.
      */

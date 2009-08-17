@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,16 +18,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
-// TODO: Auto-generated Javadoc
 /**
  * This rule checks that certain properties are set.
- * 
+ *
  * @author Paul Gier
  */
 public class RequireProperty
@@ -43,7 +43,7 @@ public class RequireProperty
 
     /**
      * Execute the rule.
-     * 
+     *
      * @param helper the helper
      * @throws EnforcerRuleException the enforcer rule exception
      */

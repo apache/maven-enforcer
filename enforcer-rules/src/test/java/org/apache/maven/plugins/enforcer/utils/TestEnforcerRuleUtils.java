@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer.utils;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +39,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 // TODO: Auto-generated Javadoc
 /**
  * The Class TestEnforcerRuleUtils.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestEnforcerRuleUtils
@@ -84,7 +85,7 @@ public class TestEnforcerRuleUtils
 
     /**
      * Test get models recursively bottom.
-     * 
+     *
      * @throws ArtifactResolutionException the artifact resolution exception
      * @throws ArtifactNotFoundException the artifact not found exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -122,7 +123,7 @@ public class TestEnforcerRuleUtils
 
     /**
      * Test get models recursively top.
-     * 
+     *
      * @throws ArtifactResolutionException the artifact resolution exception
      * @throws ArtifactNotFoundException the artifact not found exception
      * @throws IOException Signals that an I/O exception has occurred.
@@ -167,10 +168,10 @@ public class TestEnforcerRuleUtils
         parent.setGroupId( "org.apache.maven.plugins.enforcer.test" );
         parent.setArtifactId( "parent" );
         parent.setVersion( "1.0-SNAPSHOT" );
-        
+
         MockProject project = new MockProject();
         project.setParent( parent );
-        
+
         EnforcerRuleUtils utils = new EnforcerRuleUtils( EnforcerTestUtils.getHelper( project ) );
 
         List models =
@@ -236,7 +237,7 @@ public class TestEnforcerRuleUtils
 
     /**
      * Simpler wrapper to execute and deal with the expected result.
-     * 
+     *
      * @param rule the rule
      * @param helper the helper
      * @param shouldFail the should fail

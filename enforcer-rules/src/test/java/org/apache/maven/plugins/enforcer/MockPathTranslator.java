@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
 
@@ -26,7 +27,7 @@ import org.apache.maven.project.path.PathTranslator;
 // TODO: Auto-generated Javadoc
 /**
  * The Class MockPathTranslator.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class MockPathTranslator
@@ -35,7 +36,7 @@ public class MockPathTranslator
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.project.path.PathTranslator#alignToBaseDirectory(org.apache.maven.model.Model,
      *      java.io.File)
      */
@@ -45,7 +46,7 @@ public class MockPathTranslator
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.project.path.PathTranslator#alignToBaseDirectory(java.lang.String, java.io.File)
      */
     public String alignToBaseDirectory( String thePath, File theBasedir )
@@ -55,7 +56,7 @@ public class MockPathTranslator
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.project.path.PathTranslator#unalignFromBaseDirectory(org.apache.maven.model.Model,
      *      java.io.File)
      */
@@ -65,7 +66,7 @@ public class MockPathTranslator
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.project.path.PathTranslator#unalignFromBaseDirectory(java.lang.String, java.io.File)
      */
     public String unalignFromBaseDirectory( String theDirectory, File theBasedir )

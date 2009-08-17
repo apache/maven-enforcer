@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.util.Iterator;
 
@@ -30,10 +31,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * Contains the common code to compare a version against a version range.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -55,7 +55,7 @@ public abstract class AbstractVersionEnforcer
 
     /**
      * Compares the specified version to see if it is allowed by the defined version range.
-     * 
+     *
      * @param log the log
      * @param variableName name of variable to use in messages (Example: "Maven" or "Java" etc).
      * @param requiredVersionRange range of allowed versions.
@@ -114,7 +114,7 @@ public abstract class AbstractVersionEnforcer
      * Copied from Artifact.VersionRange. This is tweaked to handle singular ranges properly. Currently the default
      * containsVersion method assumes a singular version means allow everything. This method assumes that "2.0.4" ==
      * "[2.0.4,)"
-     * 
+     *
      * @param allowedRange range of allowed versions.
      * @param theVersion the version to be checked.
      * @return true if the version is contained by the range.
@@ -146,7 +146,7 @@ public abstract class AbstractVersionEnforcer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
     public String getCacheId()
@@ -165,7 +165,7 @@ public abstract class AbstractVersionEnforcer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
     public boolean isCacheable()
@@ -176,7 +176,7 @@ public abstract class AbstractVersionEnforcer
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
     public boolean isResultValid( EnforcerRule theCachedRule )
@@ -188,7 +188,7 @@ public abstract class AbstractVersionEnforcer
 
     /**
      * Gets the required version.
-     * 
+     *
      * @return the required version
      */
     public String getVersion()
@@ -198,7 +198,7 @@ public abstract class AbstractVersionEnforcer
 
     /**
      * Sets the required version.
-     * 
+     *
      * @param theVersion the required version to set
      */
     public void setVersion( String theVersion )

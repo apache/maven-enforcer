@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
 import java.util.List;
@@ -30,11 +31,10 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
-// TODO: Auto-generated Javadoc
 /**
  * Default implementation of the EnforcementRuleHelper interface. This is used to help retrieve information from the
  * session and provide useful elements like the log.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -56,7 +56,7 @@ public class DefaultEnforcementRuleHelper
 
     /**
      * Instantiates a new default enforcement rule helper.
-     * 
+     *
      * @param session the session
      * @param evaluator the evaluator
      * @param log the log
@@ -80,7 +80,7 @@ public class DefaultEnforcementRuleHelper
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#getLog()
      */
     public Log getLog()
@@ -90,7 +90,7 @@ public class DefaultEnforcementRuleHelper
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator#alignToBaseDirectory(java.io.File)
      */
     public File alignToBaseDirectory( File theFile )
@@ -100,7 +100,7 @@ public class DefaultEnforcementRuleHelper
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator#evaluate(java.lang.String)
      */
     public Object evaluate( String theExpression )
@@ -111,7 +111,7 @@ public class DefaultEnforcementRuleHelper
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper#getRuntimeInformation()
      */
     public Object getComponent( Class clazz )
@@ -122,7 +122,7 @@ public class DefaultEnforcementRuleHelper
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#lookup(java.lang.String)
      */
     public Object getComponent( String theComponentKey )
@@ -133,7 +133,7 @@ public class DefaultEnforcementRuleHelper
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#lookup(java.lang.String, java.lang.String)
      */
     public Object getComponent( String theRole, String theRoleHint )
@@ -144,7 +144,7 @@ public class DefaultEnforcementRuleHelper
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#lookupList(java.lang.String)
      */
     public List getComponentList( String theRole )
@@ -155,7 +155,7 @@ public class DefaultEnforcementRuleHelper
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#lookupMap(java.lang.String)
      */
     public Map getComponentMap( String theRole )
@@ -166,7 +166,7 @@ public class DefaultEnforcementRuleHelper
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#getContainer()
      */
     public PlexusContainer getContainer()

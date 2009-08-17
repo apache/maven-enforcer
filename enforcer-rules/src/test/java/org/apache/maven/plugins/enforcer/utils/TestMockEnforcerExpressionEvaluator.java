@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer.utils;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer.utils;
 
 import junit.framework.TestCase;
 
@@ -53,7 +54,7 @@ public class TestMockEnforcerExpressionEvaluator
 
     /**
      * Assert match.
-     * 
+     *
      * @param ev the ev
      * @param exp the exp
      */

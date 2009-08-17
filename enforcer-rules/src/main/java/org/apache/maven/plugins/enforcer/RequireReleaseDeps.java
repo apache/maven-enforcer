@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -29,10 +30,9 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
-// TODO: Auto-generated Javadoc
 /**
  * This rule checks that no snapshots are included.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -42,14 +42,14 @@ public class RequireReleaseDeps
 
     /**
      * Allows this rule to execute only when this project is a release.
-     * 
+     *
      * @parameter
      */
     public boolean onlyWhenRelease = false;
 
     /**
      * Allows this rule to fail when the parent is defined as a snapshot.
-     * 
+     *
      * @parameter
      */
     public boolean failWhenParentIsSnapshot = true;
@@ -112,7 +112,7 @@ public class RequireReleaseDeps
 
     /**
      * Checks the set of dependencies to see if any snapshots are included
-     * 
+     *
      * @param dependencies the dependencies
      * @param log the log
      * @return the sets the
@@ -136,7 +136,7 @@ public class RequireReleaseDeps
 
         return foundExcludes;
     }
-    
+
     public boolean isOnlyWhenRelease()
     {
         return onlyWhenRelease;

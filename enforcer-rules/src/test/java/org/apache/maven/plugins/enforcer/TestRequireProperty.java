@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import junit.framework.TestCase;
 
@@ -26,7 +27,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 // TODO: Auto-generated Javadoc
 /**
  * The Class TestRequireProperty.
- * 
+ *
  * @author Paul Gier
  */
 public class TestRequireProperty
@@ -35,7 +36,7 @@ public class TestRequireProperty
 
     /**
      * Test rule.
-     * 
+     *
      * @throws EnforcerRuleException the enforcer rule exception
      */
     public void testRule()
@@ -74,7 +75,7 @@ public class TestRequireProperty
 
     /**
      * Test rule with regex.
-     * 
+     *
      * @throws EnforcerRuleException the enforcer rule exception
      */
     public void testRuleWithRegex()

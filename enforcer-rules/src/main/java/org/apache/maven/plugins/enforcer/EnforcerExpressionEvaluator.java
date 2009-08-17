@@ -1,3 +1,5 @@
+package org.apache.maven.plugins.enforcer;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,7 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
@@ -25,11 +26,10 @@ import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class EnforcerExpressionEvaluator. This class wraps the PluginParameterExpressionEvaluator
  * because it can't be accessed directly in 2.0.x so we must create a new one.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class EnforcerExpressionEvaluator
@@ -38,7 +38,7 @@ public class EnforcerExpressionEvaluator
 
     /**
      * The Constructor.
-     * 
+     *
      * @param theContext the the context
      * @param thePathTranslator the the path translator
      * @param theProject the the project
