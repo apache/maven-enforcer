@@ -92,6 +92,7 @@ public class TestRequireFilesSize
 
         MockProject project = new MockProject();
         File f = File.createTempFile( "enforcer", "tmp" );
+        f.deleteOnExit();
         ArtifactStubFactory factory = new ArtifactStubFactory();
         Artifact a = factory.getReleaseArtifact();
         a.setFile( f );
