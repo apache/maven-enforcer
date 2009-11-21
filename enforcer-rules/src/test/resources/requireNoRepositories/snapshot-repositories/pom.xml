@@ -1,0 +1,17 @@
+<project>
+  <groupId>org.apache.maven.plugins.enforcer.test</groupId>
+  <artifactId>snapshot-repositories</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <repositories>
+    <repository>
+      <id>repo</id>
+      <url>http://example.com/repo</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+</project>

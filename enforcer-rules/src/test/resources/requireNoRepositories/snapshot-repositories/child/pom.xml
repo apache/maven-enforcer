@@ -1,0 +1,9 @@
+<project>
+  <parent>
+    <groupId>org.apache.maven.plugins.enforcer.test
+    </groupId>
+    <artifactId>snapshot-repositories</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  <artifactId>snapshot-repositories-child</artifactId>
+</project>

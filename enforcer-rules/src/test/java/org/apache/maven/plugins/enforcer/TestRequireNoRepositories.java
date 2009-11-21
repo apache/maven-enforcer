@@ -184,6 +184,66 @@ public class TestRequireNoRepositories
         rule.execute( helper );
     }
 
+    public void testReposNotAllowedWithSnapshotRepositories()
+        throws EnforcerRuleException
+    {
+        rule.allowSnapshotRepositories = true;
+
+        project.setArtifactId( "snapshot-plugin-repositories-child" );
+        project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/snapshot-plugin-repositories/child" ) );
+
+        try
+        {
+            rule.execute( helper );
+            fail( "Should have exception" );
+        }
+        catch ( EnforcerRuleException e )
+        {
+            assertTrue( true );
+        }
+    }
+
+    public void testReposAllowedWithSnapshotRepositories()
+        throws EnforcerRuleException
+    {
+        rule.allowSnapshotRepositories = true;
+
+        project.setArtifactId( "snapshot-repositories-child" );
+        project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/snapshot-repositories/child" ) );
+
+        rule.execute( helper );
+    }
+
+    public void testPluginReposNotAllowedWithSnapshotRepositories()
+        throws EnforcerRuleException
+    {
+        rule.allowSnapshotPluginRepositories = true;
+
+        project.setArtifactId( "snapshot-repositories-child" );
+        project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/snapshot-repositories/child" ) );
+
+        try
+        {
+            rule.execute( helper );
+            fail( "Should have exception" );
+        }
+        catch ( EnforcerRuleException e )
+        {
+            assertTrue( true );
+        }
+    }
+
+    public void testPluginReposAllowedWithSnapshotPluginRepositories()
+        throws EnforcerRuleException
+    {
+        rule.allowSnapshotPluginRepositories = true;
+
+        project.setArtifactId( "snapshot-plugin-repositories-child" );
+        project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/snapshot-plugin-repositories/child" ) );
+
+        rule.execute( helper );
+    }
+
     /**
      * Test id.
      */

@@ -19,13 +19,6 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -38,9 +31,16 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * This rule checks that this pom or its parents don't define a repository.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class RequireNoRepositories
@@ -65,6 +65,16 @@ public class RequireNoRepositories
      * Specify explicitly allowed plugin repositories. This is a list of ids.
      */
     public List allowedPluginRepositories = Collections.EMPTY_LIST;
+
+    /**
+     * Whether to allow repositories which only resolve snapshots. By default they are banned.
+     */
+    public boolean allowSnapshotRepositories = false;
+
+    /**
+     * Whether to allow plugin repositories which only resolve snapshots. By default they are banned.
+     */
+    public boolean allowSnapshotPluginRepositories = false;
 
     /*
      * (non-Javadoc)
@@ -97,12 +107,14 @@ public class RequireNoRepositories
                     List repos = model.getRepositories();
                     if ( repos != null && !repos.isEmpty() )
                     {
-                        List bannedRepos = findBannedRepositories( repos, allowedRepositories );
+                        List bannedRepos =
+                            findBannedRepositories( repos, allowedRepositories, allowSnapshotRepositories );
                         if ( !bannedRepos.isEmpty() )
                         {
                             badModels.add( model );
-                            newMsg.append( model.getGroupId() + ":" + model.getArtifactId() + " version:"
-                                + model.getVersion() + " has repositories " + bannedRepos );
+                            newMsg.append(
+                                model.getGroupId() + ":" + model.getArtifactId() + " version:" + model.getVersion()
+                                    + " has repositories " + bannedRepos );
                         }
                     }
                 }
@@ -111,12 +123,14 @@ public class RequireNoRepositories
                     List repos = model.getPluginRepositories();
                     if ( repos != null && !repos.isEmpty() )
                     {
-                        List bannedRepos = findBannedRepositories( repos, allowedPluginRepositories );
+                        List bannedRepos =
+                            findBannedRepositories( repos, allowedPluginRepositories, allowSnapshotPluginRepositories );
                         if ( !bannedRepos.isEmpty() )
                         {
                             badModels.add( model );
-                            newMsg.append( model.getGroupId() + ":" + model.getArtifactId() + " version:"
-                                + model.getVersion() + " has plugin repositories " + bannedRepos );
+                            newMsg.append(
+                                model.getGroupId() + ":" + model.getArtifactId() + " version:" + model.getVersion()
+                                    + " has plugin repositories " + bannedRepos );
                         }
                     }
                 }
@@ -157,7 +171,7 @@ public class RequireNoRepositories
         }
     }
 
-    private static List findBannedRepositories( List repos, List allowedRepos )
+    private static List findBannedRepositories( List repos, List allowedRepos, boolean allowSnapshots )
     {
         List bannedRepos = new ArrayList( allowedRepos.size() );
         for ( Iterator i = repos.iterator(); i.hasNext(); )
@@ -165,7 +179,14 @@ public class RequireNoRepositories
             Repository r = (Repository) i.next();
             if ( !allowedRepos.contains( r.getId() ) )
             {
-                bannedRepos.add( r.getId() );
+                if ( !allowSnapshots || r.getReleases().isEnabled() )
+                {
+                    // if we are not allowing snapshots and this repo is enabled for releases
+                    // it is banned.  We don't care whether it is enabled for snapshots
+                    // if you define a repo and don't enable it for anything, then we have nothing 
+                    // to worry about
+                    bannedRepos.add( r.getId() );
+                }
             }
         }
         return bannedRepos;
