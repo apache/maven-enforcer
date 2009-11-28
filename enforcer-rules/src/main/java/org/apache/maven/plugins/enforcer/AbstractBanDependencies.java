@@ -83,7 +83,7 @@ public abstract class AbstractBanDependencies
                 Artifact artifact = (Artifact) iter.next();
                 buf.append( getErrorMessage( artifact ) );
             }
-            message = buf.toString();
+            message = buf.toString()+ "Use 'mvn dependency:tree' to locate the source of the banned dependencies.";
 
             throw new EnforcerRuleException( message );
         }
