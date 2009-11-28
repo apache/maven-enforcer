@@ -23,13 +23,13 @@
   <parent>
     <artifactId>maven-parent</artifactId>
     <groupId>org.apache.maven</groupId>
-    <version>11</version>
+    <version>15</version>
     <relativePath>../pom/maven/pom.xml</relativePath>
   </parent>
 
   <groupId>org.apache.maven.enforcer</groupId>
   <artifactId>enforcer</artifactId>
-  <version>1.0-beta-2-SNAPSHOT</version>
+  <version>1.0-beta-2</version>
   <packaging>pom</packaging>
 
   <name>Enforcer</name>
@@ -141,13 +141,12 @@
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MENFORCER</url>
   </issueManagement>
-  <distributionManagement>
+    <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>${site.deploy.url}/enforcer/</url>
+      <url>scp://people.apache.org/www/maven.apache.org/enforcer/</url>
     </site>
   </distributionManagement>
-
   <properties>
     <maven.version>2.0.9</maven.version>
     <maven.plugin.plugin.version>2.4.3</maven.plugin.plugin.version>
@@ -287,4 +286,5 @@
        </plugin>
     </plugins>
   </reporting>
+
 </project>
