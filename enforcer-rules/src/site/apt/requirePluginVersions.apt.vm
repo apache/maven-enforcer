@@ -20,7 +20,7 @@
   ------
   Brian Fox
   ------
-  Novemer 2007
+  November 2009
   ------
 
 Require Plugin Versions
@@ -80,8 +80,8 @@ Require Plugin Versions
                      <additionalPlugin>org.apache.maven.plugins:maven-eclipse-plugin</additionalPlugin>
                      <additionalPlugin>org.apache.maven.plugins:maven-reactor-plugin</additionalPlugin>
                    </additionalPlugins>
+                   <unCheckedPluginList>org.apache.maven.plugins:maven-enforcer-plugin,org.apache.maven.plugins:maven-idea-plugin</unCheckedPluginList>
                 </requirePluginVersions>
-                <unCheckedPluginList>org.apache.maven.plugins:maven-enforcer-plugin,org.apache.maven.plugins:maven-idea-plugin</unCheckedPluginList>
               </rules>
             </configuration>
           </execution>
