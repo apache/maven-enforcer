@@ -65,6 +65,12 @@ Require Property
                   <regex>\d</regex>
                   <regexMessage>You must have a digit in your baseDir!</regexMessage>
                 </requireProperty>
+                <requireProperty>
+                  <property>project.version</property>
+                  <message>"Project version must be specified."</message>
+                  <regex>(\d|-SNAPSHOT)$</regex>
+                  <regexMessage>"Project version must end in a number or -SNAPSHOT."</regexMessage>
+                </requireProperty>
               </rules>
               <fail>true</fail>
             </configuration>
