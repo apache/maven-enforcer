@@ -31,9 +31,7 @@ Require Release Version
    The following parameters are supported by this rule:
    
    * message - an optional message to the user if the rule fails.
-   
-   * onlyWhenRelease - if this rule should only be executed when the version is a non-SNAPSHOT version. Default: false
-   
+    
    * failWhenParentIsSnapshot - if the parent should be checked. Default: true 
 
    []
