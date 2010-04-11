@@ -44,7 +44,12 @@ under the License.
             <configuration>
               <rules>
                 <requireJavaVersion>
+                  <!-- implicit range -->
                   <version>1.4</version>
+                </requireJavaVersion>
+                <requireJavaVersion>
+                  <!-- explicit range -->
+                  <version>[1.4,)</version>
                 </requireJavaVersion>
               </rules>
             </configuration>
