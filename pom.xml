@@ -23,7 +23,7 @@
   <parent>
     <artifactId>maven-parent</artifactId>
     <groupId>org.apache.maven</groupId>
-    <version>15</version>
+    <version>16</version>
     <relativePath>../pom/maven/pom.xml</relativePath>
   </parent>
 
@@ -149,7 +149,7 @@
   </distributionManagement>
   <properties>
     <maven.version>2.0.9</maven.version>
-    <maven.plugin.plugin.version>2.4.3</maven.plugin.plugin.version>
+    <maven.plugin.plugin.version>2.5.1</maven.plugin.plugin.version>
     <site.deploy.url>scp://people.apache.org/www/maven.apache.org</site.deploy.url>
   </properties>
 

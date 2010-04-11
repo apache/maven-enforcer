@@ -20,7 +20,6 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <inceptionYear>2007</inceptionYear>
 
   <parent>
     <groupId>org.apache.maven.enforcer</groupId>
@@ -36,6 +35,7 @@
   <name>Maven Enforcer Plugin</name>
   <description>The Loving Iron Fist of Maven</description>
   <url>http://maven.apache.org/plugins/maven-enforcer-plugin/</url>
+  <inceptionYear>2007</inceptionYear>
 
   <developers>
     <developer>
@@ -175,7 +175,7 @@
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.4</version>
+            <version>1.5</version>
             <configuration>
               <debug>true</debug>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
