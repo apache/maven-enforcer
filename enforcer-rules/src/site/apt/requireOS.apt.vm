@@ -125,7 +125,7 @@ OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
               <rules>
                 <requireOS>
                   <name>Windows XP</name>
-                  <family>Windows</family>
+                  <family>windows</family>
                   <arch>x86</arch>
                   <version>5.1.2600</version>
                 </requireOS>
