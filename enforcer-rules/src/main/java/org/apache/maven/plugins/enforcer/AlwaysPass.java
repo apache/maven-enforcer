@@ -38,7 +38,13 @@ public class AlwaysPass
         throws EnforcerRuleException
     {
         final Log log = helper.getLog();
-        log.info( "Always pass!" );
+        StringBuffer buf = new StringBuffer();
+        if ( message != null )
+        {
+            buf.append( message + "\n" );
+        }
+        buf.append( "Always pass!" );
+        log.info( buf.toString() );
     }
 
 }

@@ -37,6 +37,12 @@ public class AlwaysFail
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
-        throw new EnforcerRuleException( "Always fails!" );
+        StringBuffer buf = new StringBuffer();
+        if ( message != null )
+        {
+            buf.append( message + "\n" );
+        }
+        buf.append( "Always fails!" );
+        throw new EnforcerRuleException( buf.toString() );
     }
 }
