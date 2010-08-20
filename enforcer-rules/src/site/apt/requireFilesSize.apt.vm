@@ -31,10 +31,15 @@ Require File Size
    The following parameters are supported by this rule:
    
    * message - an optional message to the user if the rule fails.
+   
    * files - A list of files to check. If this list is empty, the main project artifact will be checked.
+   
    * maxsize - maximum size in bytes for this file
+   
    * minsize - minimum size in bytes for this file
+   
    * allowNulls - If null files should be allowed. If allowed, they will be treated as if they do exist. Default is false.
+   
    []
 
    
@@ -61,8 +66,8 @@ Require File Size
                   <maxsize>10000</maxsize>
                   <minsize>90</minsize>
                   <files>
-                   <file>${project.outputDirectory}/foo.txt</file>
-                   <file>${project.outputDirectory}/foo2.txt</file>
+                   <file>\${project.build.outputDirectory}/foo.txt</file>
+                   <file>\${project.build.outputDirectory}/foo2.txt</file>
                   </files>
                 </requireFilesSize>
               </rules>

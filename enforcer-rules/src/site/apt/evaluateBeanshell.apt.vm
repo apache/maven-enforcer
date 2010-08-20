@@ -57,7 +57,7 @@ Beanshell
             <configuration>
               <rules>
                 <evaluateBeanshell>
-                  <condition>${project.artifactId} == foo</condition>
+                  <condition>\${project.artifactId} == foo</condition>
                 </evaluateBeanshell>
               </rules>
               <fail>true</fail>

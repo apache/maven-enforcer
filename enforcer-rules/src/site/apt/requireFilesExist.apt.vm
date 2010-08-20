@@ -31,7 +31,9 @@ Require Files Exist
    The following parameters are supported by this rule:
    
    * message - an optional message to the user if the rule fails.
+   
    * files - A list of files to check.
+   
    * allowNulls - If null files should be allowed. If allowed, they will be treated as if they do exist. Default is false.
    
    []
@@ -58,8 +60,8 @@ Require Files Exist
               <rules>
                 <requireFilesExist>
                   <files>
-                   <file>${project.outputDirectory}/foo.txt</file>
-                   <file>${project.outputDirectory}/foo2.txt</file>
+                   <file>\${project.build.outputDirectory}/foo.txt</file>
+                   <file>\${project.build.outputDirectory}/foo2.txt</file>
                   </files>
                 </requireFilesExist>
               </rules>
