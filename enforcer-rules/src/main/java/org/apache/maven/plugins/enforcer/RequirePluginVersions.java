@@ -341,7 +341,6 @@ public class RequirePluginVersions
      *
      * @param uncheckedPlugins
      * @param plugins
-     * @param field
      * @return
      * @throws MojoExecutionException
      */

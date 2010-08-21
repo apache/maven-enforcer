@@ -29,7 +29,7 @@ import org.apache.maven.plugin.logging.Log;
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
- * @deprecated replaced by {@link #RequireReleaseDeps}
+ * @deprecated replaced by {@link RequireReleaseDeps}
  */
 public class NoSnapshots
     extends AbstractBanDependencies

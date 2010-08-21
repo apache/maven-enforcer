@@ -25,7 +25,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 
 /**
- * This rule checks that lists of plguins are not included.
+ * This rule checks that lists of plugins are not included.
  *
  * @author <a href="mailto:velo.br@gmail.com">Marvin Froeder</a>
  */

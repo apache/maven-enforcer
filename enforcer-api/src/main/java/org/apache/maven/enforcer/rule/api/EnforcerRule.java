@@ -38,7 +38,6 @@ public interface EnforcerRule
      * helpers to get common components. It is also able to lookup components
      * by class name.
      *
-     * @throws MojoExecutionException
      * @throws EnforcerRuleException the enforcer rule exception
      */
     void execute( EnforcerRuleHelper helper )
