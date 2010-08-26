@@ -21,13 +21,17 @@ package org.apache.maven.plugins.enforcer;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
+import org.apache.maven.shared.artifact.filter.StrictPatternIncludesArtifactFilter;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
@@ -53,6 +57,18 @@ public class RequireReleaseDeps
      * @parameter
      */
     public boolean failWhenParentIsSnapshot = true;
+
+    /**
+     * Dependencies to ignore when checking for release versions.  For example, inter-module dependencies 
+     * can be excluded from the check and therefore allowed to contain snapshot versions.
+     */
+    public List excludes = null;
+
+    /**
+     * Dependencies to include when checking for release versions.  If any of the included dependencies
+     * have snapshot versions, the rule will fail.
+     */
+    public List includes = null;
 
     /**
      * Override parent to allow optional ignore of this rule.
@@ -121,20 +137,59 @@ public class RequireReleaseDeps
     protected Set checkDependencies( Set dependencies, Log log )
         throws EnforcerRuleException
     {
-        Set foundExcludes = new HashSet();
+        Set foundSnapshots = new HashSet();
 
-        Iterator DependencyIter = dependencies.iterator();
+        Set filteredDependencies = this.filterArtifacts( dependencies );
+        
+        Iterator DependencyIter = filteredDependencies.iterator();
         while ( DependencyIter.hasNext() )
         {
             Artifact artifact = (Artifact) DependencyIter.next();
 
             if ( artifact.isSnapshot() )
             {
-                foundExcludes.add( artifact );
+                foundSnapshots.add( artifact );
             }
         }
 
-        return foundExcludes;
+        return foundSnapshots;
+    }
+    
+    /*
+     * Filter the dependency artifacts according to the includes and excludes
+     * If includes and excludes are both null, the original set is returned.
+     * 
+     * @param dependencies the list of dependencies to filter
+     * @return the resulting set of dependencies
+     */
+    public Set filterArtifacts( Set dependencies )
+    {
+        if ( includes == null && excludes == null )
+        {
+            return dependencies;
+        }
+        
+        AndArtifactFilter filter = new AndArtifactFilter( );
+        if ( includes != null )
+        {
+            filter.add( new StrictPatternIncludesArtifactFilter( includes ) );
+        }
+        if ( excludes != null )
+        {
+            filter.add( new StrictPatternExcludesArtifactFilter( excludes ) );
+        }
+        
+        Set result = new HashSet();
+        Iterator iter = dependencies.iterator();
+        while ( iter.hasNext() )
+        {
+            Artifact artifact = (Artifact) iter.next();
+            if ( filter.include( artifact ) )
+            {
+                result.add( artifact );
+            }
+        }
+        return result;
     }
 
     public boolean isOnlyWhenRelease()

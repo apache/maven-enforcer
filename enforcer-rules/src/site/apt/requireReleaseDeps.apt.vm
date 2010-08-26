@@ -37,6 +37,10 @@ Require Release Dependencies
    * onlyWhenRelease - if this rule should only be executed when the version is a non-SNAPSHOT version. Default: false
    
    * failWhenParentIsSnapshot - if the parent should be checked. Default: true 
+   
+   * includes - List of dependency patterns to include when checking for snapshot versions
+   
+   * excludes - List of dependency patterns to exclude when checking for snapshot versions
 
    []
 
@@ -62,6 +66,44 @@ Require Release Dependencies
               <rules>
                 <requireReleaseDeps>
                   <message>No Snapshots Allowed!</message>
+                </requireReleaseDeps>
+              </rules>
+              <fail>true</fail>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+
+  Includes/Excludes Plugin Configuration:
+  
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-no-snapshots</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireReleaseDeps>
+                  <message>No Snapshots Allowed!</message>
+                  <excludes>
+                    <exclude>org.apache.maven:maven-core</exclude>
+                    <exclude>org.apache.maven.plugins:*</exclude>
+                  </excludes>
                 </requireReleaseDeps>
               </rules>
               <fail>true</fail>

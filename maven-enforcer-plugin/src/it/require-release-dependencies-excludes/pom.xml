@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.maven.enforcer.its</groupId>
+  <artifactId>requireReleaseDeps</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>@project.version@</version>
+        <executions>
+          <execution>
+            <id>enforce</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireReleaseDeps>
+                  <message>No Snapshots Allowed!</message>
+                  <excludes>
+                    <exclude>org.apache.maven.enforcer:enforcer-api</exclude>
+                  </excludes>
+                </requireReleaseDeps>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.enforcer</groupId>
+      <artifactId>enforcer-api</artifactId>
+      <version>@project.version@</version>
+    </dependency>
+  </dependencies>
+ </project>
