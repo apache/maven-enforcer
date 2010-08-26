@@ -128,6 +128,7 @@ public class BannedDependencies
 
     /**
      * Compares the parsed array of substrings against the artifact.
+     * The pattern should follow the format "groupId:artifactId:version:type:scope"
      *
      * @param pattern the array of patterns
      * @param artifact the artifact
@@ -169,6 +170,26 @@ public class BannedDependencies
                     throw new EnforcerRuleException( "Invalid Version Range: ", e );
                 }
             }
+        }
+
+        if ( result && pattern.length > 3 )
+        {
+            String type = artifact.getType();
+            if ( type == null || type.equals( "" ) )
+            {
+                type = "jar";
+            }
+            result = pattern[3].equals( "*" ) || type.equals( pattern[3] );
+        }
+
+        if ( result && pattern.length > 4 )
+        {
+            String scope = artifact.getScope();
+            if ( scope == null || scope.equals( "" ) )
+            {
+                scope = "compile";
+            }
+            result = pattern[4].equals( "*" ) || scope.equals( pattern[4] );
         }
 
         return result;

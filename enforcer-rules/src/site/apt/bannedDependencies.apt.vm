@@ -32,7 +32,7 @@ Banned Dependencies
    
    * searchTransitive - if transitive dependencies should be checked.
    
-   * excludes - a list of artifacts to ban. The format is groupId[:artifactId][:version] where artifactId and version are optional. Wildcards may be used to replace an entire section.
+   * excludes - a list of artifacts to ban. The format is groupId[:artifactId][:version][:type][:scope] where artifactId, version, type, and scope are optional. Wildcards may be used to replace an entire section.
       Examples:
        
         * org.apache.maven
@@ -42,6 +42,8 @@ Banned Dependencies
         * org.apache.maven:artifact:badVersion
         
         * org.apache.maven:*:1.2
+        
+        * org.apache.maven:*:*:jar:test
         
         []
 
