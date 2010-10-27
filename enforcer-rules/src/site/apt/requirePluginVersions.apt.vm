@@ -46,7 +46,7 @@ Require Plugin Versions
      are plugins that may not be in the poms but are used anyway, like help, eclipse etc.
      The plugins should be specified in the form: group:artifactId.
 
-   * unCheckedPluginList - A comma separated list of plugins to skip version checking. Ie allow no version, or snapshots, etc. The plugins should be specified in the form: group:artifactId.
+   * unCheckedPluginsList - A comma separated list of plugins to skip version checking. Ie allow no version, or snapshots, etc. The plugins should be specified in the form: group:artifactId.
 
 
    []
@@ -80,7 +80,7 @@ Require Plugin Versions
                      <additionalPlugin>org.apache.maven.plugins:maven-eclipse-plugin</additionalPlugin>
                      <additionalPlugin>org.apache.maven.plugins:maven-reactor-plugin</additionalPlugin>
                    </additionalPlugins>
-                   <unCheckedPluginList>org.apache.maven.plugins:maven-enforcer-plugin,org.apache.maven.plugins:maven-idea-plugin</unCheckedPluginList>
+                   <unCheckedPluginsList>org.apache.maven.plugins:maven-enforcer-plugin,org.apache.maven.plugins:maven-idea-plugin</unCheckedPluginsList>
                 </requirePluginVersions>
               </rules>
             </configuration>
