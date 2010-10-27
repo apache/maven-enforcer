@@ -175,7 +175,7 @@ public class RequirePluginVersions
             }
             catch (Exception e)
             {
-                log.warn( "This rule is not compatible with the current version of Maven. The rule is not able to perform any checks.");
+                log.info( "The requirePluginVersions rule is currently not compatible with Maven3.");
                 /*
                  *
                  * NOTE: If this happens, we're bailing out right away.
