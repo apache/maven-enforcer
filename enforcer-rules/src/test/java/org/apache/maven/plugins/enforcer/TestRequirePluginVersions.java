@@ -336,12 +336,12 @@ public class TestRequirePluginVersions
     {
         RequirePluginVersions rule = new RequirePluginVersions();
 
-        Set plugins = new HashSet();
+        Set <Plugin> plugins = new HashSet<Plugin>();
         plugins.add( EnforcerTestUtils.newPlugin( "group", "a-artifact", "1.0" ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "foo", null ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "foo2", "" ) );
 
-        List unchecked = new ArrayList();
+        List<String> unchecked = new ArrayList<String>();
         //intentionally inserting spaces to make sure they are handled correctly.
         unchecked.add( "group : a-artifact" );
 
