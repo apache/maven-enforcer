@@ -1010,9 +1010,19 @@ public class RequirePluginVersions
     {
         List plugins = new ArrayList();
         // get all the pom models
+        
+        String pomName = null;
+        try
+        {
+            pomName = project.getFile().getName();
+        }
+        catch (Exception e)
+        {
+            pomName = "pom.xml";
+        }
         List models =
             utils.getModelsRecursively( project.getGroupId(), project.getArtifactId(), project.getVersion(),
-                                        new File( project.getBasedir(), project.getFile().getName() ) );
+                                        new File( project.getBasedir(), pomName ) );
 
         // now find all the plugin entries, either in
         // build.plugins or build.pluginManagement.plugins, profiles.plugins and reporting
