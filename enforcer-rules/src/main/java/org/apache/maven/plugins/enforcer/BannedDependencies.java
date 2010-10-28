@@ -163,7 +163,7 @@ public class BannedDependencies
                 {
                     result =
                         AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( pattern[2] ),
-                                                                 new DefaultArtifactVersion( artifact.getVersion() ) );
+                                                                 new DefaultArtifactVersion( artifact.getBaseVersion() ) );
                 }
                 catch ( InvalidVersionSpecificationException e )
                 {
