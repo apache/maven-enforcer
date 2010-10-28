@@ -23,10 +23,9 @@
   <parent>
     <artifactId>maven-parent</artifactId>
     <groupId>org.apache.maven</groupId>
-    <version>16</version>
+    <version>17-SNAPSHOT</version>
     <relativePath>../pom/maven/pom.xml</relativePath>
   </parent>
-
   <groupId>org.apache.maven.enforcer</groupId>
   <artifactId>enforcer</artifactId>
   <version>1.0-beta-2-SNAPSHOT</version>
@@ -245,8 +244,8 @@
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
-            <source>1.4</source>
-            <target>1.4</target>
+            <source>1.5</source>
+            <target>1.5</target>
           </configuration>
         </plugin>
         <plugin>
@@ -268,18 +267,18 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
-        <version>2.2</version>
+        <version>2.4</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.5</version>
+        <version>2.7</version>
         <configuration>
            <tagletArtifacts>
              <tagletArtifact>
                 <groupId>org.apache.maven.plugin-tools</groupId>
                 <artifactId>maven-plugin-tools-javadoc</artifactId>
-                <version>2.4.3</version>
+                <version>2.6</version>
              </tagletArtifact>
              <tagletArtifact>
                <groupId>org.codehaus.plexus</groupId>
