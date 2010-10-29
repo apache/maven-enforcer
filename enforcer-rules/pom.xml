@@ -121,23 +121,6 @@
           </execution>
         </executions>
       </plugin>
-     <!--plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>shitty-maven-plugin</artifactId>
-        <version>1.0-alpha-2</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>clean</goal>
-              <goal>install</goal>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <parallel>false</parallel>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin-->    
     </plugins>
   </build>
 </project>

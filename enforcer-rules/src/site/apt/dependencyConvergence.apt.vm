@@ -92,13 +92,13 @@ and
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version><version>${project.version}</version></version>
+        <version>${project.version}</version>
         <executions>
           <execution>
             <id>enforce</id>
             <configuration>
               <rules>
-                <DependencyConvergenceRule/>
+                <DependencyConvergence/>
               </rules>
             </configuration>
             <goals>
