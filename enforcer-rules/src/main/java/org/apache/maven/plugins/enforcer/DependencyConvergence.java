@@ -109,14 +109,14 @@ public class DependencyConvergence implements EnforcerRule {
   }
 
   private String getFullArtifactName(Artifact artifact){
-    return artifact.getGroupId() + ":" + artifact.getArtifactId() + artifact.getVersion();
+    return artifact.getGroupId() + ":" + artifact.getArtifactId() +":"+ artifact.getVersion();
   }
   
   private StringBuilder buildTreeString(DependencyNode node) {
     List<String> loc = new ArrayList<String>();
     DependencyNode currentNode = node;
     while (currentNode != null) {
-      loc.add(getFullArtifactName(node.getArtifact()));
+      loc.add(getFullArtifactName(currentNode.getArtifact()));
       currentNode = currentNode.getParent();
     }
     Collections.reverse(loc);
@@ -145,7 +145,7 @@ public class DependencyConvergence implements EnforcerRule {
     if (nodeList.size() > 0){
       builder.append(buildTreeString(nodeList.get(0)));
     }
-    for (DependencyNode node: nodeList){
+    for (DependencyNode node: nodeList.subList(1,nodeList.size())){
       builder.append("and\n");
       builder.append(buildTreeString(node));
     }
