@@ -55,14 +55,15 @@ public class DisplayInfoMojo
     /**
      * The MavenSession
      * 
-     * @parameter expression="${session}"
+     * @parameter default-value="${session}"
+     * @readonly
      */
     protected MavenSession session;
 
     /**
      * POM
      * 
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @readonly
      * @required
      */
