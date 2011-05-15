@@ -140,7 +140,11 @@
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MENFORCER</url>
   </issueManagement>
-    <distributionManagement>
+  <ciManagement>
+    <system>Jenkins</system>
+    <url>https://builds.apache.org/hudson/job/maven-enforcer/</url>
+  </ciManagement>
+  <distributionManagement>
     <site>
       <id>apache.website</id>
       <url>scp://people.apache.org/www/maven.apache.org/enforcer/</url>
