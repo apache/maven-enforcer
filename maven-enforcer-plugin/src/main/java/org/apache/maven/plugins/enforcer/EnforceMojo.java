@@ -45,6 +45,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
  * @requiresDependencyResolution test
  * @goal enforce
  * @phase validate
+ * @threadSafe
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -183,7 +184,11 @@ public class EnforceMojo
                             if ( ignoreCache || shouldExecute( rule ) )
                             {
                                 // execute the rule
-                                rules[i].execute( helper );
+                                //noinspection SynchronizationOnLocalVariableOrMethodParameter
+                                synchronized ( rule )
+                                {
+                                   rule.execute( helper );
+                                }
                             }
                         }
                         catch ( EnforcerRuleException e )
