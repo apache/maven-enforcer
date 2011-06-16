@@ -128,7 +128,7 @@
         <artifactId>maven-site-plugin</artifactId>
         <configuration>
           <stagingSiteURL>
-            scp://people.apache.org/www/maven.apache.org/plugins/${project.artifactId}-${project.version}
+            scp://people.apache.org/www/maven.apache.org/staging
           </stagingSiteURL>
         </configuration>
       </plugin>
