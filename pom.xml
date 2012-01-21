@@ -212,9 +212,9 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>easymock</groupId>
-        <artifactId>easymock</artifactId>
-        <version>1.2_Java1.3</version>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>1.9.0</version>
         <scope>test</scope>
       </dependency>
       <dependency>

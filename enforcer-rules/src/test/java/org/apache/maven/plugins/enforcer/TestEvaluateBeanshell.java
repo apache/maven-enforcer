@@ -19,13 +19,14 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import static org.mockito.Mockito.*;
+
 import junit.framework.TestCase;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
-import org.easymock.MockControl;
 
 /**
  * The Class TestEvaluateBeanshell.
@@ -105,14 +106,11 @@ public class TestEvaluateBeanshell
         EvaluateBeanshell rule = new EvaluateBeanshell();
         rule.condition = "${env} == null";
         rule.message = "We have a variable : ${env}";
-        MockControl evalControl = MockControl.createControl( ExpressionEvaluator.class );
+
+        ExpressionEvaluator eval = mock( ExpressionEvaluator.class );
+        when( eval.evaluate( rule.condition ) ).thenThrow( new ExpressionEvaluationException( "expected error" ) );
         try
         {
-            ExpressionEvaluator eval = (ExpressionEvaluator) evalControl.getMock();
-            eval.evaluate( rule.condition );
-            evalControl.expectAndDefaultThrow( null, new ExpressionEvaluationException( "expected error" ) );
-            evalControl.replay();
-
             EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project, eval );
             rule.execute( helper );
             fail( "Expected an exception." );
@@ -121,8 +119,7 @@ public class TestEvaluateBeanshell
         {
             assertFalse( e.getLocalizedMessage().equals( rule.message ) );
         }
-
-        evalControl.verify();
+        verify( eval );
     }
 
     public void testRuleInvalidBeanshell()
