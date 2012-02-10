@@ -68,7 +68,7 @@ Require Property
                 <requireProperty>
                   <property>project.version</property>
                   <message>"Project version must be specified."</message>
-                  <regex>(\d|-SNAPSHOT)$</regex>
+                  <regex>.*(\d|-SNAPSHOT)$</regex>
                   <regexMessage>"Project version must end in a number or -SNAPSHOT."</regexMessage>
                 </requireProperty>
               </rules>
