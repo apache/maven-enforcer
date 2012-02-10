@@ -37,6 +37,8 @@ Standard Rules
   
   * {{{./dependencyConvergence.html}dependencyConvergence}} - ensure all dependencies converge to the same version.
 
+  * {{{./incompatibleDependencyOverwrite.html}IncompatibleDependencyOverwrite}} - ensures that every (transitive) dependency is resolved to it's specified version or higher.
+
   * {{{./evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
 
   * {{{./requireReleaseDeps.html}requireReleaseDeps}} - enforces that no snapshots are included as dependencies.
