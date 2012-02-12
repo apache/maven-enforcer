@@ -48,7 +48,7 @@ import org.codehaus.plexus.i18n.I18N;
 /**
  * @author Geoffrey De Smet
  */
-public class IncompatibleDependencyOverwrite extends AbstractNonCacheableEnforcerRule
+public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
 {
 
     private static Log log;
@@ -112,14 +112,14 @@ public class IncompatibleDependencyOverwrite extends AbstractNonCacheableEnforce
                 i18n = (I18N) helper.getComponent( I18N.class );
             }
             DependencyNode node = getNode( helper );
-            IncompatibleOverwriteVisitor visitor
-                    = new IncompatibleOverwriteVisitor();
+            RequireUpperBoundDepsVisitor visitor
+                    = new RequireUpperBoundDepsVisitor();
             node.accept( visitor );
             List<String> errorMessages = buildErrorMessages( visitor.getConflicts() );
             if ( errorMessages.size() > 0 )
             {
                 throw new EnforcerRuleException(
-                        "Failed while enforcing IncompatibleDependencyOverwrite. The error(s) are "
+                        "Failed while enforcing RequireUpperBoundDeps. The error(s) are "
                         + errorMessages );
             }
         }
@@ -145,7 +145,7 @@ public class IncompatibleDependencyOverwrite extends AbstractNonCacheableEnforce
 
     private String buildErrorMessage(List<DependencyNode> conflict) {
         StringBuilder errorMessage = new StringBuilder();
-        errorMessage.append("\nIncompatible dependency overwrite error for "
+        errorMessage.append("\nRequire upper bound dependencies error for "
                 + getFullArtifactName(conflict.get(0).getArtifact())
                 + " paths to dependency are:\n");
         if ( conflict.size() > 0 )
@@ -187,7 +187,7 @@ public class IncompatibleDependencyOverwrite extends AbstractNonCacheableEnforce
         return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
     }
 
-    private static class IncompatibleOverwriteVisitor implements DependencyNodeVisitor {
+    private static class RequireUpperBoundDepsVisitor implements DependencyNodeVisitor {
 
         private Map<String, List<DependencyNodeHopCountPair>> keyToPairsMap
                 = new LinkedHashMap<String, List<DependencyNodeHopCountPair>>();
