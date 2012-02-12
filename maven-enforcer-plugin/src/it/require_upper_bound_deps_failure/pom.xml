@@ -30,7 +30,7 @@
             <id>enforce</id>
             <configuration>
               <rules>
-                <IncompatibleDependencyOverwrite/>
+                <RequireUpperBoundDeps/>
               </rules>
             </configuration>
             <goals>
