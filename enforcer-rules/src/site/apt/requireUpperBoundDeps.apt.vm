@@ -16,14 +16,18 @@
  ~~ under the License.
 
  -----
- Comparing against a specific artifact
+ Require Upper Bound Dependencies
  -----
  -----
  2012-02-08
  -----
 
-  This rule requires that every dependency (including transitive dependencies) is resolved to a version
-  which is at least the specified version.
+  This rule requires that the version for each dependency resolved during a build, is equal
+  to or higher than all transitive dependency declarations.  The version of each dependency
+  resolved during the build will normally be the version specified in the POM or the 
+  version with the least transitive steps (the "nearest" definition).  For more 
+  information about Maven dependency resolution, see 
+  {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html}the Maven site}}.
 
   Here is a concrete example. This will cause a build to fail:
   
@@ -98,7 +102,7 @@ and
             <id>enforce</id>
             <configuration>
               <rules>
-                <RequireUpperBoundDeps/>
+                <requireUpperBoundDeps/>
               </rules>
             </configuration>
             <goals>
