@@ -128,7 +128,7 @@ public class RequirePluginVersions
     private Map phaseToLifecycleMap;
 
     /** The lifecycles. */
-    private List lifecycles;
+    private Collection lifecycles;
 
     /** The factory. */
     ArtifactFactory factory;
@@ -171,18 +171,21 @@ public class RequirePluginVersions
             life = (LifecycleExecutor) helper.getComponent( LifecycleExecutor.class );
             try
             {
-              lifecycles = (List) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", life );
+              lifecycles = (Collection) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", life );
             }
             catch (Exception e)
             {
-                log.info( "The requirePluginVersions rule is currently not compatible with Maven3.");
+                //log.info( "The requirePluginVersions rule is currently not compatible with Maven3.");
+                Object dlc = ReflectionUtils.getValueIncludingSuperclasses("defaultLifeCycles", life);
+                Map mmap = (Map)ReflectionUtils.getValueIncludingSuperclasses("lifecycles", dlc);
+                lifecycles = mmap.values();
                 /*
                  *
                  * NOTE: If this happens, we're bailing out right away.
                  *
                  *
                  */
-                return;
+                //return;
             }
             session = (MavenSession) helper.evaluate( "${session}" );
             pluginManager = (PluginManager) helper.getComponent( PluginManager.class );
