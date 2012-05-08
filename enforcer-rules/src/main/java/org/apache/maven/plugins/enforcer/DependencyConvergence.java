@@ -51,7 +51,14 @@ public class DependencyConvergence
     private static Log log;
 
     private static I18N i18n;
+    
+    private boolean uniqueVersions; 
 
+    public void setUniqueVersions( boolean uniqueVersions )
+    {
+        this.uniqueVersions = uniqueVersions;
+    }
+    
     /**
      * Uses the {@link EnforcerRuleHelper} to populate the values of the
      * {@link DependencyTreeBuilder#buildDependencyTree(MavenProject, ArtifactRepository, ArtifactFactory, ArtifactMetadataSource, ArtifactFilter, ArtifactCollector)}
@@ -109,8 +116,8 @@ public class DependencyConvergence
                 i18n = (I18N) helper.getComponent( I18N.class );
             }
             DependencyNode node = getNode( helper );
-            MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-            DependencyVersionMap visitor = new DependencyVersionMap( project.getArtifact().isRelease(), log );
+            DependencyVersionMap visitor = new DependencyVersionMap( log );
+            visitor.setUniqueVersions( uniqueVersions );
             node.accept( visitor );
             List<CharSequence> errorMsgs = new ArrayList<CharSequence>();
             errorMsgs.addAll( getConvergenceErrorMsgs( visitor.getConflictedVersionNumbers() ) );
@@ -122,10 +129,6 @@ public class DependencyConvergence
             {
                 throw new EnforcerRuleException( "Failed while enforcing releasability the error(s) are " + errorMsgs );
             }
-        }
-        catch ( ExpressionEvaluationException e )
-        {
-            throw new EnforcerRuleException( "Unable to lookup an expression " + e.getLocalizedMessage(), e );
         }
         catch ( ComponentLookupException e )
         {

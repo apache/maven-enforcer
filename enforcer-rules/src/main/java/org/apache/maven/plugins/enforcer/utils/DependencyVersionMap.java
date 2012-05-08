@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
@@ -31,41 +32,27 @@ import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
 public class DependencyVersionMap
     implements DependencyNodeVisitor
 {
-
-    private boolean demandReleasedVersions = false;
+    private Log log;
+    
+    private boolean uniqueVersions;
 
     private Map<String, List<DependencyNode>> idsToNode;
 
-    private List<DependencyNode> snapshots;
-
     public DependencyVersionMap( Log log )
     {
+        this.log = log;
         idsToNode = new HashMap<String, List<DependencyNode>>();
-        snapshots = new ArrayList<DependencyNode>();
     }
-
-    public DependencyVersionMap( boolean demandReleasedVersions, Log log )
+    
+    public void setUniqueVersions( boolean uniqueVersions )
     {
-        this( log );
-        this.demandReleasedVersions = demandReleasedVersions;
+        this.uniqueVersions = uniqueVersions;
     }
 
     public boolean visit( DependencyNode node )
     {
         addDependency( node );
-        if ( containsConflicts( node ) )
-        {
-            return false;
-        }
-        if ( demandReleasedVersions )
-        {
-            if ( node.getArtifact().isSnapshot() )
-            {
-                snapshots.add( node );
-                return false;
-            }
-        }
-        return true;
+        return !containsConflicts( node );
     }
 
     public boolean endVisit( DependencyNode node )
@@ -86,10 +73,6 @@ public class DependencyVersionMap
     public void addDependency( DependencyNode node )
     {
         String key = constructKey( node );
-        if ( node.getArtifact().isSnapshot() )
-        {
-            snapshots.add( node );
-        }
         List<DependencyNode> nodes = idsToNode.get( key );
         if ( nodes == null )
         {
@@ -98,10 +81,11 @@ public class DependencyVersionMap
         }
         nodes.add( node );
     }
-
-    public List<DependencyNode> getSnapshots()
+    
+    private String getVersion( Artifact artifact )
     {
-        return snapshots;
+        log.info( ArtifactUtils.versionlessKey( artifact ) + " " + artifact.getVersion() + " " + artifact.getBaseVersion() );
+        return uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion(); 
     }
 
     private boolean containsConflicts( DependencyNode node )
@@ -121,11 +105,11 @@ public class DependencyVersionMap
         {
             if ( version == null )
             {
-                version = node.getArtifact().getVersion();
+                version = getVersion( node.getArtifact() );
             }
             else
             {
-                if ( version.compareTo( node.getArtifact().getVersion() ) != 0 )
+                if ( version.compareTo( getVersion( node.getArtifact() ) ) != 0 )
                 {
                     return true;
                 }
