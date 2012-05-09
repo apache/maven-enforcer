@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -128,7 +129,7 @@ public class RequirePluginVersions
     private Map phaseToLifecycleMap;
 
     /** The lifecycles. */
-    private List lifecycles;
+    private Collection lifecycles;
 
     /** The factory. */
     ArtifactFactory factory;
@@ -169,21 +170,21 @@ public class RequirePluginVersions
             project = (MavenProject) helper.evaluate( "${project}" );
             LifecycleExecutor life;
             life = (LifecycleExecutor) helper.getComponent( LifecycleExecutor.class );
-            try
+
+            // The lifecycle API changed from Maven 2 to 3 so we have to do a hack to figure
+            // out which one we're using.
+            Field field = ReflectionUtils.getFieldByNameIncludingSuperclasses( "defaultLifeCycles", life.getClass() );
+            if (field != null) // Using Maven 3
             {
-              lifecycles = (List) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", life );
+                Object defaultLifeCycles = ReflectionUtils.getValueIncludingSuperclasses("defaultLifeCycles", life);
+                Map lifecyclesMap = (Map)ReflectionUtils.getValueIncludingSuperclasses("lifecycles", defaultLifeCycles);
+                lifecycles = lifecyclesMap.values();
             }
-            catch (Exception e)
+            else  // Using Maven 2
             {
-                log.info( "The requirePluginVersions rule is currently not compatible with Maven3.");
-                /*
-                 *
-                 * NOTE: If this happens, we're bailing out right away.
-                 *
-                 *
-                 */
-                return;
+                lifecycles = (Collection) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", life );
             }
+
             session = (MavenSession) helper.evaluate( "${session}" );
             pluginManager = (PluginManager) helper.getComponent( PluginManager.class );
             factory = (ArtifactFactory) helper.getComponent( ArtifactFactory.class );
