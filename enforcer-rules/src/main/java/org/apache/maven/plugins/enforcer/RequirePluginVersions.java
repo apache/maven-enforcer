@@ -174,10 +174,11 @@ public class RequirePluginVersions
             // The lifecycle API changed from Maven 2 to 3 so we have to do a hack to figure
             // out which one we're using.
             Field field = ReflectionUtils.getFieldByNameIncludingSuperclasses( "defaultLifeCycles", life.getClass() );
-            if (field != null) // Using Maven 3
+            if ( field != null ) // Using Maven 3
             {
-                Object defaultLifeCycles = ReflectionUtils.getValueIncludingSuperclasses("defaultLifeCycles", life);
-                Map lifecyclesMap = (Map)ReflectionUtils.getValueIncludingSuperclasses("lifecycles", defaultLifeCycles);
+                Object defaultLifeCycles = ReflectionUtils.getValueIncludingSuperclasses( "defaultLifeCycles", life );
+                Map lifecyclesMap =
+                    (Map) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", defaultLifeCycles );
                 lifecycles = lifecyclesMap.values();
             }
             else  // Using Maven 2
@@ -203,7 +204,9 @@ public class RequirePluginVersions
 
 
             // pull out any we should skip
-            allPlugins = (Set) removeUncheckedPlugins( combineUncheckedPlugins( unCheckedPlugins, unCheckedPluginList ), allPlugins );
+            allPlugins =
+                (Set) removeUncheckedPlugins( combineUncheckedPlugins( unCheckedPlugins, unCheckedPluginList ),
+                                              allPlugins );
 
             // there's nothing to do here
             if ( allPlugins.isEmpty() )
@@ -376,7 +379,7 @@ public class RequirePluginVersions
             {
                 uncheckedPlugins = new HashSet();
             }
-            else if (!uncheckedPlugins.isEmpty() && log != null)
+            else if ( !uncheckedPlugins.isEmpty() && log != null )
             {
                 log.warn( "The parameter 'unCheckedPlugins' is deprecated. Use 'unCheckedPluginList' instead" );
             }
@@ -1017,7 +1020,7 @@ public class RequirePluginVersions
         {
             pomName = project.getFile().getName();
         }
-        catch (Exception e)
+        catch ( Exception e )
         {
             pomName = "pom.xml";
         }
