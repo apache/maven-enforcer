@@ -46,9 +46,13 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 import org.codehaus.plexus.i18n.I18N;
 
 /**
+ * Rule to enforce that the resolved dependency is also the most recent one of all transitive dependencies.
+ * 
  * @author Geoffrey De Smet
+ * @since 1.1
  */
-public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
+public class RequireUpperBoundDeps
+    extends AbstractNonCacheableEnforcerRule
 {
 
     private static Log log;
@@ -112,15 +116,13 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
                 i18n = (I18N) helper.getComponent( I18N.class );
             }
             DependencyNode node = getNode( helper );
-            RequireUpperBoundDepsVisitor visitor
-                    = new RequireUpperBoundDepsVisitor();
+            RequireUpperBoundDepsVisitor visitor = new RequireUpperBoundDepsVisitor();
             node.accept( visitor );
             List<String> errorMessages = buildErrorMessages( visitor.getConflicts() );
             if ( errorMessages.size() > 0 )
             {
-                throw new EnforcerRuleException(
-                        "Failed while enforcing RequireUpperBoundDeps. The error(s) are "
-                        + errorMessages );
+                throw new EnforcerRuleException( "Failed while enforcing RequireUpperBoundDeps. The error(s) are "
+                    + errorMessages );
             }
         }
         catch ( ComponentLookupException e )
@@ -135,26 +137,27 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
 
     private List<String> buildErrorMessages( List<List<DependencyNode>> conflicts )
     {
-        List<String> errorMessages = new ArrayList<String>(conflicts.size());
+        List<String> errorMessages = new ArrayList<String>( conflicts.size() );
         for ( List<DependencyNode> conflict : conflicts )
         {
-            errorMessages.add(buildErrorMessage(conflict));
+            errorMessages.add( buildErrorMessage( conflict ) );
         }
         return errorMessages;
     }
 
-    private String buildErrorMessage(List<DependencyNode> conflict) {
+    private String buildErrorMessage( List<DependencyNode> conflict )
+    {
         StringBuilder errorMessage = new StringBuilder();
-        errorMessage.append("\nRequire upper bound dependencies error for "
-                + getFullArtifactName(conflict.get(0).getArtifact())
-                + " paths to dependency are:\n");
+        errorMessage.append( "\nRequire upper bound dependencies error for "
+            + getFullArtifactName( conflict.get( 0 ).getArtifact() ) + " paths to dependency are:\n" );
         if ( conflict.size() > 0 )
         {
-            errorMessage.append(buildTreeString(conflict.get(0)));
+            errorMessage.append( buildTreeString( conflict.get( 0 ) ) );
         }
-        for ( DependencyNode node : conflict.subList( 1, conflict.size() ) ) {
-            errorMessage.append("and\n");
-            errorMessage.append(buildTreeString(node));
+        for ( DependencyNode node : conflict.subList( 1, conflict.size() ) )
+        {
+            errorMessage.append( "and\n" );
+            errorMessage.append( buildTreeString( node ) );
         }
         return errorMessage.toString();
     }
@@ -176,36 +179,41 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
             {
                 builder.append( "  " );
             }
-            builder.append("+-").append(loc.get(i));
+            builder.append( "+-" ).append( loc.get( i ) );
             builder.append( "\n" );
         }
         return builder;
     }
 
-    private String getFullArtifactName(Artifact artifact)
+    private String getFullArtifactName( Artifact artifact )
     {
         return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
     }
 
-    private static class RequireUpperBoundDepsVisitor implements DependencyNodeVisitor {
+    private static class RequireUpperBoundDepsVisitor
+        implements DependencyNodeVisitor
+    {
 
-        private Map<String, List<DependencyNodeHopCountPair>> keyToPairsMap
-                = new LinkedHashMap<String, List<DependencyNodeHopCountPair>>();
+        private Map<String, List<DependencyNodeHopCountPair>> keyToPairsMap =
+            new LinkedHashMap<String, List<DependencyNodeHopCountPair>>();
 
-        public boolean visit(DependencyNode node) {
-            DependencyNodeHopCountPair pair = new DependencyNodeHopCountPair(node);
+        public boolean visit( DependencyNode node )
+        {
+            DependencyNodeHopCountPair pair = new DependencyNodeHopCountPair( node );
             String key = pair.constructKey();
-            List<DependencyNodeHopCountPair> pairs = keyToPairsMap.get(key);
-            if (pairs == null) {
+            List<DependencyNodeHopCountPair> pairs = keyToPairsMap.get( key );
+            if ( pairs == null )
+            {
                 pairs = new ArrayList<DependencyNodeHopCountPair>();
-                keyToPairsMap.put(key, pairs);
+                keyToPairsMap.put( key, pairs );
             }
-            pairs.add(pair);
-            Collections.sort(pairs);
+            pairs.add( pair );
+            Collections.sort( pairs );
             return true;
         }
 
-        public boolean endVisit(DependencyNode node) {
+        public boolean endVisit( DependencyNode node )
+        {
             return true;
         }
 
@@ -216,43 +224,54 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
             {
                 if ( containsConflicts( pairs ) )
                 {
-                    List<DependencyNode> outputSubList = new ArrayList<DependencyNode>(pairs.size());
-                    for (DependencyNodeHopCountPair pair : pairs) {
+                    List<DependencyNode> outputSubList = new ArrayList<DependencyNode>( pairs.size() );
+                    for ( DependencyNodeHopCountPair pair : pairs )
+                    {
                         outputSubList.add( pair.getNode() );
                     }
-                    output.add(outputSubList);
+                    output.add( outputSubList );
                 }
             }
             return output;
         }
-        
-        private boolean containsConflicts(List<DependencyNodeHopCountPair> pairs) {
-                ArtifactVersion resolvedVersion = pairs.get(0).extractArtifactVersion();
-                for (DependencyNodeHopCountPair pair : pairs) {
-                    ArtifactVersion version = pair.extractArtifactVersion();
-                    if (resolvedVersion.compareTo(version) < 0) {
-                        return true;
-                    }
+
+        @SuppressWarnings( "unchecked" )
+        private boolean containsConflicts( List<DependencyNodeHopCountPair> pairs )
+        {
+            ArtifactVersion resolvedVersion = pairs.get( 0 ).extractArtifactVersion();
+            for ( DependencyNodeHopCountPair pair : pairs )
+            {
+                ArtifactVersion version = pair.extractArtifactVersion();
+                if ( resolvedVersion.compareTo( version ) < 0 )
+                {
+                    return true;
                 }
+            }
             return false;
         }
 
     }
 
-    private static class DependencyNodeHopCountPair implements Comparable<DependencyNodeHopCountPair> {
+    private static class DependencyNodeHopCountPair
+        implements Comparable<DependencyNodeHopCountPair>
+    {
 
         private DependencyNode node;
+
         private int hopCount;
 
-        private DependencyNodeHopCountPair(DependencyNode node) {
+        private DependencyNodeHopCountPair( DependencyNode node )
+        {
             this.node = node;
             countHops();
         }
 
-        private void countHops() {
+        private void countHops()
+        {
             hopCount = 0;
             DependencyNode parent = node.getParent();
-            while (parent != null) {
+            while ( parent != null )
+            {
                 hopCount++;
                 parent = parent.getParent();
             }
@@ -264,29 +283,37 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
             return artifact.getGroupId() + ":" + artifact.getArtifactId();
         }
 
-        public DependencyNode getNode() {
+        public DependencyNode getNode()
+        {
             return node;
         }
 
-        private ArtifactVersion extractArtifactVersion() {
+        private ArtifactVersion extractArtifactVersion()
+        {
             Artifact artifact = node.getArtifact();
             String version = artifact.getVersion();
-            if (version != null) {
-                return new DefaultArtifactVersion(version);
+            if ( version != null )
+            {
+                return new DefaultArtifactVersion( version );
             }
-            try {
+            try
+            {
                 return artifact.getSelectedVersion();
-            } catch (OverConstrainedVersionException e) {
-                throw new RuntimeException("Version ranges problem with " + node.getArtifact(), e);
+            }
+            catch ( OverConstrainedVersionException e )
+            {
+                throw new RuntimeException( "Version ranges problem with " + node.getArtifact(), e );
             }
         }
 
-        public int getHopCount() {
+        public int getHopCount()
+        {
             return hopCount;
         }
 
-        public int compareTo(DependencyNodeHopCountPair other) {
-            return Integer.valueOf(hopCount).compareTo(Integer.valueOf(other.getHopCount()));
+        public int compareTo( DependencyNodeHopCountPair other )
+        {
+            return Integer.valueOf( hopCount ).compareTo( Integer.valueOf( other.getHopCount() ) );
         }
 
     }
