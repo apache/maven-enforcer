@@ -37,17 +37,21 @@ Standard Rules
   
   * {{{./dependencyConvergence.html}dependencyConvergence}} - ensure all dependencies converge to the same version.
 
-  * {{{./requireUpperBoundDeps.html}requireUpperBoundDeps}} - ensures that every (transitive) dependency is resolved to it's specified version or higher.
-
   * {{{./evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
 
-  * {{{./requireReleaseDeps.html}requireReleaseDeps}} - enforces that no snapshots are included as dependencies.
+  * requireActiveProfile - enforces one or more active profiles.
+  
+  * {{{./requireFilesDontExist.html}requireFilesDontExist}} - enforces that the list of files do not exist.
+  
+  * {{{./requireFilesExist.html}requireFilesExist}} - enforces that the list of files do exist.
 
-  * {{{./requireReleaseVersion.html}requireReleaseVersion}} - enforces that the artifact is not a snapshot.
+  * {{{./requireFilesSize.html}requireFilesSize}} - enforces that the list of files exist and are within a certain size range.
+
+  * {{{./requireJavaVersion.html}requireJavaVersion}} - enforces the JDK version.
 
   * {{{./requireMavenVersion.html}requireMavenVersion}} - enforces the Maven version.
 
-  * {{{./requireJavaVersion.html}requireJavaVersion}} - enforces the JDK version.
+  * {{{./requireNoRepositories.html}requireNoRepositories}} - enforces to not include repositories.
 
   * {{{./requireOS.html}requireOS}} - enforces the OS / CPU Archictecture.
 
@@ -55,11 +59,11 @@ Standard Rules
 
   * {{{./requireProperty.html}requireProperty}} - enforces the existence and values of properties.
    
-  * {{{./requireFilesDontExist.html}requireFilesDontExist}} - enforces that the list of files do not exist.
-  
-  * {{{./requireFilesExist.html}requireFilesExist}} - enforces that the list of files do exist.
+  * {{{./requireReleaseDeps.html}requireReleaseDeps}} - enforces that no snapshots are included as dependencies.
 
-  * {{{./requireFilesSize.html}requireFilesSize}} - enforces that the list of files exist and are within a certain size range.
+  * {{{./requireReleaseVersion.html}requireReleaseVersion}} - enforces that the artifact is not a snapshot.
+
+  * {{{./requireUpperBoundDeps.html}requireUpperBoundDeps}} - ensures that every (transitive) dependency is resolved to it's specified version or higher.
 
   []
 
