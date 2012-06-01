@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer;
 
 import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
 
@@ -36,14 +37,9 @@ public class NoSnapshots
 {
 
     /**
-     * Checks the set of dependencies to see if any snapshots are included.
-     *
-     * @param dependencies the dependencies
-     * @param log the log
-     * @return the sets the
-     * @throws EnforcerRuleException the enforcer rule exception
+     * {@inheritDoc}
      */
-    protected Set checkDependencies( Set dependencies, Log log )
+    protected Set<Artifact> checkDependencies( Set<Artifact> dependencies, Log log )
         throws EnforcerRuleException
     {
         log.warn( "The \"NoSnapshots\" rule is deprecated. Use \"requireReleaseDeps\" instead" );

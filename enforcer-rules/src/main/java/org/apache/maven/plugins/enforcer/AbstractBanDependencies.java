@@ -19,7 +19,6 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -64,23 +63,21 @@ public abstract class AbstractBanDependencies
         }
 
         // get the correct list of dependencies
-        Set dependencies = getDependenciesToCheck( project );
+        Set<Artifact> dependencies = getDependenciesToCheck( project );
 
         // look for banned dependencies
-        Set foundExcludes = checkDependencies( dependencies, helper.getLog() );
+        Set<Artifact> foundExcludes = checkDependencies( dependencies, helper.getLog() );
 
         // if any are found, fail the check but list all of them
         if ( foundExcludes != null && !foundExcludes.isEmpty() )
         {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             if ( message != null )
             {
                 buf.append( message + "\n" );
             }
-            Iterator iter = foundExcludes.iterator();
-            while ( iter.hasNext() )
+            for ( Artifact artifact : foundExcludes )
             {
-                Artifact artifact = (Artifact) iter.next();
                 buf.append( getErrorMessage( artifact ) );
             }
             message = buf.toString()+ "Use 'mvn dependency:tree' to locate the source of the banned dependencies.";
@@ -95,9 +92,10 @@ public abstract class AbstractBanDependencies
         return "Found Banned Dependency: " + artifact.getId() + "\n";
     }
 
-    protected Set getDependenciesToCheck( MavenProject project )
+    @SuppressWarnings( "unchecked" )
+    protected Set<Artifact> getDependenciesToCheck( MavenProject project )
     {
-        Set dependencies = null;
+        Set<Artifact> dependencies = null;
         if ( searchTransitive )
         {
             dependencies = project.getArtifacts();
@@ -117,7 +115,7 @@ public abstract class AbstractBanDependencies
      * @return the sets the
      * @throws EnforcerRuleException the enforcer rule exception
      */
-    abstract protected Set checkDependencies( Set dependencies, Log log )
+    abstract protected Set<Artifact> checkDependencies( Set<Artifact> dependencies, Log log )
         throws EnforcerRuleException;
 
     /**

@@ -20,7 +20,6 @@ package org.apache.maven.plugins.enforcer;
  */
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -47,7 +46,7 @@ public class BannedDependencies
      * Any of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
      * The rule will fail if any dependency matches any exclude, unless it also matches an include rule.
      */
-    public List excludes = null;
+    public List<String> excludes = null;
 
     /**
      * Specify the allowed dependencies. This can be a list of artifacts in the format <code>groupId[:artifactId][:version]</code>.
@@ -56,23 +55,22 @@ public class BannedDependencies
      * smaller set of includes. <br>
      * For example, to ban all xerces except xerces-api -> exclude "xerces", include "xerces:xerces-api"
      */
-    public List includes = null;
+    public List<String> includes = null;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.plugin.enforcer.AbstractBanDependencies#checkDependencies(java.util.Set)
+
+    /**
+     * {@inheritDoc}
      */
-    protected Set checkDependencies( Set theDependencies, Log log )
+    protected Set<Artifact> checkDependencies( Set<Artifact> theDependencies, Log log )
         throws EnforcerRuleException
     {
-        Set excluded = checkDependencies( theDependencies, excludes );
+        Set<Artifact> excluded = checkDependencies( theDependencies, excludes );
 
         // anything specifically included should be removed
         // from the ban list.
         if ( excluded != null )
         {
-            Set included = checkDependencies( theDependencies, includes );
+            Set<Artifact> included = checkDependencies( theDependencies, includes );
             if ( included != null )
             {
                 excluded.removeAll( included );
@@ -90,33 +88,28 @@ public class BannedDependencies
      * @return a set containing artifacts matching one of the patterns or <code>null</code>
      * @throws EnforcerRuleException the enforcer rule exception
      */
-    private Set checkDependencies( Set dependencies, List thePatterns )
+    private Set<Artifact> checkDependencies( Set<Artifact> dependencies, List<String> thePatterns )
         throws EnforcerRuleException
     {
-        Set foundMatches = null;
+        Set<Artifact> foundMatches = null;
 
         if ( thePatterns != null && thePatterns.size() > 0 )
         {
 
-            Iterator iter = thePatterns.iterator();
-            while ( iter.hasNext() )
+            for ( String pattern : thePatterns )
             {
-                String pattern = (String) iter.next();
 
                 String[] subStrings = pattern.split( ":" );
                 subStrings = StringUtils.stripAll( subStrings );
 
-                Iterator dependencyIter = dependencies.iterator();
-                while ( dependencyIter.hasNext() )
+                for ( Artifact artifact : dependencies )
                 {
-                    Artifact artifact = (Artifact) dependencyIter.next();
-
                     if ( compareDependency( subStrings, artifact ) )
                     {
                         // only create if needed
                         if ( foundMatches == null )
                         {
-                            foundMatches = new HashSet();
+                            foundMatches = new HashSet<Artifact>();
                         }
                         foundMatches.add( artifact );
                     }
@@ -200,7 +193,7 @@ public class BannedDependencies
      *
      * @return the excludes
      */
-    public List getExcludes()
+    public List<String> getExcludes()
     {
         return this.excludes;
     }
@@ -210,7 +203,7 @@ public class BannedDependencies
      *
      * @param theExcludes the excludes to set
      */
-    public void setExcludes( List theExcludes )
+    public void setExcludes( List<String> theExcludes )
     {
         this.excludes = theExcludes;
     }
@@ -220,7 +213,7 @@ public class BannedDependencies
      *
      * @return the includes
      */
-    public List getIncludes()
+    public List<String> getIncludes()
     {
         return this.includes;
     }
@@ -230,7 +223,7 @@ public class BannedDependencies
      *
      * @param theIncludes the includes to set
      */
-    public void setIncludes( List theIncludes )
+    public void setIncludes( List<String> theIncludes )
     {
         this.includes = theIncludes;
     }

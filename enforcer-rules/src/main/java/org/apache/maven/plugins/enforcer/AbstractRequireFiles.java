@@ -21,7 +21,7 @@ package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -73,33 +73,31 @@ public abstract class AbstractRequireFiles
             throw new EnforcerRuleException( "The file list is empty and Null files are disabled." );
     	}
 
-        ArrayList failures = new ArrayList();
-        for ( int i = 0; i < files.length; i++ )
+        List<File> failures = new ArrayList<File>();
+        for ( File file : files )
         {
-            if ( !allowNulls && files[i] == null )
+            if ( !allowNulls && file == null )
         	{
-                failures.add( files[i] );
+                failures.add( file );
         	}
-        	else if ( !checkFile( files[i] ) )
+        	else if ( !checkFile( file ) )
             {
-                failures.add( files[i] );
+                failures.add( file );
             }
         }
 
         // if anything was found, log it with the optional message.
         if ( !failures.isEmpty() )
         {
-            StringBuffer buf = new StringBuffer();
+            StringBuilder buf = new StringBuilder();
             if ( message != null )
             {
                 buf.append( message + "\n" );
             }
             buf.append( getErrorMsg() );
 
-            Iterator iter = failures.iterator();
-            while ( iter.hasNext() )
+            for ( File file : failures )
             {
-                File file = (File) iter.next();
                 if ( file != null )
                 {
                     buf.append( file.getAbsolutePath() + "\n" );

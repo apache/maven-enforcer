@@ -20,7 +20,6 @@ package org.apache.maven.plugins.enforcer;
  */
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -62,13 +61,13 @@ public class RequireReleaseDeps
      * Dependencies to ignore when checking for release versions.  For example, inter-module dependencies 
      * can be excluded from the check and therefore allowed to contain snapshot versions.
      */
-    public List excludes = null;
+    public List<String> excludes = null;
 
     /**
      * Dependencies to include when checking for release versions.  If any of the included dependencies
      * have snapshot versions, the rule will fail.
      */
-    public List includes = null;
+    public List<String> includes = null;
 
     /**
      * Override parent to allow optional ignore of this rule.
@@ -126,26 +125,19 @@ public class RequireReleaseDeps
         }
     }
 
+
     /**
-     * Checks the set of dependencies to see if any snapshots are included
-     *
-     * @param dependencies the dependencies
-     * @param log the log
-     * @return the sets the
-     * @throws EnforcerRuleException the enforcer rule exception
+     * {@inheritDoc}
      */
-    protected Set checkDependencies( Set dependencies, Log log )
+    protected Set<Artifact> checkDependencies( Set<Artifact> dependencies, Log log )
         throws EnforcerRuleException
     {
-        Set foundSnapshots = new HashSet();
+        Set<Artifact> foundSnapshots = new HashSet<Artifact>();
 
-        Set filteredDependencies = this.filterArtifacts( dependencies );
+        Set<Artifact> filteredDependencies = filterArtifacts( dependencies );
         
-        Iterator DependencyIter = filteredDependencies.iterator();
-        while ( DependencyIter.hasNext() )
+        for ( Artifact artifact : filteredDependencies )
         {
-            Artifact artifact = (Artifact) DependencyIter.next();
-
             if ( artifact.isSnapshot() )
             {
                 foundSnapshots.add( artifact );
@@ -162,7 +154,7 @@ public class RequireReleaseDeps
      * @param dependencies the list of dependencies to filter
      * @return the resulting set of dependencies
      */
-    public Set filterArtifacts( Set dependencies )
+    public Set<Artifact> filterArtifacts( Set<Artifact> dependencies )
     {
         if ( includes == null && excludes == null )
         {
@@ -179,11 +171,9 @@ public class RequireReleaseDeps
             filter.add( new StrictPatternExcludesArtifactFilter( excludes ) );
         }
         
-        Set result = new HashSet();
-        Iterator iter = dependencies.iterator();
-        while ( iter.hasNext() )
+        Set<Artifact> result = new HashSet<Artifact>();
+        for ( Artifact artifact : dependencies )
         {
-            Artifact artifact = (Artifact) iter.next();
             if ( filter.include( artifact ) )
             {
                 result.add( artifact );

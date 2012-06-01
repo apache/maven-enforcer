@@ -117,7 +117,7 @@ public class RequireOS
         }
         else
         {
-            StringBuffer buffer = new StringBuffer( 50 );
+            StringBuilder buffer = new StringBuilder( 50 );
             Iterator iter = Os.getValidFamilies().iterator();
             while ( iter.hasNext() )
             {
