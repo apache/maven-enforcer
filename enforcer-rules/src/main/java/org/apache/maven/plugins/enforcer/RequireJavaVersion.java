@@ -76,10 +76,10 @@ public class RequireJavaVersion
 
         theJdkVersion = theJdkVersion.replaceAll( "_|-", "." );
         String tokenArray[] = StringUtils.split( theJdkVersion, "." );
-        List tokens = Arrays.asList( tokenArray );
+        List<String> tokens = Arrays.asList( tokenArray );
         StringBuffer buffer = new StringBuffer( theJdkVersion.length() );
 
-        Iterator iter = tokens.iterator();
+        Iterator<String> iter = tokens.iterator();
         for ( int i = 0; i < tokens.size() && i < 4; i++ )
         {
             String section = (String) iter.next();

@@ -62,7 +62,7 @@ public class EnforcerRuleUtils
     ArtifactRepository local;
 
     /** The remote repositories. */
-    List remoteRepositories;
+    List<ArtifactRepository> remoteRepositories;
 
     /** The log. */
     Log log;
@@ -83,7 +83,7 @@ public class EnforcerRuleUtils
      * @param theLog the the log
      */
     public EnforcerRuleUtils( ArtifactFactory theFactory, ArtifactResolver theResolver, ArtifactRepository theLocal,
-                              List theRemoteRepositories, MavenProject project, Log theLog )
+                              List<ArtifactRepository> theRemoteRepositories, MavenProject project, Log theLog )
     {
         super();
         this.factory = theFactory;
@@ -99,6 +99,7 @@ public class EnforcerRuleUtils
      *
      * @param helper the helper
      */
+    @SuppressWarnings( "unchecked" )
     public EnforcerRuleUtils( EnforcerRuleHelper helper )
     {
 
@@ -231,10 +232,10 @@ public class EnforcerRuleUtils
      * @throws IOException Signals that an I/O exception has occurred.
      * @throws XmlPullParserException the xml pull parser exception
      */
-    public List getModelsRecursively ( String groupId, String artifactId, String version, File pom )
+    public List<Model> getModelsRecursively ( String groupId, String artifactId, String version, File pom )
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
     {
-        List models = null;
+        List<Model> models = null;
         Model model = getPomModel( groupId, artifactId, version, pom );
 
         Parent parent = model.getParent();
@@ -262,7 +263,7 @@ public class EnforcerRuleUtils
         else
         {
             // only create it here since I'm not at the top
-            models = new ArrayList();
+            models = new ArrayList<Model>();
         }
         models.add( model );
 

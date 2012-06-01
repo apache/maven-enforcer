@@ -20,7 +20,6 @@ package org.apache.maven.plugins.enforcer;
  */
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -53,18 +52,18 @@ public class RequireActiveProfile
     public void execute( EnforcerRuleHelper theHelper )
         throws EnforcerRuleException
     {
-        List missingProfiles = new ArrayList();
+        List<String> missingProfiles = new ArrayList<String>();
         try
         {
             MavenProject project = (MavenProject) theHelper.evaluate( "${project}" );
             if ( StringUtils.isNotEmpty( profiles ) )
             {
                 String[] profs = profiles.split( "," );
-                for ( int i = 0; i < profs.length; i++ )
+                for ( String profile : profs )
                 {
-                    if ( !isProfileActive( project, profs[i] ) )
+                    if ( !isProfileActive( project, profile ) )
                     {
-                        missingProfiles.add( profs[i] );
+                        missingProfiles.add( profile );
                     }
                 }
 
@@ -87,16 +86,15 @@ public class RequireActiveProfile
 
                 if ( fail )
                 {
-                    StringBuffer buf = new StringBuffer();
+                    StringBuilder buf = new StringBuilder();
                     if ( message != null )
                     {
                         buf.append( message + "\n" );
                     }
 
-                    Iterator iter = missingProfiles.iterator();
-                    while ( iter.hasNext() )
+                    for ( String profile : missingProfiles )
                     {
-                        buf.append( "Profile \"" + iter.next().toString() + "\" is not activated.\n" );
+                        buf.append( "Profile \"" + profile + "\" is not activated.\n" );
                     }
 
                     throw new EnforcerRuleException( buf.toString() );
@@ -117,16 +115,16 @@ public class RequireActiveProfile
      *
      * @param project the project
      * @param profileName the profile name
-     * @return <code>true</code> if profile is active
+     * @return <code>true</code> if profile is active, otherwise <code>false</code>
      */
     protected boolean isProfileActive( MavenProject project, String profileName )
     {
-        List activeProfiles = project.getActiveProfiles();
+        @SuppressWarnings( "unchecked" )
+        List<Profile> activeProfiles = project.getActiveProfiles();
         if ( activeProfiles != null && !activeProfiles.isEmpty() )
         {
-            for ( Iterator it = activeProfiles.iterator(); it.hasNext(); )
+            for ( Profile profile : activeProfiles )
             {
-                Profile profile = (Profile) it.next();
                 if ( profile.getId().equals( profileName ) )
                 {
                     return true;

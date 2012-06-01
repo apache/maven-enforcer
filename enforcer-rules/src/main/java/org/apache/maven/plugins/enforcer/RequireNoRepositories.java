@@ -19,6 +19,12 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -30,13 +36,6 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * This rule checks that this pom or its parents don't define a repository.
@@ -59,12 +58,12 @@ public class RequireNoRepositories
     /**
      * Specify explicitly allowed non-plugin repositories. This is a list of ids.
      */
-    public List allowedRepositories = Collections.EMPTY_LIST;
+    public List<String> allowedRepositories = Collections.emptyList();
 
     /**
      * Specify explicitly allowed plugin repositories. This is a list of ids.
      */
-    public List allowedPluginRepositories = Collections.EMPTY_LIST;
+    public List<String> allowedPluginRepositories = Collections.emptyList();
 
     /**
      * Whether to allow repositories which only resolve snapshots. By default they are banned.
@@ -91,23 +90,23 @@ public class RequireNoRepositories
         {
             project = (MavenProject) helper.evaluate( "${project}" );
 
-            List models =
+            List<Model> models =
                 utils.getModelsRecursively( project.getGroupId(), project.getArtifactId(), project.getVersion(),
                                             new File( project.getBasedir(), "pom.xml" ) );
-            List badModels = new ArrayList();
+            List<Model> badModels = new ArrayList<Model>();
 
             StringBuffer newMsg = new StringBuffer();
             newMsg.append( "Some poms have repositories defined:\n" );
 
-            for ( Iterator i = models.iterator(); i.hasNext(); )
+            for ( Model model : models )
             {
-                Model model = (Model) i.next();
                 if ( banRepositories )
                 {
-                    List repos = model.getRepositories();
+                    @SuppressWarnings( "unchecked" )
+                    List<Repository> repos = model.getRepositories();
                     if ( repos != null && !repos.isEmpty() )
                     {
-                        List bannedRepos =
+                        List<String> bannedRepos =
                             findBannedRepositories( repos, allowedRepositories, allowSnapshotRepositories );
                         if ( !bannedRepos.isEmpty() )
                         {
@@ -120,10 +119,11 @@ public class RequireNoRepositories
                 }
                 if ( banPluginRepositories )
                 {
-                    List repos = model.getPluginRepositories();
+                    @SuppressWarnings( "unchecked" )
+                    List<Repository> repos = model.getPluginRepositories();
                     if ( repos != null && !repos.isEmpty() )
                     {
-                        List bannedRepos =
+                        List<String> bannedRepos =
                             findBannedRepositories( repos, allowedPluginRepositories, allowSnapshotPluginRepositories );
                         if ( !bannedRepos.isEmpty() )
                         {
@@ -171,12 +171,11 @@ public class RequireNoRepositories
         }
     }
 
-    private static List findBannedRepositories( List repos, List allowedRepos, boolean allowSnapshots )
+    private static List<String> findBannedRepositories( List<Repository> repos, List<String> allowedRepos, boolean allowSnapshots )
     {
-        List bannedRepos = new ArrayList( allowedRepos.size() );
-        for ( Iterator i = repos.iterator(); i.hasNext(); )
+        List<String> bannedRepos = new ArrayList<String>( allowedRepos.size() );
+        for ( Repository r : repos )
         {
-            Repository r = (Repository) i.next();
             if ( !allowedRepos.contains( r.getId() ) )
             {
                 if ( !allowSnapshots || r.getReleases().isEnabled() )
