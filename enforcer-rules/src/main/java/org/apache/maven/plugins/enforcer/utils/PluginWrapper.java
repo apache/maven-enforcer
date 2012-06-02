@@ -20,7 +20,6 @@ package org.apache.maven.plugins.enforcer.utils;
  */
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.model.Plugin;
@@ -36,17 +35,15 @@ public class PluginWrapper
 
     private String source;
 
-    public static List addAll( List plugins, String source )
+    public static List<PluginWrapper> addAll( List<?> plugins, String source )
     {
-        List results = null;
+        List<PluginWrapper> results = null;
 
         if ( !plugins.isEmpty() )
         {
-            results = new ArrayList( plugins.size() );
-            Iterator iter = plugins.iterator();
-            while ( iter.hasNext() )
+            results = new ArrayList<PluginWrapper>( plugins.size() );
+            for ( Object o : plugins )
             {
-                Object o = iter.next();
                 if ( o instanceof Plugin )
                 {
                     results.add( new PluginWrapper( (Plugin) o, source ) );
@@ -119,7 +116,4 @@ public class PluginWrapper
     {
         this.source = source;
     }
-
-
-
 }
