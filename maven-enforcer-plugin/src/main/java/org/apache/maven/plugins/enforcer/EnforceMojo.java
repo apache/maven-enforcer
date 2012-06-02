@@ -21,7 +21,7 @@ package org.apache.maven.plugins.enforcer;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
+import java.util.List;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -123,7 +123,7 @@ public class EnforceMojo
     /**
      * This is a static variable used to persist the cached results across plugin invocations.
      */
-     protected static Hashtable cache = new Hashtable();
+     protected static Hashtable<String, EnforcerRule> cache = new Hashtable<String, EnforcerRule>();
 
     
     // set by the contextualize method. Only way to get the
@@ -150,7 +150,7 @@ public class EnforceMojo
         if ( !skip )
         {
             // list to store exceptions
-            ArrayList list = new ArrayList();
+            List<String> list = new ArrayList<String>();
 
             // make sure the rules exist
             if ( rules != null && rules.length > 0 )
@@ -213,10 +213,8 @@ public class EnforceMojo
                 // if we found anything
                 if ( !list.isEmpty() )
                 {
-                    Iterator iter = list.iterator();
-                    while ( iter.hasNext() )
+                    for ( String failure  : list )
                     {
-                        String failure = (String) iter.next();
                         log.warn( failure );
                     }
                     if ( fail )
