@@ -106,7 +106,7 @@ public class RequirePluginVersions
      * like help, eclipse etc. <br>
      * The plugins should be specified in the form: <code>group:artifactId</code>.
      */
-    public List additionalPlugins;
+    public List<String> additionalPlugins;
 
     /**
      * Plugins to skip for version enforcement. The plugins should be specified in the form:
@@ -126,10 +126,10 @@ public class RequirePluginVersions
     private PluginManager pluginManager;
 
     /** The phase to lifecycle map. */
-    private Map phaseToLifecycleMap;
+    private Map<String, Lifecycle> phaseToLifecycleMap;
 
     /** The lifecycles. */
-    private Collection lifecycles;
+    private Collection<Lifecycle> lifecycles;
 
     /** The factory. */
     ArtifactFactory factory;
@@ -141,7 +141,7 @@ public class RequirePluginVersions
     ArtifactRepository local;
 
     /** The remote repositories. */
-    List remoteRepositories;
+    List<ArtifactRepository> remoteRepositories;
 
     /** The log. */
     Log log;
@@ -196,7 +196,7 @@ public class RequirePluginVersions
             utils = new EnforcerRuleUtils( helper );
 
             // get all the plugins that are bound to the specified lifecycles
-            Set allPlugins = getBoundPlugins( life, project, phases );
+            Set<Plugin> allPlugins = getBoundPlugins( life, project, phases );
 
             // insert any additional plugins specified by the user.
             allPlugins = addAdditionalPlugins( allPlugins, additionalPlugins );
@@ -220,15 +220,12 @@ public class RequirePluginVersions
             }
 
             // get all the plugins that are mentioned in the pom (and parents)
-            List pluginWrappers = getAllPluginEntries( project );
+            List<PluginWrapper> pluginWrappers = getAllPluginEntries( project );
 
             // now look for the versions that aren't valid and add to a list.
-            ArrayList failures = new ArrayList();
-            Iterator iter = allPlugins.iterator();
-            while ( iter.hasNext() )
+            List<Plugin> failures = new ArrayList<Plugin>();
+            for ( Plugin plugin : allPlugins )
             {
-                Plugin plugin = (Plugin) iter.next();
-
                 if ( !hasValidVersionSpecified( helper, plugin, pluginWrappers ) )
                 {
                     failures.add( plugin );
@@ -238,7 +235,7 @@ public class RequirePluginVersions
             // if anything was found, log it then append the optional message.
             if ( !failures.isEmpty() )
             {
-                StringBuffer newMsg = new StringBuffer();
+                StringBuilder newMsg = new StringBuilder();
                 newMsg.append( "Some plugins are missing valid versions:" );
                 if ( banLatest || banRelease || banSnapshots || banTimestamps )
                 {
@@ -257,11 +254,8 @@ public class RequirePluginVersions
                     }
                     newMsg.append( "are not allowed )\n" );
                 }
-                iter = failures.iterator();
-                while ( iter.hasNext() )
+                for ( Plugin plugin : failures )
                 {
-                    Plugin plugin = (Plugin) iter.next();
-
                     newMsg.append( plugin.getGroupId() );
                     newMsg.append( ":" );
                     newMsg.append( plugin.getArtifactId() );
@@ -348,15 +342,14 @@ public class RequirePluginVersions
      * @return
      * @throws MojoExecutionException
      */
-    public Collection removeUncheckedPlugins( Collection uncheckedPlugins, Collection plugins )
+    public Collection<Plugin> removeUncheckedPlugins( Collection<String> uncheckedPlugins, Collection<Plugin> plugins )
         throws MojoExecutionException
     {
         if ( uncheckedPlugins != null && !uncheckedPlugins.isEmpty() )
         {
-            Iterator iter = uncheckedPlugins.iterator();
-            while ( iter.hasNext() )
+            for ( String pluginKey : uncheckedPlugins )
             {
-                Plugin plugin = parsePluginString( (String) iter.next(), "UncheckedPlugins" );
+                Plugin plugin = parsePluginString( pluginKey, "UncheckedPlugins" );
                 plugins.remove( plugin );
             }
         }
@@ -369,7 +362,7 @@ public class RequirePluginVersions
      * @param uncheckedPluginsList
      * @return
      */
-    public Collection combineUncheckedPlugins( Collection uncheckedPlugins, String uncheckedPluginsList )
+    public Collection<String> combineUncheckedPlugins( Collection<String> uncheckedPlugins, String uncheckedPluginsList )
     {
         //if the comma list is empty, then there's nothing to do here.
         if ( StringUtils.isNotEmpty( uncheckedPluginsList ) )
@@ -377,7 +370,7 @@ public class RequirePluginVersions
             //make sure there is a collection to add to.
             if ( uncheckedPlugins == null )
             {
-                uncheckedPlugins = new HashSet();
+                uncheckedPlugins = new HashSet<String>();
             }
             else if ( !uncheckedPlugins.isEmpty() && log != null )
             {
@@ -397,20 +390,18 @@ public class RequirePluginVersions
      * @return the sets the
      * @throws MojoExecutionException the mojo execution exception
      */
-    public Set addAdditionalPlugins( Set existing, List additional )
+    public Set<Plugin> addAdditionalPlugins( Set<Plugin> existing, List<String> additional )
         throws MojoExecutionException
     {
         if ( additional != null )
         {
-            Iterator iter = additional.iterator();
-            while ( iter.hasNext() )
+            for( String pluginString : additional )
             {
-                String pluginString = (String) iter.next();
                 Plugin plugin = parsePluginString( pluginString, "AdditionalPlugins" );
 
                 if ( existing == null )
                 {
-                    existing = new HashSet();
+                    existing = new HashSet<Plugin>();
                     existing.add( plugin );
                 }
                 else if ( !existing.contains( plugin ) )
@@ -461,20 +452,20 @@ public class RequirePluginVersions
      * @param project the project
      * @return the profile plugins
      */
-    public Set getProfilePlugins( MavenProject project )
+    public Set<Plugin> getProfilePlugins( MavenProject project )
     {
-        Set result = new HashSet();
-        List profiles = project.getActiveProfiles();
+        Set<Plugin> result = new HashSet<Plugin>();
+        @SuppressWarnings( "unchecked" )
+        List<Profile> profiles = project.getActiveProfiles();
         if ( profiles != null && !profiles.isEmpty() )
         {
-            Iterator iter = profiles.iterator();
-            while ( iter.hasNext() )
+            for ( Profile p : profiles )
             {
-                Profile p = (Profile) iter.next();
                 BuildBase b = p.getBuild();
                 if ( b != null )
                 {
-                    List plugins = b.getPlugins();
+                    @SuppressWarnings( "unchecked" )
+                    List<Plugin> plugins = b.getPlugins();
                     if ( plugins != null )
                     {
                         result.addAll( plugins );
@@ -498,8 +489,9 @@ public class RequirePluginVersions
         try
         {
             Model model = project.getModel();
-            Map plugins = model.getBuild().getPluginsAsMap();
-            found = (Plugin) plugins.get( plugin.getKey() );
+            @SuppressWarnings( "unchecked" )
+            Map<String, Plugin> plugins = model.getBuild().getPluginsAsMap();
+            found = plugins.get( plugin.getKey() );
         }
         catch ( NullPointerException e )
         {
@@ -524,7 +516,8 @@ public class RequirePluginVersions
     protected Plugin resolvePlugin( Plugin plugin, MavenProject project )
     {
 
-        List pluginRepositories = project.getPluginArtifactRepositories();
+        @SuppressWarnings( "unchecked" )
+        List<ArtifactRepository> pluginRepositories = project.getPluginArtifactRepositories();
         Artifact artifact =
             factory.createPluginArtifact( plugin.getGroupId(), plugin.getArtifactId(),
                                           VersionRange.createFromVersion( "LATEST" ) );
@@ -556,11 +549,11 @@ public class RequirePluginVersions
      * @throws LifecycleExecutionException the lifecycle execution exception
      * @throws IllegalAccessException the illegal access exception
      */
-    protected Set getBoundPlugins( LifecycleExecutor life, MavenProject project, String thePhases )
+    protected Set<Plugin> getBoundPlugins( LifecycleExecutor life, MavenProject project, String thePhases )
         throws PluginNotFoundException, LifecycleExecutionException, IllegalAccessException
     {
 
-        Set allPlugins = new HashSet();
+        Set<Plugin> allPlugins = new HashSet<Plugin>();
 
         // lookup the bindings for all the passed in phases
         String[] lifecyclePhases = thePhases.split( "," );
@@ -597,15 +590,13 @@ public class RequirePluginVersions
      * @param pluginWrappers the plugins
      * @return true, if successful
      */
-    protected boolean hasValidVersionSpecified( EnforcerRuleHelper helper, Plugin source, List pluginWrappers )
+    protected boolean hasValidVersionSpecified( EnforcerRuleHelper helper, Plugin source, List<PluginWrapper> pluginWrappers )
     {
         boolean found = false;
         boolean status = false;
-        Iterator iter = pluginWrappers.iterator();
-        while ( iter.hasNext() )
+        for ( PluginWrapper plugin : pluginWrappers )
         {
             // find the matching plugin entry
-            PluginWrapper plugin = (PluginWrapper) iter.next();
             if ( source.getArtifactId().equals( plugin.getArtifactId() )
                 && source.getGroupId().equals( plugin.getGroupId() ) )
             {
@@ -690,11 +681,12 @@ public class RequirePluginVersions
      * @throws PluginNotFoundException the plugin not found exception
      * @throws LifecycleExecutionException the lifecycle execution exception
      */
-    private Set getAllPlugins( MavenProject project, Lifecycle lifecycle )
+    @SuppressWarnings( "unchecked" )
+    private Set<Plugin> getAllPlugins( MavenProject project, Lifecycle lifecycle )
         throws PluginNotFoundException, LifecycleExecutionException
 
     {
-        HashSet plugins = new HashSet();
+        Set<Plugin> plugins = new HashSet<Plugin>();
         // first, bind those associated with the packaging
         Map mappings = findMappingsForLifecycle( project, lifecycle );
 
@@ -711,11 +703,9 @@ public class RequirePluginVersions
             plugins.add( plugin );
         }
 
-        List mojos = findOptionalMojosForLifecycle( project, lifecycle );
-        iter = mojos.iterator();
-        while ( iter.hasNext() )
+        List<String> mojos = findOptionalMojosForLifecycle( project, lifecycle );
+        for ( String value : mojos )
         {
-            String value = (String) iter.next();
             String tokens[] = value.split( ":" );
 
             Plugin plugin = new Plugin();
@@ -724,10 +714,7 @@ public class RequirePluginVersions
             plugins.add( plugin );
         }
 
-        for ( Iterator i = project.getBuildPlugins().iterator(); i.hasNext(); )
-        {
-            plugins.add( i.next() );
-        }
+        plugins.addAll( project.getBuildPlugins() );
 
         return plugins;
     }
@@ -742,21 +729,19 @@ public class RequirePluginVersions
      * @return the phase to lifecycle map
      * @throws LifecycleExecutionException the lifecycle execution exception
      */
-    public Map getPhaseToLifecycleMap()
+    public Map<String, Lifecycle> getPhaseToLifecycleMap()
         throws LifecycleExecutionException
     {
         if ( phaseToLifecycleMap == null )
         {
-            phaseToLifecycleMap = new HashMap();
+            phaseToLifecycleMap = new HashMap<String, Lifecycle>();
 
-            for ( Iterator i = lifecycles.iterator(); i.hasNext(); )
+            for ( Lifecycle lifecycle : lifecycles )
             {
-                Lifecycle lifecycle = (Lifecycle) i.next();
-
-                for ( Iterator p = lifecycle.getPhases().iterator(); p.hasNext(); )
+                @SuppressWarnings( "unchecked" )
+                List<String> phases = lifecycle.getPhases(); 
+                for ( String phase : phases )
                 {
-                    String phase = (String) p.next();
-
                     if ( phaseToLifecycleMap.containsKey( phase ) )
                     {
                         Lifecycle prevLifecycle = (Lifecycle) phaseToLifecycleMap.get( phase );
@@ -861,11 +846,12 @@ public class RequirePluginVersions
      * @throws LifecycleExecutionException the lifecycle execution exception
      * @throws PluginNotFoundException the plugin not found exception
      */
-    private List findOptionalMojosForLifecycle( MavenProject project, Lifecycle lifecycle )
+    @SuppressWarnings( "unchecked" )
+    private List<String> findOptionalMojosForLifecycle( MavenProject project, Lifecycle lifecycle )
         throws LifecycleExecutionException, PluginNotFoundException
     {
         String packaging = project.getPackaging();
-        List optionalMojos = null;
+        List<String> optionalMojos = null;
 
         LifecycleMapping m =
             (LifecycleMapping) findExtension( project, LifecycleMapping.ROLE, packaging, session.getSettings(),
@@ -892,7 +878,7 @@ public class RequirePluginVersions
 
         if ( optionalMojos == null )
         {
-            optionalMojos = Collections.EMPTY_LIST;
+            optionalMojos = Collections.emptyList();
         }
 
         return optionalMojos;
@@ -916,10 +902,10 @@ public class RequirePluginVersions
     {
         Object pluginComponent = null;
 
-        for ( Iterator i = project.getBuildPlugins().iterator(); i.hasNext() && pluginComponent == null; )
+        @SuppressWarnings( "unchecked" )
+        List<Plugin> buildPlugins = project.getBuildPlugins();
+        for ( Plugin plugin : buildPlugins )
         {
-            Plugin plugin = (Plugin) i.next();
-
             if ( plugin.isExtensions() )
             {
                 verifyPlugin( plugin, project, settings, localRepository );
@@ -931,6 +917,11 @@ public class RequirePluginVersions
                 try
                 {
                     pluginComponent = pluginManager.getPluginComponent( plugin, role, roleHint );
+                    
+                    if ( pluginComponent != null )
+                    {
+                        break;
+                    }
                 }
                 catch ( ComponentLookupException e )
                 {
@@ -1009,10 +1000,10 @@ public class RequirePluginVersions
      * @throws IOException Signals that an I/O exception has occurred.
      * @throws XmlPullParserException the xml pull parser exception
      */
-    protected List getAllPluginEntries( MavenProject project )
+    protected List<PluginWrapper> getAllPluginEntries( MavenProject project )
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
     {
-        List plugins = new ArrayList();
+        List<PluginWrapper> plugins = new ArrayList<PluginWrapper>();
         // get all the pom models
         
         String pomName = null;
@@ -1024,16 +1015,14 @@ public class RequirePluginVersions
         {
             pomName = "pom.xml";
         }
-        List models =
+        List<Model> models =
             utils.getModelsRecursively( project.getGroupId(), project.getArtifactId(), project.getVersion(),
                                         new File( project.getBasedir(), pomName ) );
 
         // now find all the plugin entries, either in
         // build.plugins or build.pluginManagement.plugins, profiles.plugins and reporting
-        Iterator iter = models.iterator();
-        while ( iter.hasNext() )
+        for ( Model model : models )
         {
-            Model model = (Model) iter.next();
             try
             {
                 plugins.addAll( PluginWrapper.addAll( model.getBuild().getPlugins(), model.getId() + ".build.plugins" ) );
@@ -1064,10 +1053,10 @@ public class RequirePluginVersions
             }
 
             // Add plugins in profiles
-            Iterator it = model.getProfiles().iterator();
-            while ( it.hasNext() )
+            @SuppressWarnings( "unchecked" )
+            List<Profile> profiles = model.getProfiles();
+            for ( Profile profile : profiles )
             {
-                Profile profile = (Profile) it.next();
                 try
                 {
                     plugins.addAll( PluginWrapper.addAll( profile.getBuild().getPlugins(), model.getId()
