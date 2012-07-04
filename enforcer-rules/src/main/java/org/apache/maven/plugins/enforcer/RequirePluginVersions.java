@@ -686,6 +686,8 @@ public class RequirePluginVersions
         throws PluginNotFoundException, LifecycleExecutionException
 
     {
+        log.debug( "RequirePluginVersions.getAllPlugins:" );
+
         Set<Plugin> plugins = new HashSet<Plugin>();
         // first, bind those associated with the packaging
         Map mappings = findMappingsForLifecycle( project, lifecycle );
@@ -694,13 +696,25 @@ public class RequirePluginVersions
         while ( iter.hasNext() )
         {
             Entry entry = (Entry) iter.next();
-            String value = (String) entry.getValue();
-            String tokens[] = value.split( ":" );
+            log.debug( "  lifecycleMapping = " + entry.getKey() );
+            String pluginsForLifecycle = (String) entry.getValue();
+            log.debug( "  plugins = " + pluginsForLifecycle );
+            if ( StringUtils.isNotEmpty( pluginsForLifecycle ) )
+            {
+                String pluginList[] = pluginsForLifecycle.split( "," );
+                for ( String plugin : pluginList )
+                {
+                    plugin = StringUtils.strip( plugin );
+                    log.debug( "    plugin = " + plugin );
+                    String tokens[] = plugin.split( ":" );
+                    log.debug( "    GAV = " + Arrays.asList( tokens ) );
 
-            Plugin plugin = new Plugin();
-            plugin.setGroupId( tokens[0] );
-            plugin.setArtifactId( tokens[1] );
-            plugins.add( plugin );
+                    Plugin p = new Plugin();
+                    p.setGroupId( tokens[0] );
+                    p.setArtifactId( tokens[1] );
+                    plugins.add( p );
+                }
+            }
         }
 
         List<String> mojos = findOptionalMojosForLifecycle( project, lifecycle );
