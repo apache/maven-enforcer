@@ -24,11 +24,11 @@
   <parent>
     <groupId>org.apache.maven.enforcer</groupId>
     <artifactId>enforcer</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
   </parent>
 
   <artifactId>enforcer-rules</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2</version>
   <packaging>jar</packaging>
 
   <name>Enforcer Rules</name>
