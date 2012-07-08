@@ -29,9 +29,9 @@ Require No Repositories
 
    The following parameters are supported by this rule:
 
-   * banRepositories - Whether to ban non-plugin repositories. By default they are banned (false).
+   * banRepositories - Whether to ban non-plugin repositories. By default they are banned (true).
 
-   * banPluginRepositories - Whether to ban plugin repositories. By default they are banned (false).
+   * banPluginRepositories - Whether to ban plugin repositories. By default they are banned (true).
 
    * allowedRepositories - Specify explicitly allowed non-plugin repositories. This is a list of ids.
 
