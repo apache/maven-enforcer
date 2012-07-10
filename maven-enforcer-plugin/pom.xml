@@ -33,7 +33,6 @@
 
   <name>Maven Enforcer Plugin</name>
   <description>The Loving Iron Fist of Maven</description>
-  <url>http://maven.apache.org/plugins/maven-enforcer-plugin/</url>
   <inceptionYear>2007</inceptionYear>
 
   <developers>
@@ -57,12 +56,6 @@
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MENFORCER</url>
   </issueManagement>
-  <distributionManagement>
-    <site>
-      <id>apache.website</id>
-      <url>${site.deploy.url}/plugins/maven-enforcer-plugin</url>
-    </site>
-  </distributionManagement>
 
   <dependencies>
     <dependency>
@@ -122,14 +115,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-site-plugin</artifactId>
-        <configuration>
-          <stagingSiteURL>
-            scp://people.apache.org/www/maven.apache.org/staging
-          </stagingSiteURL>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
