@@ -52,7 +52,8 @@ public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule 
      * Wildcard '*' can be used to in place of specific section
      * (ie group:*:1.0 will match both 'group:artifact:1.0' and 'group:anotherArtifact:1.0') <br>
      * You can override this patterns by using includes.
-     * Invalid and empty patterns will be ignored.
+     * Version is a string representing standard maven version range.
+     * Empty patterns will be ignored.
      */
 	private List<String> excludes;
 	
@@ -62,7 +63,8 @@ public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule 
      * This can be a list of artifacts in the format <code>groupId[:artifactId][:version][:type][:scope]</code>.
      * Wildcard '*' can be used to in place of specific section
      * (ie group:*:1.0 will match both 'group:artifact:1.0' and 'group:anotherArtifact:1.0') <br>
-     * Invalid and empty patterns will be ignored.
+     * Version is a string representing standard maven version range.
+     * Empty patterns will be ignored.
      */
 	private List<String> includes;
 

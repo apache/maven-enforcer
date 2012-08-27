@@ -69,21 +69,21 @@ public final class ArtifactMatcher
 			switch(parts.length)
 			{
 				case 5:
-		            String scope = artifact.getScope();
+					String scope = artifact.getScope();
 		            if ( scope == null || scope.equals( "" ) )
 		            {
-		                scope = "compile";
+		            	scope = "compile";
 		            }
 		            
 					if(!"*".equals(parts[4]) && !parts[4].equals(scope))
 						return false;
 					
 				case 4:
-		            String type = artifact.getType();
-		            if ( type == null || type.equals( "" ) )
-		            {
-		                type = "jar";
-		            }
+					String type = artifact.getType();
+					if ( type == null || type.equals( "" ) )
+					{
+						type = "jar";
+					}
 		            
 					if(!"*".equals(parts[3]) && !parts[3].equals(type))
 						return false;
