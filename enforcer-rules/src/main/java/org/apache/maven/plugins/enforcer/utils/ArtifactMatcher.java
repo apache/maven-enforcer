@@ -29,15 +29,23 @@ public final class ArtifactMatcher
 		public Pattern(String pattern)
 		{
 			if(pattern == null) throw new NullPointerException("pattern");
-				
+
 			this.pattern = pattern;
 			
-			this.parts = pattern.split(":", 5);
+			parts = pattern.split(":", 6);
+			
+			if(parts.length == 6) throw new IllegalArgumentException("Pattern contains too many delimiters."); 
+			
+			for(String part: parts)
+			{
+				if("".equals(part))
+					throw new IllegalArgumentException("Pattern or its part is empty.");
+			}
 		}
 				
-		public boolean match(Artifact artifact)
+		public boolean match(Artifact artifact) throws InvalidVersionSpecificationException
 		{
-			if(artifact == null) return false;
+			if(artifact == null) throw new NullPointerException("artifact");
 			
 			switch(parts.length)
 			{
@@ -64,17 +72,9 @@ public final class ArtifactMatcher
 				case 3:
 					if(!"*".equals(parts[2]) && !parts[2].equals(artifact.getVersion()))
 					{
-						try
+						if(!AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec(parts[2]),
+							new DefaultArtifactVersion( artifact.getVersion() ) ))
 						{
-							if(!AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec(parts[2]),
-									new DefaultArtifactVersion( artifact.getBaseVersion() ) ))
-							{
-								return false;
-							}
-						}
-						catch(InvalidVersionSpecificationException e)
-						{
-							// TODO
 							return false;
 						}
 					}
@@ -117,27 +117,28 @@ public final class ArtifactMatcher
 		if(patterns == null) throw new NullPointerException("patterns");
 		if(ignorePatterns == null) throw new NullPointerException("ignorePatterns");
 		
-		for(String exclude: patterns)
+		for(String pattern: patterns)
 		{
-			if(exclude != null && !"".equals(exclude))
+			if(pattern != null && !"".equals(pattern))
 			{	
-				this.patterns.add(new Pattern(exclude));
+				this.patterns.add(new Pattern(pattern));
 			}
 		}
 		
-		for(String include: ignorePatterns)
+		for(String ignorePattern: ignorePatterns)
 		{
-			if(include != null && !"".equals(include))
+			if(ignorePattern != null && !"".equals(ignorePattern))
 			{
-				this.ignorePatterns.add(new Pattern(include));
+				this.ignorePatterns.add(new Pattern(ignorePattern));
 			}
 		}
 	}
 	
 	/**
 	 * Check if artifact matches patterns.
+	 * @throws InvalidVersionSpecificationException 
 	 */
-	public boolean match(Artifact artifact)
+	public boolean match(Artifact artifact) throws InvalidVersionSpecificationException
 	{
 		for(Pattern pattern: patterns)
 		{
