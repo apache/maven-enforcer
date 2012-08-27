@@ -3,6 +3,7 @@ package org.apache.maven.plugins.enforcer;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
@@ -17,7 +18,7 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 /**
  * This rule bans all transitive dependencies.
  * There is a configuration option to exclude certain artifacts
- * from being checked (similar to BannedDependencies).
+ * from being checked.
  * 
  * @author Jakub Senko
  */
@@ -50,8 +51,10 @@ public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule 
 	 * Searches dependency tree recursively for transitive dependencies
 	 * that are not excluded, while generating nice info message
 	 * along the way.
+	 * @throws InvalidVersionSpecificationException 
 	 */
 	private static boolean searchTree(DependencyNode node, int level, ArtifactMatcher excludes, StringBuilder message)
+			throws InvalidVersionSpecificationException
 	{
 		
 		List<DependencyNode> children = node.getChildren();
@@ -131,7 +134,6 @@ public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule 
 		try
 		{
 			MavenProject project = (MavenProject) helper.evaluate("${project}");
-
 			rootNode = createDependencyGraphBuilder()
 					.buildDependencyGraph(project, null);
 		}
@@ -140,21 +142,22 @@ public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule 
 			throw new EnforcerRuleException("Error: Could not construct dependency tree.", e);
 		}
 
+		StringBuilder generatedMessage = null;
 		if(message == null)
 		{
-			StringBuilder generatedMessage = new StringBuilder();
-			
+			generatedMessage = new StringBuilder();
+		}
+		
+		try
+		{
 			if(searchTree(rootNode, 0, exclusions, generatedMessage))
 			{				
-				throw new EnforcerRuleException(generatedMessage.toString());
+				throw new EnforcerRuleException(message == null ? generatedMessage.toString() : message);
 			}
 		}
-		else
+		catch (InvalidVersionSpecificationException e)
 		{
-			if(searchTree(rootNode, 0, exclusions, null))
-			{				
-				throw new EnforcerRuleException(message);
-			}
+			throw new EnforcerRuleException("Error: Invalid version range.", e);
 		}
 
 	}
