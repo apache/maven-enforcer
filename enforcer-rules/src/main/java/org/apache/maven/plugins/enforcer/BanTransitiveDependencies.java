@@ -78,10 +78,9 @@ public class BanTransitiveDependencies
         List<DependencyNode> children = node.getChildren();
 
         /*
-         * if the node is deeper than direct dependency and is empty, it is transitive. if its not empty it may contain
-         * only excluded dependencies and does not have to cause failure
+         * if the node is deeper than direct dependency and is empty, it is transitive.
          */
-        boolean hasTransitiveDependencies = level > 1 && children.size() == 0;
+        boolean hasTransitiveDependencies = level > 1;
 
         boolean excluded = false;
 
