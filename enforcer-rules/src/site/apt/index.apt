@@ -32,6 +32,8 @@ Standard Rules
   * {{{./alwaysFail.html}alwaysFail}} - Always fail... used to test plugin configuration.
  
   * {{{./bannedDependencies.html}bannedDependencies}} - enforces that excluded dependencies aren't included.
+  
+  * {{{./banTransitiveDependencies.html}banTransitiveDependencies}} - enforces that project doesn't have transitive dependencies.
 
   * bannedPlugins - enforces that excluded plugins aren't included.
   
