@@ -5,7 +5,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
 /**
  * Abstract enforcer rule that give a foundation to validate properties from multiple sources.
- * 
+ *
  * @author Paul Gier
  * @author <a href='mailto:marvin[at]marvinformatics[dot]com'>Marvin Froeder</a>
  * @version $Id: AbstractPropertyEnforcerRule.java $
@@ -19,7 +19,9 @@ public abstract class AbstractPropertyEnforcerRule
      */
     public String regex = null;
 
-    /** Specify a warning message if the regular expression is not matched. */
+    /**
+     * Specify a warning message if the regular expression is not matched.
+     */
     public String regexMessage = null;
 
     public AbstractPropertyEnforcerRule()
@@ -29,7 +31,7 @@ public abstract class AbstractPropertyEnforcerRule
 
     /**
      * Execute the rule.
-     * 
+     *
      * @param helper the helper
      * @throws EnforcerRuleException the enforcer rule exception
      */
@@ -52,9 +54,8 @@ public abstract class AbstractPropertyEnforcerRule
         {
             if ( regexMessage == null )
             {
-                regexMessage =
-                    getName() + " \"" + getPropertyName() + "\" evaluates to \"" + propValue + "\".  "
-                        + "This does not match the regular expression \"" + regex + "\"";
+                regexMessage = getName() + " \"" + getPropertyName() + "\" evaluates to \"" + propValue + "\".  "
+                    + "This does not match the regular expression \"" + regex + "\"";
             }
             throw new EnforcerRuleException( regexMessage );
         }
@@ -72,7 +73,7 @@ public abstract class AbstractPropertyEnforcerRule
 
     /**
      * Resolves the property value
-     * 
+     *
      * @param helper
      * @throws EnforcerRuleException
      */

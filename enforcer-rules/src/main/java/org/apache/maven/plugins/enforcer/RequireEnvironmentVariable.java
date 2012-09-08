@@ -24,14 +24,16 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
 /**
  * This rule checks that certain environment variable is set.
- * 
+ *
  * @author <a href='mailto:marvin[at]marvinformatics[dot]com'>Marvin Froeder</a>
  */
 public class RequireEnvironmentVariable
     extends AbstractPropertyEnforcerRule
 {
 
-    /** Specify the required variable. */
+    /**
+     * Specify the required variable.
+     */
     public String variableName = null;
 
     @Override

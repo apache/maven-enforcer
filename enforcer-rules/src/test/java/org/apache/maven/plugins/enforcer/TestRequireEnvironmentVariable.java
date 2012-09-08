@@ -20,7 +20,6 @@ package org.apache.maven.plugins.enforcer;
  */
 
 import junit.framework.TestCase;
-
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
