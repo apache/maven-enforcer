@@ -20,7 +20,7 @@
   ------
   Brian Fox
   ------
-  August 2008
+  September 2012
   ------
 
 Standard Rules
@@ -40,6 +40,8 @@ Standard Rules
   * {{{./evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
 
   * requireActiveProfile - enforces one or more active profiles.
+  
+  * requireEnvironmentVariable - enforces the existence of an environment variable
   
   * {{{./requireFilesDontExist.html}requireFilesDontExist}} - enforces that the list of files do not exist.
   
