@@ -153,7 +153,7 @@
   </distributionManagement>
   <properties>
     <maven.version>2.0.9</maven.version>
-    <maven.plugin.plugin.version>2.7</maven.plugin.plugin.version>
+    <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
     <site.deploy.url>scp://people.apache.org/www/maven.apache.org</site.deploy.url>
   </properties>
 
@@ -248,7 +248,7 @@
       <plugins>
         <plugin>
           <artifactId>maven-plugin-plugin</artifactId>
-          <version>${maven.plugin.plugin.version}</version>
+          <version>${mavenPluginPluginVersion}</version>
         </plugin>
         <plugin>
           <artifactId>maven-release-plugin</artifactId>
@@ -269,5 +269,4 @@
       </plugin>
     </plugins>
   </reporting>
-
 </project>

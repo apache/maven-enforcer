@@ -33,7 +33,6 @@
 
   <name>Maven Enforcer Plugin</name>
   <description>The Loving Iron Fist of Maven</description>
-  <inceptionYear>2007</inceptionYear>
 
   <dependencies>
     <dependency>
@@ -77,6 +76,12 @@
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>${mavenPluginPluginVersion}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -97,11 +102,20 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
+        <configuration>
+          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+        </configuration>
         <executions>
           <execution>
-            <id>generated-helpmojo</id>
+            <id>generate-helpmojo</id>
             <goals>
               <goal>helpmojo</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>mojo-descriptor</id>
+            <goals>
+              <goal>descriptor</goal>
             </goals>
           </execution>
         </executions>
@@ -125,7 +139,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>${maven.plugin.plugin.version}</version>
+        <version>${mavenPluginPluginVersion}</version>
       </plugin>
     </plugins>
   </reporting>

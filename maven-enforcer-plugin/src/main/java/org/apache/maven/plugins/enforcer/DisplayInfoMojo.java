@@ -24,6 +24,8 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
 import org.codehaus.plexus.PlexusConstants;
@@ -36,11 +38,10 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 /**
  * This goal displays the current platform information.
  *
- * @goal display-info
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
- * @threadSafe
  */
+@Mojo( name = "display-info", threadSafe = true )
 public class DisplayInfoMojo
     extends AbstractMojo
     implements Contextualizable
@@ -48,26 +49,20 @@ public class DisplayInfoMojo
 
     /**
      * Path Translator needed by the ExpressionEvaluator
-     *
-     * @component role="org.apache.maven.project.path.PathTranslator"
      */
+    @Component( role = PathTranslator.class )
     protected PathTranslator translator;
 
     /**
      * The MavenSession
-     *
-     * @parameter default-value="${session}"
-     * @readonly
      */
+    @Component
     protected MavenSession session;
 
     /**
      * POM
-     *
-     * @parameter default-value="${project}"
-     * @readonly
-     * @required
      */
+    @Component
     protected MavenProject project;
 
     // set by the contextualize method. Only way to get the
@@ -97,13 +92,11 @@ public class DisplayInfoMojo
                                + RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
             RequireOS os = new RequireOS();
             os.displayOSInfo( getLog(), true );
-
         }
         catch ( ComponentLookupException e )
         {
             getLog().warn( "Unable to Lookup component: " + e.getLocalizedMessage() );
         }
-
     }
 
 }
