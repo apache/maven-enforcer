@@ -35,28 +35,6 @@
   <description>The Loving Iron Fist of Maven</description>
   <inceptionYear>2007</inceptionYear>
 
-  <developers>
-    <developer>
-      <id>brianf</id>
-      <name>Brian Fox</name>
-      <email>brianf@apache.org</email>
-      <roles>
-        <role>Lead Developer</role>
-      </roles>
-      <timezone>5</timezone>
-    </developer>
-  </developers>
-
-  <prerequisites>
-    <!--because of the encoding fixes, I need a new plexus-utils. The new plexus utils can only be used in 2.0.6 or later: http://jira.codehaus.org/browse/MNG-2892 -->
-    <maven>2.0.6</maven>
-  </prerequisites>
-
-  <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MENFORCER</url>
-  </issueManagement>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
