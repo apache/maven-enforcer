@@ -27,18 +27,20 @@ Require Property
 
   This rule can enforce that a declared property is set and optionally evaluate it against a regular expression.
 
+  The following parameters are supported by this rule:
+   
+  * property - the property to evaluate.
+   
+  * message - an optional message to the user if the rule fails. Default is: "Property 'xxx' is required for this build".	
+   
+  * regex - a regular expression used to check the value of the property.
+   
+  * regexMessage - an optional message to the user if the regex check fails.
 
-   The following parameters are supported by this rule:
-   
-   * property - the property to evaluate.
-   
-   * message - an optional message to the user if the rule fails. Default is: "Property 'xxx' is required for this build".	
-   
-   * regex - a regular expression used to check the value of the property.
-   
-   * regexMessage - an optional message to the user if the regex check fails.
-   
-   []
+  []
+
+  The regex is applied to the entire value of the property (i.e. using the regex "match" method),
+  and not just a substring of the property value.
 
   Sample Plugin Configuration:
   
@@ -61,9 +63,9 @@ Require Property
               <rules>
                 <requireProperty>
                   <property>basedir</property>
-                  <message>You must have a basedir!</message>
-                  <regex>\d</regex>
-                  <regexMessage>You must have a digit in your baseDir!</regexMessage>
+                  <message>You must set a basedir property!</message>
+                  <regex>.*\d.*</regex>
+                  <regexMessage>You're basedir property must contain at least one digit.</regexMessage>
                 </requireProperty>
                 <requireProperty>
                   <property>project.version</property>
