@@ -33,10 +33,10 @@ Standard Rules
  
   * {{{./bannedDependencies.html}bannedDependencies}} - enforces that excluded dependencies aren't included.
   
+  * {{{./bannedPlugins.html}bannedPlugins}} - enforces that specific plugins aren't included in the build.
+  
   * {{{./banTransitiveDependencies.html}banTransitiveDependencies}} - enforces that project doesn't have transitive dependencies.
 
-  * bannedPlugins - enforces that excluded plugins aren't included.
-  
   * {{{./dependencyConvergence.html}dependencyConvergence}} - ensure all dependencies converge to the same version.
 
   * {{{./evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
