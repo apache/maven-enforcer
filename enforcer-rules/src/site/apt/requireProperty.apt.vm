@@ -65,7 +65,7 @@ Require Property
                   <property>basedir</property>
                   <message>You must set a basedir property!</message>
                   <regex>.*\d.*</regex>
-                  <regexMessage>You're basedir property must contain at least one digit.</regexMessage>
+                  <regexMessage>The basedir property must contain at least one digit.</regexMessage>
                 </requireProperty>
                 <requireProperty>
                   <property>project.version</property>
