@@ -1,6 +1,9 @@
 package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,12 +28,11 @@ import org.apache.maven.plugin.MojoExecutionException;
  * This goal has been deprecated.
  * 
  * @deprecated
- * @goal enforce-once
- * @phase validate
- * @requiresDependencyResolution test
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
+@Mojo( name = "enforce-once", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true,
+                requiresDependencyResolution = ResolutionScope.TEST )
 public class EnforceOnceMojo
     extends EnforceMojo
 {

@@ -84,8 +84,7 @@ public class DependencyVersionMap
     
     private String getVersion( Artifact artifact )
     {
-        log.info( ArtifactUtils.versionlessKey( artifact ) + " " + artifact.getVersion() + " " + artifact.getBaseVersion() );
-        return uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion(); 
+        return uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
     }
 
     private boolean containsConflicts( DependencyNode node )

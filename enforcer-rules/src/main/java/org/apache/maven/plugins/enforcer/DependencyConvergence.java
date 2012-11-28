@@ -123,7 +123,7 @@ public class DependencyConvergence
             errorMsgs.addAll( getConvergenceErrorMsgs( visitor.getConflictedVersionNumbers() ) );
             for ( CharSequence errorMsg : errorMsgs )
             {
-                log.error( errorMsg );
+                log.warn( errorMsg );
             }
             if ( errorMsgs.size() > 0 )
             {

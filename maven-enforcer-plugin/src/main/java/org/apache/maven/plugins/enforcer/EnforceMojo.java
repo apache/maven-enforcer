@@ -30,6 +30,11 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
 import org.codehaus.plexus.PlexusConstants;
@@ -42,13 +47,11 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
  * This goal executes the defined enforcer-rules once per
  * module.
  * 
- * @requiresDependencyResolution test
- * @goal enforce
- * @phase validate
- * @threadSafe
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
+@Mojo( name = "enforce", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true,
+                requiresDependencyResolution = ResolutionScope.TEST )
 public class EnforceMojo
     extends AbstractMojo
     implements Contextualizable
@@ -56,74 +59,59 @@ public class EnforceMojo
 
     /**
      * Path Translator needed by the ExpressionEvaluator
-     * 
-     * @component role="org.apache.maven.project.path.PathTranslator"
      */
+    @Component( role = PathTranslator.class )
     protected PathTranslator translator;
 
     /**
      * The MavenSession
-     * 
-     * @parameter expression="${session}"
-     * @readonly
      */
+    @Component
     protected MavenSession session;
 
     /**
      * POM
-     * 
-     * @parameter expression="${project}"
-     * @readonly
-     * @required
      */
+    @Component
     protected MavenProject project;
 
     /**
      * Flag to fail the build if a version check fails.
-     * 
-     * @parameter expression="${enforcer.fail}"
-     *            default-value="true"
      */
+    @Parameter( property = "enforcer.fail", defaultValue = "true" )
     protected boolean fail = true;
 
     /**
      * Flag to easily skip all checks
-     * 
-     * @parameter expression="${enforcer.skip}"
-     *            default-value="false"
      */
+    @Parameter( property = "enforcer.skip", defaultValue = "false" )
     protected boolean skip = false;
 
     /**
      * Fail on the first rule that doesn't pass
-     * 
-     * @parameter expression="${enforcer.failFast}"
-     *            default-value="false"
      */
+    @Parameter( property = "enforcer.failFast", defaultValue = "false" )
     protected boolean failFast = false;
 
     /**
      * Array of objects that implement the EnforcerRule
      * interface to execute.
-     * 
-     * @parameter
-     * @required
      */
+    @Parameter( required = true )
     private EnforcerRule[] rules;
     
     /**
      * Use this flag to disable rule result caching. This will cause
      * all rules to execute on each project even if the rule indicates it can
      * safely be cached.
-     * @parameter expression="${enforcer.ignoreCache}"
-     *  default-value="false"
      */
-     protected boolean ignoreCache = false;
+    @Parameter( property = "enforcer.ignoreCache", defaultValue = "false" )
+    protected boolean ignoreCache = false;
     
     /**
      * This is a static variable used to persist the cached results across plugin invocations.
      */
-     protected static Hashtable<String, EnforcerRule> cache = new Hashtable<String, EnforcerRule>();
+    protected static Hashtable<String, EnforcerRule> cache = new Hashtable<String, EnforcerRule>();
 
     
     // set by the contextualize method. Only way to get the

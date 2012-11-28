@@ -25,29 +25,18 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 
 /**
  * This rule checks that certain properties are set.
- *
+ * 
  * @author Paul Gier
  */
 public class RequireProperty
-    extends AbstractNonCacheableEnforcerRule
+    extends AbstractPropertyEnforcerRule
 {
 
     /** Specify the required property. */
     public String property = null;
 
-    /** Match the property value to a given regular expression. Defaults to <code>null</code> (any value is ok). */
-    public String regex = null;
-
-    /** Specify a warning message if the regular expression is not matched. */
-    public String regexMessage = null;
-
-    /**
-     * Execute the rule.
-     *
-     * @param helper the helper
-     * @throws EnforcerRuleException the enforcer rule exception
-     */
-    public void execute( EnforcerRuleHelper helper )
+    @Override
+    public Object resolveValue( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
         Object propValue = null;
@@ -59,26 +48,23 @@ public class RequireProperty
         {
             throw new EnforcerRuleException( "Unable to evaluate property: " + property, eee );
         }
+        return propValue;
+    }
 
-        // Check that the property is not null or empty string
-        if ( propValue == null )
-        {
-            if ( message == null )
-            {
-                message = "Property \"" + property + "\" is required for this build.";
-            }
-            throw new EnforcerRuleException( message );
-        }
-        // If there is a regex, check that the property matches it
-        if ( regex != null && !propValue.toString().matches( regex ) )
-        {
-            if ( regexMessage == null )
-            {
-                regexMessage =
-                    "Property \"" + property + "\" evaluates to \"" + propValue + "\".  " +
-                        "This does not match the regular expression \"" + regex + "\"";
-            }
-            throw new EnforcerRuleException( regexMessage );
-        }
+    protected String resolveValue()
+    {
+        return null;
+    }
+
+    @Override
+    public String getPropertyName()
+    {
+        return property;
+    }
+
+    @Override
+    public String getName()
+    {
+        return "Property";
     }
 }

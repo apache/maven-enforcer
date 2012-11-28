@@ -13,8 +13,8 @@
 ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 ~~ KIND, either express or implied.  See the License for the
 ~~ specific language governing permissions and limitations
-~~ under the License.    
- 
+~~ under the License.
+
   ------
   Require No Repositories
   ------
@@ -25,30 +25,26 @@
 
 Require No Repositories
 
-   This rule enforces that all plugins have a version defined, either in the plugin or pluginManagement section of the pom or a parent pom.
+   This rule checks that this pom or its parents don't define a repository.
 
    The following parameters are supported by this rule:
-   
-   * message - an optional message to the user if the rule fails.
-   
-   * banLatest - disallow any use of "LATEST" as a version for any plugin. Default = true.
-   
-   * banRelease - disallow any use of "RELEASE" as a version for any plugin. Default = true.
-   
-   * banSnapshots - disallow any use of SNAPSHOT plugins. Default = true.
-   
-   * phases - The comma separated list of phases that should be used to find 
-     lifecycle plugin bindings. The default value is "clean,deploy,site".
-   
-   * additionalPlugins - A list of additional plugins to enforce have versions. These
-     are plugins that may not be in the poms but are used anyway, like help, eclipse etc.
-     The plugins should be specified in the form: group:artifactId.  
-     
-   
+
+   * banRepositories - Whether to ban non-plugin repositories. By default they are banned (true).
+
+   * banPluginRepositories - Whether to ban plugin repositories. By default they are banned (true).
+
+   * allowedRepositories - Specify explicitly allowed non-plugin repositories. This is a list of ids.
+
+   * allowedPluginRepositories - Specify explicitly allowed plugin repositories. This is a list of ids.
+
+   * allowSnapshotRepositories - Whether to allow repositories which only resolve snapshots. By default they are banned (false).
+
+   * allowSnapshotPluginRepositories - Whether to allow plugin repositories which only resolve snapshots. By default they are banned (false).
+
    []
 
    Sample Plugin Configuration (showing some defaults, defaults can be skipped):
-   
+
 +---+
 <project>
   [...]
@@ -60,24 +56,16 @@ Require No Repositories
         <version>${project.version}</version>
         <executions>
           <execution>
-            <id>enforce-no-repos</id>
+            <id>enforce-no-repositories</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <requirePluginVersions>
-                  <message>Best Practice is to always define plugin versions!</message>
-                  <banLatest>true</banLatest>
-                  <banRelease>true</banRelease>
-                  <banSnapshots>true</banSnapshots>
-                  <phases>clean,deploy,site</phases>
-                  <additionalPlugins>
-                    <additionalPlugin>org.apache.maven.plugins:maven-eclipse-plugin</additionalPlugin>
-                    <additionalPlugin>org.apache.maven.plugins:maven-ide-plugin</additionalPlugin>
-                  </additionalPlugins>
-                </requirePluginVersions>
-              </rules>    
+                <requireNoRepositories>
+                  <message>Best Practice is to never define repositories in pom.xml (use a repository manager instead)</message>
+                </requireNoRepositories>
+              </rules>
             </configuration>
           </execution>
         </executions>
@@ -86,4 +74,4 @@ Require No Repositories
   </build>
   [...]
 </project>
-+---+  
++---+

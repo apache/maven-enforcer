@@ -20,7 +20,7 @@
   ------
   Brian Fox
   ------
-  August 2008
+  September 2012
   ------
 
 Standard Rules
@@ -32,14 +32,18 @@ Standard Rules
   * {{{./alwaysFail.html}alwaysFail}} - Always fail... used to test plugin configuration.
  
   * {{{./bannedDependencies.html}bannedDependencies}} - enforces that excluded dependencies aren't included.
-
-  * bannedPlugins - enforces that excluded plugins aren't included.
   
+  * {{{./bannedPlugins.html}bannedPlugins}} - enforces that specific plugins aren't included in the build.
+  
+  * {{{./banTransitiveDependencies.html}banTransitiveDependencies}} - enforces that project doesn't have transitive dependencies.
+
   * {{{./dependencyConvergence.html}dependencyConvergence}} - ensure all dependencies converge to the same version.
 
   * {{{./evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
 
   * requireActiveProfile - enforces one or more active profiles.
+  
+  * requireEnvironmentVariable - enforces the existence of an environment variable
   
   * {{{./requireFilesDontExist.html}requireFilesDontExist}} - enforces that the list of files do not exist.
   
@@ -53,7 +57,7 @@ Standard Rules
 
   * {{{./requireNoRepositories.html}requireNoRepositories}} - enforces to not include repositories.
 
-  * {{{./requireOS.html}requireOS}} - enforces the OS / CPU Archictecture.
+  * {{{./requireOS.html}requireOS}} - enforces the OS / CPU Architecture.
 
   * {{{./requirePluginVersions.html}requirePluginVersions}} - enforces that all plugins have a specified version.
 

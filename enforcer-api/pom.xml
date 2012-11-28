@@ -28,7 +28,6 @@
   </parent>
 
   <artifactId>enforcer-api</artifactId>
-  <version>1.2</version>
   <packaging>jar</packaging>
 
   <name>Enforcer API</name>
@@ -56,17 +55,6 @@
           <source>1.4</source>
           <target>1.4</target>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

@@ -16,32 +16,40 @@
 ~~ under the License.    
  
   ------
-  Require Property
+  Banned Plugins
   ------
-  Brian Fox
+  Paul Gier
   ------
-  June 2007
+  November 2012
   ------
 
-Require Property
+Banned Plugins
 
-  This rule can enforce that a declared property is set and optionally evaluate it against a regular expression.
+   This rule checks the set of plugins used during the build and enforces that specific excluded plugins are not used.
 
-  The following parameters are supported by this rule:
+   The following parameters are supported by this rule:
    
-  * property - the property to evaluate.
-   
-  * message - an optional message to the user if the rule fails. Default is: "Property 'xxx' is required for this build".	
-   
-  * regex - a regular expression used to check the value of the property.
-   
-  * regexMessage - an optional message to the user if the regex check fails.
+   * excludes - a list of plugin artifacts to ban. The format is groupId[:artifactId][:version] where artifactId and version are optional. Wildcards may be used to replace an entire section.
+      Examples:
+       
+        * org.apache.maven
+        
+        * org.apache.maven:bad-plugin
+        
+        * org.apache.maven:my-plugin:badVersion
+        
+        * org.apache.maven:*:1.2
+                
+        []
 
-  []
+   * includes - a list of plugin artifacts to include. These are exceptions to the excludes. It is meant to allow wide exclusion rules with wildcards and fine tune using includes. 
+     If nothing has been excluded, then the includes have no effect. In otherwords, includes only subtract from artifacts that matched an exclude rule.
+      
+   * message - an optional message to the user if the rule fails.
+   
+   []
 
-  The regex is applied to the entire value of the property (i.e. using the regex "match" method),
-  and not just a substring of the property value.
-
+   
   Sample Plugin Configuration:
   
 +---+
@@ -55,24 +63,17 @@ Require Property
         <version>${project.version}</version>
         <executions>
           <execution>
-            <id>enforce-property</id>
+            <id>enforce-banned-dependencies</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <requireProperty>
-                  <property>basedir</property>
-                  <message>You must set a basedir property!</message>
-                  <regex>.*\d.*</regex>
-                  <regexMessage>The basedir property must contain at least one digit.</regexMessage>
-                </requireProperty>
-                <requireProperty>
-                  <property>project.version</property>
-                  <message>"Project version must be specified."</message>
-                  <regex>.*(\d|-SNAPSHOT)$</regex>
-                  <regexMessage>"Project version must end in a number or -SNAPSHOT."</regexMessage>
-                </requireProperty>
+                <bannedPlugins>
+                  <excludes>
+                    <exclude>org.codehaus.mojo:build-helper-maven-plugin</exclude>
+                  </excludes>
+                </bannedPlugins>
               </rules>
               <fail>true</fail>
             </configuration>
@@ -84,4 +85,3 @@ Require Property
   [...]
 </project>
 +---+
-  
