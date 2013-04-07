@@ -33,9 +33,9 @@ Require OS Version
 
    * message - an optional message to the user if the rule fails.
    
-   * {{{../apidocs/org/apache/maven/plugin/enforcer/RequireOS.html#arch}arch}} - the cpu architecture.
+   * {{{../apidocs/org/apache/maven/plugins/enforcer/RequireOS.html#arch}arch}} - the cpu architecture.
    
-   * {{{../apidocs/org/apache/maven/plugin/enforcer/RequireOS.html#family}family}} - the family of OS. Possible families are:
+   * {{{../apidocs/org/apache/maven/plugins/enforcer/RequireOS.html#family}family}} - the family of OS. Possible families are:
    
      * dos
   
@@ -60,11 +60,11 @@ Require OS Version
      []
    		
    
-   * {{{../apidocs/org/apache/maven/plugin/enforcer/RequireOS.html#name}name}} - the name of the OS.
+   * {{{../apidocs/org/apache/maven/plugins/enforcer/RequireOS.html#name}name}} - the name of the OS.
    
-   * {{{../apidocs/org/apache/maven/plugin/enforcer/RequireOS.html#version}version}} - the version of the OS.
+   * {{{../apidocs/org/apache/maven/plugins/enforcer/RequireOS.html#version}version}} - the version of the OS.
    
-   * {{{../apidocs/org/apache/maven/plugin/enforcer/RequireOS.html#display}display}} -  flag to display the detected OS informatin.
+   * {{{../apidocs/org/apache/maven/plugins/enforcer/RequireOS.html#display}display}} -  flag to display the detected OS informatin.
    
    []
 
