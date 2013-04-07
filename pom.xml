@@ -36,18 +36,6 @@
   <url>http://maven.apache.org/enforcer</url>
   <inceptionYear>2007</inceptionYear>
 
-  <developers>
-    <developer>
-      <id>brianf</id>
-      <name>Brian Fox</name>
-      <email>brianf@apache.org</email>
-      <roles>
-        <role>Lead Developer</role>
-      </roles>
-      <timezone>5</timezone>
-    </developer>
-  </developers>
-
   <mailingLists>
     <mailingList>
       <name>Maven User List</name>
