@@ -136,13 +136,13 @@
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>scp://people.apache.org/www/maven.apache.org/enforcer/</url>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
     </site>
   </distributionManagement>
   <properties>
     <maven.version>2.0.9</maven.version>
     <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
-    <site.deploy.url>scp://people.apache.org/www/maven.apache.org</site.deploy.url>
+    <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
   </properties>
 
   <dependencyManagement>
@@ -242,6 +242,15 @@
           <artifactId>maven-release-plugin</artifactId>
           <configuration>
             <tagBase>https://svn.apache.org/repos/asf/maven/enforcer/tags</tagBase>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-scm-publish-plugin</artifactId>
+          <configuration>
+            <content>${project.build.directory}/staging/${maven.site.path}</content>
+            <checkoutDirectory>${maven.site.cache}/${maven.site.path}</checkoutDirectory>
+            <tryUpdate>true</tryUpdate>
           </configuration>
         </plugin>
       </plugins>
