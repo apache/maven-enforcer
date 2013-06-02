@@ -32,6 +32,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Profile;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
@@ -119,22 +120,67 @@ public class BanDuplicatePomDependencyVersions
     {
         @SuppressWarnings( "unchecked" )
         List<Dependency> dependencies = model.getDependencies();
-
         Map<String, Integer> duplicateDependencies = validateDependencies( dependencies );
+
+        int duplicates = duplicateDependencies.size();
         
-        if ( !duplicateDependencies.isEmpty() )
+        StringBuilder summary = new StringBuilder();
+        messageBuilder( duplicateDependencies, "dependencies.dependency", summary );
+
+        if( model.getDependencyManagement() != null )
+        {
+            @SuppressWarnings( "unchecked" )
+            List<Dependency> managementDependencies = model.getDependencies();
+            Map<String, Integer> duplicateManagementDependencies = validateDependencies( managementDependencies );
+            duplicates += duplicateManagementDependencies.size();
+
+            messageBuilder( duplicateManagementDependencies, "dependencyManagement.dependencies.dependency", summary );
+        }
+        
+        
+        @SuppressWarnings( "unchecked" )
+        List<Profile> profiles = model.getProfiles();
+        for( Profile profile : profiles )
+        {
+            @SuppressWarnings( "unchecked" )
+            List<Dependency> profileDependencies = profile.getDependencies();
+            Map<String, Integer> duplicateProfileDependencies = validateDependencies( profileDependencies );
+            duplicates += duplicateProfileDependencies.size();
+            
+            messageBuilder( duplicateProfileDependencies, "profiles.profile[" + profile.getId() + "].dependencies.dependency",  summary );
+
+            if( model.getDependencyManagement() != null )
+            {
+                @SuppressWarnings( "unchecked" )
+                List<Dependency> profileManagementDependencies = profile.getDependencies();
+                Map<String, Integer> duplicateProfileManagementDependencies = validateDependencies( profileManagementDependencies );
+                duplicates += duplicateProfileManagementDependencies.size();
+                
+                messageBuilder( duplicateProfileManagementDependencies, "profiles.profile[" + profile.getId() + "].dependencyManagement.dependencies.dependency", summary );
+            }
+        }
+            
+        if( summary.length() > 0 )
         {
             StringBuilder message = new StringBuilder();
-            message.append( "Found " ).append( duplicateDependencies.size() ).append( " duplicate " );
-            message.append( duplicateDependencies.size() == 1 ? "dependency" : "dependencies" ).append( " in this project:\n" );
-            for ( Map.Entry<String, Integer> entry : duplicateDependencies.entrySet() )
-            {
-                message.append( " - " ).append( entry.getKey() ).append( " ( " ).append( entry.getValue() ).append( " times )\n" );
-            }
+            message.append( "Found " ).append( duplicates ).append( " duplicate dependency " );
+            message.append( duplicateDependencies.size() == 1 ? "declaration" : "declarations" ).append( " in this project:\n" );
+            message.append( summary );
             throw new EnforcerRuleException( message.toString() );
         }
-
     }
+
+    private void messageBuilder( Map<String, Integer> duplicateDependencies, String prefix, StringBuilder message )
+    {
+        if ( !duplicateDependencies.isEmpty() )
+        {
+            for ( Map.Entry<String, Integer> entry : duplicateDependencies.entrySet() )
+            {
+                message.append( " - " ).append( prefix ).append( '[' ).append( entry.getKey() ).append( "] ( " ).append( entry.getValue() ).append( " times )\n" );
+            }
+        }
+    }
+    
 
     private Map<String, Integer> validateDependencies( List<Dependency> dependencies )
         throws EnforcerRuleException

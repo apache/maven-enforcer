@@ -18,8 +18,8 @@
  */
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.text.contains( '[WARNING] Rule 0: org.apache.maven.plugins.enforcer.BanDuplicatePomDependencyVersions failed with message:' )
-assert buildLog.text.contains( 'Found 1 duplicate dependency in this project:' )
-assert buildLog.text.contains( '- org.codehaus.plexus:plexus-utils:jar ( 2 times )' )
+assert buildLog.text.contains( 'Found 1 duplicate dependency declaration in this project:' )
+assert buildLog.text.contains( '- dependencies.dependency[org.codehaus.plexus:plexus-utils:jar] ( 2 times )' )
 
 
 
