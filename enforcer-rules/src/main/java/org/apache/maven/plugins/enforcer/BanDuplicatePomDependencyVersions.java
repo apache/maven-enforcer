@@ -117,37 +117,49 @@ public class BanDuplicatePomDependencyVersions
     private void maven2Validation( EnforcerRuleHelper helper, Model model )
         throws EnforcerRuleException
     {
-        Map<String, Integer> depMap = new HashMap<String, Integer>();
-        Set<String> duplicateDeps = new HashSet<String>();
-
         @SuppressWarnings( "unchecked" )
         List<Dependency> dependencies = model.getDependencies();
+
+        Map<String, Integer> duplicateDependencies = validateDependencies( dependencies );
+        
+        if ( !duplicateDependencies.isEmpty() )
+        {
+            StringBuilder message = new StringBuilder();
+            message.append( "Found " ).append( duplicateDependencies.size() ).append( " duplicate " );
+            message.append( duplicateDependencies.size() == 1 ? "dependency" : "dependencies" ).append( " in this project:\n" );
+            for ( Map.Entry<String, Integer> entry : duplicateDependencies.entrySet() )
+            {
+                message.append( " - " ).append( entry.getKey() ).append( " ( " ).append( entry.getValue() ).append( " times )\n" );
+            }
+            throw new EnforcerRuleException( message.toString() );
+        }
+
+    }
+
+    private Map<String, Integer> validateDependencies( List<Dependency> dependencies )
+        throws EnforcerRuleException
+    {
+        Map<String, Integer> duplicateDeps = new HashMap<String, Integer>();
+        Set<String> deps = new HashSet<String>();
         for ( Dependency dependency : dependencies )
         {
             String key = dependency.getManagementKey();
 
-            helper.getLog().debug( "verify " + key );
-
-            int times = 0;
-            if ( depMap.containsKey( key ) )
+            if ( deps.contains( key ) )
             {
-                times = depMap.get( key );
-                duplicateDeps.add( key );
+                int times = 1;
+                if( duplicateDeps.containsKey( key ) )
+                {
+                    times = duplicateDeps.get( key );
+                }
+                duplicateDeps.put( key, times + 1 );
             }
-            depMap.put( key, times + 1 );
-        }
-
-        if ( !duplicateDeps.isEmpty() )
-        {
-            StringBuilder message = new StringBuilder();
-            message.append( "Found " ).append( duplicateDeps.size() ).append( " duplicate " );
-            message.append( duplicateDeps.size() == 1 ? "dependency" : "dependencies" ).append( " in this project:\n" );
-            for ( String key : duplicateDeps )
+            else
             {
-                message.append( " - " ).append( key ).append( " ( " ).append( depMap.get( key ) ).append( " times )\n" );
+                deps.add( key );
             }
-            throw new EnforcerRuleException( message.toString() );
         }
+        return duplicateDeps;
     }
 
 }
