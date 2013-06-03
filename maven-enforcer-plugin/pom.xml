@@ -138,9 +138,10 @@
         <plugins>
           <plugin>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.5</version>
+            <version>1.8</version>
             <configuration>
               <debug>true</debug>
+              <projectsDirectory>src/it/projects</projectsDirectory>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <preBuildHookScript>setup</preBuildHookScript>
               <postBuildHookScript>verify</postBuildHookScript>
