@@ -51,14 +51,14 @@ under the License.
 
   <dependencies>
     <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>3.0</version>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer152</artifactId>
+      <version>1.0</version>
     </dependency>  
     <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>3.0</version>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer152</artifactId>
+      <version>1.0</version>
     </dependency>  
   </dependencies>
 
