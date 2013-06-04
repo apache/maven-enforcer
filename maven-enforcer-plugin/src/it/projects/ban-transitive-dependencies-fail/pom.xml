@@ -42,9 +42,8 @@ under the License.
               <rules>
                 <BanTransitiveDependencies>
                   <excludes>
-                    <exclude>junit:junit</exclude>
-                    <exclude>classworlds:classworlds</exclude>
-                    <exclude>org.codehaus.plexus:plexus-io</exclude>
+                    <exclude>org.apache.maven.plugins.enforcer.its:menforcer138_classworlds</exclude>
+                    <exclude>org.apache.maven.plugins.enforcer.its:menforcer138_io</exclude>
                   </excludes>
                 </BanTransitiveDependencies>
               </rules>
@@ -57,13 +56,13 @@ under the License.
 
   <dependencies>
     <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-archiver</artifactId>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer138_archiver</artifactId>
       <version>2.1.1</version>
     </dependency>  
     <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer138_utils</artifactId>
       <version>3.0</version>
     </dependency>  
   </dependencies>

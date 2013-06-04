@@ -1,0 +1,19 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+  <artifactId>menforcer138_container-default</artifactId>
+  <version>1.0-alpha-9-stable-1</version>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer1308_utils</artifactId>
+      <version>1.0.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer138_classworlds</artifactId>
+      <version>1.1-alpha-2</version>
+    </dependency>
+  </dependencies>
+</project>
