@@ -92,6 +92,13 @@ public class TestArtifactMatcher extends TestCase
 		executePatternMatch("*:artifactId:*", "groupId", "artifactId", "1.0", "", "", true);
 		
 		executePatternMatch("*", "groupId", "artifactId", "1.0", "", "", true);
+		
+		// MENFORCER-83
+        executePatternMatch("*upId", "groupId", "artifactId", "1.0", "", "", true);
+        
+        executePatternMatch("gr*pId:?rt?f?ct?d:1.0", "groupId", "artifactId", "1.0", "", "", true);
+        
+        executePatternMatch("org.apache.*:maven-*:*", "org.apache.maven", "maven-core", "3.0", "", "", true);
 	}
 	
 	public void testMatch() throws InvalidVersionSpecificationException

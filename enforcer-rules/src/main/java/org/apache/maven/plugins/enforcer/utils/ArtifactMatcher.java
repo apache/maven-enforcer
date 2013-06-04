@@ -47,19 +47,25 @@ public final class ArtifactMatcher
         public Pattern( String pattern )
         {
             if ( pattern == null )
+            {
                 throw new NullPointerException( "pattern" );
+            }
 
             this.pattern = pattern;
 
             parts = pattern.split( ":", 6 );
 
             if ( parts.length == 6 )
+            {
                 throw new IllegalArgumentException( "Pattern contains too many delimiters." );
+            }
 
             for ( String part : parts )
             {
                 if ( "".equals( part ) )
+                {
                     throw new IllegalArgumentException( "Pattern or its part is empty." );
+                }
             }
         }
 
@@ -67,7 +73,9 @@ public final class ArtifactMatcher
             throws InvalidVersionSpecificationException
         {
             if ( artifact == null )
+            {
                 throw new NullPointerException( "artifact" );
+            }
 
             switch ( parts.length )
             {
@@ -78,9 +86,10 @@ public final class ArtifactMatcher
                         scope = "compile";
                     }
 
-                    if ( !"*".equals( parts[4] ) && !parts[4].equals( scope ) )
+                    if ( !matches( parts[4], scope ) )
+                    {
                         return false;
-
+                    }
                 case 4:
                     String type = artifact.getType();
                     if ( type == null || type.equals( "" ) )
@@ -88,11 +97,13 @@ public final class ArtifactMatcher
                         type = "jar";
                     }
 
-                    if ( !"*".equals( parts[3] ) && !parts[3].equals( type ) )
+                    if ( !matches( parts[3], type ) )
+                    {
                         return false;
+                    }
 
                 case 3:
-                    if ( !"*".equals( parts[2] ) && !parts[2].equals( artifact.getVersion() ) )
+                    if ( !matches( parts[2], artifact.getVersion() ) )
                     {
                         if ( !AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( parts[2] ),
                                                                        new DefaultArtifactVersion(
@@ -103,17 +114,29 @@ public final class ArtifactMatcher
                     }
 
                 case 2:
-                    if ( !"*".equals( parts[1] ) && !parts[1].equals( artifact.getArtifactId() ) )
+                    if ( !matches( parts[1],artifact.getArtifactId() ) )
+                    {
                         return false;
-
+                    }
                 case 1:
-                    if ( !"*".equals( parts[0] ) && !parts[0].equals( artifact.getGroupId() ) )
+                    if ( !matches( parts[0], artifact.getGroupId() ) )
+                    {
                         return false;
+                    }
                     else
+                    {
                         return true;
+                    }
                 default:
                     throw new AssertionError();
             }
+        }
+        
+        private boolean matches( String expression, String input )
+        {
+            String regex = expression.replace( ".", "\\." ).replace( "*", ".*" ).replace( ":", "\\:" ).replace( '?', '.' );
+
+            return java.util.regex.Pattern.matches( regex , input );
         }
 
         @Override
@@ -135,10 +158,13 @@ public final class ArtifactMatcher
     public ArtifactMatcher( final Collection<String> patterns, final Collection<String> ignorePatterns )
     {
         if ( patterns == null )
+        {
             throw new NullPointerException( "patterns" );
+        }
         if ( ignorePatterns == null )
+        {
             throw new NullPointerException( "ignorePatterns" );
-
+        }
         for ( String pattern : patterns )
         {
             if ( pattern != null && !"".equals( pattern ) )
