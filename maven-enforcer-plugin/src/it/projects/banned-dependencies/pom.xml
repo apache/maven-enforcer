@@ -45,7 +45,7 @@ under the License.
               <rules>
                 <BannedDependencies>
                   <excludes>
-                    <exclude>commons-logging:commons-logging</exclude>
+                    <exclude>org.apache.maven.plugins.enforcer.its:menforcer72_logging</exclude>
                   </excludes>
                 </BannedDependencies>
               </rules>

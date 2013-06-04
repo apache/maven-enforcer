@@ -23,7 +23,7 @@ under the License.
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.its.enforcer</groupId>
-  <artifactId>test</artifactId>
+  <artifactId>menforcer72</artifactId>
   <version>1.0</version>
 
   <description>
@@ -48,7 +48,7 @@ under the License.
                     <exclude>*:*:*:jar</exclude>
                   </excludes>
                   <includes>
-                    <include>junit:*:*:*:test</include>
+                    <include>*:menforcer72_junit:*:*:test</include>
                   </includes>
                 </bannedDependencies>
               </rules>
@@ -61,14 +61,14 @@ under the License.
   
   <dependencies>
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer72_logging</artifactId>
       <version>1.1.1</version>
       <type>pom</type>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer72_junit</artifactId>
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
