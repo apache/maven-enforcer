@@ -53,9 +53,9 @@ public final class ArtifactMatcher
 
             this.pattern = pattern;
 
-            parts = pattern.split( ":", 6 );
+            parts = pattern.split( ":", 7 );
 
-            if ( parts.length == 6 )
+            if ( parts.length == 7 )
             {
                 throw new IllegalArgumentException( "Pattern contains too many delimiters." );
             }
@@ -79,6 +79,12 @@ public final class ArtifactMatcher
 
             switch ( parts.length )
             {
+                case 6:
+                    String classifier = artifact.getClassifier();
+                    if ( !matches( parts[5], classifier ) )
+                    {
+                        return false;
+                    }
                 case 5:
                     String scope = artifact.getScope();
                     if ( scope == null || scope.equals( "" ) )

@@ -52,7 +52,7 @@ public class TestArtifactMatcher extends TestCase
 		
 		try
 		{
-			new Pattern("a:b:c:d:e:f");
+			new Pattern("a:b:c:d:e:f:g");
 			fail("IllegalArgumentException expected.");
 		}
 		catch(IllegalArgumentException e){}
@@ -93,6 +93,9 @@ public class TestArtifactMatcher extends TestCase
 		
 		executePatternMatch("*", "groupId", "artifactId", "1.0", "", "", true);
 		
+		// MENFORCER-74/75
+		executePatternMatch("*:*:*:jar:compile:tests", "groupId", "artifactId", "1.0", "", "", "tests", true);
+		
 		// MENFORCER-83
         executePatternMatch("*upId", "groupId", "artifactId", "1.0", "", "", true);
         
@@ -122,27 +125,42 @@ public class TestArtifactMatcher extends TestCase
 		executeMatch(matcher, "groupId", "anotherArtifact", "1.1", "", "", false);	
 	}
 	
-	private void executePatternMatch(final String pattern, final String groupId, final String artifactId,
-			final String versionRange, final String scope, final String type, boolean expectedResult)
-			throws InvalidVersionSpecificationException
-	{
-		assertEquals(expectedResult, new ArtifactMatcher.Pattern(pattern).match(createMockArtifact(groupId, artifactId, versionRange, scope, type)));
-	}
-	
-	
-	private void executeMatch(final ArtifactMatcher matcher, final String groupId, final String artifactId,
-			final String versionRange, final String scope, final String type, final boolean expectedResult) throws InvalidVersionSpecificationException
-	{
-		assertEquals(expectedResult, matcher.match(createMockArtifact(groupId, artifactId, versionRange, scope, type)));
-	}
-	
-	
-	private static Artifact createMockArtifact(final String groupId, final String artifactId,
-			final String versionRange, final String scope, final String type)
-	{
-		ArtifactHandler artifactHandler = new DefaultArtifactHandler();
-		
-		VersionRange version = VersionRange.createFromVersion(versionRange);
-		return new DefaultArtifact(groupId, artifactId, version, scope, type, "", artifactHandler);
-	}
+    private void executePatternMatch( final String pattern, final String groupId, final String artifactId,
+                                      final String versionRange, final String scope, final String type,
+                                      boolean expectedResult )
+        throws InvalidVersionSpecificationException
+    {
+        executePatternMatch( pattern, groupId, artifactId, versionRange, scope, type, "", expectedResult );
+    }
+
+    private void executePatternMatch( final String pattern, final String groupId, final String artifactId,
+                                      final String versionRange, final String scope, final String type,
+                                      final String classifier, boolean expectedResult )
+        throws InvalidVersionSpecificationException
+    {
+        assertEquals( expectedResult, new ArtifactMatcher.Pattern( pattern ).match( createMockArtifact( groupId,
+                                                                                                        artifactId,
+                                                                                                        versionRange,
+                                                                                                        scope, type,
+                                                                                                        classifier ) ) );
+    }
+
+    private void executeMatch( final ArtifactMatcher matcher, final String groupId, final String artifactId,
+                               final String versionRange, final String scope, final String type,
+                               final boolean expectedResult )
+        throws InvalidVersionSpecificationException
+    {
+        assertEquals( expectedResult,
+                      matcher.match( createMockArtifact( groupId, artifactId, versionRange, scope, type, "" ) ) );
+    }
+
+    private static Artifact createMockArtifact( final String groupId, final String artifactId,
+                                                final String versionRange, final String scope, final String type,
+                                                final String classifier )
+    {
+        ArtifactHandler artifactHandler = new DefaultArtifactHandler();
+
+        VersionRange version = VersionRange.createFromVersion( versionRange );
+        return new DefaultArtifact( groupId, artifactId, version, scope, type, classifier, artifactHandler );
+    }
 }

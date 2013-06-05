@@ -31,13 +31,13 @@ Ban Transitive Dependencies
    
    * excludes - specify the dependencies that will be ignored.\
       This can be a list of artifacts in the format
-      groupId[:artifactId[:version[:type[:scope]]]] .
+      groupId[:artifactId[:version[:type[:scope[:classifier]]]]] .
       Wildcard '*' can be used to in place of specific section (e.g. group:*:1.0 will match both 'group:artifact:1.0' and 'group:anotherArtifact:1.0')
       Version is a string representing standard maven version range. Empty patterns will be ignored. 
 
    * includes - specify the dependencies that will be checked.\
      These are exceptions to excludes intended for more convenient configuration. This can be a list of artifacts in the format
-     groupId[:artifactId[:version[:type[:scope]]]] as above.
+     groupId[:artifactId[:version[:type[:scope[:classifier]]]]] as above.
  
    * message - an optional message to the user if the rule fails. Will replace generated report message.
    
