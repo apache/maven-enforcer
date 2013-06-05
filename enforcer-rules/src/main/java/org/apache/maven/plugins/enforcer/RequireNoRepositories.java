@@ -171,6 +171,13 @@ public class RequireNoRepositories
         }
     }
 
+    /**
+     * 
+     * @param repos all repositories, never {@code null}
+     * @param allowedRepos allowed repositories, never {@code null}
+     * @param allowSnapshots 
+     * @return
+     */
     private static List<String> findBannedRepositories( List<Repository> repos, List<String> allowedRepos, boolean allowSnapshots )
     {
         List<String> bannedRepos = new ArrayList<String>( allowedRepos.size() );
@@ -178,7 +185,7 @@ public class RequireNoRepositories
         {
             if ( !allowedRepos.contains( r.getId() ) )
             {
-                if ( !allowSnapshots || r.getReleases().isEnabled() )
+                if ( !allowSnapshots || r.getReleases() == null || r.getReleases().isEnabled() )
                 {
                     // if we are not allowing snapshots and this repo is enabled for releases
                     // it is banned.  We don't care whether it is enabled for snapshots
