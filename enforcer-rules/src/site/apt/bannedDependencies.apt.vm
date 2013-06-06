@@ -41,7 +41,9 @@ Banned Dependencies
         
         * org.apache.maven:artifact:badVersion
         
-        * org.apache.maven:*:1.2
+        * org.apache.maven:*:1.2 (exclude version 1.2 and above, equivalent to [1.2,) )
+
+        * org.apache.maven:*:[1.2] (explicit exclude of version 1.2)
         
         * org.apache.maven:*:*:jar:test
         
