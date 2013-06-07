@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -53,7 +54,7 @@ public class TestBannedDependencies
         project.setDependencyArtifacts( factory.getScopedArtifacts() );
         BannedDependencies rule = new BannedDependencies();
 
-        ArrayList excludes = new ArrayList();
+        List<String> excludes = new ArrayList<String>();
         rule.setSearchTransitive( false );
 
         // test whole name
@@ -144,8 +145,8 @@ public class TestBannedDependencies
         project.setDependencyArtifacts( factory.getScopedArtifacts() );
         BannedDependencies rule = new BannedDependencies();
 
-        ArrayList excludes = new ArrayList();
-        ArrayList includes = new ArrayList();
+        List<String> excludes = new ArrayList<String>();
+        List<String> includes = new ArrayList<String>();
 
         rule.setSearchTransitive( false );
 
