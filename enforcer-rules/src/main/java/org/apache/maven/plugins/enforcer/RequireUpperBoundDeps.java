@@ -60,6 +60,21 @@ public class RequireUpperBoundDeps
     private static I18N i18n;
 
     /**
+     * @since 1.3
+     */
+    private boolean uniqueVersions;
+    
+    /**
+     * 
+     * @param uniqueVersions
+     * @since 1.3
+     */
+    public void setUniqueVersions( boolean uniqueVersions )
+    {
+        this.uniqueVersions = uniqueVersions;
+    }
+    
+    /**
      * Uses the {@link EnforcerRuleHelper} to populate the values of the
      * {@link DependencyTreeBuilder#buildDependencyTree(MavenProject, ArtifactRepository, ArtifactFactory, ArtifactMetadataSource, ArtifactFilter, ArtifactCollector)}
      * factory method. <br/>
@@ -117,6 +132,7 @@ public class RequireUpperBoundDeps
             }
             DependencyNode node = getNode( helper );
             RequireUpperBoundDepsVisitor visitor = new RequireUpperBoundDepsVisitor();
+            visitor.setUniqueVersions( uniqueVersions );
             node.accept( visitor );
             List<String> errorMessages = buildErrorMessages( visitor.getConflicts() );
             if ( errorMessages.size() > 0 )
@@ -193,6 +209,13 @@ public class RequireUpperBoundDeps
     private static class RequireUpperBoundDepsVisitor
         implements DependencyNodeVisitor
     {
+        
+        private boolean uniqueVersions;
+        
+        public void setUniqueVersions( boolean uniqueVersions )
+        {
+            this.uniqueVersions = uniqueVersions;
+        }
 
         private Map<String, List<DependencyNodeHopCountPair>> keyToPairsMap =
             new LinkedHashMap<String, List<DependencyNodeHopCountPair>>();
@@ -238,10 +261,10 @@ public class RequireUpperBoundDeps
         @SuppressWarnings( "unchecked" )
         private boolean containsConflicts( List<DependencyNodeHopCountPair> pairs )
         {
-            ArtifactVersion resolvedVersion = pairs.get( 0 ).extractArtifactVersion();
+            ArtifactVersion resolvedVersion = pairs.get( 0 ).extractArtifactVersion( uniqueVersions );
             for ( DependencyNodeHopCountPair pair : pairs )
             {
-                ArtifactVersion version = pair.extractArtifactVersion();
+                ArtifactVersion version = pair.extractArtifactVersion( uniqueVersions );
                 if ( resolvedVersion.compareTo( version ) < 0 )
                 {
                     return true;
@@ -288,10 +311,10 @@ public class RequireUpperBoundDeps
             return node;
         }
 
-        private ArtifactVersion extractArtifactVersion()
+        private ArtifactVersion extractArtifactVersion( boolean uniqueVersions )
         {
             Artifact artifact = node.getArtifact();
-            String version = artifact.getVersion();
+            String version = uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
             if ( version != null )
             {
                 return new DefaultArtifactVersion( version );
@@ -315,7 +338,6 @@ public class RequireUpperBoundDeps
         {
             return Integer.valueOf( hopCount ).compareTo( Integer.valueOf( other.getHopCount() ) );
         }
-
     }
 
 }

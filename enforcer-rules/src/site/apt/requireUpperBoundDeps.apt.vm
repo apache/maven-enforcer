@@ -84,7 +84,6 @@ and
   </dependencies>
 -----------------------------------------------------------------------------------
 
-
   Here is how a project should be setup to use this rule
 
 -----------------------------------------------------------------------------------
@@ -102,7 +101,10 @@ and
             <id>enforce</id>
             <configuration>
               <rules>
-                <requireUpperBoundDeps/>
+                <requireUpperBoundDeps>
+                  <!-- 'uniqueVersions' (default:false) can be set to true if you want to compare the timestamped SNAPSHOTs  -->
+                  <!-- <uniqueVersions>true</uniqueVersions> -->
+                </requireUpperBoundDeps>
               </rules>
             </configuration>
             <goals>
@@ -117,3 +119,5 @@ and
   ...
 </project>
 -----------------------------------------------------------------------------------
+
+  

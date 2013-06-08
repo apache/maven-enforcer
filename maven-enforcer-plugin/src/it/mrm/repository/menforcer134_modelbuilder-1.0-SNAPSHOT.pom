@@ -1,0 +1,14 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+  <artifactId>menforcer134_modelbuilder</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer134_model</artifactId>
+      <version>1.0-20130423.044324-5638</version>
+    </dependency>  
+  </dependencies>
+</project>
