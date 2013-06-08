@@ -23,7 +23,7 @@
                 <requireReleaseDeps>
                   <message>No Snapshots Allowed!</message>
                   <excludes>
-                    <exclude>org.apache.maven.enforcer:enforcer-api</exclude>
+                    <exclude>org.apache.maven.plugins.enforcer.its:menforcer85_api</exclude>
                   </excludes>
                 </requireReleaseDeps>
               </rules>
@@ -36,9 +36,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.maven.enforcer</groupId>
-      <artifactId>enforcer-api</artifactId>
-      <version>@project.version@</version>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer85_api</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
  </project>
