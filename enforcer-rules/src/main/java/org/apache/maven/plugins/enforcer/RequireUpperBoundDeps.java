@@ -261,15 +261,30 @@ public class RequireUpperBoundDeps
         @SuppressWarnings( "unchecked" )
         private boolean containsConflicts( List<DependencyNodeHopCountPair> pairs )
         {
-            ArtifactVersion resolvedVersion = pairs.get( 0 ).extractArtifactVersion( uniqueVersions );
-            for ( DependencyNodeHopCountPair pair : pairs )
+            if ( pairs.size() > 1 )
             {
-                ArtifactVersion version = pair.extractArtifactVersion( uniqueVersions );
-                if ( resolvedVersion.compareTo( version ) < 0 )
+                DependencyNodeHopCountPair resolvedPair = pairs.get( 0 );
+
+                // search for artifact with lowest hopCount
+                for ( DependencyNodeHopCountPair hopPair : pairs )
                 {
-                    return true;
+                    if ( hopPair.getHopCount() < resolvedPair.getHopCount() )
+                    {
+                        resolvedPair = hopPair;
+                    }
                 }
-            }
+
+                ArtifactVersion resolvedVersion = resolvedPair.extractArtifactVersion( uniqueVersions );
+
+                for ( DependencyNodeHopCountPair pair : pairs )
+                {
+                    ArtifactVersion version = pair.extractArtifactVersion( uniqueVersions );
+                    if ( resolvedVersion.compareTo( version ) < 0 )
+                    {
+                        return true;
+                    }
+                }
+            } 
             return false;
         }
 

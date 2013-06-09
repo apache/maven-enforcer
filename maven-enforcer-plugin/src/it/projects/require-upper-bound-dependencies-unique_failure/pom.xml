@@ -21,7 +21,7 @@
             <configuration>
               <rules>
                 <requireUpperBoundDeps>
-                  <unique>true</unique>
+                  <uniqueVersions>true</uniqueVersions>
                 </requireUpperBoundDeps>
               </rules>
             </configuration>
