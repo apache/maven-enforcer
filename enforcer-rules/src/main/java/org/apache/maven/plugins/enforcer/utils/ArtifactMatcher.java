@@ -203,13 +203,13 @@ public final class ArtifactMatcher
                 for ( Pattern ignorePattern : ignorePatterns )
                 {
                     if ( ignorePattern.match( artifact ) )
+                    {
                         return false;
+                    }
                 }
-
                 return true;
             }
         }
-
         return false;
     }
 }
