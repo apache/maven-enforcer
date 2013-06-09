@@ -40,7 +40,7 @@ public class AlwaysFail
         StringBuffer buf = new StringBuffer();
         if ( message != null )
         {
-            buf.append( message + "\n" );
+            buf.append( message ).append( '\n' );
         }
         buf.append( "Always fails!" );
         throw new EnforcerRuleException( buf.toString() );

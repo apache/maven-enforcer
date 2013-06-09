@@ -57,9 +57,9 @@ public class RequireReleaseVersion
             StringBuffer buf = new StringBuffer();
             if ( message != null )
             {
-                buf.append( message + "\n" );
+                buf.append( message ).append( '\n' );
             }
-            buf.append( "This project cannot be a snapshot:" + project.getArtifact().getId() );
+            buf.append( "This project cannot be a snapshot:").append( project.getArtifact().getId() );
             throw new EnforcerRuleException( buf.toString() );
         }
         if ( failWhenParentIsSnapshot )
