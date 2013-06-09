@@ -1,0 +1,7 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+  <artifactId>menforcer126_maven-plugin</artifactId>
+  <version>1.0</version>
+  <packaging>maven-plugin</packaging>
+</project>

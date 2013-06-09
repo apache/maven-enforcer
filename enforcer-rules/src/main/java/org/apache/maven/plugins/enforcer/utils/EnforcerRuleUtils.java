@@ -34,6 +34,8 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -323,4 +325,53 @@ public class EnforcerRuleUtils
         return ( StringUtils.equals( groupId, modelGroup ) && StringUtils.equals( version, modelVersion ) && StringUtils
             .equals( artifactId, model.getArtifactId() ) );
     }
+    
+ 
+    private void resolve( Plugin plugin )
+    {
+        try
+        {
+            plugin.setGroupId( (String) helper.evaluate( plugin.getGroupId() ) );
+            plugin.setArtifactId( (String) helper.evaluate( plugin.getArtifactId() ) );
+            plugin.setVersion( (String) helper.evaluate( plugin.getVersion() ) );
+        }
+        catch ( ExpressionEvaluationException e )
+        {
+            // this should have gone already before
+        }
+    }
+    
+    private void resolve( ReportPlugin plugin )
+    {
+        try
+        {
+            plugin.setGroupId( (String) helper.evaluate( plugin.getGroupId() ) );
+            plugin.setArtifactId( (String) helper.evaluate( plugin.getArtifactId() ) );
+            plugin.setVersion( (String) helper.evaluate( plugin.getVersion() ) );
+        }
+        catch ( ExpressionEvaluationException e )
+        {
+            // this should have gone already before
+        }
+    }
+    
+    public List<Plugin> resolvePlugins( List<Plugin> plugins )
+    {
+        for( Plugin plugin : plugins )
+        {
+            resolve( plugin );
+        }
+        return plugins;
+    }
+    
+    public List<ReportPlugin> resolveReportPlugins( List<ReportPlugin> reportPlugins )
+    {
+        for( ReportPlugin plugin : reportPlugins )
+        {
+            resolve( plugin );
+        }
+        return reportPlugins;
+    }
+
+
 }

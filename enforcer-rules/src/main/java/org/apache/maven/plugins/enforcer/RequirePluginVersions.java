@@ -54,6 +54,7 @@ import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Profile;
+import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.plugin.InvalidPluginException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.PluginManager;
@@ -1039,7 +1040,8 @@ public class RequirePluginVersions
         {
             try
             {
-                plugins.addAll( PluginWrapper.addAll( model.getBuild().getPlugins(), model.getId() + ".build.plugins" ) );
+                List<Plugin> modelPlugins =  model.getBuild().getPlugins();
+                plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ), model.getId() + ".build.plugins" ) );
             }
             catch ( NullPointerException e )
             {
@@ -1048,8 +1050,9 @@ public class RequirePluginVersions
 
             try
             {
+                List<ReportPlugin> modelReportPlugins =  model.getReporting().getPlugins();
                 // add the reporting plugins
-                plugins.addAll( PluginWrapper.addAll( model.getReporting().getPlugins(), model.getId() + ".reporting" ) );
+                plugins.addAll( PluginWrapper.addAll( utils.resolveReportPlugins( modelReportPlugins ), model.getId() + ".reporting" ) );
             }
             catch ( NullPointerException e )
             {
@@ -1058,7 +1061,8 @@ public class RequirePluginVersions
 
             try
             {
-                plugins.addAll( PluginWrapper.addAll( model.getBuild().getPluginManagement().getPlugins(),
+                List<Plugin> modelPlugins =  model.getBuild().getPluginManagement().getPlugins();
+                plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ),
                                                       model.getId() + ".build.pluginManagement.plugins" ) );
             }
             catch ( NullPointerException e )
@@ -1073,7 +1077,8 @@ public class RequirePluginVersions
             {
                 try
                 {
-                    plugins.addAll( PluginWrapper.addAll( profile.getBuild().getPlugins(), model.getId()
+                    List<Plugin> modelPlugins =  profile.getBuild().getPlugins();
+                    plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ), model.getId()
                         + ".profiles.profile[" + profile.getId() + "].build.plugins" ) );
                 }
                 catch ( NullPointerException e )
@@ -1083,8 +1088,9 @@ public class RequirePluginVersions
 
                 try
                 {
+                    List<ReportPlugin> modelReportPlugins =  profile.getReporting().getPlugins();
                     // add the reporting plugins
-                    plugins.addAll( PluginWrapper.addAll( profile.getReporting().getPlugins(), model.getId()
+                    plugins.addAll( PluginWrapper.addAll( utils.resolveReportPlugins( modelReportPlugins ), model.getId()
                         + "profile[" + profile.getId() + "].reporting.plugins" ) );
                 }
                 catch ( NullPointerException e )
@@ -1093,8 +1099,8 @@ public class RequirePluginVersions
                 }
                 try
                 {
-                    // add the reporting plugins
-                    plugins.addAll( PluginWrapper.addAll( profile.getBuild().getPluginManagement().getPlugins(),
+                    List<Plugin> modelPlugins =  profile.getBuild().getPluginManagement().getPlugins();
+                    plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ),
                                                           model.getId() + "profile[" + profile.getId()
                                                               + "].build.pluginManagement.plugins" ) );
                 }
