@@ -1,0 +1,86 @@
+ ~~ Licensed to the Apache Software Foundation (ASF) under one
+ ~~ or more contributor license agreements.  See the NOTICE file
+ ~~ distributed with this work for additional information
+ ~~ regarding copyright ownership.  The ASF licenses this file
+ ~~ to you under the Apache License, Version 2.0 (the
+ ~~ "License"); you may not use this file except in compliance
+ ~~ with the License.  You may obtain a copy of the License at
+ ~~
+ ~~   http://www.apache.org/licenses/LICENSE-2.0
+ ~~
+ ~~ Unless required by applicable law or agreed to in writing,
+ ~~ software distributed under the License is distributed on an
+ ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ ~~ KIND, either express or implied.  See the License for the
+ ~~ specific language governing permissions and limitations
+ ~~ under the License.
+
+ -----
+ Require Same Version
+ -----
+ Robert Scholte
+ -----
+ 2013-06-13
+ -----
+ 
+ Require Same Versions
+
+  This rule enforces that specific dependencies and/or plugins have the same version.
+
+
+   The following parameters are supported by this rule:
+   
+   * dependencies - an optional list of dependency patterns
+   
+   * buildPlugins - an optional list of build plugin patterns
+   
+   * reportPlugins - an optional list of report plugin patterns
+   
+   * plugins - an optional list of both build and report plugin patterns
+    
+   * uniqueVersions - if SNAPSHOTs should be compared by their timestamped version or not. Default: false 
+
+   []
+
+   
+  Sample Plugin Configuration:
+  
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-no-snapshots</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireSameVersions>
+                  <plugins>
+                    <plugin>org.apache.maven.plugins:maven-surefire-plugin</plugin>
+                    <plugin>org.apache.maven.plugins:maven-failsafe-plugin</plugin>
+                    <plugin>org.apache.maven.plugins:maven-surefire-report-plugin</plugin>
+                  </plugins>
+                </requireSameVersions>
+                <requireSameVersions>
+                  <dependencies>
+                    <dependency>org.apache.maven</dependency> <!-- or org.apache.maven:* -->
+                  </dependencies>
+                </requireSameVersions>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+

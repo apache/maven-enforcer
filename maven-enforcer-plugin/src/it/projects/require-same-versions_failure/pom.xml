@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><project>
+  
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.maven.enforcer.its</groupId>
+  <artifactId>requireSameVersion</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>@project.version@</version>
+        <executions>
+          <execution>
+            <id>enforce</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireSameVersions>
+                  <buildPlugins>
+                    <buildPlugin>org.apache.maven.plugins:maven-surefire-plugin</buildPlugin>
+                    <buildPlugin>org.apache.maven.plugins:maven-failsafe-plugin</buildPlugin>
+                  </buildPlugins>
+                  <reportPlugins>
+                    <reportPlugin>org.apache.maven.plugins:maven-surefire-report-plugin</reportPlugin>
+                  </reportPlugins>
+                </requireSameVersions>
+                <!-- almost the rule configuration -->
+                <requireSameVersions>
+                  <plugins>
+                    <plugin>org.apache.maven.plugins:maven-surefire-plugin</plugin>
+                    <plugin>org.apache.maven.plugins:maven-failsafe-plugin</plugin>
+                    <plugin>org.apache.maven.plugins:maven-surefire-report-plugin</plugin>
+                  </plugins>
+                </requireSameVersions>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.14</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.15</version>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.13</version>
+      </plugin>
+    </plugins>
+  </reporting>
+  
+
+ </project>
