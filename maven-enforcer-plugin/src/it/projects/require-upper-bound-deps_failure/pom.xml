@@ -2,21 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>test</groupId>
-  <artifactId>TestParent</artifactId>
+  <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+  <artifactId>menforcer128</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <dependencies>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer128_api</artifactId>
       <version>1.4.0</version>
     </dependency>
     <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer128_classic</artifactId>
       <version>0.9.9</version>
-      <!-- Depends on org.slf4j:slf4j-api:1.5.0 -->
+      <!-- Depends on org.apache.maven.plugins.enforcer.its:menforcer128_api:1.5.0 -->
     </dependency>
   </dependencies>
   <build>

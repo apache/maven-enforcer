@@ -1,0 +1,14 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+  <artifactId>menforcer128_classic</artifactId>
+  <version>0.9.9</version>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer128_api</artifactId>
+      <version>1.5.0</version>
+    </dependency>
+  </dependencies>
+</project>
