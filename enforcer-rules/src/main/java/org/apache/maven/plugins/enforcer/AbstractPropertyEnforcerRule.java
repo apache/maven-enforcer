@@ -27,7 +27,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
  *
  * @author Paul Gier
  * @author <a href='mailto:marvin[at]marvinformatics[dot]com'>Marvin Froeder</a>
- * @version $Id: AbstractPropertyEnforcerRule.java $
+ * @version $Id$
  */
 public abstract class AbstractPropertyEnforcerRule
     extends AbstractNonCacheableEnforcerRule
@@ -36,16 +36,26 @@ public abstract class AbstractPropertyEnforcerRule
     /**
      * Match the property value to a given regular expression. Defaults to <code>null</code> (any value is ok).
      */
-    public String regex = null;
+    private String regex;
 
     /**
      * Specify a warning message if the regular expression is not matched.
      */
-    public String regexMessage = null;
+    private String regexMessage;
 
     public AbstractPropertyEnforcerRule()
     {
         super();
+    }
+    
+    public void setRegex( String regex )
+    {
+        this.regex = regex;
+    }
+    
+    public void setRegexMessage( String regexMessage )
+    {
+        this.regexMessage = regexMessage;
     }
 
     /**
@@ -62,6 +72,7 @@ public abstract class AbstractPropertyEnforcerRule
         // Check that the property is not null or empty string
         if ( propValue == null )
         {
+            String message = getMessage();
             if ( message == null )
             {
                 message = getName() + " \"" + getPropertyName() + "\" is required for this build.";

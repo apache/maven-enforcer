@@ -181,7 +181,7 @@ public class TestBannedDependencies
     {
         try
         {
-            rule.message = null;
+            rule.setMessage( null );
             rule.execute( helper );
             if ( shouldFail )
             {

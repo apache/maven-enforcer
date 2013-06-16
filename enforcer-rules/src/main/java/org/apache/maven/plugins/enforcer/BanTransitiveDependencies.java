@@ -164,6 +164,7 @@ public class BanTransitiveDependencies
             throw new EnforcerRuleException( "Error: Could not construct dependency tree.", e );
         }
 
+        String message = getMessage();
         StringBuilder generatedMessage = null;
         if ( message == null )
         {

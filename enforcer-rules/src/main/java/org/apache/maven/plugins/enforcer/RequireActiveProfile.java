@@ -86,6 +86,7 @@ public class RequireActiveProfile
 
                 if ( fail )
                 {
+                    String message = getMessage();
                     StringBuilder buf = new StringBuilder();
                     if ( message != null )
                     {

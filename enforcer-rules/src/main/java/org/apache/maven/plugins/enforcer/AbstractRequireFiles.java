@@ -69,18 +69,18 @@ public abstract class AbstractRequireFiles
     {
 
         if ( !allowNulls && files.length == 0 )
-    	{
+        {
             throw new EnforcerRuleException( "The file list is empty and Null files are disabled." );
-    	}
+        }
 
         List<File> failures = new ArrayList<File>();
         for ( File file : files )
         {
             if ( !allowNulls && file == null )
-        	{
+            {
                 failures.add( file );
-        	}
-        	else if ( !checkFile( file ) )
+            }
+            else if ( !checkFile( file ) )
             {
                 failures.add( file );
             }
@@ -89,6 +89,8 @@ public abstract class AbstractRequireFiles
         // if anything was found, log it with the optional message.
         if ( !failures.isEmpty() )
         {
+            String message = getMessage();
+            
             StringBuilder buf = new StringBuilder();
             if ( message != null )
             {

@@ -53,7 +53,7 @@ public class TestEvaluateBeanshell
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should not be set
         rule.condition = "${env} == \"This is a test.\"";
-        rule.message = "We have a variable : ${env}";
+        rule.setMessage( "We have a variable : ${env}" );
 
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
         rule.execute( helper );
@@ -66,7 +66,7 @@ public class TestEvaluateBeanshell
         // this property should be set by the surefire
         // plugin
         rule.condition = "${env} == null";
-        rule.message = "We have a variable : ${env}";
+        rule.setMessage( "We have a variable : ${env}" );
 
         try
         {
@@ -76,7 +76,7 @@ public class TestEvaluateBeanshell
         }
         catch ( EnforcerRuleException e )
         {
-            assertEquals( e.getLocalizedMessage(), rule.message );
+            assertEquals( e.getLocalizedMessage(), rule.getMessage() );
         }
     }
 
@@ -95,7 +95,7 @@ public class TestEvaluateBeanshell
         }
         catch ( EnforcerRuleException e )
         {
-            assertEquals( e.getLocalizedMessage(), rule.message );
+            assertEquals( e.getLocalizedMessage(), "The expression \"${env} == null\" is not true." );
             assertTrue( e.getLocalizedMessage().length() > 0 );
         }
     }
@@ -105,7 +105,7 @@ public class TestEvaluateBeanshell
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         rule.condition = "${env} == null";
-        rule.message = "We have a variable : ${env}";
+        rule.setMessage( "We have a variable : ${env}" );
 
         ExpressionEvaluator eval = mock( ExpressionEvaluator.class );
         when( eval.evaluate( rule.condition ) ).thenThrow( new ExpressionEvaluationException( "expected error" ) );
@@ -117,7 +117,7 @@ public class TestEvaluateBeanshell
         }
         catch ( EnforcerRuleException e )
         {
-            assertFalse( e.getLocalizedMessage().equals( rule.message ) );
+            assertFalse( e.getLocalizedMessage().equals( rule.getMessage() ) );
         }
         verify( eval );
     }
@@ -127,7 +127,7 @@ public class TestEvaluateBeanshell
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         rule.condition = "this is not valid beanshell";
-        rule.message = "We have a variable : ${env}";
+        rule.setMessage( "We have a variable : ${env}" );
         try
         {
             EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
@@ -136,7 +136,7 @@ public class TestEvaluateBeanshell
         }
         catch ( EnforcerRuleException e )
         {
-            assertFalse( e.getLocalizedMessage().equals( rule.message ) );
+            assertFalse( e.getLocalizedMessage().equals( rule.getMessage() ) );
         }
     }
 }

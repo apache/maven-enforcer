@@ -54,6 +54,7 @@ public class RequireReleaseVersion
 
         if ( project.getArtifact().isSnapshot() )
         {
+            String message = getMessage();
             StringBuffer buf = new StringBuffer();
             if ( message != null )
             {

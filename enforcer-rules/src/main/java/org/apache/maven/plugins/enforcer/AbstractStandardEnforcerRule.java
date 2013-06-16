@@ -29,6 +29,16 @@ public abstract class AbstractStandardEnforcerRule
 {
 
     /** Specify a friendly message if the rule fails. */
-    public String message = null;
+    private String message;
+    
+    public final void setMessage( String message )
+    {
+        this.message = message;
+    }
+    
+    public final String getMessage()
+    {
+        return message;
+    }
 
 }

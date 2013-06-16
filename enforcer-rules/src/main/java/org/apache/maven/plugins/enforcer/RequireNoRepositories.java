@@ -140,6 +140,7 @@ public class RequireNoRepositories
             // optional message.
             if ( !badModels.isEmpty() )
             {
+                String message = getMessage();
                 if ( StringUtils.isNotEmpty( message ) )
                 {
                     newMsg.append( message );

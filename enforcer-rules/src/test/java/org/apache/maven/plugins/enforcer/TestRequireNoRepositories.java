@@ -45,7 +45,7 @@ public class TestRequireNoRepositories
         super.setUp();
 
         rule = new RequireNoRepositories();
-        rule.message = "my message";
+        rule.setMessage( "my message" );
 
         project = new MockProject();
         project.setGroupId( "org.apache.maven.plugins.enforcer.test" );

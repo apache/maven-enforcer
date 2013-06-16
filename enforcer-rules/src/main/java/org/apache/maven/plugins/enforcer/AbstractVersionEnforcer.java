@@ -93,6 +93,8 @@ public abstract class AbstractVersionEnforcer
                     }
                     else
                     {
+                        String message = getMessage();
+                        
                         if ( StringUtils.isEmpty( message ) )
                         {
                             message = msg + " is not in the allowed range " + vr + ".";

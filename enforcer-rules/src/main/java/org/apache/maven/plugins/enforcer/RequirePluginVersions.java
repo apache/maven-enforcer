@@ -285,6 +285,7 @@ public class RequirePluginVersions
                     }
                     newMsg.append( "\n" );
                 }
+                String message = getMessage();
                 if ( StringUtils.isNotEmpty( message ) )
                 {
                     newMsg.append( message );
@@ -1152,26 +1153,6 @@ public class RequirePluginVersions
     protected void setBanRelease( boolean theBanRelease )
     {
         this.banRelease = theBanRelease;
-    }
-
-    /**
-     * Gets the message.
-     *
-     * @return the message
-     */
-    protected String getMessage()
-    {
-        return this.message;
-    }
-
-    /**
-     * Sets the message.
-     *
-     * @param theMessage the message to set
-     */
-    protected void setMessage( String theMessage )
-    {
-        this.message = theMessage;
     }
 
     /**

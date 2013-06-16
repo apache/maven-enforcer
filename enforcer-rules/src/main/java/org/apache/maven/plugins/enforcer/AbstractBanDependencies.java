@@ -71,6 +71,8 @@ public abstract class AbstractBanDependencies
         // if any are found, fail the check but list all of them
         if ( foundExcludes != null && !foundExcludes.isEmpty() )
         {
+            String message = getMessage();
+            
             StringBuilder buf = new StringBuilder();
             if ( message != null )
             {
@@ -80,7 +82,7 @@ public abstract class AbstractBanDependencies
             {
                 buf.append( getErrorMessage( artifact ) );
             }
-            message = buf.toString()+ "Use 'mvn dependency:tree' to locate the source of the banned dependencies.";
+            message = buf.toString() + "Use 'mvn dependency:tree' to locate the source of the banned dependencies.";
 
             throw new EnforcerRuleException( message );
         }
@@ -115,28 +117,8 @@ public abstract class AbstractBanDependencies
      * @return the sets the
      * @throws EnforcerRuleException the enforcer rule exception
      */
-    abstract protected Set<Artifact> checkDependencies( Set<Artifact> dependencies, Log log )
+    protected abstract Set<Artifact> checkDependencies( Set<Artifact> dependencies, Log log )
         throws EnforcerRuleException;
-
-    /**
-     * Gets the message.
-     *
-     * @return the message
-     */
-    public String getMessage()
-    {
-        return this.message;
-    }
-
-    /**
-     * Sets the message.
-     *
-     * @param theMessage the message to set
-     */
-    public void setMessage( String theMessage )
-    {
-        this.message = theMessage;
-    }
 
     /**
      * Checks if is search transitive.

@@ -61,11 +61,12 @@ public class EvaluateBeanshell
             log.debug( "Echo script : " + script );
             if ( !evaluateCondition( script, log ) )
             {
+                String message = getMessage();
                 if ( StringUtils.isEmpty( message ) )
                 {
                     message = "The expression \"" + condition + "\" is not true.";
                 }
-                throw new EnforcerRuleException( this.message );
+                throw new EnforcerRuleException( message );
             }
         }
         catch ( ExpressionEvaluationException e )

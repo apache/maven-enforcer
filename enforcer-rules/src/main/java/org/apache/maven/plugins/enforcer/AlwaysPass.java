@@ -38,6 +38,9 @@ public class AlwaysPass
         throws EnforcerRuleException
     {
         final Log log = helper.getLog();
+        
+        String message = getMessage();
+        
         StringBuffer buf = new StringBuffer();
         if ( message != null )
         {

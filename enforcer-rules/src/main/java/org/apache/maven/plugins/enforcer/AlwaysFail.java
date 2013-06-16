@@ -37,6 +37,8 @@ public class AlwaysFail
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
+        String message = getMessage();
+        
         StringBuffer buf = new StringBuffer();
         if ( message != null )
         {

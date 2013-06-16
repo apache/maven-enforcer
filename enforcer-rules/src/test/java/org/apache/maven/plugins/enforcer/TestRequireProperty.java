@@ -89,7 +89,7 @@ public class TestRequireProperty
         rule.property = "testProp";
         // This expression should not match the property
         // value
-        rule.regex = "[^abc]";
+        rule.setRegex( "[^abc]" );
 
         try
         {
@@ -102,7 +102,7 @@ public class TestRequireProperty
         }
 
         // this expr should match the property
-        rule.regex = "[This].*[.]";
+        rule.setRegex( "[This].*[.]" );
         try
         {
             rule.execute( helper );

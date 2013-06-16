@@ -84,7 +84,7 @@ public class TestRequireEnvironmentVariable
         rule.variableName = "PATH";
         // This expression should not match the property
         // value
-        rule.regex = "[^abc]";
+        rule.setRegex( "[^abc]" );
 
         try
         {
@@ -97,7 +97,7 @@ public class TestRequireEnvironmentVariable
         }
 
         // can't really predict what a PATH will looks like, just enforce it ain't empty
-        rule.regex = ".{1,}";
+        rule.setRegex( ".{1,}" );
         try
         {
             rule.execute( helper );
