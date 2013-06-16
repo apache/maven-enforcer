@@ -54,7 +54,6 @@ import org.codehaus.plexus.i18n.I18N;
 public class RequireUpperBoundDeps
     extends AbstractNonCacheableEnforcerRule
 {
-
     private static Log log;
 
     private static I18N i18n;
@@ -63,9 +62,8 @@ public class RequireUpperBoundDeps
      * @since 1.3
      */
     private boolean uniqueVersions;
-    
+
     /**
-     * 
      * @param uniqueVersions
      * @since 1.3
      */
@@ -73,7 +71,7 @@ public class RequireUpperBoundDeps
     {
         this.uniqueVersions = uniqueVersions;
     }
-    
+
     /**
      * Uses the {@link EnforcerRuleHelper} to populate the values of the
      * {@link DependencyTreeBuilder#buildDependencyTree(MavenProject, ArtifactRepository, ArtifactFactory, ArtifactMetadataSource, ArtifactFilter, ArtifactCollector)}
@@ -165,7 +163,7 @@ public class RequireUpperBoundDeps
     {
         StringBuilder errorMessage = new StringBuilder();
         errorMessage.append( "\nRequire upper bound dependencies error for "
-            + getFullArtifactName( conflict.get( 0 ).getArtifact() ) + " paths to dependency are:\n" );
+            + getFullArtifactName( conflict.get( 0 ), false ) + " paths to dependency are:\n" );
         if ( conflict.size() > 0 )
         {
             errorMessage.append( buildTreeString( conflict.get( 0 ) ) );
@@ -184,7 +182,15 @@ public class RequireUpperBoundDeps
         DependencyNode currentNode = node;
         while ( currentNode != null )
         {
-            loc.add( getFullArtifactName( currentNode.getArtifact() ) );
+            StringBuilder line = new StringBuilder( getFullArtifactName( currentNode, false ) );
+            
+            if( currentNode.getPremanagedVersion() != null )
+            {
+                line.append( " (managed) <-- " );
+                line.append( getFullArtifactName( currentNode, true ) );
+            }
+            
+            loc.add( line.toString() );
             currentNode = currentNode.getParent();
         }
         Collections.reverse( loc );
@@ -201,17 +207,24 @@ public class RequireUpperBoundDeps
         return builder;
     }
 
-    private String getFullArtifactName( Artifact artifact )
+    private String getFullArtifactName( DependencyNode node, boolean usePremanaged )
     {
-        return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
+        Artifact artifact = node.getArtifact();
+
+        String version = node.getPremanagedVersion();
+        if ( !usePremanaged || version == null )
+        {
+            version = uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
+        }
+        return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + version;
     }
 
     private static class RequireUpperBoundDepsVisitor
         implements DependencyNodeVisitor
     {
-        
+
         private boolean uniqueVersions;
-        
+
         public void setUniqueVersions( boolean uniqueVersions )
         {
             this.uniqueVersions = uniqueVersions;
@@ -261,30 +274,27 @@ public class RequireUpperBoundDeps
         @SuppressWarnings( "unchecked" )
         private boolean containsConflicts( List<DependencyNodeHopCountPair> pairs )
         {
-            if ( pairs.size() > 1 )
+            DependencyNodeHopCountPair resolvedPair = pairs.get( 0 );
+
+            // search for artifact with lowest hopCount
+            for ( DependencyNodeHopCountPair hopPair : pairs.subList( 1, pairs.size() ) )
             {
-                DependencyNodeHopCountPair resolvedPair = pairs.get( 0 );
-
-                // search for artifact with lowest hopCount
-                for ( DependencyNodeHopCountPair hopPair : pairs )
+                if ( hopPair.getHopCount() < resolvedPair.getHopCount() )
                 {
-                    if ( hopPair.getHopCount() < resolvedPair.getHopCount() )
-                    {
-                        resolvedPair = hopPair;
-                    }
+                    resolvedPair = hopPair;
                 }
+            }
 
-                ArtifactVersion resolvedVersion = resolvedPair.extractArtifactVersion( uniqueVersions );
+            ArtifactVersion resolvedVersion = resolvedPair.extractArtifactVersion( uniqueVersions, false );
 
-                for ( DependencyNodeHopCountPair pair : pairs )
+            for ( DependencyNodeHopCountPair pair : pairs )
+            {
+                ArtifactVersion version = pair.extractArtifactVersion( uniqueVersions, true );
+                if ( resolvedVersion.compareTo( version ) < 0 )
                 {
-                    ArtifactVersion version = pair.extractArtifactVersion( uniqueVersions );
-                    if ( resolvedVersion.compareTo( version ) < 0 )
-                    {
-                        return true;
-                    }
+                    return true;
                 }
-            } 
+            }
             return false;
         }
 
@@ -326,8 +336,13 @@ public class RequireUpperBoundDeps
             return node;
         }
 
-        private ArtifactVersion extractArtifactVersion( boolean uniqueVersions )
+        private ArtifactVersion extractArtifactVersion( boolean uniqueVersions, boolean usePremanagedVersion )
         {
+            if ( usePremanagedVersion && node.getPremanagedVersion() != null )
+            {
+                return new DefaultArtifactVersion( node.getPremanagedVersion() );
+            }
+
             Artifact artifact = node.getArtifact();
             String version = uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
             if ( version != null )
