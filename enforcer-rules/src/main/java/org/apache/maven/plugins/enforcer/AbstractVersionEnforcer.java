@@ -27,7 +27,6 @@ import org.apache.maven.artifact.versioning.Restriction;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -51,7 +50,7 @@ public abstract class AbstractVersionEnforcer
      * <li><code>(,2.0.5],[2.1.1,)</code> Versions up to 2.0.5 (included) and 2.1.1 or higher</li>
      * </ul>
      */
-    public String version = null;
+    private String version;
 
     /**
      * Compares the specified version to see if it is allowed by the defined version range.
@@ -60,7 +59,6 @@ public abstract class AbstractVersionEnforcer
      * @param variableName name of variable to use in messages (Example: "Maven" or "Java" etc).
      * @param requiredVersionRange range of allowed versions.
      * @param actualVersion the version to be checked.
-     * @throws MojoExecutionException if the version is not allowed.
      * @throws EnforcerRuleException the enforcer rule exception
      */
     public void enforceVersion( Log log, String variableName, String requiredVersionRange, ArtifactVersion actualVersion )
@@ -105,8 +103,8 @@ public abstract class AbstractVersionEnforcer
                 }
                 catch ( InvalidVersionSpecificationException e )
                 {
-                    throw new EnforcerRuleException( "The requested " + variableName + " version " +
-                        requiredVersionRange + " is invalid.", e );
+                    throw new EnforcerRuleException( "The requested " + variableName + " version "
+                        + requiredVersionRange + " is invalid.", e );
                 }
             }
         }
@@ -195,7 +193,7 @@ public abstract class AbstractVersionEnforcer
      *
      * @return the required version
      */
-    public String getVersion()
+    public final String getVersion()
     {
         return this.version;
     }
@@ -205,7 +203,7 @@ public abstract class AbstractVersionEnforcer
      *
      * @param theVersion the required version to set
      */
-    public void setVersion( String theVersion )
+    public final void setVersion( String theVersion )
     {
         this.version = theVersion;
     }

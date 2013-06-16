@@ -18,6 +18,7 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -221,8 +222,10 @@ public class DependencyConvergence
      * allow double checking of the results. Most of the time this can be done by generating unique ids, but sometimes
      * the results of objects returned by the helper need to be queried. You may for example, store certain objects in
      * your rule and then query them later.
+     * 
+     * @param rule
      */
-    public boolean isResultValid( EnforcerRule arg0 )
+    public boolean isResultValid( EnforcerRule rule )
     {
         return false;
     }

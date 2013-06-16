@@ -48,7 +48,7 @@ public class RequireMavenVersion
             RuntimeInformation rti = (RuntimeInformation) helper.getComponent( RuntimeInformation.class );
             ArtifactVersion detectedMavenVersion = rti.getApplicationVersion();
             helper.getLog().debug( "Detected Maven Version: " + detectedMavenVersion );
-            enforceVersion( helper.getLog(), "Maven", this.version, detectedMavenVersion );
+            enforceVersion( helper.getLog(), "Maven", getVersion(), detectedMavenVersion );
         }
         catch ( ComponentLookupException e )
         {

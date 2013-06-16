@@ -108,7 +108,7 @@ public class RequireFilesSize
      */
     boolean checkFile( File file )
     {
-        if (file == null)
+        if ( file == null )
         {
             //if we get here and it's null, treat it as a success.
             return true;
@@ -131,11 +131,11 @@ public class RequireFilesSize
             else
             {
 
-                this.log.debug( file +
-                    " size (" +
-                    length +
-                    ") is OK (" +
-                    ( minsize == maxsize || minsize == 0 ? ( "max. " + maxsize )
+                this.log.debug( file
+                    + " size ("
+                    + length
+                    + ") is OK ("
+                    + ( minsize == maxsize || minsize == 0 ? ( "max. " + maxsize )
                                     : ( "between " + minsize + " and " + maxsize ) ) + " byte)." );
 
                 return true;

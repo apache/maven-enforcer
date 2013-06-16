@@ -49,20 +49,20 @@ public class RequireJavaVersion
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
-        String java_version = SystemUtils.JAVA_VERSION_TRIMMED;
+        String javaVersion = SystemUtils.JAVA_VERSION_TRIMMED;
         Log log = helper.getLog();
 
-        log.debug( "Detected Java String: " + java_version );
-        java_version = normalizeJDKVersion( java_version );
-        log.debug( "Normalized Java String: " + java_version );
+        log.debug( "Detected Java String: " + javaVersion );
+        javaVersion = normalizeJDKVersion( javaVersion );
+        log.debug( "Normalized Java String: " + javaVersion );
 
-        ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion( java_version );
+        ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion( javaVersion );
 
-        log.debug( "Parsed Version: Major: " + detectedJdkVersion.getMajorVersion() + " Minor: " +
-            detectedJdkVersion.getMinorVersion() + " Incremental: " + detectedJdkVersion.getIncrementalVersion() +
-            " Build: " + detectedJdkVersion.getBuildNumber() + " Qualifier: " + detectedJdkVersion.getQualifier() );
+        log.debug( "Parsed Version: Major: " + detectedJdkVersion.getMajorVersion() + " Minor: "
+            + detectedJdkVersion.getMinorVersion() + " Incremental: " + detectedJdkVersion.getIncrementalVersion()
+            + " Build: " + detectedJdkVersion.getBuildNumber() + " Qualifier: " + detectedJdkVersion.getQualifier() );
 
-        enforceVersion( helper.getLog(), "JDK", version, detectedJdkVersion );
+        enforceVersion( helper.getLog(), "JDK", getVersion(), detectedJdkVersion );
     }
 
     /**

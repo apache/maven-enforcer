@@ -41,7 +41,17 @@ public class EvaluateBeanshell
     private static final Interpreter bsh = new Interpreter();
 
     /** The condition to be evaluated. */
-    public String condition;
+    private String condition;
+    
+    public final void setCondition( String condition )
+    {
+        this.condition = condition;
+    }
+    
+    public final String getCondition()
+    {
+        return condition;
+    }
 
     /*
      * (non-Javadoc)

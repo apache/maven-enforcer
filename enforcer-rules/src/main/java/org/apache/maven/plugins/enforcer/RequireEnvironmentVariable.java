@@ -34,7 +34,12 @@ public class RequireEnvironmentVariable
     /**
      * Specify the required variable.
      */
-    public String variableName = null;
+    private String variableName;
+    
+    public final void setVariableName( String variableName )
+    {
+        this.variableName = variableName;
+    }
 
     @Override
     public String resolveValue( EnforcerRuleHelper helper )

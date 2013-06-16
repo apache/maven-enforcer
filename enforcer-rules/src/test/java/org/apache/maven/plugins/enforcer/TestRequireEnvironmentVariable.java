@@ -46,7 +46,7 @@ public class TestRequireEnvironmentVariable
 
         RequireEnvironmentVariable rule = new RequireEnvironmentVariable();
         // this env variable should not be set
-        rule.variableName = "JUNK";
+        rule.setVariableName( "JUNK" );
 
         try
         {
@@ -59,7 +59,7 @@ public class TestRequireEnvironmentVariable
         }
 
         // PATH shall be common to windows and linux
-        rule.variableName = "PATH";
+        rule.setVariableName( "PATH" );
         try
         {
             rule.execute( helper );
@@ -81,7 +81,7 @@ public class TestRequireEnvironmentVariable
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
 
         RequireEnvironmentVariable rule = new RequireEnvironmentVariable();
-        rule.variableName = "PATH";
+        rule.setVariableName( "PATH" );
         // This expression should not match the property
         // value
         rule.setRegex( "[^abc]" );

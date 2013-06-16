@@ -127,7 +127,7 @@ public class BanDuplicatePomDependencyVersions
         StringBuilder summary = new StringBuilder();
         messageBuilder( duplicateDependencies, "dependencies.dependency", summary );
 
-        if( model.getDependencyManagement() != null )
+        if ( model.getDependencyManagement() != null )
         {
             @SuppressWarnings( "unchecked" )
             List<Dependency> managementDependencies = model.getDependencies();
@@ -140,27 +140,34 @@ public class BanDuplicatePomDependencyVersions
         
         @SuppressWarnings( "unchecked" )
         List<Profile> profiles = model.getProfiles();
-        for( Profile profile : profiles )
+        for ( Profile profile : profiles )
         {
             @SuppressWarnings( "unchecked" )
             List<Dependency> profileDependencies = profile.getDependencies();
+
             Map<String, Integer> duplicateProfileDependencies = validateDependencies( profileDependencies );
+
             duplicates += duplicateProfileDependencies.size();
             
-            messageBuilder( duplicateProfileDependencies, "profiles.profile[" + profile.getId() + "].dependencies.dependency",  summary );
+            messageBuilder( duplicateProfileDependencies, "profiles.profile[" + profile.getId()
+                + "].dependencies.dependency", summary );
 
-            if( model.getDependencyManagement() != null )
+            if ( model.getDependencyManagement() != null )
             {
                 @SuppressWarnings( "unchecked" )
                 List<Dependency> profileManagementDependencies = profile.getDependencies();
-                Map<String, Integer> duplicateProfileManagementDependencies = validateDependencies( profileManagementDependencies );
+                
+                Map<String, Integer> duplicateProfileManagementDependencies =
+                    validateDependencies( profileManagementDependencies );
+
                 duplicates += duplicateProfileManagementDependencies.size();
                 
-                messageBuilder( duplicateProfileManagementDependencies, "profiles.profile[" + profile.getId() + "].dependencyManagement.dependencies.dependency", summary );
+                messageBuilder( duplicateProfileManagementDependencies, "profiles.profile[" + profile.getId()
+                    + "].dependencyManagement.dependencies.dependency", summary );
             }
         }
             
-        if( summary.length() > 0 )
+        if ( summary.length() > 0 )
         {
             StringBuilder message = new StringBuilder();
             message.append( "Found " ).append( duplicates ).append( " duplicate dependency " );
@@ -194,7 +201,7 @@ public class BanDuplicatePomDependencyVersions
             if ( deps.contains( key ) )
             {
                 int times = 1;
-                if( duplicateDeps.containsKey( key ) )
+                if ( duplicateDeps.containsKey( key ) )
                 {
                     times = duplicateDeps.get( key );
                 }

@@ -39,10 +39,10 @@ public class RequireActiveProfile
 {
 
     /** Comma separated list of profiles to check. */
-    public String profiles = null;
+    private String profiles = null;
 
     /** If all profiles must be active. If false, only one must be active */
-    public boolean all = true;
+    private boolean all = true;
 
     /*
      * (non-Javadoc)

@@ -52,7 +52,7 @@ public class TestEvaluateBeanshell
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should not be set
-        rule.condition = "${env} == \"This is a test.\"";
+        rule.setCondition( "${env} == \"This is a test.\"" );
         rule.setMessage( "We have a variable : ${env}" );
 
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
@@ -65,7 +65,7 @@ public class TestEvaluateBeanshell
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should be set by the surefire
         // plugin
-        rule.condition = "${env} == null";
+        rule.setCondition( "${env} == null" );
         rule.setMessage( "We have a variable : ${env}" );
 
         try
@@ -86,7 +86,7 @@ public class TestEvaluateBeanshell
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should be set by the surefire
         // plugin
-        rule.condition = "${env} == null";
+        rule.setCondition( "${env} == null" );
         try
         {
             EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
@@ -104,11 +104,11 @@ public class TestEvaluateBeanshell
         throws EnforcerRuleException, ExpressionEvaluationException
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
-        rule.condition = "${env} == null";
+        rule.setCondition( "${env} == null" );
         rule.setMessage( "We have a variable : ${env}" );
 
         ExpressionEvaluator eval = mock( ExpressionEvaluator.class );
-        when( eval.evaluate( rule.condition ) ).thenThrow( new ExpressionEvaluationException( "expected error" ) );
+        when( eval.evaluate( rule.getCondition() ) ).thenThrow( new ExpressionEvaluationException( "expected error" ) );
         try
         {
             EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project, eval );
@@ -126,7 +126,7 @@ public class TestEvaluateBeanshell
         throws EnforcerRuleException, ExpressionEvaluationException
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
-        rule.condition = "this is not valid beanshell";
+        rule.setCondition( "this is not valid beanshell" );
         rule.setMessage( "We have a variable : ${env}" );
         try
         {
