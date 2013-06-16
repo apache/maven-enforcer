@@ -123,9 +123,10 @@ public class EnforceMojo
     {
         container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
-    
+
     /**
      * Entry point to the mojo
+     * @throws MojoExecutionException 
      */
     public void execute ()
         throws MojoExecutionException
@@ -228,8 +229,8 @@ public class EnforceMojo
      * This method determines if a rule should execute based
      * on the cache
      * 
-     * @param rule
-     * @return
+     * @param rule the rule to verify
+     * @return {@code true} if rule should be executed, otherwise {@code false} 
      */
     protected boolean shouldExecute ( EnforcerRule rule )
     {
@@ -243,7 +244,7 @@ public class EnforceMojo
                 log.debug( "Key " + key + " was found in the cache" );
                 if ( rule.isResultValid( (EnforcerRule) cache.get( key ) ) )
                 {
-                    log.debug( "The cached results are still valid. Skipping the rule: "+rule.getClass().getName() );
+                    log.debug( "The cached results are still valid. Skipping the rule: " + rule.getClass().getName() );
                     return false;
                 }
             }
