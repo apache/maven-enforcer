@@ -39,7 +39,7 @@ public class RequireReleaseVersion
      *
      * @parameter
      */
-    public boolean failWhenParentIsSnapshot = true;
+    private boolean failWhenParentIsSnapshot = true;
 
     /*
      * (non-Javadoc)
@@ -60,7 +60,7 @@ public class RequireReleaseVersion
             {
                 buf.append( message ).append( '\n' );
             }
-            buf.append( "This project cannot be a snapshot:").append( project.getArtifact().getId() );
+            buf.append( "This project cannot be a snapshot:" ).append( project.getArtifact().getId() );
             throw new EnforcerRuleException( buf.toString() );
         }
         if ( failWhenParentIsSnapshot )
@@ -92,12 +92,12 @@ public class RequireReleaseVersion
         }
     }
 
-    public boolean isFailWhenParentIsSnapshot()
+    public final boolean isFailWhenParentIsSnapshot()
     {
         return failWhenParentIsSnapshot;
     }
 
-    public void setFailWhenParentIsSnapshot( boolean failWhenParentIsSnapshot )
+    public final void setFailWhenParentIsSnapshot( boolean failWhenParentIsSnapshot )
     {
         this.failWhenParentIsSnapshot = failWhenParentIsSnapshot;
     }

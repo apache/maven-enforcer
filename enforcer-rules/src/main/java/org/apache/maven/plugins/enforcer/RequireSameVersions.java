@@ -99,7 +99,7 @@ public class RequireSameVersions
         Map<String, List<String>> versionMembers = new LinkedHashMap<String, List<String>>();
         
         List<Pattern> regExs = new ArrayList<Pattern>();
-        for( String pattern : patterns )
+        for ( String pattern : patterns )
         {
             String regex = pattern.replace( ".", "\\." ).replace( "*", ".*" ).replace( ":", "\\:" ).replace( '?', '.' );
 

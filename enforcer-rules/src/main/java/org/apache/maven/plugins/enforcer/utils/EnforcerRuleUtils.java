@@ -105,10 +105,10 @@ public class EnforcerRuleUtils
     public EnforcerRuleUtils( EnforcerRuleHelper helper )
     {
 
-    	this.helper = helper;
-    	// get the various expressions out of the
+        this.helper = helper;
+        // get the various expressions out of the
         // helper.
-    	try
+        try
         {
             factory = (ArtifactFactory) helper.getComponent( ArtifactFactory.class );
             resolver = (ArtifactResolver) helper.getComponent( ArtifactResolver.class );
@@ -296,7 +296,7 @@ public class EnforcerRuleUtils
             }
             else
             {
-            	//MENFORCER-30, handle cases where the value is a property like ${project.parent.groupId}
+                // MENFORCER-30, handle cases where the value is a property like ${project.parent.groupId}
                 modelGroup = (String) helper.evaluate( modelGroup );
             }
 
@@ -306,7 +306,7 @@ public class EnforcerRuleUtils
             }
             else
             {
-            	//MENFORCER-30, handle cases where the value is a property like ${project.parent.version}
+                // MENFORCER-30, handle cases where the value is a property like ${project.parent.version}
                 modelVersion = (String) helper.evaluate( modelVersion );
             }
         }
@@ -357,7 +357,7 @@ public class EnforcerRuleUtils
     
     public List<Plugin> resolvePlugins( List<Plugin> plugins )
     {
-        for( Plugin plugin : plugins )
+        for ( Plugin plugin : plugins )
         {
             resolve( plugin );
         }
@@ -366,7 +366,7 @@ public class EnforcerRuleUtils
     
     public List<ReportPlugin> resolveReportPlugins( List<ReportPlugin> reportPlugins )
     {
-        for( ReportPlugin plugin : reportPlugins )
+        for ( ReportPlugin plugin : reportPlugins )
         {
             resolve( plugin );
         }

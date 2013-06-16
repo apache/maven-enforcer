@@ -27,13 +27,12 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugins.enforcer.AbstractVersionEnforcer;
-import org.apache.maven.plugins.enforcer.BanTransitiveDependencies;
 
 /**
  * This class is used for matching Artifacts against a list of patterns.
  * 
  * @author Jakub Senko
- * @see BanTransitiveDependencies
+ * @see org.apache.maven.plugins.enforcer.BanTransitiveDependencies
  */
 public final class ArtifactMatcher
 {
@@ -120,7 +119,7 @@ public final class ArtifactMatcher
                     }
 
                 case 2:
-                    if ( !matches( parts[1],artifact.getArtifactId() ) )
+                    if ( !matches( parts[1], artifact.getArtifactId() ) )
                     {
                         return false;
                     }

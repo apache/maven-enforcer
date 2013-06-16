@@ -1,6 +1,5 @@
 package org.apache.maven.plugins.enforcer;
 
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -40,11 +39,21 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule
      */
     private String mavenVersion;
 
+    /**
+     * Set the mavenVersion
+     * 
+     * Can either be version or a range, e.g. {@code 2.2.1} or {@code [2.2.1,)}
+     * 
+     * @param mavenVersion the version or {@code null}
+     */
     public void setMavenVersion( String mavenVersion )
     {
         this.mavenVersion = mavenVersion;
     }
     
+    /**
+     * {@inheritDoc}
+     */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

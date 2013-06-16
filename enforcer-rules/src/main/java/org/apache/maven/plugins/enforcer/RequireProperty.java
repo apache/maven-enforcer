@@ -33,7 +33,12 @@ public class RequireProperty
 {
 
     /** Specify the required property. */
-    public String property = null;
+    private String property;
+    
+    public final void setProperty( String property )
+    {
+        this.property = property;
+    }
 
     @Override
     public Object resolveValue( EnforcerRuleHelper helper )

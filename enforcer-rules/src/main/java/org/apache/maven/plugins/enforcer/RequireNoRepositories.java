@@ -48,33 +48,63 @@ public class RequireNoRepositories
     /**
      * Whether to ban non-plugin repositories. By default they are banned.
      */
-    public boolean banRepositories = true;
+    private boolean banRepositories = true;
 
     /**
      * Whether to ban plugin repositories. By default they are banned.
      */
-    public boolean banPluginRepositories = true;
+    private boolean banPluginRepositories = true;
 
     /**
      * Specify explicitly allowed non-plugin repositories. This is a list of ids.
      */
-    public List<String> allowedRepositories = Collections.emptyList();
+    private List<String> allowedRepositories = Collections.emptyList();
 
     /**
      * Specify explicitly allowed plugin repositories. This is a list of ids.
      */
-    public List<String> allowedPluginRepositories = Collections.emptyList();
+    private List<String> allowedPluginRepositories = Collections.emptyList();
 
     /**
      * Whether to allow repositories which only resolve snapshots. By default they are banned.
      */
-    public boolean allowSnapshotRepositories = false;
+    private boolean allowSnapshotRepositories = false;
 
     /**
      * Whether to allow plugin repositories which only resolve snapshots. By default they are banned.
      */
-    public boolean allowSnapshotPluginRepositories = false;
+    private boolean allowSnapshotPluginRepositories = false;
 
+    public final void setBanRepositories( boolean banRepositories )
+    {
+        this.banRepositories = banRepositories;
+    }
+    
+    public final void setBanPluginRepositories( boolean banPluginRepositories )
+    {
+        this.banPluginRepositories = banPluginRepositories;
+    }
+    
+    public final void setAllowedRepositories( List<String> allowedRepositories )
+    {
+        this.allowedRepositories = allowedRepositories;
+    }
+    
+    public final void setAllowedPluginRepositories( List<String> allowedPluginRepositories )
+    {
+        this.allowedPluginRepositories = allowedPluginRepositories;
+    }
+    
+    public final void setAllowSnapshotRepositories( boolean allowSnapshotRepositories )
+    {
+        this.allowSnapshotRepositories = allowSnapshotRepositories;
+    }
+    
+    public final void setAllowSnapshotPluginRepositories( boolean allowSnapshotPluginRepositories )
+    {
+        this.allowSnapshotPluginRepositories = allowSnapshotPluginRepositories;
+    }
+    
     /*
      * (non-Javadoc)
      * @see

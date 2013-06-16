@@ -59,22 +59,22 @@ public class RequireOS
      * <li>os/400</li>
      * </ul>
      */
-    public String family = null;
+    private String family = null;
 
     /** The OS name desired. */
-    public String name = null;
+    private String name = null;
 
     /** The OS version desired. */
-    public String version = null;
+    private String version = null;
 
     /** The OS architecture desired. */
-    public String arch = null;
+    private String arch = null;
 
     /** Specify an optional message to the user if the rule fails. */
-    public String message = "";
+    private String message = "";
 
     /** Display detected OS information. */
-    public boolean display = false;
+    private boolean display = false;
 
     /**
      * Instantiates a new RequireOS.
@@ -107,10 +107,11 @@ public class RequireOS
                 if ( StringUtils.isEmpty( message ) )
                 {
                     message =
-                        ( "OS Arch: " + Os.OS_ARCH + " Family: " + Os.OS_FAMILY + " Name: " + Os.OS_NAME +
-                            " Version: " + Os.OS_VERSION + " is not allowed by" +
-                            ( arch != null ? " Arch=" + arch : "" ) + ( family != null ? " Family=" + family : "" ) +
-                            ( name != null ? " Name=" + name : "" ) + ( version != null ? " Version=" + version : "" ) );
+                        ( "OS Arch: " + Os.OS_ARCH + " Family: " + Os.OS_FAMILY + " Name: " + Os.OS_NAME + " Version: "
+                            + Os.OS_VERSION + " is not allowed by" + ( arch != null ? " Arch=" + arch : "" )
+                            + ( family != null ? " Family=" + family : "" ) + ( name != null ? " Name=" + name : "" ) + ( version != null ? " Version="
+                            + version
+                                        : "" ) );
                 }
                 throw new EnforcerRuleException( message );
             }
@@ -138,8 +139,8 @@ public class RequireOS
     public void displayOSInfo( Log log, boolean info )
     {
         String string =
-            "OS Info: Arch: " + Os.OS_ARCH + " Family: " + Os.OS_FAMILY + " Name: " + Os.OS_NAME + " Version: " +
-                Os.OS_VERSION;
+            "OS Info: Arch: " + Os.OS_ARCH + " Family: " + Os.OS_FAMILY + " Name: " + Os.OS_NAME + " Version: "
+                + Os.OS_VERSION;
 
         if ( !info )
         {

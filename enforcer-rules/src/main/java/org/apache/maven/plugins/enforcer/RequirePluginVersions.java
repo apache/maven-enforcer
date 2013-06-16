@@ -85,43 +85,43 @@ public class RequirePluginVersions
 {
 
     /** Don't allow the LATEST identifier. */
-    public boolean banLatest = true;
+    private boolean banLatest = true;
 
     /** Don't allow the RELEASE identifier. */
-    public boolean banRelease = true;
+    private boolean banRelease = true;
 
     /** Don't allow snapshot plugins. */
-    public boolean banSnapshots = true;
+    private boolean banSnapshots = true;
 
     /** Don't allow timestamp snapshot plugins. */
-    public boolean banTimestamps = true;
+    private boolean banTimestamps = true;
 
     /**
      * The comma separated list of phases that should be used to find lifecycle plugin bindings. The default value is
      * "clean,deploy,site".
      */
-    public String phases = "clean,deploy,site";
+    private String phases = "clean,deploy,site";
 
     /**
      * Additional plugins to enforce have versions. These are plugins that may not be in the poms but are used anyway,
      * like help, eclipse etc. <br>
      * The plugins should be specified in the form: <code>group:artifactId</code>.
      */
-    public List<String> additionalPlugins;
+    private List<String> additionalPlugins;
 
     /**
      * Plugins to skip for version enforcement. The plugins should be specified in the form:
      * <code>group:artifactId</code>. NOTE: This is deprecated, use unCheckedPluginList instead.
      * @deprecated
      */
-    public List unCheckedPlugins;
+    private List unCheckedPlugins;
 
     /**
      * Same as unCheckedPlugins but as a comma list to better support properties. Sample form:
      * <code>group:artifactId,group2:artifactId2</code>
      * @since 1.0-beta-1
      */
-    public String unCheckedPluginList;
+    private String unCheckedPluginList;
 
     /** The plugin manager. */
     private PluginManager pluginManager;
@@ -133,25 +133,25 @@ public class RequirePluginVersions
     private Collection<Lifecycle> lifecycles;
 
     /** The factory. */
-    ArtifactFactory factory;
+    private ArtifactFactory factory;
 
     /** The resolver. */
-    ArtifactResolver resolver;
+    private ArtifactResolver resolver;
 
     /** The local. */
-    ArtifactRepository local;
+    private ArtifactRepository local;
 
     /** The remote repositories. */
-    List<ArtifactRepository> remoteRepositories;
+    private List<ArtifactRepository> remoteRepositories;
 
     /** The log. */
-    Log log;
+    private Log log;
 
     /** The session. */
-    MavenSession session;
+    private MavenSession session;
 
     /** The utils. */
-    EnforcerRuleUtils utils;
+    private EnforcerRuleUtils utils;
 
     /*
      * (non-Javadoc)
@@ -341,8 +341,8 @@ public class RequirePluginVersions
      *
      * @param uncheckedPlugins
      * @param plugins
-     * @return
      * @throws MojoExecutionException
+     * @return
      */
     public Collection<Plugin> removeUncheckedPlugins( Collection<String> uncheckedPlugins, Collection<Plugin> plugins )
         throws MojoExecutionException
@@ -397,7 +397,7 @@ public class RequirePluginVersions
     {
         if ( additional != null )
         {
-            for( String pluginString : additional )
+            for ( String pluginString : additional )
             {
                 Plugin plugin = parsePluginString( pluginString, "AdditionalPlugins" );
 
@@ -419,8 +419,9 @@ public class RequirePluginVersions
      * Helper method to parse and inject a Plugin.
      *
      * @param pluginString
-     * @return
+     * @param field 
      * @throws MojoExecutionException
+     * @return the plugin
      */
     protected Plugin parsePluginString( String pluginString, String field )
         throws MojoExecutionException

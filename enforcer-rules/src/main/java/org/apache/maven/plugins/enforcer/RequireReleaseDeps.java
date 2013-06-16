@@ -48,29 +48,34 @@ public class RequireReleaseDeps
      *
      * @parameter
      */
-    public boolean onlyWhenRelease = false;
+    private boolean onlyWhenRelease = false;
 
     /**
      * Allows this rule to fail when the parent is defined as a snapshot.
      *
      * @parameter
      */
-    public boolean failWhenParentIsSnapshot = true;
+    private boolean failWhenParentIsSnapshot = true;
 
     /**
      * Dependencies to ignore when checking for release versions.  For example, inter-module dependencies 
      * can be excluded from the check and therefore allowed to contain snapshot versions.
      */
-    public List<String> excludes = null;
+    private List<String> excludes = null;
 
     /**
      * Dependencies to include when checking for release versions.  If any of the included dependencies
      * have snapshot versions, the rule will fail.
      */
-    public List<String> includes = null;
+    private List<String> includes = null;
 
+    
+    
     /**
      * Override parent to allow optional ignore of this rule.
+     * 
+     * @param helper the enforcerRuleHelper
+     * @throws EnforcerRuleException when an exception occurs
      */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
@@ -182,22 +187,22 @@ public class RequireReleaseDeps
         return result;
     }
 
-    public boolean isOnlyWhenRelease()
+    public final boolean isOnlyWhenRelease()
     {
         return onlyWhenRelease;
     }
 
-    public void setOnlyWhenRelease( boolean onlyWhenRelease )
+    public final void setOnlyWhenRelease( boolean onlyWhenRelease )
     {
         this.onlyWhenRelease = onlyWhenRelease;
     }
 
-    public boolean isFailWhenParentIsSnapshot()
+    public final boolean isFailWhenParentIsSnapshot()
     {
         return failWhenParentIsSnapshot;
     }
 
-    public void setFailWhenParentIsSnapshot( boolean failWhenParentIsSnapshot )
+    public final void setFailWhenParentIsSnapshot( boolean failWhenParentIsSnapshot )
     {
         this.failWhenParentIsSnapshot = failWhenParentIsSnapshot;
     }

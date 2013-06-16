@@ -48,7 +48,7 @@ public class TestRequireProperty
 
         RequireProperty rule = new RequireProperty();
         // this property should not be set
-        rule.property = "testPropJunk";
+        rule.setProperty( "testPropJunk" );
 
         try
         {
@@ -62,7 +62,7 @@ public class TestRequireProperty
 
         // this property should be set by the surefire
         // plugin
-        rule.property = "testProp";
+        rule.setProperty( "testProp" );
         try
         {
             rule.execute( helper );
@@ -86,7 +86,7 @@ public class TestRequireProperty
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
 
         RequireProperty rule = new RequireProperty();
-        rule.property = "testProp";
+        rule.setProperty( "testProp" );
         // This expression should not match the property
         // value
         rule.setRegex( "[^abc]" );

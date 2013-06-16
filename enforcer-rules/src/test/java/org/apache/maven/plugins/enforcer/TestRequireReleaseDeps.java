@@ -66,7 +66,7 @@ public class TestRequireReleaseDeps
 
         TestEnforcerRuleUtils.execute( rule, helper, true );
 
-        rule.onlyWhenRelease = true;
+        rule.setOnlyWhenRelease( true );
 
         TestEnforcerRuleUtils.execute( rule, helper, false );
 

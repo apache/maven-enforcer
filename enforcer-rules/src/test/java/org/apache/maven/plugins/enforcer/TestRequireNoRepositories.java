@@ -83,7 +83,7 @@ public class TestRequireNoRepositories
     public void testAllBannedWithAllowedRepositories()
         throws EnforcerRuleException
     {
-        rule.allowedRepositories = Collections.singletonList( "repo" );
+        rule.setAllowedRepositories( Collections.singletonList( "repo" ) );
 
         project.setArtifactId( "with-repositories-child" );
         project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/with-repositories/child" ) );
@@ -94,7 +94,7 @@ public class TestRequireNoRepositories
     public void testAllBannedWithAllowedPluginRepositories()
         throws EnforcerRuleException
     {
-        rule.allowedPluginRepositories = Collections.singletonList( "repo" );
+        rule.setAllowedPluginRepositories( Collections.singletonList( "repo" ) );
 
         project.setArtifactId( "with-plugin-repositories-child" );
         project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/with-plugin-repositories/child" ) );
@@ -105,7 +105,7 @@ public class TestRequireNoRepositories
     public void testReposNotBannedNoRepositories()
         throws EnforcerRuleException
     {
-        rule.banRepositories = false;
+        rule.setBanRepositories( false );
 
         project.setArtifactId( "no-repositories-child" );
         project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/no-repositories/child" ) );
@@ -116,7 +116,7 @@ public class TestRequireNoRepositories
     public void testReposNotBannedWithRepositories()
         throws EnforcerRuleException
     {
-        rule.banRepositories = false;
+        rule.setBanRepositories( false );
 
         project.setArtifactId( "with-repositories-child" );
         project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/with-repositories/child" ) );
@@ -127,7 +127,7 @@ public class TestRequireNoRepositories
     public void testReposNotBannedWithPluginRepositories()
         throws EnforcerRuleException
     {
-        rule.banRepositories = false;
+        rule.setBanRepositories( false );
 
         project.setArtifactId( "with-plugin-repositories-child" );
         project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/with-plugin-repositories/child" ) );
@@ -146,7 +146,7 @@ public class TestRequireNoRepositories
     public void testPluginReposNotBannedNoRepositories()
         throws EnforcerRuleException
     {
-        rule.banPluginRepositories = false;
+        rule.setBanPluginRepositories( false );
 
         project.setArtifactId( "no-repositories-child" );
         project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/no-repositories/child" ) );
@@ -157,7 +157,7 @@ public class TestRequireNoRepositories
     public void testPluginReposNotBannedWithRepositories()
         throws EnforcerRuleException
     {
-        rule.banPluginRepositories = false;
+        rule.setBanPluginRepositories( false );
 
         project.setArtifactId( "with-repositories-child" );
         project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/with-repositories/child" ) );
@@ -176,7 +176,7 @@ public class TestRequireNoRepositories
     public void testPluginReposNotBannedWithPluginRepositories()
         throws EnforcerRuleException
     {
-        rule.banPluginRepositories = false;
+        rule.setBanPluginRepositories( false );
 
         project.setArtifactId( "with-plugin-repositories-child" );
         project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/with-plugin-repositories/child" ) );
@@ -187,7 +187,7 @@ public class TestRequireNoRepositories
     public void testReposNotAllowedWithSnapshotRepositories()
         throws EnforcerRuleException
     {
-        rule.allowSnapshotRepositories = true;
+        rule.setAllowSnapshotRepositories( true );
 
         project.setArtifactId( "snapshot-plugin-repositories-child" );
         project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/snapshot-plugin-repositories/child" ) );
@@ -206,7 +206,7 @@ public class TestRequireNoRepositories
     public void testReposAllowedWithSnapshotRepositories()
         throws EnforcerRuleException
     {
-        rule.allowSnapshotRepositories = true;
+        rule.setAllowSnapshotRepositories( true );
 
         project.setArtifactId( "snapshot-repositories-child" );
         project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/snapshot-repositories/child" ) );
@@ -217,7 +217,7 @@ public class TestRequireNoRepositories
     public void testPluginReposNotAllowedWithSnapshotRepositories()
         throws EnforcerRuleException
     {
-        rule.allowSnapshotPluginRepositories = true;
+        rule.setAllowSnapshotPluginRepositories( true );
 
         project.setArtifactId( "snapshot-repositories-child" );
         project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/snapshot-repositories/child" ) );
@@ -236,7 +236,7 @@ public class TestRequireNoRepositories
     public void testPluginReposAllowedWithSnapshotPluginRepositories()
         throws EnforcerRuleException
     {
-        rule.allowSnapshotPluginRepositories = true;
+        rule.setAllowSnapshotPluginRepositories( true );
 
         project.setArtifactId( "snapshot-plugin-repositories-child" );
         project.setBaseDir( getTestFile( "target/test-classes/requireNoRepositories/snapshot-plugin-repositories/child" ) );

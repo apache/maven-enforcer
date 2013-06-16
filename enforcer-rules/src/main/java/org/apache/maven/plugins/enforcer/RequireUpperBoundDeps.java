@@ -18,6 +18,7 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -64,7 +65,9 @@ public class RequireUpperBoundDeps
     private boolean uniqueVersions;
 
     /**
-     * @param uniqueVersions
+     * Set to {@code true} if timestamped snapshots should be used.
+     * 
+     * @param uniqueVersions 
      * @since 1.3
      */
     public void setUniqueVersions( boolean uniqueVersions )
@@ -184,7 +187,7 @@ public class RequireUpperBoundDeps
         {
             StringBuilder line = new StringBuilder( getFullArtifactName( currentNode, false ) );
             
-            if( currentNode.getPremanagedVersion() != null )
+            if ( currentNode.getPremanagedVersion() != null )
             {
                 line.append( " (managed) <-- " );
                 line.append( getFullArtifactName( currentNode, true ) );
