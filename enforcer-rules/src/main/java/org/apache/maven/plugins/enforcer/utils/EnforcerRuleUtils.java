@@ -286,6 +286,7 @@ public class EnforcerRuleUtils
     {
         // try these first.
         String modelGroup = model.getGroupId();
+        String modelArtifactId = model.getArtifactId();
         String modelVersion = model.getVersion();
 
         try
@@ -309,6 +310,9 @@ public class EnforcerRuleUtils
                 // MENFORCER-30, handle cases where the value is a property like ${project.parent.version}
                 modelVersion = (String) helper.evaluate( modelVersion );
             }
+            
+            // Is this only required for Maven2?
+            modelArtifactId = (String) helper.evaluate( modelArtifactId );
         }
         catch ( NullPointerException e )
         {
@@ -323,7 +327,7 @@ public class EnforcerRuleUtils
             // as above
         }
         return ( StringUtils.equals( groupId, modelGroup ) && StringUtils.equals( version, modelVersion ) && StringUtils
-            .equals( artifactId, model.getArtifactId() ) );
+            .equals( artifactId, modelArtifactId ) );
     }
     
  
