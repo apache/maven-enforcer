@@ -19,14 +19,22 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
  * Abstract Rule for banning dependencies.
@@ -40,6 +48,8 @@ public abstract class AbstractBanDependencies
 
     /** Specify if transitive dependencies should be searched (default) or only look at direct dependencies. */
     private boolean searchTransitive = true;
+
+    private DependencyGraphBuilder graphBuilder;
 
     /**
      * Execute the rule.
@@ -62,6 +72,15 @@ public abstract class AbstractBanDependencies
             throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
         }
 
+        try
+        {
+            graphBuilder = (DependencyGraphBuilder) helper.getComponent( DependencyGraphBuilder.class );
+        }
+        catch ( ComponentLookupException e )
+        {
+            throw new EnforcerRuleException( "Unable to lookup DependencyGraphBuilder: ", e );
+        }
+        
         // get the correct list of dependencies
         Set<Artifact> dependencies = getDependenciesToCheck( project );
 
@@ -106,7 +125,51 @@ public abstract class AbstractBanDependencies
         {
             dependencies = project.getDependencyArtifacts();
         }
+        
+        // requiresDependencyCollection doesn't work for M2, this is the fallback
+        if( dependencies == null )
+        {
+            try
+            {
+                DependencyNode node = graphBuilder.buildDependencyGraph( project, null );
+                if( searchTransitive )
+                {
+                    dependencies  = getAllDescendants( node );
+                }
+                else if ( node.getChildren() != null )
+                {
+                    dependencies = new HashSet<Artifact>();
+                    for( DependencyNode depNode : node.getChildren() )
+                    {
+                        dependencies.add( depNode.getArtifact() );
+                    }
+                }
+            }
+            catch ( DependencyGraphBuilderException e )
+            {
+                // otherwise we need to change the signature of this protected method
+                throw new RuntimeException( e );
+            }
+        }
         return dependencies;
+    }
+
+    private Set<Artifact> getAllDescendants( DependencyNode node )
+    {
+        Set<Artifact> children = null; 
+        if( node.getChildren() != null )
+        {
+            children = new HashSet<Artifact>();
+            for( DependencyNode depNode : node.getChildren() )
+            {
+                Set<Artifact> subNodes = getAllDescendants( depNode );
+                if( subNodes != null )
+                {
+                    children.addAll( subNodes );
+                }
+            }
+        }
+        return children;
     }
 
     /**
