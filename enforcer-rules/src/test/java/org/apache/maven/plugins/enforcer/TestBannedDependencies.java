@@ -22,12 +22,15 @@ package org.apache.maven.plugins.enforcer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
+import org.apache.maven.project.MavenProject;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -52,7 +55,8 @@ public class TestBannedDependencies
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
         project.setArtifacts( factory.getMixedArtifacts() );
         project.setDependencyArtifacts( factory.getScopedArtifacts() );
-        BannedDependencies rule = new BannedDependencies();
+        
+        BannedDependencies rule = newBannedDependenciesRule();
 
         List<String> excludes = new ArrayList<String>();
         rule.setSearchTransitive( false );
@@ -143,7 +147,7 @@ public class TestBannedDependencies
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
         project.setArtifacts( factory.getMixedArtifacts() );
         project.setDependencyArtifacts( factory.getScopedArtifacts() );
-        BannedDependencies rule = new BannedDependencies();
+        BannedDependencies rule = newBannedDependenciesRule();
 
         List<String> excludes = new ArrayList<String>();
         List<String> includes = new ArrayList<String>();
@@ -168,6 +172,21 @@ public class TestBannedDependencies
         includes.add( "*:test" );
         rule.setIncludes( includes );
         execute( rule, helper, true );
+    }
+
+    private BannedDependencies newBannedDependenciesRule()
+    {
+        BannedDependencies rule = new BannedDependencies()
+        {
+            @Override
+            protected Set<Artifact> getDependenciesToCheck( MavenProject project )
+            {
+                // the integration with dependencyGraphTree is verified with the integration tests
+                // for unit-testing 
+                return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
+            }
+        };
+        return rule;
     }
 
     /**

@@ -20,12 +20,15 @@ package org.apache.maven.plugins.enforcer;
  */
 
 import java.io.IOException;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.TestEnforcerRuleUtils;
+import org.apache.maven.project.MavenProject;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -51,7 +54,7 @@ public class TestRequireReleaseDeps
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
         project.setArtifacts( factory.getMixedArtifacts() );
         project.setDependencyArtifacts( factory.getScopedArtifacts() );
-        RequireReleaseDeps rule = new RequireReleaseDeps();
+        RequireReleaseDeps rule = newRequireReleaseDeps();
         rule.setSearchTransitive( false );
 
         TestEnforcerRuleUtils.execute( rule, helper, false );
@@ -90,12 +93,26 @@ public class TestRequireReleaseDeps
 
     }
 
+    private RequireReleaseDeps newRequireReleaseDeps()
+    {
+        RequireReleaseDeps rule = new RequireReleaseDeps()
+        {
+            protected Set<Artifact> getDependenciesToCheck( MavenProject project )
+            {
+                // the integration with dependencyGraphTree is verified with the integration tests
+                // for unit-testing 
+                return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
+            }
+        };        
+        return rule;
+    }
+
     /**
      * Test id.
      */
     public void testId()
     {
-        RequireReleaseDeps rule = new RequireReleaseDeps();
+        RequireReleaseDeps rule = newRequireReleaseDeps();
         rule.getCacheId();
     }
 }

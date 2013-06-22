@@ -19,17 +19,14 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
@@ -48,8 +45,8 @@ public abstract class AbstractBanDependencies
 
     /** Specify if transitive dependencies should be searched (default) or only look at direct dependencies. */
     private boolean searchTransitive = true;
-
-    private DependencyGraphBuilder graphBuilder;
+    
+    private transient DependencyGraphBuilder graphBuilder;
 
     /**
      * Execute the rule.
@@ -78,7 +75,15 @@ public abstract class AbstractBanDependencies
         }
         catch ( ComponentLookupException e )
         {
-            throw new EnforcerRuleException( "Unable to lookup DependencyGraphBuilder: ", e );
+            // real cause is probably that one of the Maven3 graph builder could not be initiated and fails with a ClassNotFoundException
+            try
+            {
+                graphBuilder = (DependencyGraphBuilder) helper.getComponent( DependencyGraphBuilder.class.getName(), "maven2" );
+            }
+            catch ( ComponentLookupException e1 )
+            {
+                throw new EnforcerRuleException( "Unable to lookup DependencyGraphBuilder: ", e );
+            }
         }
         
         // get the correct list of dependencies
@@ -113,43 +118,29 @@ public abstract class AbstractBanDependencies
         return "Found Banned Dependency: " + artifact.getId() + "\n";
     }
 
-    @SuppressWarnings( "unchecked" )
     protected Set<Artifact> getDependenciesToCheck( MavenProject project )
     {
         Set<Artifact> dependencies = null;
-        if ( searchTransitive )
+        try
         {
-            dependencies = project.getArtifacts();
-        }
-        else
-        {
-            dependencies = project.getDependencyArtifacts();
-        }
-        
-        // requiresDependencyCollection doesn't work for M2, this is the fallback
-        if( dependencies == null )
-        {
-            try
+            DependencyNode node = graphBuilder.buildDependencyGraph( project, null );
+            if( searchTransitive )
             {
-                DependencyNode node = graphBuilder.buildDependencyGraph( project, null );
-                if( searchTransitive )
+                dependencies  = getAllDescendants( node );
+            }
+            else if ( node.getChildren() != null )
+            {
+                dependencies = new HashSet<Artifact>();
+                for( DependencyNode depNode : node.getChildren() )
                 {
-                    dependencies  = getAllDescendants( node );
-                }
-                else if ( node.getChildren() != null )
-                {
-                    dependencies = new HashSet<Artifact>();
-                    for( DependencyNode depNode : node.getChildren() )
-                    {
-                        dependencies.add( depNode.getArtifact() );
-                    }
+                    dependencies.add( depNode.getArtifact() );
                 }
             }
-            catch ( DependencyGraphBuilderException e )
-            {
-                // otherwise we need to change the signature of this protected method
-                throw new RuntimeException( e );
-            }
+        }
+        catch ( DependencyGraphBuilderException e )
+        {
+            // otherwise we need to change the signature of this protected method
+            throw new RuntimeException( e );
         }
         return dependencies;
     }
@@ -162,6 +153,7 @@ public abstract class AbstractBanDependencies
             children = new HashSet<Artifact>();
             for( DependencyNode depNode : node.getChildren() )
             {
+                children.add( depNode.getArtifact() );
                 Set<Artifact> subNodes = getAllDescendants( depNode );
                 if( subNodes != null )
                 {

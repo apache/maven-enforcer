@@ -20,12 +20,15 @@ package org.apache.maven.plugins.enforcer;
  */
 
 import java.io.IOException;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.TestEnforcerRuleUtils;
+import org.apache.maven.project.MavenProject;
 
 /**
  * The Class TestNoSnapshots.
@@ -50,7 +53,7 @@ public class TestNoSnapshots
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
         project.setArtifacts( factory.getMixedArtifacts() );
         project.setDependencyArtifacts( factory.getScopedArtifacts() );
-        NoSnapshots rule = new NoSnapshots();
+        NoSnapshots rule = newNoSnapshots();
         rule.setSearchTransitive( false );
 
         TestEnforcerRuleUtils.execute( rule, helper, false );
@@ -64,12 +67,26 @@ public class TestNoSnapshots
         TestEnforcerRuleUtils.execute( rule, helper, true );
     }
 
+    private NoSnapshots newNoSnapshots()
+    {
+        NoSnapshots rule = new NoSnapshots()
+        {
+            protected Set<Artifact> getDependenciesToCheck( MavenProject project )
+            {
+                // the integration with dependencyGraphTree is verified with the integration tests
+                // for unit-testing 
+                return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
+            }
+        };
+        return rule;
+    }
+
     /**
      * Test id.
      */
     public void testId()
     {
-        NoSnapshots rule = new NoSnapshots();
+        NoSnapshots rule = newNoSnapshots();
         rule.getCacheId();
     }
 }
