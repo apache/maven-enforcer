@@ -48,29 +48,27 @@ public class RequireReleaseDeps
      *
      * @parameter
      */
-    private boolean onlyWhenRelease = false;
+    public boolean onlyWhenRelease = false;
 
     /**
      * Allows this rule to fail when the parent is defined as a snapshot.
      *
      * @parameter
      */
-    private boolean failWhenParentIsSnapshot = true;
+    public boolean failWhenParentIsSnapshot = true;
 
     /**
      * Dependencies to ignore when checking for release versions.  For example, inter-module dependencies 
      * can be excluded from the check and therefore allowed to contain snapshot versions.
      */
-    private List<String> excludes = null;
+    public List<String> excludes = null;
 
     /**
      * Dependencies to include when checking for release versions.  If any of the included dependencies
      * have snapshot versions, the rule will fail.
      */
-    private List<String> includes = null;
+    public List<String> includes = null;
 
-    
-    
     /**
      * Override parent to allow optional ignore of this rule.
      * 

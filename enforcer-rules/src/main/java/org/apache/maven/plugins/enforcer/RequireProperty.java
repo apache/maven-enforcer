@@ -33,8 +33,7 @@ public class RequireProperty
 {
 
     /** Specify the required property. */
-    private String property;
-    
+    public String property = null;
     public final void setProperty( String property )
     {
         this.property = property;

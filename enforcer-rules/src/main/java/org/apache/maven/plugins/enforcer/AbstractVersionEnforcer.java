@@ -50,7 +50,7 @@ public abstract class AbstractVersionEnforcer
      * <li><code>(,2.0.5],[2.1.1,)</code> Versions up to 2.0.5 (included) and 2.1.1 or higher</li>
      * </ul>
      */
-    private String version;
+    public String version = null;
 
     /**
      * Compares the specified version to see if it is allowed by the defined version range.

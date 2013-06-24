@@ -46,7 +46,7 @@ public class BannedDependencies
      * Any of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
      * The rule will fail if any dependency matches any exclude, unless it also matches an include rule.
      */
-    private List<String> excludes = null;
+    public List<String> excludes = null;
 
     /**
      * Specify the allowed dependencies. This can be a list of artifacts in the format <code>groupId[:artifactId][:version]</code>.
@@ -55,7 +55,7 @@ public class BannedDependencies
      * smaller set of includes. <br>
      * For example, to ban all xerces except xerces-api -> exclude "xerces", include "xerces:xerces-api"
      */
-    private List<String> includes = null;
+    public List<String> includes = null;
 
 
     /**

@@ -36,24 +36,24 @@ public abstract class AbstractPropertyEnforcerRule
     /**
      * Match the property value to a given regular expression. Defaults to <code>null</code> (any value is ok).
      */
-    private String regex;
+    public String regex = null;
 
     /**
      * Specify a warning message if the regular expression is not matched.
      */
-    private String regexMessage;
+    public String regexMessage = null;
 
     public AbstractPropertyEnforcerRule()
     {
         super();
     }
     
-    public void setRegex( String regex )
+    public final void setRegex( String regex )
     {
         this.regex = regex;
     }
     
-    public void setRegexMessage( String regexMessage )
+    public final void setRegexMessage( String regexMessage )
     {
         this.regexMessage = regexMessage;
     }

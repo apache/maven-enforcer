@@ -39,7 +39,7 @@ public class RequireReleaseVersion
      *
      * @parameter
      */
-    private boolean failWhenParentIsSnapshot = true;
+    public boolean failWhenParentIsSnapshot = true;
 
     /*
      * (non-Javadoc)

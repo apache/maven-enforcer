@@ -48,32 +48,32 @@ public class RequireNoRepositories
     /**
      * Whether to ban non-plugin repositories. By default they are banned.
      */
-    private boolean banRepositories = true;
+    public boolean banRepositories = true;
 
     /**
      * Whether to ban plugin repositories. By default they are banned.
      */
-    private boolean banPluginRepositories = true;
+    public boolean banPluginRepositories = true;
 
     /**
      * Specify explicitly allowed non-plugin repositories. This is a list of ids.
      */
-    private List<String> allowedRepositories = Collections.emptyList();
+    public List<String> allowedRepositories = Collections.emptyList();
 
     /**
      * Specify explicitly allowed plugin repositories. This is a list of ids.
      */
-    private List<String> allowedPluginRepositories = Collections.emptyList();
+    public List<String> allowedPluginRepositories = Collections.emptyList();
 
     /**
      * Whether to allow repositories which only resolve snapshots. By default they are banned.
      */
-    private boolean allowSnapshotRepositories = false;
+    public boolean allowSnapshotRepositories = false;
 
     /**
      * Whether to allow plugin repositories which only resolve snapshots. By default they are banned.
      */
-    private boolean allowSnapshotPluginRepositories = false;
+    public boolean allowSnapshotPluginRepositories = false;
 
     public final void setBanRepositories( boolean banRepositories )
     {

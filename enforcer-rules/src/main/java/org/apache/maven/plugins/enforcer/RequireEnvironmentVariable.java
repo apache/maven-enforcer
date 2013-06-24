@@ -34,8 +34,8 @@ public class RequireEnvironmentVariable
     /**
      * Specify the required variable.
      */
-    private String variableName;
-    
+    public String variableName = null;
+
     public final void setVariableName( String variableName )
     {
         this.variableName = variableName;

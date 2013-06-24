@@ -59,22 +59,22 @@ public class RequireOS
      * <li>os/400</li>
      * </ul>
      */
-    private String family = null;
+    public String family = null;
 
     /** The OS name desired. */
-    private String name = null;
+    public String name = null;
 
     /** The OS version desired. */
-    private String version = null;
+    public String version = null;
 
     /** The OS architecture desired. */
-    private String arch = null;
+    public String arch = null;
 
     /** Specify an optional message to the user if the rule fails. */
-    private String message = "";
+    public String message = "";
 
     /** Display detected OS information. */
-    private boolean display = false;
+    public boolean display = false;
 
     /**
      * Instantiates a new RequireOS.
