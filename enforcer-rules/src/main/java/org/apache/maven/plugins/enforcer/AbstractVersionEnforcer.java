@@ -49,6 +49,11 @@ public abstract class AbstractVersionEnforcer
      * <li><code>[2.0.5,)</code> Versions 2.0.5 and higher</li>
      * <li><code>(,2.0.5],[2.1.1,)</code> Versions up to 2.0.5 (included) and 2.1.1 or higher</li>
      * </ul>
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setVersion(String)}
+     * @see {@link #getVersion()}
+
      */
     public String version = null;
 

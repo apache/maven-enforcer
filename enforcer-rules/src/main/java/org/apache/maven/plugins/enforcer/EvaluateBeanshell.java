@@ -19,6 +19,8 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import java.util.List;
+
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
@@ -40,7 +42,12 @@ public class EvaluateBeanshell
     /** Beanshell interpreter. */
     private static final Interpreter bsh = new Interpreter();
 
-    /** The condition to be evaluated. */
+    /** The condition to be evaluated.
+     *  
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setCondition(String)}
+     * @see {@link #getCondition()}
+     * */
     public String condition;
 
     public final void setCondition( String condition )

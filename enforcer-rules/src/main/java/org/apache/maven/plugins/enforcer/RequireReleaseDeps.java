@@ -47,6 +47,11 @@ public class RequireReleaseDeps
      * Allows this rule to execute only when this project is a release.
      *
      * @parameter
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setOnlyWhenRelease(boolean)}
+     * @see {@link #isOnlyWhenRelease()}
+
      */
     public boolean onlyWhenRelease = false;
 
@@ -54,18 +59,30 @@ public class RequireReleaseDeps
      * Allows this rule to fail when the parent is defined as a snapshot.
      *
      * @parameter
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setFailWhenParentIsSnapshot(boolean)}
+     * @see {@link #isFailWhenParentIsSnapshot()}
      */
     public boolean failWhenParentIsSnapshot = true;
 
     /**
      * Dependencies to ignore when checking for release versions.  For example, inter-module dependencies 
      * can be excluded from the check and therefore allowed to contain snapshot versions.
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setExcludes(List)}
+     * @see {@link #getExcludes()}
      */
     public List<String> excludes = null;
 
     /**
      * Dependencies to include when checking for release versions.  If any of the included dependencies
      * have snapshot versions, the rule will fail.
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setIncludes(List)}
+     * @see {@link #getIncludes()}
      */
     public List<String> includes = null;
 
@@ -203,5 +220,25 @@ public class RequireReleaseDeps
     public final void setFailWhenParentIsSnapshot( boolean failWhenParentIsSnapshot )
     {
         this.failWhenParentIsSnapshot = failWhenParentIsSnapshot;
+    }
+    
+    public final void setExcludes( List<String> excludes )
+    {
+        this.excludes = excludes;
+    }
+    
+    public final List<String> getExcludes()
+    {
+        return excludes;
+    }
+    
+    public void setIncludes( List<String> includes )
+    {
+        this.includes = includes;
+    }
+    
+    public List<String> getIncludes()
+    {
+        return includes;
     }
 }

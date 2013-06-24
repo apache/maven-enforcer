@@ -45,6 +45,10 @@ public class BannedDependencies
      * Specify the banned dependencies. This can be a list of artifacts in the format <code>groupId[:artifactId][:version]</code>.
      * Any of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
      * The rule will fail if any dependency matches any exclude, unless it also matches an include rule.
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setExcludes(List)}
+     * @see {@link #getExcludes()}
      */
     public List<String> excludes = null;
 
@@ -54,6 +58,10 @@ public class BannedDependencies
      * Includes override the exclude rules. It is meant to allow wide exclusion rules with wildcards and still allow a
      * smaller set of includes. <br>
      * For example, to ban all xerces except xerces-api -> exclude "xerces", include "xerces:xerces-api"
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setIncludes(List)}
+     * @see {@link #getIncludes()}
      */
     public List<String> includes = null;
 

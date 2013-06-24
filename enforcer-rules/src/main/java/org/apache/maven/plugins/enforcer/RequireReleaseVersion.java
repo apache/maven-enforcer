@@ -38,6 +38,10 @@ public class RequireReleaseVersion
      * Allows this rule to fail when the parent is defined as a snapshot.
      *
      * @parameter
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setFailWhenParentIsSnapshot(boolean)}
+     * @see {@link #isFailWhenParentIsSnapshot()}
      */
     public boolean failWhenParentIsSnapshot = true;
 
