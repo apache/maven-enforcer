@@ -28,9 +28,15 @@ public abstract class AbstractStandardEnforcerRule
     implements EnforcerRule
 {
 
-    /** Specify a friendly message if the rule fails. */
-    private String message;
-    
+    /** Specify a friendly message if the rule fails.
+     *  
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setMessage(String)}
+     * @see {@link #getMessage()}
+ 
+     */
+    public String message = null;
+
     public final void setMessage( String message )
     {
         this.message = message;

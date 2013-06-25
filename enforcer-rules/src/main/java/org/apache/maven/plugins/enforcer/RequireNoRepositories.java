@@ -47,33 +47,51 @@ public class RequireNoRepositories
 {
     /**
      * Whether to ban non-plugin repositories. By default they are banned.
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setBanRepositories(boolean)}
      */
-    private boolean banRepositories = true;
+    public boolean banRepositories = true;
 
     /**
      * Whether to ban plugin repositories. By default they are banned.
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setBanPluginRepositories(boolean)}
      */
-    private boolean banPluginRepositories = true;
+    public boolean banPluginRepositories = true;
 
     /**
      * Specify explicitly allowed non-plugin repositories. This is a list of ids.
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setAllowedRepositories(List)}
      */
-    private List<String> allowedRepositories = Collections.emptyList();
+    public List<String> allowedRepositories = Collections.emptyList();
 
     /**
      * Specify explicitly allowed plugin repositories. This is a list of ids.
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setAllowedPluginRepositories(List)}
      */
-    private List<String> allowedPluginRepositories = Collections.emptyList();
+    public List<String> allowedPluginRepositories = Collections.emptyList();
 
     /**
      * Whether to allow repositories which only resolve snapshots. By default they are banned.
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setAllowSnapshotRepositories(boolean)}
      */
-    private boolean allowSnapshotRepositories = false;
+    public boolean allowSnapshotRepositories = false;
 
     /**
      * Whether to allow plugin repositories which only resolve snapshots. By default they are banned.
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setAllowSnapshotPluginRepositories(boolean)}
      */
-    private boolean allowSnapshotPluginRepositories = false;
+    public boolean allowSnapshotPluginRepositories = false;
 
     public final void setBanRepositories( boolean banRepositories )
     {

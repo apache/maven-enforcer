@@ -35,28 +35,67 @@ public abstract class AbstractPropertyEnforcerRule
 
     /**
      * Match the property value to a given regular expression. Defaults to <code>null</code> (any value is ok).
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setRegex(String)}
+     * @see {@link #getRegex()}
      */
-    private String regex;
+    public String regex = null;
 
     /**
      * Specify a warning message if the regular expression is not matched.
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setRegexMessage(String)}
+     * @see {@link #getRegexMessage()}
      */
-    private String regexMessage;
+    public String regexMessage = null;
 
     public AbstractPropertyEnforcerRule()
     {
         super();
     }
     
-    public void setRegex( String regex )
+    /**
+     * Set the property value to a given regular expression. Defaults to <code>null</code> (any value is ok).
+     * 
+     * @param the regular expression
+     */
+    public final void setRegex( String regex )
     {
         this.regex = regex;
     }
+
+    /**
+     * Get the property value to a given regular expression. Defaults to <code>null</code> (any value is ok).
+     * 
+     * @return the regular expression
+     */
+    public final String getRegex()
+    {
+        return regex;
+    }
     
-    public void setRegexMessage( String regexMessage )
+    /**
+     * Set a warning message if the regular expression is not matched.
+     * 
+     * @param regexMessage the regex message
+     */
+    public final void setRegexMessage( String regexMessage )
     {
         this.regexMessage = regexMessage;
     }
+    
+    /**
+     * Get a warning message if the regular expression is not matched.
+     * 
+     * @return the regex message
+     */
+    public final String getRegexMessage()
+    {
+        return regexMessage;
+    }
+    
 
     /**
      * Execute the rule.

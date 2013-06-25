@@ -58,23 +58,44 @@ public class RequireOS
      * <li>z/os</li>
      * <li>os/400</li>
      * </ul>
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setFamily(String)}
+     * @see {@link #getFamily()}
      */
-    private String family = null;
+    public String family = null;
 
-    /** The OS name desired. */
-    private String name = null;
+    /** The OS name desired.
+     *
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setName(String)}
+     * @see {@link #getName()}
+     */
+    public String name = null;
 
-    /** The OS version desired. */
-    private String version = null;
+    /** The OS version desired.
+     * 
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setVersion(String)}
+     * @see {@link #getVersion()}
+     */
+    public String version = null;
 
-    /** The OS architecture desired. */
-    private String arch = null;
+    /** The OS architecture desired.
+     *  
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setArch(String)}
+     * @see {@link #getArch()} 
+     */
+    public String arch = null;
 
-    /** Specify an optional message to the user if the rule fails. */
-    private String message = "";
-
-    /** Display detected OS information. */
-    private boolean display = false;
+    /** Display detected OS information.
+     *  
+     * @deprecated the visibility will be reduced to private with the next major version
+     * @see {@link #setDisplay(boolean)}
+     * @see {@link #isDisplay()}
+     * */
+    public boolean display = false;
 
     /**
      * Instantiates a new RequireOS.
@@ -104,6 +125,7 @@ public class RequireOS
         {
             if ( !isAllowed() )
             {
+                String message = getMessage();
                 if ( StringUtils.isEmpty( message ) )
                 {
                     message =
@@ -324,6 +346,16 @@ public class RequireOS
     public void setVersion( String theVersion )
     {
         this.version = theVersion;
+    }
+    
+    public final void setDisplay( boolean display )
+    {
+        this.display = display;
+    }
+    
+    public final boolean isDisplay()
+    {
+        return display;
     }
 
     /*
