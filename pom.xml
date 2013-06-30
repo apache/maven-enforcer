@@ -279,4 +279,13 @@
     </plugins>
   </reporting>
 
+  <profiles>
+    <profile>
+      <id>site-release</id>
+      <properties>
+        <maven.site.path>${project.artifactId}</maven.site.path>
+      </properties>
+    </profile>
+  </profiles>
+
 </project>
