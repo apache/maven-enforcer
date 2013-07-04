@@ -30,7 +30,7 @@
   <artifactId>enforcer-api</artifactId>
   <packaging>jar</packaging>
 
-  <name>Enforcer API</name>
+  <name>Apache Maven Enforcer API</name>
   <description>
     This component provides the generic interfaces needed to implement custom rules for the maven-enforcer-plugin.
   </description>

@@ -30,7 +30,7 @@
   <artifactId>enforcer-rules</artifactId>
   <packaging>jar</packaging>
 
-  <name>Enforcer Rules</name>
+  <name>Apache Maven Enforcer Rules</name>
   <description>This component contains the standard Enforcer Rules</description>
 
   <dependencies>
