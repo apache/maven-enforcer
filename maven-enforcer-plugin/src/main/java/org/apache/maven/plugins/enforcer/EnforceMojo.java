@@ -34,7 +34,6 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
 import org.codehaus.plexus.PlexusConstants;
@@ -50,8 +49,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
-@Mojo( name = "enforce", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true,
-                requiresDependencyCollection = ResolutionScope.TEST )
+@Mojo( name = "enforce", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true )
 public class EnforceMojo
     extends AbstractMojo
     implements Contextualizable
