@@ -34,7 +34,6 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  * rules.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
  */
 public interface EnforcerRuleHelper
     extends ExpressionEvaluator
@@ -47,11 +46,6 @@ public interface EnforcerRuleHelper
      */
     Log getLog ();
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper#getRuntimeInformation()
-     */
     /**
      * Gets the component.
      *

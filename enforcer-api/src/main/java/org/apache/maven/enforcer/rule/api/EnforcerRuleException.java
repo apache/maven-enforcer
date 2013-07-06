@@ -25,7 +25,6 @@ package org.apache.maven.enforcer.rule.api;
  * minimum.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
  */
 public class EnforcerRuleException
     extends Exception
