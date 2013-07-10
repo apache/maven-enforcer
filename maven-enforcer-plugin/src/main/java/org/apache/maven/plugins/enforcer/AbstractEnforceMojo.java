@@ -42,9 +42,9 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public abstract class AbstractEnforceMojo 
-    extends AbstractMojo 
-    implements Contextualizable 
+public abstract class AbstractEnforceMojo
+    extends AbstractMojo
+    implements Contextualizable
 {
     /**
      * This is a static variable used to persist the cached results across plugin invocations.
@@ -66,20 +66,10 @@ public abstract class AbstractEnforceMojo
     @Component
     protected MavenProject project;
     /**
-     * Flag to fail the build if a version check fails.
-     */
-    @Parameter(property = "enforcer.fail", defaultValue = "true")
-    protected boolean fail = true;
-    /**
      * Flag to easily skip all checks
      */
     @Parameter(property = "enforcer.skip", defaultValue = "false")
     protected boolean skip = false;
-    /**
-     * Fail on the first rule that doesn't pass
-     */
-    @Parameter(property = "enforcer.failFast", defaultValue = "false")
-    protected boolean failFast = false;
     /**
      * Use this flag to disable rule result caching. This will cause
      * all rules to execute on each project even if the rule indicates it can
@@ -113,8 +103,8 @@ public abstract class AbstractEnforceMojo
                 EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper(session, evaluator, log, container);
                 // if we are only warning, then disable
                 // failFast
-                if (!fail) {
-                    failFast = false;
+                if (!isFail()) {
+                    setFailFast( false );
                 }
                 // go through each rule
                 for (int i = 0; i < getRules().length; i++) {
@@ -137,7 +127,7 @@ public abstract class AbstractEnforceMojo
                             // i can throw an exception
                             // because failfast will be
                             // false if fail is false.
-                            if (failFast) {
+                            if (isFailFast()) {
                                 throw new MojoExecutionException(currentRule + " failed with message:\n" + e.getMessage(), e);
                             } else {
                                 list.add("Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage());
@@ -151,7 +141,7 @@ public abstract class AbstractEnforceMojo
                     for (String failure : list) {
                         log.warn(failure);
                     }
-                    if (fail) {
+                    if (isFail()) {
                         throw new MojoExecutionException("Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed.");
                     }
                 }
@@ -191,14 +181,17 @@ public abstract class AbstractEnforceMojo
     /**
      * @return the fail
      */
-    public boolean isFail() {
-        return this.fail;
-    }
+    public abstract boolean isFail();
 
     /**
      * @return the rules
      */
     public abstract EnforcerRule[] getRules();
+
+    /**
+     * @param the rules to set.
+     */
+    public abstract void setRules( EnforcerRule[] rules );
 
     /**
      * @return the skip
@@ -217,9 +210,12 @@ public abstract class AbstractEnforceMojo
     /**
      * @return the failFast
      */
-    public boolean isFailFast() {
-        return this.failFast;
-    }
+    public abstract boolean isFailFast();
+
+    /**
+     * @param failFast to set
+     */
+    public abstract void setFailFast( boolean failFast );
 
     /**
      * @return the project
@@ -262,5 +258,5 @@ public abstract class AbstractEnforceMojo
     public void setTranslator(PathTranslator theTranslator) {
         this.translator = theTranslator;
     }
-    
+
 }

@@ -31,6 +31,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * build, i.e. it will only warn.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @author Mirko Friedenhagen
  * @version $Id$
  */
 @Mojo( name = "recommend", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true )
@@ -45,22 +46,10 @@ public class RecommendMojo
     @Parameter( required = true )
     private EnforcerRule[] recommendedRules;
 
-    public RecommendMojo() 
-    {
-        fail = false;
-    }
-
-    /**
-     * @param theFail the fail to set
-     */
-    public void setFail ( boolean theFail )
-    {
-        this.fail = theFail;
-    }
-
     /**
      * @return the recommendedRules
      */
+    @Override
     public EnforcerRule[] getRules ()
     {
         return this.recommendedRules;
@@ -69,6 +58,7 @@ public class RecommendMojo
     /**
      * @param theRules the recommendedRules to set
      */
+    @Override
     public void setRules ( EnforcerRule[] theRules )
     {
         this.recommendedRules = theRules;
@@ -77,8 +67,27 @@ public class RecommendMojo
     /**
      * @param theFailFast the failFast to set
      */
+    @Override
     public void setFailFast ( boolean theFailFast )
     {
-        this.failFast = theFailFast;
+        // intentionally blank
+    }
+
+    /**
+     * Always return false, as this Mojo should never fail the build.
+     * @return false
+     */
+    @Override
+    public boolean isFail() {
+        return false;
+    }
+
+    /**
+     * Always return false, as this Mojo should never fail the build.
+     * @return false
+     */
+    @Override
+    public boolean isFailFast() {
+        return false;
     }
 }
