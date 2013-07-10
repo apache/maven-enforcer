@@ -26,14 +26,15 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * This goal executes the defined enforcer-rules once per
- * module.
+ * This goal executes the defined recommended enforcer-rules once per
+ * module. In contrast to {@link EnforceMojo} it will never fail the
+ * build, i.e. it will only warn.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
-@Mojo( name = "enforce", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true )
-public class EnforceMojo
+@Mojo( name = "recommend", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true )
+public class RecommendMojo
     extends AbstractEnforceMojo
 {
 
@@ -42,7 +43,12 @@ public class EnforceMojo
      * interface to execute.
      */
     @Parameter( required = true )
-    private EnforcerRule[] rules;
+    private EnforcerRule[] recommendedRules;
+
+    public RecommendMojo() 
+    {
+        fail = false;
+    }
 
     /**
      * @param theFail the fail to set
@@ -53,19 +59,19 @@ public class EnforceMojo
     }
 
     /**
-     * @return the rules
+     * @return the recommendedRules
      */
     public EnforcerRule[] getRules ()
     {
-        return this.rules;
+        return this.recommendedRules;
     }
 
     /**
-     * @param theRules the rules to set
+     * @param theRules the recommendedRules to set
      */
     public void setRules ( EnforcerRule[] theRules )
     {
-        this.rules = theRules;
+        this.recommendedRules = theRules;
     }
 
     /**
