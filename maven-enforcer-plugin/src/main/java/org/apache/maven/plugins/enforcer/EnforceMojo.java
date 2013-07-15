@@ -22,8 +22,10 @@ package org.apache.maven.plugins.enforcer;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.enforcer.rule.api.EnforcerRule2;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
@@ -45,7 +47,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 /**
  * This goal executes the defined enforcer-rules once per
  * module.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -97,7 +99,7 @@ public class EnforceMojo
      */
     @Parameter( required = true )
     private EnforcerRule[] rules;
-    
+
     /**
      * Use this flag to disable rule result caching. This will cause
      * all rules to execute on each project even if the rule indicates it can
@@ -105,13 +107,13 @@ public class EnforceMojo
      */
     @Parameter( property = "enforcer.ignoreCache", defaultValue = "false" )
     protected boolean ignoreCache = false;
-    
+
     /**
      * This is a static variable used to persist the cached results across plugin invocations.
      */
     protected static Hashtable<String, EnforcerRule> cache = new Hashtable<String, EnforcerRule>();
 
-    
+
     // set by the contextualize method. Only way to get the
     // plugin's container in 2.0.x
     protected PlexusContainer container;
@@ -124,7 +126,7 @@ public class EnforceMojo
 
     /**
      * Entry point to the mojo
-     * @throws MojoExecutionException 
+     * @throws MojoExecutionException
      */
     public void execute ()
         throws MojoExecutionException
@@ -154,12 +156,15 @@ public class EnforceMojo
                     failFast = false;
                 }
 
+                boolean hasErrors = false;
+
                 // go through each rule
                 for ( int i = 0; i < rules.length; i++ )
                 {
 
                     // prevent against empty rules
                     EnforcerRule rule = rules[i];
+                    final EnforcerLevel level = getLevel( rule );
                     if ( rule != null )
                     {
                         // store the current rule for
@@ -183,15 +188,23 @@ public class EnforceMojo
                             // i can throw an exception
                             // because failfast will be
                             // false if fail is false.
-                            if ( failFast )
+                            if ( failFast && level == EnforcerLevel.ERROR )
                             {
                                 throw new MojoExecutionException( currentRule + " failed with message:\n"
                                     + e.getMessage(), e );
                             }
                             else
                             {
-                                list.add( "Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage() );
-                                log.debug( "Adding failure due to exception", e );
+                                if (level == EnforcerLevel.ERROR) {
+                                    hasErrors = true;
+                                    list.add( "Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage() );
+                                    log.debug( "Adding failure due to exception" , e );
+                                }
+                                else
+                                {
+                                    list.add( "Rule " + i + ": " + currentRule + " warned with message:\n" + e.getMessage() );
+                                    log.debug( "Adding warning due to exception" , e );
+                                }
                             }
                         }
                     }
@@ -204,7 +217,7 @@ public class EnforceMojo
                     {
                         log.warn( failure );
                     }
-                    if ( fail )
+                    if ( fail && hasErrors )
                     {
                         throw new MojoExecutionException(
                                                           "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
@@ -226,9 +239,9 @@ public class EnforceMojo
     /**
      * This method determines if a rule should execute based
      * on the cache
-     * 
+     *
      * @param rule the rule to verify
-     * @return {@code true} if rule should be executed, otherwise {@code false} 
+     * @return {@code true} if rule should be executed, otherwise {@code false}
      */
     protected boolean shouldExecute ( EnforcerRule rule )
     {
@@ -246,7 +259,7 @@ public class EnforceMojo
                     return false;
                 }
             }
-            
+
             //add it to the cache of executed rules
             EnforceMojo.cache.put( key, rule );
         }
@@ -363,5 +376,24 @@ public class EnforceMojo
     public void setTranslator ( PathTranslator theTranslator )
     {
         this.translator = theTranslator;
+    }
+
+    /**
+     * Returns the level of the rule, defaults to {@link EnforcerLevel#ERROR}
+     * for backwards compatibility.
+     *
+     * @param rule might be of type {@link EnforcerRule2}.
+     * @return level of the rule.
+     */
+    private EnforcerLevel getLevel( EnforcerRule rule )
+    {
+        if ( rule instanceof EnforcerRule2 )
+        {
+            return ( (EnforcerRule2) rule ).getLevel();
+        }
+        else
+        {
+            return EnforcerLevel.ERROR;
+        }
     }
 }
