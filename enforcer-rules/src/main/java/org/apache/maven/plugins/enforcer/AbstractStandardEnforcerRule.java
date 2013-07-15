@@ -19,32 +19,51 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.enforcer.rule.api.EnforcerLevel;
+import org.apache.maven.enforcer.rule.api.EnforcerRule2;
 
 /**
  * The Class AbstractStandardEnforcerRule.
  */
 public abstract class AbstractStandardEnforcerRule
-    implements EnforcerRule
+    implements EnforcerRule2
 {
 
     /** Specify a friendly message if the rule fails.
-     *  
+     *
      * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setMessage(String)}
      * @see {@link #getMessage()}
- 
+
      */
     public String message = null;
+
+    private EnforcerLevel level = EnforcerLevel.ERROR;
 
     public final void setMessage( String message )
     {
         this.message = message;
     }
-    
+
     public final String getMessage()
     {
         return message;
+    }
+
+    /**
+     * Returns the level of enforcement.
+     *
+     * @return level
+     */
+    //@Override
+    public EnforcerLevel getLevel()
+    {
+        return level;
+    }
+
+    public void setLevel( EnforcerLevel level )
+    {
+        this.level = level;
     }
 
 }
