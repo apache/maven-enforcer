@@ -36,6 +36,17 @@ import org.apache.maven.plugins.annotations.Parameter;
 public class EnforceMojo
     extends AbstractEnforceMojo
 {
+    /**
+     * Flag to fail the build if a version check fails.
+     */
+    @Parameter(property = "enforcer.fail", defaultValue = "true")
+    private boolean fail = true;
+
+    /**
+     * Fail on the first rule that doesn't pass
+     */
+    @Parameter(property = "enforcer.failFast", defaultValue = "false")
+    private boolean failFast = false;
 
     /**
      * Array of objects that implement the EnforcerRule
@@ -55,6 +66,7 @@ public class EnforceMojo
     /**
      * @return the rules
      */
+    @Override
     public EnforcerRule[] getRules ()
     {
         return this.rules;
@@ -63,6 +75,7 @@ public class EnforceMojo
     /**
      * @param theRules the rules to set
      */
+    @Override
     public void setRules ( EnforcerRule[] theRules )
     {
         this.rules = theRules;
@@ -71,8 +84,20 @@ public class EnforceMojo
     /**
      * @param theFailFast the failFast to set
      */
+    @Override
     public void setFailFast ( boolean theFailFast )
     {
         this.failFast = theFailFast;
     }
+
+    @Override
+    public boolean isFailFast() {
+        return failFast;
+    }
+
+    @Override
+    public boolean isFail() {
+        return fail;
+    }
+
 }
