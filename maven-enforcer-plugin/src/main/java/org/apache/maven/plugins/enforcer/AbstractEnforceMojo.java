@@ -148,9 +148,7 @@ public abstract class AbstractEnforceMojo
                             }
                             else
                             {
-                                list.add( "Rule " + i + ": " + currentRule
-                                        + " failed with message:\n"
-                                        + e.getMessage() );
+                                list.add( createRuleMessage( i , currentRule , e ));
                                 log.debug( "Adding failure due to exception" ,
                                         e );
                             }
@@ -295,4 +293,13 @@ public abstract class AbstractEnforceMojo
         this.translator = theTranslator;
     }
 
+    /**
+     * Returns the error message displayed when failFast is set to false.
+     *
+     * @param i index
+     * @param currentRule name of the current rule.
+     * @param e rule exception
+     * @return rule message
+     */
+    protected abstract String createRuleMessage( int i , String currentRule , EnforcerRuleException e );
 }

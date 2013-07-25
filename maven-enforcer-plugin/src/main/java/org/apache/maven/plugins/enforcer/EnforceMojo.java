@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer;
 
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -28,7 +29,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 /**
  * This goal executes the defined enforcer-rules once per
  * module.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -98,6 +99,12 @@ public class EnforceMojo
     @Override
     public boolean isFail() {
         return fail;
+    }
+
+    @Override
+    protected String createRuleMessage( int i , String currentRule , EnforcerRuleException e )
+    {
+        return "Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage();
     }
 
 }

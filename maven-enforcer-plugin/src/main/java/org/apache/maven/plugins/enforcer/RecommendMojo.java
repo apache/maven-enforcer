@@ -21,12 +21,13 @@ package org.apache.maven.plugins.enforcer;
 
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * This goal executes the defined recommended enforcer-rules once per
+ * This goal executes the defined enforcer-recommendations once per
  * module. In contrast to {@link EnforceMojo} it will never fail the
  * build, i.e. it will only warn.
  * 
@@ -44,7 +45,7 @@ public class RecommendMojo
      * interface to execute.
      */
     @Parameter( required = true )
-    private EnforcerRule[] recommendedRules;
+    private EnforcerRule[] recommendations;
 
     /**
      * @return the recommendedRules
@@ -52,7 +53,7 @@ public class RecommendMojo
     @Override
     public EnforcerRule[] getRules ()
     {
-        return this.recommendedRules;
+        return this.recommendations;
     }
 
     /**
@@ -61,7 +62,7 @@ public class RecommendMojo
     @Override
     public void setRules ( EnforcerRule[] theRules )
     {
-        this.recommendedRules = theRules;
+        this.recommendations = theRules;
     }
 
     /**
@@ -89,5 +90,11 @@ public class RecommendMojo
     @Override
     public boolean isFailFast() {
         return false;
+    }
+
+    @Override
+    protected String createRuleMessage( int i , String currentRule , EnforcerRuleException e )
+    {
+        return "Recommendation " + i + ": " + currentRule + " failed with message:\n" + e.getMessage();
     }
 }
