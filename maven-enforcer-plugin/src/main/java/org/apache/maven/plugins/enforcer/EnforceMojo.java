@@ -317,4 +317,23 @@ public class EnforceMojo
             return EnforcerLevel.ERROR;
         }
     }
+
+    /**
+     * Returns the level of the rule, defaults to {@link EnforcerLevel#ERROR}
+     * for backwards compatibility.
+     *
+     * @param rule might be of type {@link EnforcerRule2}.
+     * @return level of the rule.
+     */
+    private EnforcerLevel getLevel( EnforcerRule rule )
+    {
+        if ( rule instanceof EnforcerRule2 )
+        {
+            return ( (EnforcerRule2) rule ).getLevel();
+        }
+        else
+        {
+            return EnforcerLevel.ERROR;
+        }
+    }
 }
