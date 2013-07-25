@@ -164,7 +164,8 @@ public class EnforceMojo
                             }
                             else
                             {
-                                if (level == EnforcerLevel.ERROR) {
+                                if ( level == EnforcerLevel.ERROR )
+                                {
                                     hasErrors = true;
                                     list.add( "Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage() );
                                     log.debug( "Adding failure due to exception" , e );
