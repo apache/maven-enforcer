@@ -89,67 +89,97 @@ public abstract class AbstractEnforceMojo
      * Entry point to the mojo
      * @throws MojoExecutionException
      */
-    public void execute() throws MojoExecutionException {
+    public void execute() throws MojoExecutionException
+    {
         Log log = this.getLog();
-        EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator(session, translator, project);
+        EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator(
+                session , translator , project );
         // the entire execution can be easily skipped
-        if (!skip) {
+        if ( !skip )
+        {
             // list to store exceptions
             List<String> list = new ArrayList<String>();
             // make sure the rules exist
-            if (getRules() != null && getRules().length > 0) {
+            if ( getRules() != null && getRules().length > 0 )
+            {
                 String currentRule = "Unknown";
                 // create my helper
-                EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper(session, evaluator, log, container);
+                EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper(
+                        session , evaluator , log , container );
                 // if we are only warning, then disable
                 // failFast
-                if (!isFail()) {
+                if ( !isFail() )
+                {
                     setFailFast( false );
                 }
                 // go through each rule
-                for (int i = 0; i < getRules().length; i++) {
+                for ( int i = 0; i < getRules().length; i++ )
+                {
                     // prevent against empty rules
                     EnforcerRule rule = getRules()[i];
-                    if (rule != null) {
+                    if ( rule != null )
+                    {
                         // store the current rule for
                         // logging purposes
                         currentRule = rule.getClass().getName();
-                        log.debug("Executing rule: " + currentRule);
-                        try {
-                            if (ignoreCache || shouldExecute(rule)) {
+                        log.debug( "Executing rule: " + currentRule );
+                        try
+                        {
+                            if ( ignoreCache || shouldExecute( rule ) )
+                            {
                                 // execute the rule
                                 //noinspection SynchronizationOnLocalVariableOrMethodParameter
-                                synchronized (rule) {
-                                    rule.execute(helper);
+                                synchronized ( rule )
+                                {
+                                    rule.execute( helper );
                                 }
                             }
-                        } catch (EnforcerRuleException e) {
+                        }
+                        catch ( EnforcerRuleException e )
+                        {
                             // i can throw an exception
                             // because failfast will be
                             // false if fail is false.
-                            if (isFailFast()) {
-                                throw new MojoExecutionException(currentRule + " failed with message:\n" + e.getMessage(), e);
-                            } else {
-                                list.add("Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage());
-                                log.debug("Adding failure due to exception", e);
+                            if ( isFailFast() )
+                            {
+                                throw new MojoExecutionException(
+                                        currentRule + " failed with message:\n"
+                                        + e.getMessage() , e );
+                            }
+                            else
+                            {
+                                list.add( "Rule " + i + ": " + currentRule
+                                        + " failed with message:\n"
+                                        + e.getMessage() );
+                                log.debug( "Adding failure due to exception" ,
+                                        e );
                             }
                         }
                     }
                 }
                 // if we found anything
-                if (!list.isEmpty()) {
-                    for (String failure : list) {
-                        log.warn(failure);
+                if ( !list.isEmpty() )
+                {
+                    for ( String failure : list )
+                    {
+                        log.warn( failure );
                     }
-                    if (isFail()) {
-                        throw new MojoExecutionException("Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed.");
+                    if ( isFail() )
+                    {
+                        throw new MojoExecutionException(
+                                "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
                     }
                 }
-            } else {
-                throw new MojoExecutionException("No rules are configured. Use the skip flag if you want to disable execution.");
             }
-        } else {
-            log.info("Skipping Rule Enforcement.");
+            else
+            {
+                throw new MojoExecutionException(
+                        "No rules are configured. Use the skip flag if you want to disable execution." );
+            }
+        }
+        else
+        {
+            log.info( "Skipping Rule Enforcement." );
         }
     }
 
@@ -160,20 +190,26 @@ public abstract class AbstractEnforceMojo
      * @param rule the rule to verify
      * @return {@code true} if rule should be executed, otherwise {@code false}
      */
-    protected boolean shouldExecute(EnforcerRule rule) {
-        if (rule.isCacheable()) {
+    protected boolean shouldExecute( EnforcerRule rule )
+    {
+        if ( rule.isCacheable() )
+        {
             Log log = this.getLog();
-            log.debug("Rule " + rule.getClass().getName() + " is cacheable.");
+            log.debug( "Rule " + rule.getClass().getName() + " is cacheable." );
             String key = rule.getClass().getName() + " " + rule.getCacheId();
-            if (EnforceMojo.cache.containsKey(key)) {
-                log.debug("Key " + key + " was found in the cache");
-                if (rule.isResultValid((EnforcerRule) cache.get(key))) {
-                    log.debug("The cached results are still valid. Skipping the rule: " + rule.getClass().getName());
+            if ( EnforceMojo.cache.containsKey( key ) )
+            {
+                log.debug( "Key " + key + " was found in the cache" );
+                if ( rule.isResultValid( (EnforcerRule) cache.get( key ) ) )
+                {
+                    log.debug(
+                            "The cached results are still valid. Skipping the rule: "
+                            + rule.getClass().getName() );
                     return false;
                 }
             }
             //add it to the cache of executed rules
-            EnforceMojo.cache.put(key, rule);
+            EnforceMojo.cache.put( key , rule );
         }
         return true;
     }
@@ -189,9 +225,9 @@ public abstract class AbstractEnforceMojo
     public abstract EnforcerRule[] getRules();
 
     /**
-     * @param the rules to set.
+     * @param theRules to set.
      */
-    public abstract void setRules( EnforcerRule[] rules );
+    public abstract void setRules( EnforcerRule[] theRules );
 
     /**
      * @return the skip
