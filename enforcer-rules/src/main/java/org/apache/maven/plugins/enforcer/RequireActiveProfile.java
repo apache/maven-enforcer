@@ -31,44 +31,46 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This rule checks that some profiles are active.
- *
+ * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class RequireActiveProfile
     extends AbstractNonCacheableEnforcerRule
 {
 
-    /** Comma separated list of profiles to check.
-     *  
+    /**
+     * Comma separated list of profiles to check.
+     * 
      * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setProfiles(String)}
      * @see {@link #getProfiles()}
      */
     public String profiles = null;
 
-    /** If all profiles must be active. If false, only one must be active
-     *
+    /**
+     * If all profiles must be active. If false, only one must be active
+     * 
      * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setAll(boolean)}
      * @see {@link #isAll()}
      */
     public boolean all = true;
-    
+
     public final String getProfiles()
     {
         return profiles;
     }
-    
+
     public final void setProfiles( String profiles )
     {
         this.profiles = profiles;
     }
-    
+
     public final boolean isAll()
     {
         return all;
     }
-    
+
     public final void setAll( boolean all )
     {
         this.all = all;
@@ -76,8 +78,8 @@ public class RequireActiveProfile
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+     * @see
+     * org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
      */
     public void execute( EnforcerRuleHelper theHelper )
         throws EnforcerRuleException
@@ -100,18 +102,10 @@ public class RequireActiveProfile
                 boolean fail = false;
                 if ( !missingProfiles.isEmpty() )
                 {
-                    fail = true;
-                    // if (all && missingProfiles.size() != profs.length)
-                    // {
-                    // fail = true;
-                    // }
-                    // else
-                    // {
-                    // if (!all && missingProfiles.size() >= (profs.length -1))
-                    // {
-                    // fail = true;
-                    // }
-                    // }
+                    if ( all || missingProfiles.size() == profs.length )
+                    {
+                        fail = true;
+                    }
                 }
 
                 if ( fail )
@@ -143,7 +137,7 @@ public class RequireActiveProfile
 
     /**
      * Checks if profile is active.
-     *
+     * 
      * @param project the project
      * @param profileName the profile name
      * @return <code>true</code> if profile is active, otherwise <code>false</code>
@@ -166,3 +160,4 @@ public class RequireActiveProfile
         return false;
     }
 }
+
