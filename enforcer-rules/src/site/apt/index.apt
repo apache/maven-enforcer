@@ -43,7 +43,7 @@ Standard Rules
 
   * requireActiveProfile - enforces one or more active profiles.
   
-  * requireEnvironmentVariable - enforces the existence of an environment variable
+  * {{{./requireEnvironmentVariable.html}requireEnvironmentVariable}} - enforces the existence of an environment variable
   
   * {{{./requireFilesDontExist.html}requireFilesDontExist}} - enforces that the list of files do not exist.
   
