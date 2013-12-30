@@ -25,21 +25,27 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Prerequisites;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.junit.Before;
 import org.junit.Test;
 
 public class RequirePrerequisiteTest
 {
+    private MavenProject project;
+    private EnforcerRuleHelper helper;
+
+    @Before
+    public void before() throws ExpressionEvaluationException {
+        project = mock( MavenProject.class );
+        helper = mock( EnforcerRuleHelper.class );
+        when( helper.evaluate( "${project}" ) ).thenReturn( project );
+    }
+
     @Test( expected = EnforcerRuleException.class )
     public void testNoPrerequisite()
         throws Exception
     {
         RequirePrerequisite rule = new RequirePrerequisite();
-
-        MavenProject project = mock( MavenProject.class );
-
-        EnforcerRuleHelper helper = mock( EnforcerRuleHelper.class );
-        when( helper.evaluate( "${project}" ) ).thenReturn( project );
-
         rule.execute( helper );
     }
     
@@ -47,14 +53,9 @@ public class RequirePrerequisiteTest
     public void testNoSpecifiedPrerequisite()
         throws Exception
     {
-        RequirePrerequisite rule = new RequirePrerequisite();
-
-        MavenProject project = mock( MavenProject.class );
         when( project.getPrerequisites() ).thenReturn( new Prerequisites() );
 
-        EnforcerRuleHelper helper = mock( EnforcerRuleHelper.class );
-        when( helper.evaluate( "${project}" ) ).thenReturn( project );
-
+        RequirePrerequisite rule = new RequirePrerequisite();
         rule.execute( helper );
     }
 
@@ -62,15 +63,10 @@ public class RequirePrerequisiteTest
     public void testLowerMavenPrerequisite()
         throws Exception
     {
-        RequirePrerequisite rule = new RequirePrerequisite();
-        rule.setMavenVersion( "3.0" );
-
-        MavenProject project = mock( MavenProject.class );
         when( project.getPrerequisites() ).thenReturn( new Prerequisites() );
 
-        EnforcerRuleHelper helper = mock( EnforcerRuleHelper.class );
-        when( helper.evaluate( "${project}" ) ).thenReturn( project );
-
+        RequirePrerequisite rule = new RequirePrerequisite();
+        rule.setMavenVersion( "3.0" );
         rule.execute( helper );
     }
 
@@ -78,14 +74,10 @@ public class RequirePrerequisiteTest
     public void testLowerMavenRangePrerequisite()
         throws Exception
     {
-        RequirePrerequisite rule = new RequirePrerequisite();
-        rule.setMavenVersion( "[3.0,)" );
-
-        MavenProject project = mock( MavenProject.class );
         when( project.getPrerequisites() ).thenReturn( new Prerequisites() );
 
-        EnforcerRuleHelper helper = mock( EnforcerRuleHelper.class );
-        when( helper.evaluate( "${project}" ) ).thenReturn( project );
+        RequirePrerequisite rule = new RequirePrerequisite();
+        rule.setMavenVersion( "[3.0,)" );
 
         rule.execute( helper );
     }
@@ -94,17 +86,14 @@ public class RequirePrerequisiteTest
     public void testValidPrerequisite()
                     throws Exception
     {
-        RequirePrerequisite rule = new RequirePrerequisite();
-        rule.setMavenVersion( "2.2.1" );
-
-        MavenProject project = mock( MavenProject.class );
         Prerequisites prerequisites = new Prerequisites();
         prerequisites.setMaven( "3.0" );
         when( project.getPrerequisites() ).thenReturn( prerequisites );
 
-        EnforcerRuleHelper helper = mock( EnforcerRuleHelper.class );
-        when( helper.evaluate( "${project}" ) ).thenReturn( project );
-
+        RequirePrerequisite rule = new RequirePrerequisite();
+        rule.setMavenVersion( "2.2.1" );
+        
         rule.execute( helper );
     }
 }
+
