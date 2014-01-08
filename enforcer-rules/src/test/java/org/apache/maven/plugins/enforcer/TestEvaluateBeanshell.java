@@ -19,14 +19,12 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import static org.mockito.Mockito.*;
-
 import junit.framework.TestCase;
-
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+import static org.mockito.Mockito.*;
 
 /**
  * The Class TestEvaluateBeanshell.
@@ -119,7 +117,6 @@ public class TestEvaluateBeanshell
         {
             assertFalse( e.getLocalizedMessage().equals( rule.getMessage() ) );
         }
-        verify( eval );
     }
 
     public void testRuleInvalidBeanshell()
