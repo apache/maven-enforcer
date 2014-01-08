@@ -100,18 +100,10 @@ public class RequireActiveProfile
                 boolean fail = false;
                 if ( !missingProfiles.isEmpty() )
                 {
-                    fail = true;
-                    // if (all && missingProfiles.size() != profs.length)
-                    // {
-                    // fail = true;
-                    // }
-                    // else
-                    // {
-                    // if (!all && missingProfiles.size() >= (profs.length -1))
-                    // {
-                    // fail = true;
-                    // }
-                    // }
+                    if (all || missingProfiles.size() == profs.length )
+                    {
+                      fail = true;
+                    }
                 }
 
                 if ( fail )
