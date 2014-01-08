@@ -41,7 +41,7 @@ Standard Rules
 
   * {{{./evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
 
-  * requireActiveProfile - enforces one or more active profiles.
+  * {{{./requireActiveProfile.html}requireActiveProfile}} - enforces one or more active profiles.
   
   * {{{./requireEnvironmentVariable .html}requireEnvironmentVariable}} - enforces the existence of an environment variable
   
