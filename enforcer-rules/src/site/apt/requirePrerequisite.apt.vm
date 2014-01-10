@@ -55,13 +55,13 @@
             </goals>
             <configuration>
               <rules>
-                <requirePrerequisites>
+                <requirePrerequisite>
                   <mavenVersion>2.2.1</mavenVersion>
-                </requirePrerequisites>
+                </requirePrerequisite>
                 <!-- same rule, different notation -->
-                <requirePrerequisites>
+                <requirePrerequisite>
                   <mavenVersion>[2.2.1,)</mavenVersion>
-                </requirePrerequisites>
+                </requirePrerequisite>
               </rules>
             </configuration>
           </execution>

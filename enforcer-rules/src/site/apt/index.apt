@@ -61,7 +61,7 @@ Standard Rules
 
   * {{{./requirePluginVersions.html}requirePluginVersions}} - enforces that all plugins have a specified version.
 
-  * {{{./requirePrerequisites.html}requirePrerequisites}} - enforces that prerequisites have been specified.
+  * {{{./requirePrerequisite.html}requirePrerequisite}} - enforces that prerequisites have been specified.
    
   * {{{./requireProperty.html}requireProperty}} - enforces the existence and values of properties.
    
