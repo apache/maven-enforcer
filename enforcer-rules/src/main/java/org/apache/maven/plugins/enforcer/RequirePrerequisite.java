@@ -19,6 +19,8 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import java.util.List;
+
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -34,6 +36,13 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  */
 public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule
 {
+    /**
+     * Only the projects with one of these packagings will be enforced to have the correct prerequisite.
+     *  
+     * @since 1.3.2
+     */
+    private List<String> packagings;
+    
     /**
      * Can either be version or a range, e.g. {@code 2.2.1} or {@code [2.2.1,)}
      */
@@ -52,6 +61,17 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule
     }
     
     /**
+     * Only the projects with one of these packagings will be enforced to have the correct prerequisite.
+     * 
+     * @since 1.3.2
+     * @param packagings the list of packagings
+     */
+    public void setPackagings( List<String> packagings )
+    {
+        this.packagings = packagings;
+    }
+    
+    /**
      * {@inheritDoc}
      */
     public void execute( EnforcerRuleHelper helper )
@@ -60,6 +80,18 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule
         try
         {
             MavenProject project = (MavenProject) helper.evaluate( "${project}" );
+
+            if ( "pom".equals( project.getPackaging() ) )
+            {
+                helper.getLog().debug( "Packaging is pom, skipping requirePrerequisite rule" );
+                return;
+            }
+
+            if ( packagings != null && !packagings.contains( project.getPackaging() ) )
+            {
+                helper.getLog().debug( "Packaging is " + project.getPackaging() + ", skipping requirePrerequisite rule" );
+                return;
+            }
             
             Prerequisites prerequisites = project.getPrerequisites(); 
             
