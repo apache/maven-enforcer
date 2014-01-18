@@ -19,126 +19,354 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import junit.framework.TestCase;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.project.MavenProject;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import static org.junit.Assert.fail;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class TestBannedDependencies.
- *
+ * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
+@RunWith( Enclosed.class )
 public class TestBannedDependencies
-    extends TestCase
 {
-
-    /**
-     * Test rule.
-     *
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    public void testRule()
-        throws IOException
+    public static class ExcludesDoNotUseTransitiveDependencies
     {
-        ArtifactStubFactory factory = new ArtifactStubFactory();
-        MockProject project = new MockProject();
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
-        project.setArtifacts( factory.getMixedArtifacts() );
-        project.setDependencyArtifacts( factory.getScopedArtifacts() );
-        
-        BannedDependencies rule = newBannedDependenciesRule();
 
-        List<String> excludes = new ArrayList<String>();
-        rule.setSearchTransitive( false );
+        private List<String> excludes;
 
-        // test whole name
-        excludes.add( "testGroupId:release:1.0" );
-        rule.setExcludes( excludes );
+        private BannedDependencies rule;
 
-        execute( rule, helper, false );
+        private EnforcerRuleHelper helper;
 
-        // test group:artifact
-        excludes.clear();
-        excludes.add( "testGroupId:release" );
-        execute( rule, helper, false );
+        @Before
+        public void beforeMethod()
+            throws IOException
+        {
+            ArtifactStubFactory factory = new ArtifactStubFactory();
 
-        // test group
-        excludes.clear();
-        excludes.add( "testGroupId" );
-        execute( rule, helper, false );
+            MockProject project = new MockProject();
+            project.setArtifacts( factory.getMixedArtifacts() );
+            project.setDependencyArtifacts( factory.getScopedArtifacts() );
 
-        // now check one that should be found in direct
-        // dependencies
-        excludes.clear();
-        excludes.add( "g:compile:1.0" );
-        execute( rule, helper, true );
-        rule.setSearchTransitive( true );
+            helper = EnforcerTestUtils.getHelper( project );
+            rule = newBannedDependenciesRule();
 
-        // whole name
-        excludes.clear();
-        excludes.add( "testGroupId:release:1.0" );
-        execute( rule, helper, true );
+            excludes = new ArrayList<String>();
+            rule.setExcludes( excludes );
+            rule.setMessage( null );
 
-        // group:artifact
-        excludes.clear();
-        excludes.add( "testGroupId:release" );
-        execute( rule, helper, true );
+            rule.setSearchTransitive( false );
+        }
 
-        // group
-        excludes.clear();
-        excludes.add( "testGroupId" );
-        execute( rule, helper, true );
+        private void addExcludeAndRunRule( String toAdd )
+            throws EnforcerRuleException
+        {
+            excludes.add( toAdd );
+            rule.execute( helper );
+        }
 
-        // now check wildcards
-        excludes.clear();
-        excludes.add( "*:release" );
-        execute( rule, helper, true );
+        @Test
+        public void testGroupIdArtifactIdVersion()
+            throws Exception
+        {
+            addExcludeAndRunRule( "testGroupId:release:1.0" );
+        }
 
-        // now check wildcards
-        excludes.clear();
-        excludes.add( "*:*:1.0" );
-        execute( rule, helper, true );
+        @Test
+        public void testGroupIdArtifactId()
+            throws Exception
+        {
+            addExcludeAndRunRule( "testGroupId:release" );
+        }
 
-        // now check wildcards
-        excludes.clear();
-        excludes.add( "*:release:*" );
-        execute( rule, helper, true );
+        @Test
+        public void testGroupId()
+            throws Exception
+        {
+            addExcludeAndRunRule( "testGroupId" );
+        }
 
-        // now check wildcards
-        excludes.clear();
-        excludes.add( "*:release:1.2" );
-        execute( rule, helper, false );
+    }
 
-        // now check multiple excludes
-        excludes.add( "*:release:*" );
-        execute( rule, helper, true );
+    public static class ExcludesUsingTransitiveDependencies
+    {
 
-        // now check space trimming
-        excludes.clear();
-        excludes.add( "  testGroupId  :  release   :   1.0    " );
-        execute( rule, helper, true );
+        private List<String> excludes;
 
-        // now check weirdness
-        excludes.clear();
-        excludes.add( ":::" ); // null entry, won't match anything
-        execute( rule, helper, false );
+        private BannedDependencies rule;
+
+        private EnforcerRuleHelper helper;
+
+        @Before
+        public void beforeMethod()
+            throws IOException
+        {
+            ArtifactStubFactory factory = new ArtifactStubFactory();
+
+            MockProject project = new MockProject();
+            project.setArtifacts( factory.getMixedArtifacts() );
+            project.setDependencyArtifacts( factory.getScopedArtifacts() );
+
+            helper = EnforcerTestUtils.getHelper( project );
+            rule = newBannedDependenciesRule();
+
+            excludes = new ArrayList<String>();
+            rule.setExcludes( excludes );
+            rule.setMessage( null );
+            rule.setSearchTransitive( true );
+        }
+
+        private void addExcludeAndRunRule( String toAdd )
+            throws EnforcerRuleException
+        {
+            excludes.add( toAdd );
+            rule.execute( helper );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void testGroupIdArtifactIdVersion()
+            throws Exception
+        {
+            addExcludeAndRunRule( "testGroupId:release:1.0" );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void testGroupIdArtifactId()
+            throws Exception
+        {
+            addExcludeAndRunRule( "testGroupId:release" );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void testGroupId()
+            throws Exception
+        {
+            addExcludeAndRunRule( "testGroupId" );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void testSpaceTrimmingGroupIdArtifactIdVersion()
+            throws Exception
+        {
+            addExcludeAndRunRule( "  testGroupId  :  release   :   1.0    " );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void groupIdArtifactIdVersionType()
+            throws Exception
+        {
+            addExcludeAndRunRule( "g:a:1.0:war" );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void groupIdArtifactIdVersionTypeScope()
+            throws Exception
+        {
+            addExcludeAndRunRule( "g:a:1.0:war:compile" );
+        }
+
+        // @Test(expected = EnforcerRuleException.class)
+        // public void groupIdArtifactIdVersionTypeScopeClassifier() throws Exception {
+        // addExcludeAndRunRule("g:compile:1.0:jar:compile:one");
+        // }
+        //
+    }
+
+    public static class WildcardExcludesUsingTransitiveDependencies
+    {
+
+        private List<String> excludes;
+
+        private BannedDependencies rule;
+
+        private EnforcerRuleHelper helper;
+
+        @Before
+        public void beforeMethod()
+            throws IOException
+        {
+            ArtifactStubFactory factory = new ArtifactStubFactory();
+
+            MockProject project = new MockProject();
+            project.setArtifacts( factory.getMixedArtifacts() );
+            project.setDependencyArtifacts( factory.getScopedArtifacts() );
+
+            helper = EnforcerTestUtils.getHelper( project );
+            rule = newBannedDependenciesRule();
+
+            rule.setMessage( null );
+
+            excludes = new ArrayList<String>();
+            rule.setExcludes( excludes );
+            rule.setSearchTransitive( true );
+        }
+
+        private void addExcludeAndRunRule( String toAdd )
+            throws EnforcerRuleException
+        {
+            excludes.add( toAdd );
+            rule.execute( helper );
+        }
+
+        @Test
+        public void testWildcardForGroupIdArtifactIdVersion()
+            throws Exception
+        {
+            addExcludeAndRunRule( "*:release:1.2" );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void testWildCardForGroupIdArtifactId()
+            throws Exception
+        {
+            addExcludeAndRunRule( "*:release" );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void testWildcardForGroupIdWildcardForArtifactIdVersion()
+            throws Exception
+        {
+            addExcludeAndRunRule( "*:*:1.0" );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void testWildcardForGroupIdArtifactIdWildcardForVersion()
+            throws Exception
+        {
+            addExcludeAndRunRule( "*:release:*" );
+        }
+
+    }
+
+    public static class PartialWildcardExcludesUsingTransitiveDependencies
+    {
+
+        private List<String> excludes;
+
+        private BannedDependencies rule;
+
+        private EnforcerRuleHelper helper;
+
+        @Before
+        public void beforeMethod()
+            throws IOException
+        {
+            ArtifactStubFactory factory = new ArtifactStubFactory();
+
+            MockProject project = new MockProject();
+            project.setArtifacts( factory.getMixedArtifacts() );
+            project.setDependencyArtifacts( factory.getScopedArtifacts() );
+
+            helper = EnforcerTestUtils.getHelper( project );
+            rule = newBannedDependenciesRule();
+
+            rule.setMessage( null );
+
+            excludes = new ArrayList<String>();
+            rule.setExcludes( excludes );
+            rule.setSearchTransitive( true );
+        }
+
+        private void addExcludeAndRunRule( String toAdd )
+            throws EnforcerRuleException
+        {
+            excludes.add( toAdd );
+            rule.execute( helper );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void groupIdArtifactIdWithWildcard()
+            throws EnforcerRuleException
+        {
+            addExcludeAndRunRule( "testGroupId:re*" );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void groupIdArtifactIdVersionTypeWildcardScope()
+            throws EnforcerRuleException
+        {
+            addExcludeAndRunRule( "g:a:1.0:war:co*" );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void groupIdArtifactIdVersionWildcardTypeScope()
+            throws EnforcerRuleException
+        {
+            addExcludeAndRunRule( "g:a:1.0:w*:compile" );
+        }
+    }
+
+    public static class IllegalFormatsTests
+    {
+        private List<String> excludes;
+
+        private BannedDependencies rule;
+
+        private EnforcerRuleHelper helper;
+
+        @Before
+        public void beforeMethod()
+            throws IOException
+        {
+            ArtifactStubFactory factory = new ArtifactStubFactory();
+
+            MockProject project = new MockProject();
+            project.setArtifacts( factory.getMixedArtifacts() );
+            project.setDependencyArtifacts( factory.getScopedArtifacts() );
+
+            helper = EnforcerTestUtils.getHelper( project );
+            rule = newBannedDependenciesRule();
+
+            rule.setMessage( null );
+
+            excludes = new ArrayList<String>();
+            rule.setExcludes( excludes );
+            rule.setSearchTransitive( true );
+        }
+
+        private void addExcludeAndRunRule( String toAdd )
+            throws EnforcerRuleException
+        {
+            excludes.add( toAdd );
+            rule.execute( helper );
+        }
+
+        @Test( expected = IllegalArgumentException.class )
+        public void onlyThreeColonsWithoutAnythingElse()
+            throws EnforcerRuleException
+        {
+            addExcludeAndRunRule( ":::" );
+        }
+
+        @Test( expected = IllegalArgumentException.class )
+        public void onlySevenColonsWithoutAnythingElse()
+            throws EnforcerRuleException
+        {
+            addExcludeAndRunRule( ":::::::" );
+        }
+
     }
 
     /**
      * Test includes.
-     *
+     * 
      * @throws IOException Signals that an I/O exception has occurred.
      */
+    @Test
     public void testIncludes()
         throws IOException
     {
@@ -172,9 +400,10 @@ public class TestBannedDependencies
         includes.add( "*:test" );
         rule.setIncludes( includes );
         execute( rule, helper, true );
+
     }
 
-    private BannedDependencies newBannedDependenciesRule()
+    private static BannedDependencies newBannedDependenciesRule()
     {
         BannedDependencies rule = new BannedDependencies()
         {
@@ -182,7 +411,7 @@ public class TestBannedDependencies
             protected Set<Artifact> getDependenciesToCheck( MavenProject project )
             {
                 // the integration with dependencyGraphTree is verified with the integration tests
-                // for unit-testing 
+                // for unit-testing
                 return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
             }
         };
@@ -191,7 +420,7 @@ public class TestBannedDependencies
 
     /**
      * Simpler wrapper to execute and deal with the expected result.
-     *
+     * 
      * @param rule the rule
      * @param helper the helper
      * @param shouldFail the should fail

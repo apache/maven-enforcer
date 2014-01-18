@@ -19,19 +19,16 @@ package org.apache.maven.plugins.enforcer.utils;
  * under the License.
  */
 
-import java.util.ArrayList;
-import java.util.Collection;
-
+import junit.framework.TestCase;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
-
 import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher.Pattern;
-
-import junit.framework.TestCase;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class TestArtifactMatcher extends TestCase
 {
@@ -72,7 +69,7 @@ public class TestArtifactMatcher extends TestCase
 		}
 		catch(NullPointerException e){}
 	}
-	
+
 	public void testPattern() throws InvalidVersionSpecificationException
 	{
 		executePatternMatch("groupId:artifactId:1.0:jar:compile", "groupId", "artifactId", "1.0", "compile", "jar", true);

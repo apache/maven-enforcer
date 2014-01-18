@@ -19,9 +19,6 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
@@ -32,6 +29,8 @@ import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Abstract Rule for banning dependencies.
@@ -173,7 +172,7 @@ public abstract class AbstractBanDependencies
      * @throws EnforcerRuleException the enforcer rule exception
      */
     protected abstract Set<Artifact> checkDependencies( Set<Artifact> dependencies, Log log )
-        throws EnforcerRuleException;
+            throws EnforcerRuleException;
 
     /**
      * Checks if is search transitive.

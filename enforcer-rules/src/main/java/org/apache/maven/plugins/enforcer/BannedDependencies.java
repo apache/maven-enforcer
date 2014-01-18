@@ -19,21 +19,20 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher;
+import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher.Pattern;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.util.StringUtils;
-
 /**
  * This rule checks that lists of dependencies are not included.
- *
+ * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
@@ -42,29 +41,28 @@ public class BannedDependencies
 {
 
     /**
-     * Specify the banned dependencies. This can be a list of artifacts in the format <code>groupId[:artifactId][:version]</code>.
-     * Any of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
+     * Specify the banned dependencies. This can be a list of artifacts in the format
+     * <code>groupId[:artifactId][:version]</code>. Any of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
      * The rule will fail if any dependency matches any exclude, unless it also matches an include rule.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setExcludes(List)}
      * @see {@link #getExcludes()}
+     * @deprecated the visibility will be reduced to private with the next major version
      */
     public List<String> excludes = null;
 
     /**
-     * Specify the allowed dependencies. This can be a list of artifacts in the format <code>groupId[:artifactId][:version]</code>.
-     * Any of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
+     * Specify the allowed dependencies. This can be a list of artifacts in the format
+     * <code>groupId[:artifactId][:version]</code>. Any of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
      * Includes override the exclude rules. It is meant to allow wide exclusion rules with wildcards and still allow a
      * smaller set of includes. <br>
      * For example, to ban all xerces except xerces-api -> exclude "xerces", include "xerces:xerces-api"
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setIncludes(List)}
      * @see {@link #getIncludes()}
+     * @deprecated the visibility will be reduced to private with the next major version
      */
     public List<String> includes = null;
-
 
     /**
      * {@inheritDoc}
@@ -72,6 +70,7 @@ public class BannedDependencies
     protected Set<Artifact> checkDependencies( Set<Artifact> theDependencies, Log log )
         throws EnforcerRuleException
     {
+
         Set<Artifact> excluded = checkDependencies( theDependencies, excludes );
 
         // anything specifically included should be removed
@@ -79,6 +78,7 @@ public class BannedDependencies
         if ( excluded != null )
         {
             Set<Artifact> included = checkDependencies( theDependencies, includes );
+
             if ( included != null )
             {
                 excluded.removeAll( included );
@@ -90,7 +90,7 @@ public class BannedDependencies
 
     /**
      * Checks the set of dependencies against the list of patterns.
-     *
+     * 
      * @param thePatterns the patterns
      * @param dependencies the dependencies
      * @return a set containing artifacts matching one of the patterns or <code>null</code>
@@ -106,13 +106,13 @@ public class BannedDependencies
 
             for ( String pattern : thePatterns )
             {
-
                 String[] subStrings = pattern.split( ":" );
                 subStrings = StringUtils.stripAll( subStrings );
+                String resultPattern = StringUtils.join( subStrings, ":" );
 
                 for ( Artifact artifact : dependencies )
                 {
-                    if ( compareDependency( subStrings, artifact ) )
+                    if ( compareDependency( resultPattern, artifact ) )
                     {
                         // only create if needed
                         if ( foundMatches == null )
@@ -128,69 +128,27 @@ public class BannedDependencies
     }
 
     /**
-     * Compares the parsed array of substrings against the artifact.
-     * The pattern should follow the format "groupId:artifactId:version:type:scope"
-     *
-     * @param pattern the array of patterns
+     * Compares the given pattern against the given artifact. The pattern should follow the format
+     * <code>groupId:artifactId:version:type:scope:classifier</code>.
+     * 
+     * @param pattern The pattern to compare the artifact with.
      * @param artifact the artifact
      * @return <code>true</code> if the artifact matches one of the patterns
      * @throws EnforcerRuleException the enforcer rule exception
      */
-    protected boolean compareDependency( String[] pattern, Artifact artifact )
+    protected boolean compareDependency( String pattern, Artifact artifact )
         throws EnforcerRuleException
     {
 
-        boolean result = false;
-        if ( pattern.length > 0 )
+        ArtifactMatcher.Pattern am = new Pattern( pattern );
+        boolean result;
+        try
         {
-            result = pattern[0].equals( "*" ) || artifact.getGroupId().equals( pattern[0] );
+            result = am.match( artifact );
         }
-
-        if ( result && pattern.length > 1 )
+        catch ( InvalidVersionSpecificationException e )
         {
-            result = pattern[1].equals( "*" ) || artifact.getArtifactId().equals( pattern[1] );
-        }
-
-        if ( result && pattern.length > 2 )
-        {
-            // short circuit if the versions are exactly the same
-            if ( pattern[2].equals( "*" ) || artifact.getVersion().equals( pattern[2] ) )
-            {
-                result = true;
-            }
-            else
-            {
-                try
-                {
-                    result =
-                        AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( pattern[2] ),
-                                                                 new DefaultArtifactVersion( artifact.getBaseVersion() ) );
-                }
-                catch ( InvalidVersionSpecificationException e )
-                {
-                    throw new EnforcerRuleException( "Invalid Version Range: ", e );
-                }
-            }
-        }
-
-        if ( result && pattern.length > 3 )
-        {
-            String type = artifact.getType();
-            if ( type == null || type.equals( "" ) )
-            {
-                type = "jar";
-            }
-            result = pattern[3].equals( "*" ) || type.equals( pattern[3] );
-        }
-
-        if ( result && pattern.length > 4 )
-        {
-            String scope = artifact.getScope();
-            if ( scope == null || scope.equals( "" ) )
-            {
-                scope = "compile";
-            }
-            result = pattern[4].equals( "*" ) || scope.equals( pattern[4] );
+            throw new EnforcerRuleException( "Invalid Version Range: ", e );
         }
 
         return result;
@@ -198,7 +156,7 @@ public class BannedDependencies
 
     /**
      * Gets the excludes.
-     *
+     * 
      * @return the excludes
      */
     public List<String> getExcludes()
@@ -208,7 +166,7 @@ public class BannedDependencies
 
     /**
      * Sets the excludes.
-     *
+     * 
      * @param theExcludes the excludes to set
      */
     public void setExcludes( List<String> theExcludes )
@@ -218,7 +176,7 @@ public class BannedDependencies
 
     /**
      * Gets the includes.
-     *
+     * 
      * @return the includes
      */
     public List<String> getIncludes()
@@ -228,7 +186,7 @@ public class BannedDependencies
 
     /**
      * Sets the includes.
-     *
+     * 
      * @param theIncludes the includes to set
      */
     public void setIncludes( List<String> theIncludes )

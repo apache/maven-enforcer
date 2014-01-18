@@ -19,14 +19,13 @@ package org.apache.maven.plugins.enforcer.utils;
  * under the License.
  */
 
-import java.util.Collection;
-import java.util.LinkedList;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugins.enforcer.AbstractVersionEnforcer;
+import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * This class is used for matching Artifacts against a list of patterns.
@@ -136,10 +135,15 @@ public final class ArtifactMatcher
                     throw new AssertionError();
             }
         }
-        
+
         private boolean matches( String expression, String input )
         {
             String regex = expression.replace( ".", "\\." ).replace( "*", ".*" ).replace( ":", "\\:" ).replace( '?', '.' );
+
+            //TODO: Check if this can be done better or prevented earlier.
+            if (input == null) {
+                input = "";
+            }
 
             return java.util.regex.Pattern.matches( regex , input );
         }
