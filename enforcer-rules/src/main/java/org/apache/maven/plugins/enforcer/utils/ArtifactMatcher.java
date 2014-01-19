@@ -87,7 +87,7 @@ public final class ArtifactMatcher
                     String scope = artifact.getScope();
                     if ( scope == null || scope.equals( "" ) )
                     {
-                        scope = "compile";
+                        scope = Artifact.SCOPE_COMPILE;
                     }
 
                     if ( !matches( parts[4], scope ) )

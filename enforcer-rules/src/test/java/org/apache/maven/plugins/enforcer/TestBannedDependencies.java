@@ -19,22 +19,14 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import org.apache.maven.artifact.Artifact;
+import java.io.IOException;
+
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.plugin.testing.ArtifactStubFactory;
-import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import static org.junit.Assert.fail;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TestBannedDependencies.
  * 
@@ -43,40 +35,23 @@ import static org.junit.Assert.fail;
 @RunWith( Enclosed.class )
 public class TestBannedDependencies
 {
+
     public static class ExcludesDoNotUseTransitiveDependencies
     {
-
-        private List<String> excludes;
-
-        private BannedDependencies rule;
-
-        private EnforcerRuleHelper helper;
+        private BannedDependenciesTestSetup setup;
 
         @Before
         public void beforeMethod()
             throws IOException
         {
-            ArtifactStubFactory factory = new ArtifactStubFactory();
-
-            MockProject project = new MockProject();
-            project.setArtifacts( factory.getMixedArtifacts() );
-            project.setDependencyArtifacts( factory.getScopedArtifacts() );
-
-            helper = EnforcerTestUtils.getHelper( project );
-            rule = newBannedDependenciesRule();
-
-            excludes = new ArrayList<String>();
-            rule.setExcludes( excludes );
-            rule.setMessage( null );
-
-            rule.setSearchTransitive( false );
+            this.setup = new BannedDependenciesTestSetup();
+            this.setup.setSearchTransitive( false );
         }
 
         private void addExcludeAndRunRule( String toAdd )
             throws EnforcerRuleException
         {
-            excludes.add( toAdd );
-            rule.execute( helper );
+            this.setup.addExcludeAndRunRule( toAdd );
         }
 
         @Test
@@ -105,36 +80,20 @@ public class TestBannedDependencies
     public static class ExcludesUsingTransitiveDependencies
     {
 
-        private List<String> excludes;
-
-        private BannedDependencies rule;
-
-        private EnforcerRuleHelper helper;
+        private BannedDependenciesTestSetup setup;
 
         @Before
         public void beforeMethod()
             throws IOException
         {
-            ArtifactStubFactory factory = new ArtifactStubFactory();
-
-            MockProject project = new MockProject();
-            project.setArtifacts( factory.getMixedArtifacts() );
-            project.setDependencyArtifacts( factory.getScopedArtifacts() );
-
-            helper = EnforcerTestUtils.getHelper( project );
-            rule = newBannedDependenciesRule();
-
-            excludes = new ArrayList<String>();
-            rule.setExcludes( excludes );
-            rule.setMessage( null );
-            rule.setSearchTransitive( true );
+            this.setup = new BannedDependenciesTestSetup();
+            this.setup.setSearchTransitive( true );
         }
 
         private void addExcludeAndRunRule( String toAdd )
             throws EnforcerRuleException
         {
-            excludes.add( toAdd );
-            rule.execute( helper );
+            this.setup.addExcludeAndRunRule( toAdd );
         }
 
         @Test( expected = EnforcerRuleException.class )
@@ -189,37 +148,20 @@ public class TestBannedDependencies
     public static class WildcardExcludesUsingTransitiveDependencies
     {
 
-        private List<String> excludes;
-
-        private BannedDependencies rule;
-
-        private EnforcerRuleHelper helper;
+        private BannedDependenciesTestSetup setup;
 
         @Before
         public void beforeMethod()
             throws IOException
         {
-            ArtifactStubFactory factory = new ArtifactStubFactory();
-
-            MockProject project = new MockProject();
-            project.setArtifacts( factory.getMixedArtifacts() );
-            project.setDependencyArtifacts( factory.getScopedArtifacts() );
-
-            helper = EnforcerTestUtils.getHelper( project );
-            rule = newBannedDependenciesRule();
-
-            rule.setMessage( null );
-
-            excludes = new ArrayList<String>();
-            rule.setExcludes( excludes );
-            rule.setSearchTransitive( true );
+            this.setup = new BannedDependenciesTestSetup();
+            this.setup.setSearchTransitive( true );
         }
 
         private void addExcludeAndRunRule( String toAdd )
             throws EnforcerRuleException
         {
-            excludes.add( toAdd );
-            rule.execute( helper );
+            this.setup.addExcludeAndRunRule( toAdd );
         }
 
         @Test
@@ -255,37 +197,20 @@ public class TestBannedDependencies
     public static class PartialWildcardExcludesUsingTransitiveDependencies
     {
 
-        private List<String> excludes;
-
-        private BannedDependencies rule;
-
-        private EnforcerRuleHelper helper;
+        private BannedDependenciesTestSetup setup;
 
         @Before
         public void beforeMethod()
             throws IOException
         {
-            ArtifactStubFactory factory = new ArtifactStubFactory();
-
-            MockProject project = new MockProject();
-            project.setArtifacts( factory.getMixedArtifacts() );
-            project.setDependencyArtifacts( factory.getScopedArtifacts() );
-
-            helper = EnforcerTestUtils.getHelper( project );
-            rule = newBannedDependenciesRule();
-
-            rule.setMessage( null );
-
-            excludes = new ArrayList<String>();
-            rule.setExcludes( excludes );
-            rule.setSearchTransitive( true );
+            this.setup = new BannedDependenciesTestSetup();
+            this.setup.setSearchTransitive( true );
         }
 
         private void addExcludeAndRunRule( String toAdd )
             throws EnforcerRuleException
         {
-            excludes.add( toAdd );
-            rule.execute( helper );
+            this.setup.addExcludeAndRunRule( toAdd );
         }
 
         @Test( expected = EnforcerRuleException.class )
@@ -312,37 +237,20 @@ public class TestBannedDependencies
 
     public static class IllegalFormatsTests
     {
-        private List<String> excludes;
-
-        private BannedDependencies rule;
-
-        private EnforcerRuleHelper helper;
+        private BannedDependenciesTestSetup setup;
 
         @Before
         public void beforeMethod()
             throws IOException
         {
-            ArtifactStubFactory factory = new ArtifactStubFactory();
-
-            MockProject project = new MockProject();
-            project.setArtifacts( factory.getMixedArtifacts() );
-            project.setDependencyArtifacts( factory.getScopedArtifacts() );
-
-            helper = EnforcerTestUtils.getHelper( project );
-            rule = newBannedDependenciesRule();
-
-            rule.setMessage( null );
-
-            excludes = new ArrayList<String>();
-            rule.setExcludes( excludes );
-            rule.setSearchTransitive( true );
+            this.setup = new BannedDependenciesTestSetup();
+            this.setup.setSearchTransitive( true );
         }
 
         private void addExcludeAndRunRule( String toAdd )
             throws EnforcerRuleException
         {
-            excludes.add( toAdd );
-            rule.execute( helper );
+            this.setup.addExcludeAndRunRule( toAdd );
         }
 
         @Test( expected = IllegalArgumentException.class )
@@ -361,88 +269,44 @@ public class TestBannedDependencies
 
     }
 
-    /**
-     * Test includes.
-     * 
-     * @throws IOException Signals that an I/O exception has occurred.
-     */
-    @Test
-    public void testIncludes()
-        throws IOException
+    public static class IncludesExcludesNoTransitive
     {
-        ArtifactStubFactory factory = new ArtifactStubFactory();
-        MockProject project = new MockProject();
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
-        project.setArtifacts( factory.getMixedArtifacts() );
-        project.setDependencyArtifacts( factory.getScopedArtifacts() );
-        BannedDependencies rule = newBannedDependenciesRule();
+        private BannedDependenciesTestSetup setup;
 
-        List<String> excludes = new ArrayList<String>();
-        List<String> includes = new ArrayList<String>();
-
-        rule.setSearchTransitive( false );
-
-        excludes.add( "*" );
-        includes.add( "*" );
-
-        rule.setExcludes( excludes );
-        rule.setIncludes( includes );
-
-        execute( rule, helper, false );
-
-        excludes.clear();
-        excludes.add( "*:runtime" );
-        rule.setExcludes( excludes );
-
-        execute( rule, helper, false );
-
-        includes.clear();
-        includes.add( "*:test" );
-        rule.setIncludes( includes );
-        execute( rule, helper, true );
-
-    }
-
-    private static BannedDependencies newBannedDependenciesRule()
-    {
-        BannedDependencies rule = new BannedDependencies()
+        @Before
+        public void beforeMethod()
+            throws IOException
         {
-            @Override
-            protected Set<Artifact> getDependenciesToCheck( MavenProject project )
-            {
-                // the integration with dependencyGraphTree is verified with the integration tests
-                // for unit-testing
-                return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
-            }
-        };
-        return rule;
-    }
-
-    /**
-     * Simpler wrapper to execute and deal with the expected result.
-     * 
-     * @param rule the rule
-     * @param helper the helper
-     * @param shouldFail the should fail
-     */
-    private void execute( BannedDependencies rule, EnforcerRuleHelper helper, boolean shouldFail )
-    {
-        try
-        {
-            rule.setMessage( null );
-            rule.execute( helper );
-            if ( shouldFail )
-            {
-                fail( "Exception expected." );
-            }
+            this.setup = new BannedDependenciesTestSetup();
+            this.setup.setSearchTransitive( false );
         }
-        catch ( EnforcerRuleException e )
+
+        private void addIncludeExcludeAndRunRule( String incAdd, String excAdd )
+            throws EnforcerRuleException
         {
-            if ( !shouldFail )
-            {
-                fail( "No Exception expected:" + e.getLocalizedMessage() );
-            }
-            // helper.getLog().debug(e.getMessage());
+            this.setup.addIncludeExcludeAndRunRule( incAdd, excAdd );
+        }
+
+        @Test
+        public void includeEverythingAndExcludeEverythign()
+            throws EnforcerRuleException
+        {
+            addIncludeExcludeAndRunRule( "*", "*" );
+        }
+
+        @Test
+        public void includeEverythingAndExcludeEveryGroupIdAndScopeRuntime()
+            throws EnforcerRuleException
+        {
+            addIncludeExcludeAndRunRule( "*", "*:runtime" );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void includeEverythingAndExcludeEveryGroupIdAndScopeRuntimeYYYY()
+            throws EnforcerRuleException
+        {
+            addIncludeExcludeAndRunRule( "*:test", "*:runtime" );
         }
     }
+
 }
