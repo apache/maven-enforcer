@@ -101,7 +101,7 @@ and
             <id>enforce</id>
             <configuration>
               <rules>
-                <DependencyConvergence/>
+                <dependencyConvergence/>
               </rules>
             </configuration>
             <goals>
@@ -123,8 +123,8 @@ and
 	If you want to use the unique versions of the dependencies, you can set its property to <<<true>>>.
 
 +---------------------------------------------
-      <DependencyConvergence>
+      <dependencyConvergence>
         <uniqueVersions>true</uniqueVersions> 
-      </DependencyConvergence>
+      </dependencyConvergence>
 +---------------------------------------------
 
