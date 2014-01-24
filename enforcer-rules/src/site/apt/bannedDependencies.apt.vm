@@ -30,7 +30,7 @@ Banned Dependencies
 
    The following parameters are supported by this rule:
    
-   * searchTransitive - if transitive dependencies should be checked.
+   * searchTransitive - if transitive dependencies should be checked. Default is true.
    
    * excludes - a list of artifacts to ban. The format is groupId[:artifactId][:version][:type][:scope][:classifier] where artifactId, version, type, scope and classifier are optional. Wildcards may be used to replace an entire or just parts of a section.
       Examples:
@@ -91,6 +91,43 @@ Banned Dependencies
                     <!--only 1.0 of badArtifact is allowed-->
                     <include>org.apache.maven:badArtifact:1.0</include>
                   </includes>
+                </bannedDependencies>
+              </rules>
+              <fail>true</fail>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+
+  Example plugin configuration which ignores transitive dependencies:
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-banned-dependencies</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedDependencies>
+                  <excludes>
+                    <exclude>commons-lang:commons-lang</exclude>
+                  </excludes>
+                  <searchTransitive>false</searchTransitive>
                 </bannedDependencies>
               </rules>
               <fail>true</fail>
