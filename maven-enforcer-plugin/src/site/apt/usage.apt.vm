@@ -56,7 +56,7 @@ Usage
    Each rule to be executed should be added to the rules element along with the specific configuration for that rule.
 
    As of version 2.0 you may add a <<<level>>> element to the standard rules. Valid values are <<<WARN>>> and <<<ERROR>>>. When
-   <<<level>>> <<<WARN>>> is specified, the rule will only spit out a warning but not fail the build.
+   <<<level>>> <<<WARN>>> is specified, the rule will only spit out a warning but will not fail the build.
    
    The <<<enforce>>> goal executes against each project in a multi-project build. The <<<enforce-once>>> goal executes
    just once per build. This is most effective for the standard rules because the Maven, Java and OS versions will not change between projects in the same build.
