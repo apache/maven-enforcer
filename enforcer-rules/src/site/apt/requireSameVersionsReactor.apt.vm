@@ -1,0 +1,130 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.    
+ 
+  ------
+  Require Same Versions Reactor
+  ------
+  Karl-Heinz Marbaise
+  ------
+  March 2014
+  ------
+
+Require Same Versions Reactor
+
+  This rule checks that the versions within the reactor are consistent furthermore
+  it will check that every module within the project contains a parent and that the 
+  parent is part of the reactor build. Furthermore it will all given dependencies
+  if they are intermodule dependencies that they using the same versions. 
+
+
+  The following parameters are supported by this rule:
+   
+  * message - an optional message to the user if the rule fails.
+    
+   []
+
+   
+  Sample Plugin Configuration:
+  
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-no-snapshots</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireSameVersionsReactor/>
+              </rules>
+              <fail>true</fail>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+
+  There are different situations within a multi module build which can lead to problems
+  (for example not working with maven-release-plugin etc.).
+  This rule is intended to prevent such problems.
+  
+  Let us assume we have the following (simple) project structure for a multi module setup.
+
++-----
+   root (pom.xml)
+     +--- module1 (pom.xml)
+     +--- module2 (pom.xml)
++-----
+
+  The root <<pom.xml>> looks like this:
+  
++-----
+  <groupId>com.mycompany.project</groupId>
+  <artifactId>parent</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  (..)
++-----
+
+  The best practice in Maven is that all childs inherit the version from their parent 
+  and don't define a new version which looks like this:
+  
++-----
+  <parent>
+    <groupId>...</groupId>
+    <artifactId>...</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>module1</artifactId>
+  (..)
++-----  
+
+  But sometimes people mistaken things or violate the best-practice and  
+  this look like this:
+
++-----
+  <parent>
+    <groupId>...</groupId>
+    <artifactId>...</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+  
+  <artifactId>module1</artifactId>
+  <version>1.1-SNAPSHOT</version>
++-----
+
+  By using this rule you would get a message during the build if you try to build
+  and example like the above which result in the following output:
+
++-----
+[WARNING] Rule 0: org.apache.maven.plugins.enforcer.RequireSameVersionsReactor failed with message:
+The reactor contains different versions.
+ --> org.apache.enforcer.example:appasm:pom:1.1.0-SNAPSHOT
++-----
+
