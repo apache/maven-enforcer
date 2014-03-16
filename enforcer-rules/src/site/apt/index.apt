@@ -43,7 +43,7 @@ Standard Rules
 
   * {{{./requireActiveProfile.html}requireActiveProfile}} - enforces one or more active profiles.
   
-  * {{{./requireEnvironmentVariable .html}requireEnvironmentVariable}} - enforces the existence of an environment variable
+  * {{{./requireEnvironmentVariable.html}requireEnvironmentVariable}} - enforces the existence of an environment variable
   
   * {{{./requireFilesDontExist.html}requireFilesDontExist}} - enforces that the list of files do not exist.
   
@@ -70,6 +70,8 @@ Standard Rules
   * {{{./requireReleaseVersion.html}requireReleaseVersion}} - enforces that the artifact is not a snapshot.
 
   * {{{./requireSameVersions.html}requireSameVersions}} - enforces that specific dependencies and/or plugins have the same version.
+
+  * {{{./requireSameVersionsReactor.html}requireSameVersionsReactor}} - enforces that a multi module build follows best practice.
 
   * {{{./requireUpperBoundDeps.html}requireUpperBoundDeps}} - ensures that every (transitive) dependency is resolved to it's specified version or higher.
 

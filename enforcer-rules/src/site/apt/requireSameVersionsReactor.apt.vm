@@ -105,8 +105,8 @@ Require Same Versions Reactor
   (..)
 +-----  
 
-  But sometimes people mistaken things or violate the best-practice and  
-  this look like this:
+  But sometimes people mistaken things or violate the best-practice which  
+  looks like this:
 
 +-----
   <parent>
@@ -119,12 +119,131 @@ Require Same Versions Reactor
   <version>1.1-SNAPSHOT</version>
 +-----
 
-  By using this rule you would get a message during the build if you try to build
-  and example like the above which result in the following output:
+  By using this rule you would get a message during the build 
+  with the following resulting output:
 
 +-----
 [WARNING] Rule 0: org.apache.maven.plugins.enforcer.RequireSameVersionsReactor failed with message:
 The reactor contains different versions.
- --> org.apache.enforcer.example:appasm:pom:1.1.0-SNAPSHOT
+ --> com.mycompany.project:myproject:pom:1.1-SNAPSHOT
 +-----
 
+  The next which happens is that the parent in a reactor is sometimes 
+  the wrong one like the following situation:
+  
++-----
+  <parent>
+    <groupId>...</groupId>
+    <artifactId>...</artifactId>
+    <version>1.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>module1</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  (..)
++-----  
+
+  This will prompted by the following message:
+  
++-----
+[WARNING] Rule 0: org.apache.maven.plugins.enforcer.RequireSameVersionsReactor failed with message:
+Reactor modules have parents which contain a wrong version.
+ --> com.mycompany.project:myproject:pom:1.1-SNAPSHOT parent:com.mycompany.project:myproject:pom:1.0-SNAPSHOT
++-----
+
+  If you have only changed a parent by accident with the wrong version 
+  like this:
+  
++-----
+  <parent>
+    <groupId>...</groupId>
+    <artifactId>...</artifactId>
+    <version>1.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>module1</artifactId>
+  (..)
++-----  
+  
+  you will get the same message as above:
+  
++-----
+[WARNING] Rule 0: org.apache.maven.plugins.enforcer.RequireSameVersionsReactor failed with message:
+The reactor contains different versions.
+ --> com.mycompany.project:myproject:pom:1.1-SNAPSHOT
++-----
+
+  An other things which happens that simply the parent will be forgotten which
+  produces a message like this:
+
++----
+[WARNING] Rule 0: org.apache.maven.plugins.enforcer.RequireSameVersionsReactor failed with message:
+Reactor contains modules without parents.
+ module: com.mycompany.project:myproject:pom:1.2-SNAPSHOT
++----
+
+  In larger mutli-module builds it happens also that the defined parent is given
+  but does not belong to the reactor like this:
+  
++-----
+  <parent>
+    <groupId>org.apache.enforcer</groupId>
+    <artifactId>something-different</artifactId>
+    <version>1.1</version>
+  </parent>
+
+  <artifactId>module1</artifactId>
+  (..)
++-----  
+  
+  Usually already the Maven warning like this should be paid attention to:
+  
++-----
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for org.apache.enforcer:pom:1.0.4-SNAPSHOT
+[WARNING] 'parent.relativePath' points at org.apache.enforcer:something-different instead of org.apache.enforcer:something-different, please verify your project structure @ line 7, column 11
+[WARNING] 
++-----
+
+  but this will oversight often. So the enforcer rule will break simply
+  such mail formed build via the message (This required that the parent
+  has the same version as the rest of the build which happens):
+   
++-----
+[WARNING] Rule 0: org.apache.maven.plugins.enforcer.RequireSameVersionsReactor failed with message:
+Module parents have been found which could not be found in the reactor.
+ module: org.apache.enforcer:something-different:pom:1.0.4-SNAPSHOT
++-----
+
+
+  An other case which happens (for example by merging from a branch into trunk/master)
+  is that an intermodule dependency contains the wrong version like this:
+
++-----
+  <parent>
+    <groupId>...</groupId>
+    <artifactId>...</artifactId>
+    <version>1.2-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>module1</artifactId>
+  
+  <dependencies>
+    <dependency>
+      <groupId>com.mycompany.project</groupId>
+      <artifactId>myproject</artifactId>
+      <version>1.1</version>
+    </dependency>
+  (..)
+  </dependencies>
+  (..)
++-----
+ 
+  This will result in the following message:
+  
++-----
+[WARNING] Rule 0: org.apache.maven.plugins.enforcer.RequireSameVersionsReactor failed with message:
+Reactor modules contains dependencies which do not reference the reactor.
+ module: com.mycompany.project:myproject-x:jar:1.2-SNAPSHOT
+    dependency: com.mycompany.project:myproject:1.1
++-----

@@ -32,7 +32,7 @@ Require Environment Variable
    
    * message - an optional message to the user if the rule fails.
    
-   * variableNames - The name of the environment variable to checkfor.
+   * variableNames - The name of the environment variable to be checked for.
    
    []
 
