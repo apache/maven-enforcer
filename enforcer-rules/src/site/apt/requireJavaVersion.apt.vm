@@ -31,7 +31,7 @@ Require Java Version
    
    * message - an optional message to the user if the rule fails.
    
-   * {{{../apidocs/org/apache/maven/plugin/enforcer/AbstractVersionEnforcer.html#version}version}} - {{{./versionRanges.html}range}} of allowed JDKs.
+   * {{{../apidocs/org/apache/maven/plugins/enforcer/AbstractVersionEnforcer.html#version}version}} - {{{./versionRanges.html}range}} of allowed JDKs.
    
    []
 
