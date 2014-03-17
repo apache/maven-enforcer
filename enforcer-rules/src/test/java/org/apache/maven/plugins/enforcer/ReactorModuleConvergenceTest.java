@@ -42,7 +42,7 @@ import java.util.List;
  * 
  * @author <a href="mailto:khmarbaise@apache.org">Karl Heinz Marbaise</a>
  */
-public class RequireSameVersionsReactorTest
+public class ReactorModuleConvergenceTest
 {
     private MavenProject project;
 
@@ -50,7 +50,7 @@ public class RequireSameVersionsReactorTest
 
     private EnforcerRuleHelper helper;
 
-    private RequireSameVersionsReactor rule;
+    private ReactorModuleConvergence rule;
 
     @Before
     public void before()
@@ -63,7 +63,7 @@ public class RequireSameVersionsReactorTest
         when( helper.evaluate( "${session}" ) ).thenReturn( session );
         when( helper.getLog() ).thenReturn( mock( Log.class ) );
 
-        rule = new RequireSameVersionsReactor();
+        rule = new ReactorModuleConvergence();
     }
 
     @Test

@@ -16,24 +16,26 @@
 ~~ under the License.    
  
   ------
-  Require Same Versions Reactor
+  Reactor Module Convergence
   ------
   Karl-Heinz Marbaise
   ------
   March 2014
   ------
 
-Require Same Versions Reactor
+Reactor Module Convergence
 
   This rule checks that the versions within the reactor are consistent furthermore
   it will check that every module within the project contains a parent and that the 
-  parent is part of the reactor build. Furthermore it will all given dependencies
-  if they are intermodule dependencies that they using the same versions. 
-
+  parent is part of the reactor build. Furthermore it will be checked if dependencies
+  are intermodule dependencies that they using the same version as given by the reactor. 
 
   The following parameters are supported by this rule:
    
   * message - an optional message to the user if the rule fails.
+  
+  * ignoreModuleDependencies - Ignore module dependencies which references modules within the 
+    the reactor (default: false). 
     
    []
 
@@ -57,7 +59,10 @@ Require Same Versions Reactor
             </goals>
             <configuration>
               <rules>
-                <requireSameVersionsReactor/>
+                <reactorModuleConvergence>
+                  <message>The reactor is not valid</message>
+                  <ignoreModuleDependencies>true</ignoreModuleDependencies>
+                </reactorModuleConvergence>
               </rules>
               <fail>true</fail>
             </configuration>
@@ -123,7 +128,7 @@ Require Same Versions Reactor
   with the following resulting output:
 
 +-----
-[WARNING] Rule 0: org.apache.maven.plugins.enforcer.RequireSameVersionsReactor failed with message:
+[WARNING] Rule 0: org.apache.maven.plugins.enforcer.ReactorModuleConvergence failed with message:
 The reactor contains different versions.
  --> com.mycompany.project:myproject:pom:1.1-SNAPSHOT
 +-----
@@ -146,7 +151,7 @@ The reactor contains different versions.
   This will prompted by the following message:
   
 +-----
-[WARNING] Rule 0: org.apache.maven.plugins.enforcer.RequireSameVersionsReactor failed with message:
+[WARNING] Rule 0: org.apache.maven.plugins.enforcer.ReactorModuleConvergence failed with message:
 Reactor modules have parents which contain a wrong version.
  --> com.mycompany.project:myproject:pom:1.1-SNAPSHOT parent:com.mycompany.project:myproject:pom:1.0-SNAPSHOT
 +-----
@@ -168,7 +173,7 @@ Reactor modules have parents which contain a wrong version.
   you will get the same message as above:
   
 +-----
-[WARNING] Rule 0: org.apache.maven.plugins.enforcer.RequireSameVersionsReactor failed with message:
+[WARNING] Rule 0: org.apache.maven.plugins.enforcer.ReactorModuleConvergence failed with message:
 The reactor contains different versions.
  --> com.mycompany.project:myproject:pom:1.1-SNAPSHOT
 +-----
@@ -177,7 +182,7 @@ The reactor contains different versions.
   produces a message like this:
 
 +----
-[WARNING] Rule 0: org.apache.maven.plugins.enforcer.RequireSameVersionsReactor failed with message:
+[WARNING] Rule 0: org.apache.maven.plugins.enforcer.ReactorModuleConvergence failed with message:
 Reactor contains modules without parents.
  module: com.mycompany.project:myproject:pom:1.2-SNAPSHOT
 +----
@@ -210,7 +215,7 @@ Reactor contains modules without parents.
   has the same version as the rest of the build which happens):
    
 +-----
-[WARNING] Rule 0: org.apache.maven.plugins.enforcer.RequireSameVersionsReactor failed with message:
+[WARNING] Rule 0: org.apache.maven.plugins.enforcer.ReactorModuleConvergence failed with message:
 Module parents have been found which could not be found in the reactor.
  module: org.apache.enforcer:something-different:pom:1.0.4-SNAPSHOT
 +-----
@@ -240,9 +245,9 @@ Module parents have been found which could not be found in the reactor.
 +-----
  
   This will result in the following message:
-  
+
 +-----
-[WARNING] Rule 0: org.apache.maven.plugins.enforcer.RequireSameVersionsReactor failed with message:
+[WARNING] Rule 0: org.apache.maven.plugins.enforcer.ReactorModuleConvergence failed with message:
 Reactor modules contains dependencies which do not reference the reactor.
  module: com.mycompany.project:myproject-x:jar:1.2-SNAPSHOT
     dependency: com.mycompany.project:myproject:1.1

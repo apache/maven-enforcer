@@ -71,9 +71,9 @@ Standard Rules
 
   * {{{./requireSameVersions.html}requireSameVersions}} - enforces that specific dependencies and/or plugins have the same version.
 
-  * {{{./requireSameVersionsReactor.html}requireSameVersionsReactor}} - enforces that a multi module build follows best practice.
-
   * {{{./requireUpperBoundDeps.html}requireUpperBoundDeps}} - ensures that every (transitive) dependency is resolved to it's specified version or higher.
+
+  * {{{./reactorModuleConvergence.html}reactorModuleConvergence}} - enforces that a multi module build follows best practice.
 
   []
 

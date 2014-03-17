@@ -40,9 +40,11 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * @author Karl-Heinz Marbaise
  * @since 1.3.2
  */
-public class RequireSameVersionsReactor
+public class ReactorModuleConvergence
     extends AbstractNonCacheableEnforcerRule
 {
+    private boolean ignoreModuleDependencies = false;
+
     private Log logger;
 
     public void execute( EnforcerRuleHelper helper )
@@ -68,7 +70,10 @@ public class RequireSameVersionsReactor
             checkParentsInReactor( sortedProjects );
             checkMissingParentsInReactor( sortedProjects );
             checkParentsPartOfTheReactor( sortedProjects );
-            checkDependenciesWithinReactor( sortedProjects );
+            if ( !isIgnoreModuleDependencies() )
+            {
+                checkDependenciesWithinReactor( sortedProjects );
+            }
         }
 
     }
@@ -407,6 +412,16 @@ public class RequireSameVersionsReactor
     private boolean hasParent( MavenProject mavenProject )
     {
         return mavenProject.getParent() != null;
+    }
+
+    public boolean isIgnoreModuleDependencies()
+    {
+        return ignoreModuleDependencies;
+    }
+
+    public void setIgnoreModuleDependencies( boolean ignoreModuleDependencies )
+    {
+        this.ignoreModuleDependencies = ignoreModuleDependencies;
     }
 
 }
