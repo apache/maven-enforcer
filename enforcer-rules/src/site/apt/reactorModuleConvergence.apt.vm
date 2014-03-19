@@ -32,7 +32,7 @@ Reactor Module Convergence
 
   The following parameters are supported by this rule:
    
-  * message - an optional message to the user if the rule fails.
+  * message - an optional supplemental message to the user if the rule fails.
   
   * ignoreModuleDependencies - Ignore module dependencies which references modules within the 
     the reactor (default: false). 

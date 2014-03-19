@@ -33,6 +33,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This rule will check if a multi module build will follow the best practices.
@@ -86,6 +87,7 @@ public class ReactorModuleConvergence
         if ( !parentsWhichAreNotPartOfTheReactor.isEmpty() )
         {
             StringBuilder sb = new StringBuilder().append( SystemUtils.LINE_SEPARATOR );
+            addMessageIfExist( sb );
             for ( MavenProject mavenProject : parentsWhichAreNotPartOfTheReactor )
             {
                 sb.append( " module: " );
@@ -110,6 +112,7 @@ public class ReactorModuleConvergence
         if ( !modulesWithoutParentsInReactory.isEmpty() )
         {
             StringBuilder sb = new StringBuilder().append( SystemUtils.LINE_SEPARATOR );
+            addMessageIfExist( sb );
             for ( MavenProject mavenProject : modulesWithoutParentsInReactory )
             {
                 sb.append( " module: " );
@@ -123,7 +126,7 @@ public class ReactorModuleConvergence
     private void checkDependenciesWithinReactor( List<MavenProject> sortedProjects )
         throws EnforcerRuleException
     {
-        //TODO: After we are sure having consistent version we can simply use the first one?
+        // After we are sure having consistent version we can simply use the first one?
         String reactorVersion = sortedProjects.get( 0 ).getVersion();
 
         Map<MavenProject, List<Dependency>> areThereDependenciesWhichAreNotPartOfTheReactor =
@@ -131,6 +134,7 @@ public class ReactorModuleConvergence
         if ( !areThereDependenciesWhichAreNotPartOfTheReactor.isEmpty() )
         {
             StringBuilder sb = new StringBuilder().append( SystemUtils.LINE_SEPARATOR );
+            addMessageIfExist( sb );
             for ( Entry<MavenProject, List<Dependency>> item : areThereDependenciesWhichAreNotPartOfTheReactor.entrySet() )
             {
                 sb.append( " module: " );
@@ -160,13 +164,14 @@ public class ReactorModuleConvergence
     private void checkParentsInReactor( List<MavenProject> sortedProjects )
         throws EnforcerRuleException
     {
-        //TODO: After we are sure having consistent version we can simply use the first one?
+        //After we are sure having consistent version we can simply use the first one?
         String reactorVersion = sortedProjects.get( 0 ).getVersion();
 
         List<MavenProject> areParentsFromTheReactor = areParentsFromTheReactor( reactorVersion, sortedProjects );
         if ( !areParentsFromTheReactor.isEmpty() )
         {
             StringBuilder sb = new StringBuilder().append( SystemUtils.LINE_SEPARATOR );
+            addMessageIfExist( sb );
             for ( MavenProject mavenProject : areParentsFromTheReactor )
             {
                 sb.append( " --> " );
@@ -191,6 +196,7 @@ public class ReactorModuleConvergence
         if ( !consistenceCheckResult.isEmpty() )
         {
             StringBuilder sb = new StringBuilder().append( SystemUtils.LINE_SEPARATOR );
+            addMessageIfExist( sb );
             for ( MavenProject mavenProject : consistenceCheckResult )
             {
                 sb.append( " --> " );
@@ -287,8 +293,8 @@ public class ReactorModuleConvergence
     }
 
     /**
-     * Assume we have a module which is which is a child of a multi module build but this child does not have a parent.
-     * This method will exactly search for such cases.
+     * Assume we have a module which is a child of a multi module build but this child does not have a parent. This
+     * method will exactly search for such cases.
      * 
      * @param projectList The sorted list of the reactor modules.
      * @return The resulting list will contain the modules in the reactor which do not have a parent. The list will
@@ -338,6 +344,15 @@ public class ReactorModuleConvergence
         }
     }
 
+    /**
+     * Go through the list of modules in the builds and check if we have dependencies. If yes we will check every
+     * dependency based on groupId/artifactId if it belong to the multi module build. In such a case it will be checked
+     * if the version does fit the version in the rest of build.
+     * 
+     * @param reactorVersion The version of the reactor.
+     * @param sortedProjects The list of existing projects within this build.
+     * @return List of violations. Never null. If the list is empty than no violation has happened.
+     */
     private Map<MavenProject, List<Dependency>> areThereDependenciesWhichAreNotPartOfTheReactor( String reactorVersion,
                                                                                                  List<MavenProject> sortedProjects )
     {
@@ -389,7 +404,6 @@ public class ReactorModuleConvergence
 
         if ( projectList != null && !projectList.isEmpty() )
         {
-            //TODO: Check if this the right choice ?
             String version = projectList.get( 0 ).getVersion();
             logger.debug( "First version:" + version );
             for ( MavenProject mavenProject : projectList )
@@ -422,6 +436,20 @@ public class ReactorModuleConvergence
     public void setIgnoreModuleDependencies( boolean ignoreModuleDependencies )
     {
         this.ignoreModuleDependencies = ignoreModuleDependencies;
+    }
+
+    /**
+     * This will add the given user message to the output.
+     * 
+     * @param sb The already initialized exception message part.
+     */
+    private void addMessageIfExist( StringBuilder sb )
+    {
+        if ( !StringUtils.isEmpty( getMessage() ) )
+        {
+            sb.append( getMessage() );
+            sb.append( SystemUtils.LINE_SEPARATOR );
+        }
     }
 
 }
