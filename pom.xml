@@ -246,15 +246,6 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-scm-publish-plugin</artifactId>
-          <configuration>
-            <content>${project.build.directory}/staging</content>
-            <checkoutDirectory>${maven.site.cache}/${maven.site.path}</checkoutDirectory>
-            <tryUpdate>true</tryUpdate>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <configuration>
             <topSiteURL>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/enforcer-archives/enforcer-LATEST</topSiteURL>
