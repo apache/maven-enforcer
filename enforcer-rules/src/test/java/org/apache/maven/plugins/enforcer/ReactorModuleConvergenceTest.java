@@ -86,9 +86,6 @@ public class ReactorModuleConvergenceTest
         MavenProject mp2 = createProjectChild1( mp1 );
         MavenProject mp3 = createProjectChild2( mp1 );
 
-        assertTrue( mp2.getParent() == mp1 );
-        assertTrue( mp3.getParent() == mp1 );
-
         List<MavenProject> theList = Arrays.asList( mp1, mp2, mp3 );
         when( session.getSortedProjects() ).thenReturn( theList );
 
@@ -231,7 +228,7 @@ public class ReactorModuleConvergenceTest
         MavenProject mp2 = createProjectChild1( mp1 );
 
         Dependency goodDependency = createDependency( "org.junit", "junit", "2.0" );
-        
+
         Dependency wrongDepFromReactory = createDependency( "org.apache.enforcer", "m2", "1.1-SNAPSHOT" );
         List<Dependency> depList = Arrays.asList( goodDependency, wrongDepFromReactory );
         when( mp2.getDependencies() ).thenReturn( depList );

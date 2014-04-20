@@ -277,6 +277,15 @@ public class ReactorModuleConvergence
         return isGAPartOfTheReactor( dependency.getGroupId(), dependency.getArtifactId(), sortedProjects );
     }
 
+    /**
+     * This will check if the given <code>groupId/artifactId</code> is part of the 
+     * current reactor.
+     * 
+     * @param groupId The groupId
+     * @param artifactId The artifactId
+     * @param sortedProjects The list of projects within the reactor.
+     * @return true if the groupId/artifactId is part of the reactor false otherwise.
+     */
     private boolean isGAPartOfTheReactor( String groupId, String artifactId, List<MavenProject> sortedProjects )
     {
         boolean result = false;
@@ -309,6 +318,7 @@ public class ReactorModuleConvergence
             logger.debug( "Project: " + mavenProject.getId() );
             if ( !hasParent( mavenProject ) )
             {
+                //TODO: Should add an option to force having a parent?
                 if ( mavenProject.isExecutionRoot() )
                 {
                     logger.debug( "The root does not need having a parent." );
@@ -324,6 +334,13 @@ public class ReactorModuleConvergence
         return result;
     }
 
+    /**
+     * Convenience method to handle adding a dependency to the Map of List.
+     * 
+     * @param result The result List which should be handled.
+     * @param project The MavenProject which will be added.
+     * @param dependency The dependency which will be added.
+     */
     private void addDep( Map<MavenProject, List<Dependency>> result, MavenProject project, Dependency dependency )
     {
         if ( result.containsKey( project ) )
@@ -346,7 +363,7 @@ public class ReactorModuleConvergence
 
     /**
      * Go through the list of modules in the builds and check if we have dependencies. If yes we will check every
-     * dependency based on groupId/artifactId if it belong to the multi module build. In such a case it will be checked
+     * dependency based on groupId/artifactId if it belongs to the multi module build. In such a case it will be checked
      * if the version does fit the version in the rest of build.
      * 
      * @param reactorVersion The version of the reactor.
