@@ -100,6 +100,9 @@ public class MockProject
 
     /** The plugin artifact repositories. */
     private List pluginArtifactRepositories;
+    
+    /** The artifact repositories. */
+    private List artifactRepositories;
 
     // private ArtifactRepository releaseArtifactRepository;
 
@@ -298,7 +301,7 @@ public class MockProject
      */
     public void setRemoteArtifactRepositories( List list )
     {
-
+        this.artifactRepositories = list;
     }
 
     /*
@@ -308,7 +311,7 @@ public class MockProject
      */
     public List getRemoteArtifactRepositories()
     {
-        return Collections.singletonList( "" );
+        return artifactRepositories;
     }
 
     /*

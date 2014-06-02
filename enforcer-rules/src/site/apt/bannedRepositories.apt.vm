@@ -1,0 +1,119 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+  ------
+  Banned Specified Repositories
+  ------
+  Simon Wang
+  ------
+  June 2014
+  ------
+
+Banned Specified Repositories
+
+   This rule checks whether this maven session (defined in pom files or even settings.xml) include specified banned repository.
+
+* What's difference from "requireNoRepositories"?
+
+   The purpose for "requireNoRepositories" is: Detect whether pom and pom’s parents contains repositories definition. That guide users to use correct convention (not define repositories in pom files). So it only analyze current pom and its parent pom files.
+
+   But “BannedRepositories” is different purpose, it’s just like “BannedDependencies”. It will detect banned repositories from maven session context instead of only pom.xml and parents. It's trying to avoid misuse incorrect repositories. It will detect banned repositories from current maven session context.
+
+* Support Parameters
+
+   * banRepositories - Specify banned non-plugin repositories. This is a black list of http/https url patterns.
+
+   * banPluginRepositories - Specify banned plugin repositories. This is a black list of http/https url patterns.
+
+   * allowedRepositories - Specify explicitly allowed non-plugin repositories. This is a white list of http/https url patterns.
+
+   * allowedPluginRepositories - Specify explicitly allowed plugin repositories. This is a white list of http/https url patternes.
+
+* Sample Configuration
+
+   For example, one company want to limit repositories usage. But different developers might use different settings.xml.
+   Even their projects' pom defined different repostories too.
+   For this case, could leverage this enforcer rule to banned specified repositories or even use allowedRepositories/allowedPluginRepositories to banned others unexpected repositories.
+   
+   Ex. http://repo1/xyz is the repository that want to be banned.
+       http://repo2/xyz is the repository that want to use now.
+   
+   Sample Plugin Configuration:
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-banned-repositories</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <bannedRepositories>
+                  <bannedRepositories>
+                    <bannedRepository>http://repo1/*<bannedRepository>
+                  </bannedRepositories>
+                  <bannedPluginRepositories>
+                    <bannedPluginRepository>http://repo1/*<bannedPluginRepository>
+                  </bannedPluginRepositories>
+				  
+                  <!-- for some cases, white list is more effective -->
+                  <!--
+				  
+                  <allowedRepositories>
+                    <allowedRepository>http://repo2/*<allowedRepository>
+                  </allowedRepositories>
+                  <allowedPluginRepositories>
+                    <allowedPluginRepository>http://repo2/*<allowedPluginRepository>
+                  </allowedPluginRepositories>
+				  
+                  -->
+                </bannedRepositories>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+
+* Worth to Note
+
+   * http/https url patterns support wildcard "*"
+   
+   * This rule will detect banned repositories on maven session itself istead of pom or settings, so if users defined "mirrorOf" in settings.xml, even defined banned repositories in pom.xml, it won't be detected.
+
++---+
+	<mirrors>
+	 <mirror>
+	   <id>nexus</id>
+	   <mirrorOf>*</mirrorOf>
+	   <url>http://.../nexus/..</url>
+	 </mirror>
+	</mirrors>
++---+ 

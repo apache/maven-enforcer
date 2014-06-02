@@ -57,6 +57,8 @@ Standard Rules
 
   * {{{./requireNoRepositories.html}requireNoRepositories}} - enforces to not include repositories.
 
+  * {{{./bannedRepositories.html}bannedRepositories}} - enforces to not include banned repositories.
+
   * {{{./requireOS.html}requireOS}} - enforces the OS / CPU Architecture.
 
   * {{{./requirePluginVersions.html}requirePluginVersions}} - enforces that all plugins have a specified version.
