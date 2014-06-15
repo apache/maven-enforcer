@@ -220,6 +220,13 @@
     </dependencies>
   </dependencyManagement>
 
+  <contributors>
+    <contributor>
+      <name>Simon Wang</name>
+      <email>wangyf2010@gmail.com</email>
+      <organization>eBay Inc.</organization>
+    </contributor>
+  </contributors>
   <build>
     <resources>
       <!-- Include super-pom defined main/resources
