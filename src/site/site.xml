@@ -29,6 +29,14 @@ under the License.
       <item name="Maven" href="http://maven.apache.org/index.html" />
       <item name="Enforcer" href="http://maven.apache.org/enforcer/index.html" />
     </breadcrumbs>
+
+    <menu name="Overview">
+      <item name="Introduction" href="index.html"/>
+      <!-- According to http://jira.codehaus.org/browse/MNGSITE-152 -->
+      <item name="License" href="http://www.apache.org/licenses/"/>
+      <item name="Download" href="download.html"/>
+    </menu>
+
     <menu ref="modules" />
   </body>
 </project>
