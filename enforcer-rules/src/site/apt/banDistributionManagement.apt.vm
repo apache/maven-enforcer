@@ -1,0 +1,97 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.    
+ 
+  ------
+  Ban DistributionManagement
+  ------
+  Karl-Heinz Marbaise
+  ------
+  June 2014
+  ------
+
+Ban Distribution Management
+
+  This rule can be used to force the absence of distributionManagement
+  in your pom files.
+
+  The following parameters are supported by this rule:
+  
+  * message - an optional message to the user if the rule fails.
+   
+  * allowRepsitory - You can allow repository entry (default: false).
+
+  * allowSnapshotRepository - you can allow snapshotRepository entry (default: false).
+
+  * allowSite - You can allow site entry (default: false).
+  
+  * ignoreParent - You can control if the parent will be checked or not (default: true).
+   
+  []
+
+   
+  Sample Plugin Configuration:
+  
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>no-distribution-management-at-all</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <banDistributionManagement/>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+
+  The above configuration will prevent any declaration of distributionManagement
+  in your pom files at all as well in your parent of the given pom.
+
+  
+  Let use take a look at the following project which is a typical multi-module project.
+ 
++-----+ 
+   +-- root (pom.xml)
+        +-- m1 (pom.xml)
+        +-- m2 (pom.xml)
++-----+ 
+
+  Usually you should define the distributionManagement only once in your hierarchy.
+  
+  company-parent (pom.xml)
+  
+     
+   +-- root (pom.xml)
+        +-- m1 (pom.xml)
+        +-- m2 (pom.xml)
+

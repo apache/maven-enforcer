@@ -37,6 +37,8 @@ Standard Rules
   
   * {{{./banTransitiveDependencies.html}banTransitiveDependencies}} - enforces that project doesn't have transitive dependencies.
 
+  * {{{./banDistributionManagement.html}banDistributionManagement}} - enforces that project doesn't have distributionManagement.
+
   * {{{./dependencyConvergence.html}dependencyConvergence}} - ensure all dependencies converge to the same version.
 
   * {{{./evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
