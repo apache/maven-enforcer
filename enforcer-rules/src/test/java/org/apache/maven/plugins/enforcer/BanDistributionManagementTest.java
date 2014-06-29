@@ -30,7 +30,6 @@ import org.apache.maven.model.Site;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.junit.Before;
 import org.junit.Test;
 
 public class BanDistributionManagementTest
@@ -39,44 +38,13 @@ public class BanDistributionManagementTest
 
     private EnforcerRuleHelper helper;
 
-    @Before
-    public void before()
-        throws ExpressionEvaluationException
-    {
-    }
-
     @Test
-    public void shouldNotFailCauseDistributionManagementIsNotDefined()
+    public void shouldNotFailWithoutDistributionManagement()
         throws Exception
     {
-        project = mock( MavenProject.class );
-        when( project.getPackaging() ).thenReturn( "jar" );
-        when( project.getDistributionManagement() ).thenReturn( null );
-
-        helper = mock( EnforcerRuleHelper.class );
-        when( helper.evaluate( "${project}" ) ).thenReturn( project );
-
-        when( helper.getLog() ).thenReturn( mock( Log.class ) );
-
-        BanDistributionManagement rule = new BanDistributionManagement();
-
+        BanDistributionManagement rule = setupProjectWithoutDistributionManagement();
         rule.execute( helper );
-    }
-
-    /**
-     * <pre>
-     * &lt;distributionManagement&gt;
-     * &lt;/distributionManagement&gt;
-     * </pre>
-     * 
-     * TODO: Check via integration test in enforcer-plugin if we really will see this case like that.
-     */
-    @Test
-    public void shouldThrowExceptionIfDistributionManagementIsDefined()
-        throws Exception
-    {
-        BanDistributionManagement rule = setupProjectWithDistributionManagement( null, null, null );
-        rule.execute( helper );
+        // intentionally no assert cause in case of an exception the test will be red.
     }
 
     /**
@@ -97,6 +65,7 @@ public class BanDistributionManagementTest
         BanDistributionManagement rule =
             setupProjectWithDistributionManagement( new DeploymentRepository(), null, null );
         rule.execute( helper );
+        // intentionally no assert cause we expect an exception.
     }
 
     /**
@@ -118,6 +87,7 @@ public class BanDistributionManagementTest
         BanDistributionManagement rule =
             setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(), null );
         rule.execute( helper );
+        // intentionally no assert cause we expect an exception.
     }
 
     /**
@@ -142,6 +112,7 @@ public class BanDistributionManagementTest
         BanDistributionManagement rule =
             setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(), new Site() );
         rule.execute( helper );
+        // intentionally no assert cause we expect an exception.
     }
 
     /**
@@ -161,6 +132,7 @@ public class BanDistributionManagementTest
             setupProjectWithDistributionManagement( new DeploymentRepository(), null, null );
         rule.setAllowRepository( true );
         rule.execute( helper );
+        // intentionally no assert cause in case of an exception the test will be red.
     }
 
     /**
@@ -184,6 +156,7 @@ public class BanDistributionManagementTest
         rule.setAllowRepository( true );
         rule.setAllowSnapshotRepository( true );
         rule.execute( helper );
+        // intentionally no assert cause in case of an exception the test will be red.
     }
 
     /**
@@ -211,6 +184,7 @@ public class BanDistributionManagementTest
         rule.setAllowSnapshotRepository( true );
         rule.setAllowSite( true );
         rule.execute( helper );
+        // intentionally no assert cause in case of an exception the test will be red.
     }
 
     @Test( expected = EnforcerRuleException.class )
@@ -223,7 +197,20 @@ public class BanDistributionManagementTest
         rule.setIgnoreParent( false );
 
         rule.execute( helper );
+        // intentionally no assert cause we expect an exception.
+    }
 
+    @Test
+    public void shouldThrowExceptionCauseParentProjectHasDistributionManagementSnapshotRepository()
+        throws Exception
+    {
+        BanDistributionManagement rule =
+            setupProjectWithParentDistributionManagement( null, new DeploymentRepository(), null );
+
+        rule.setIgnoreParent( false );
+        rule.setAllowSnapshotRepository( true );
+
+        rule.execute( helper );
     }
 
     private BanDistributionManagement setupProjectWithParentDistributionManagement( DeploymentRepository repository,
@@ -242,17 +229,25 @@ public class BanDistributionManagementTest
         when( dmParent.getSnapshotRepository() ).thenReturn( snapshotRepository );
         when( dmParent.getSite() ).thenReturn( site );
 
-        // FIXME: Remove this....
-        if ( ( repository == null ) && ( snapshotRepository == null ) && ( site == null ) )
-        {
-            when( parentProject.getDistributionManagement() ).thenReturn( null );
-        }
-        else
-        {
-            when( parentProject.getDistributionManagement() ).thenReturn( dmParent );
-        }
+        when( parentProject.getDistributionManagement() ).thenReturn( dmParent );
 
         when( project.getParent() ).thenReturn( parentProject );
+
+        helper = mock( EnforcerRuleHelper.class );
+        when( helper.evaluate( "${project}" ) ).thenReturn( project );
+        BanDistributionManagement rule = new BanDistributionManagement();
+
+        when( helper.getLog() ).thenReturn( mock( Log.class ) );
+
+        return rule;
+    }
+
+    private BanDistributionManagement setupProjectWithoutDistributionManagement()
+        throws ExpressionEvaluationException
+    {
+        project = mock( MavenProject.class );
+        when( project.getPackaging() ).thenReturn( "jar" );
+        when( project.getDistributionManagement() ).thenReturn( null );
 
         helper = mock( EnforcerRuleHelper.class );
         when( helper.evaluate( "${project}" ) ).thenReturn( project );
@@ -275,15 +270,7 @@ public class BanDistributionManagementTest
         when( dm.getSnapshotRepository() ).thenReturn( snapshotRepository );
         when( dm.getSite() ).thenReturn( site );
 
-        // FIXME: Remove this....
-        if ( ( repository == null ) && ( snapshotRepository == null ) && ( site == null ) )
-        {
-            when( project.getDistributionManagement() ).thenReturn( null );
-        }
-        else
-        {
-            when( project.getDistributionManagement() ).thenReturn( dm );
-        }
+        when( project.getDistributionManagement() ).thenReturn( dm );
 
         helper = mock( EnforcerRuleHelper.class );
         when( helper.evaluate( "${project}" ) ).thenReturn( project );

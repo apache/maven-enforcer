@@ -32,7 +32,7 @@ Ban Distribution Management
   
   * message - an optional message to the user if the rule fails.
    
-  * allowRepsitory - You can allow repository entry (default: false).
+  * allowRepository - You can allow repository entry (default: false).
 
   * allowSnapshotRepository - you can allow snapshotRepository entry (default: false).
 
@@ -75,8 +75,7 @@ Ban Distribution Management
 +---+
 
   The above configuration will prevent any declaration of distributionManagement
-  in your pom files at all as well in your parent of the given pom.
-
+  in your pom files at all whereas the parent is simply ignored.
   
   Let use take a look at the following project which is a typical multi-module project.
  

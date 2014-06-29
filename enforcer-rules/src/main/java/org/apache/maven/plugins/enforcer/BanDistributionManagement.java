@@ -28,8 +28,8 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 
 /**
  * This rule will check if a pom contains a <code>distributionManagement</code> part. This should be by best practice
- * only defined once. It could happen that you like to check the parent as well which can be controlled by
- * <code>ignoreParent</code> which is by default turned on.
+ * only defined once. It could happen that you like to check the parent as well. This can be activated by using the
+ * <code>ignoreParent</code> which is by default turned off (<code>true</code>) which means not to check the parent.
  * 
  * @author Karl Heinz Marbaise
  * @since 1.4
@@ -39,7 +39,7 @@ public class BanDistributionManagement
 {
 
     /**
-     * The rule will check the parent as well.
+     * If we turn on the <code>ignoreParent</code> the parent will be ignored.
      */
     private boolean ignoreParent = true;
 
@@ -64,7 +64,6 @@ public class BanDistributionManagement
     private boolean executeRootOnly = false;
 
     private Log logger;
-
 
     /**
      * {@inheritDoc}
