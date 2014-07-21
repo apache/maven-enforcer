@@ -39,7 +39,7 @@ import org.codehaus.plexus.util.StringUtils;
  * This rule will check if a multi module build will follow the best practices.
  * 
  * @author Karl-Heinz Marbaise
- * @since 1.3.2
+ * @since 1.4
  */
 public class ReactorModuleConvergence
     extends AbstractNonCacheableEnforcerRule

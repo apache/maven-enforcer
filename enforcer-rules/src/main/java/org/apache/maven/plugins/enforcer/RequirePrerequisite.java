@@ -39,7 +39,7 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule
     /**
      * Only the projects with one of these packagings will be enforced to have the correct prerequisite.
      *  
-     * @since 1.3.2
+     * @since 1.4
      */
     private List<String> packagings;
     
@@ -63,7 +63,7 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule
     /**
      * Only the projects with one of these packagings will be enforced to have the correct prerequisite.
      * 
-     * @since 1.3.2
+     * @since 1.4
      * @param packagings the list of packagings
      */
     public void setPackagings( List<String> packagings )

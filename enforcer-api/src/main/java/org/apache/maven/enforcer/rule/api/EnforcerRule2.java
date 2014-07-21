@@ -24,7 +24,7 @@ package org.apache.maven.enforcer.rule.api;
  *
  * @author Mirko Friedenhagen
  * @version $Id$
- * @since 2.0
+ * @since 1.4
  */
 public interface EnforcerRule2 extends EnforcerRule
 {

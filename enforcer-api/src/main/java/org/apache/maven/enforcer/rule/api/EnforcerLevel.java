@@ -24,7 +24,7 @@ package org.apache.maven.enforcer.rule.api;
  *
  * @author Mirko Friedenhagen
  * 
- * @since 2.0
+ * @since 1.4
  */
 public enum EnforcerLevel 
 {
