@@ -19,6 +19,14 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Profile;
@@ -26,12 +34,6 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.junit.Before;
 import org.junit.Test;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Check the profile rule.
@@ -110,9 +112,7 @@ public class RequireActiveProfileTest
     public void testTwoActiveProfilesWithOneRequiredProfile()
         throws EnforcerRuleException
     {
-        List<Profile> profiles = new ArrayList<Profile>();
-        profiles.add( createProfile( "profile-1" )  );
-        profiles.add( createProfile( "profile-2" )  );
+        List<Profile> profiles = Arrays.asList( createProfile( "profile-1" ), createProfile( "profile-2" ) );
 
         when( project.getActiveProfiles() ).thenReturn( profiles );
 
@@ -126,9 +126,7 @@ public class RequireActiveProfileTest
     public void testTwoActiveProfilesWhereOneProfileIsRequiredToBeActivated()
         throws EnforcerRuleException
     {
-        List<Profile> profiles = new ArrayList<Profile>();
-        profiles.add( createProfile( "profile-1" )  );
-        profiles.add( createProfile( "profile-2" )  );
+        List<Profile> profiles = Arrays.asList( createProfile( "profile-1" ), createProfile( "profile-2" ) );
 
         when( project.getActiveProfiles() ).thenReturn( profiles );
 
@@ -143,9 +141,8 @@ public class RequireActiveProfileTest
     public void testTwoActiveProfilesWithTwoRequiredProfilesWhereOneOfThemIsNotPartOfTheActiveProfiles()
         throws EnforcerRuleException, ExpressionEvaluationException
     {
-        List<Profile> profiles = new ArrayList<Profile>();
-        profiles.add( createProfile( "profile-X" )  );
-        profiles.add( createProfile( "profile-Y" )  );
+
+        List<Profile> profiles = Arrays.asList( createProfile( "profile-X" ), createProfile( "profile-Y" ) );
 
         when( project.getActiveProfiles() ).thenReturn( profiles );
 
@@ -160,8 +157,7 @@ public class RequireActiveProfileTest
     public void testOneActiveProfilesWithTwoRequiredProfiles()
         throws EnforcerRuleException, ExpressionEvaluationException
     {
-        List<Profile> profiles = new ArrayList<Profile>();
-        profiles.add( createProfile( "profile-X" )  );
+        List<Profile> profiles = Collections.singletonList( createProfile( "profile-X" ) );
 
         when( project.getActiveProfiles() ).thenReturn( profiles );
 
@@ -176,8 +172,7 @@ public class RequireActiveProfileTest
     public void testOneActiveProfileWithTwoProfilesButNotAll()
         throws EnforcerRuleException, ExpressionEvaluationException
     {
-        List<Profile> profiles = new ArrayList<Profile>();
-        profiles.add( createProfile( "profile-X" )  );
+        List<Profile> profiles = Collections.singletonList( createProfile( "profile-X" ) );
 
         when( project.getActiveProfiles() ).thenReturn( profiles );
 
