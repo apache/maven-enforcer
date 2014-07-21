@@ -36,10 +36,12 @@ Reactor Module Convergence
   
   * ignoreModuleDependencies - Ignore module dependencies which references modules within the 
     the reactor (default: false). 
-    
+
+  Note: The current state does not correctly handle a situation like this {{mvn -pl subproject validate}}.
+
    []
 
-   
+
   Sample Plugin Configuration:
   
 +---+
