@@ -22,6 +22,7 @@ package org.apache.maven.plugins.enforcer;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
@@ -58,12 +59,12 @@ public abstract class AbstractEnforceMojo
     /**
      * The MavenSession
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     protected MavenSession session;
     /**
      * POM
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
     /**
      * Flag to easily skip all checks

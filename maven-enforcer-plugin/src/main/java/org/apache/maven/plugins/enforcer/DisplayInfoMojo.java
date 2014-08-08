@@ -26,6 +26,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
 import org.codehaus.plexus.PlexusConstants;
@@ -56,13 +57,13 @@ public class DisplayInfoMojo
     /**
      * The MavenSession
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     protected MavenSession session;
 
     /**
      * POM
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
 
     // set by the contextualize method. Only way to get the
