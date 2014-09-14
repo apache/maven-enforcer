@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Check requireSameVersionsReactor rule.
+ * Check reactorModuleConvergence rule.
  * 
  * @author <a href="mailto:khmarbaise@apache.org">Karl Heinz Marbaise</a>
  */
@@ -216,12 +216,12 @@ public class ReactorModuleConvergenceTest
 
         rule.execute( helper );
 
-        //intentionally no assertTrue() cause we expect getting an exception.
+        //intentionally no assertTrue() cause we do not expect to get an exception.
         assertTrue( true );
     }
 
     @Test( expected = EnforcerRuleException.class )
-    public void shouldFailWithWrongDependencyInReactory()
+    public void shouldFailWithWrongDependencyInReactor()
         throws EnforcerRuleException, ExpressionEvaluationException
     {
         MavenProject mp1 = createProjectParent();
@@ -229,8 +229,8 @@ public class ReactorModuleConvergenceTest
 
         Dependency goodDependency = createDependency( "org.junit", "junit", "2.0" );
 
-        Dependency wrongDepFromReactory = createDependency( "org.apache.enforcer", "m2", "1.1-SNAPSHOT" );
-        List<Dependency> depList = Arrays.asList( goodDependency, wrongDepFromReactory );
+        Dependency wrongDepFromReactor = createDependency( "org.apache.enforcer", "m2", "1.1-SNAPSHOT" );
+        List<Dependency> depList = Arrays.asList( goodDependency, wrongDepFromReactor );
         when( mp2.getDependencies() ).thenReturn( depList );
 
         MavenProject mp3 = createProjectChild2( mp1 );
@@ -297,13 +297,13 @@ public class ReactorModuleConvergenceTest
 
     private MavenProject createCompanyParent()
     {
-        MavenProject nonReactoryParent = mock( MavenProject.class );
-        when( nonReactoryParent.getGroupId() ).thenReturn( "org.apache.enforcer.parent" );
-        when( nonReactoryParent.getArtifactId() ).thenReturn( "parent" );
-        when( nonReactoryParent.getVersion() ).thenReturn( "1.1" );
-        when( nonReactoryParent.getId() ).thenReturn( "org.apache.enforcer.parent:parent:jar:1.1" );
-        when( nonReactoryParent.getDependencies() ).thenReturn( Collections.emptyList() );
-        return nonReactoryParent;
+        MavenProject nonReactorParent = mock( MavenProject.class );
+        when( nonReactorParent.getGroupId() ).thenReturn("org.apache.enforcer.parent");
+        when( nonReactorParent.getArtifactId() ).thenReturn("parent");
+        when( nonReactorParent.getVersion() ).thenReturn( "1.1" );
+        when( nonReactorParent.getId() ).thenReturn("org.apache.enforcer.parent:parent:jar:1.1");
+        when( nonReactorParent.getDependencies() ).thenReturn(Collections.emptyList());
+        return nonReactorParent;
     }
 
     private MavenProject createProjectParent( MavenProject nonReactorParent )

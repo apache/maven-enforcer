@@ -19,12 +19,6 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
@@ -34,6 +28,11 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.util.StringUtils;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This rule will check if a multi module build will follow the best practices.
@@ -63,7 +62,6 @@ public class ReactorModuleConvergence
             throw new EnforcerRuleException( "Unable to retrieve the MavenSession: ", eee );
         }
 
-        @SuppressWarnings( "unchecked" )
         List<MavenProject> sortedProjects = session.getSortedProjects();
         if ( sortedProjects != null && !sortedProjects.isEmpty() )
         {
@@ -175,8 +173,10 @@ public class ReactorModuleConvergence
             for ( MavenProject mavenProject : areParentsFromTheReactor )
             {
                 sb.append( " --> " );
-                sb.append( mavenProject.getId() + " parent:" + mavenProject.getParent().getId() );
-                sb.append( SystemUtils.LINE_SEPARATOR );
+                sb.append(mavenProject.getId());
+                sb.append(" parent:");
+                sb.append(mavenProject.getParent().getId());
+                sb.append(SystemUtils.LINE_SEPARATOR );
             }
             throw new EnforcerRuleException( "Reactor modules have parents which contain a wrong version."
                 + sb.toString() );
@@ -305,7 +305,7 @@ public class ReactorModuleConvergence
      * Assume we have a module which is a child of a multi module build but this child does not have a parent. This
      * method will exactly search for such cases.
      * 
-     * @param projectList The sorted list of the reactor modules.
+     * @param sortedProjects The sorted list of the reactor modules.
      * @return The resulting list will contain the modules in the reactor which do not have a parent. The list will
      *         never null. If the list is empty no violation have happened.
      */

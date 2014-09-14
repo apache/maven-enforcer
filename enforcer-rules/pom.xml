@@ -28,7 +28,6 @@
   </parent>
 
   <artifactId>enforcer-rules</artifactId>
-  <packaging>jar</packaging>
 
   <name>Apache Maven Enforcer Rules</name>
   <description>This component contains the standard Enforcer Rules</description>
