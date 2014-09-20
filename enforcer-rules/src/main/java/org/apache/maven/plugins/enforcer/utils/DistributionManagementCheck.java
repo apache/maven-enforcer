@@ -50,19 +50,11 @@ public class DistributionManagementCheck
                 throw new EnforcerRuleException( "You have defined a site in distributionManagement." );
             }
         }
-
     }
 
     private boolean hasRepository()
     {
-        if ( getDistributionManagement().getRepository() == null )
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return getDistributionManagement().getRepository() != null;
     }
 
     public DistributionManagement getDistributionManagement()
@@ -77,38 +69,16 @@ public class DistributionManagementCheck
 
     private boolean hasSnapshotRepository()
     {
-        if ( getDistributionManagement().getSnapshotRepository() == null )
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return getDistributionManagement().getSnapshotRepository() != null;
     }
 
     private boolean hasSite()
     {
-        if ( getDistributionManagement().getSite() == null )
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return getDistributionManagement().getSite() != null;
     }
 
     private boolean hasDistributionManagement()
     {
-        if ( getDistributionManagement() == null )
-        {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
+        return getDistributionManagement() != null;
     }
-
 }
