@@ -123,7 +123,7 @@ public abstract class AbstractBanDependencies
         try
         {
             DependencyNode node = graphBuilder.buildDependencyGraph( project, null );
-            if( searchTransitive )
+            if ( searchTransitive )
             {
                 dependencies  = getAllDescendants( node );
             }
@@ -147,14 +147,14 @@ public abstract class AbstractBanDependencies
     private Set<Artifact> getAllDescendants( DependencyNode node )
     {
         Set<Artifact> children = null; 
-        if( node.getChildren() != null )
+        if ( node.getChildren() != null )
         {
             children = new HashSet<Artifact>();
-            for( DependencyNode depNode : node.getChildren() )
+            for ( DependencyNode depNode : node.getChildren() )
             {
                 children.add( depNode.getArtifact() );
                 Set<Artifact> subNodes = getAllDescendants( depNode );
-                if( subNodes != null )
+                if ( subNodes != null )
                 {
                     children.addAll( subNodes );
                 }

@@ -100,7 +100,7 @@ public class RequireActiveProfile
                 boolean fail = false;
                 if ( !missingProfiles.isEmpty() )
                 {
-                    if (all || missingProfiles.size() == profs.length )
+                    if ( all || missingProfiles.size() == profs.length )
                     {
                       fail = true;
                     }

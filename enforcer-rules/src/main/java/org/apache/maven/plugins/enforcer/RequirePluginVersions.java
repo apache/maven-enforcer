@@ -502,7 +502,6 @@ public class RequirePluginVersions
                 BuildBase b = p.getBuild();
                 if ( b != null )
                 {
-                    @SuppressWarnings( "unchecked" )
                     List<Plugin> plugins = b.getPlugins();
                     if ( plugins != null )
                     {
@@ -1108,7 +1107,6 @@ public class RequirePluginVersions
             }
 
             // Add plugins in profiles
-            @SuppressWarnings( "unchecked" )
             List<Profile> profiles = model.getProfiles();
             for ( Profile profile : profiles )
             {

@@ -141,7 +141,7 @@ public class RequireOS
         else
         {
             StringBuilder buffer = new StringBuilder( 50 );
-            Iterator iter = Os.getValidFamilies().iterator();
+            Iterator<?> iter = Os.getValidFamilies().iterator();
             while ( iter.hasNext() )
             {
                 buffer.append( iter.next() );

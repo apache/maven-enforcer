@@ -19,8 +19,6 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.util.List;
-
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;

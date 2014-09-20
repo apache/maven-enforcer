@@ -123,14 +123,7 @@ public final class ArtifactMatcher
                         return false;
                     }
                 case 1:
-                    if ( !matches( parts[0], artifact.getGroupId() ) )
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
+                    return matches( parts[0], artifact.getGroupId() );
                 default:
                     throw new AssertionError();
             }
@@ -138,10 +131,12 @@ public final class ArtifactMatcher
 
         private boolean matches( String expression, String input )
         {
-            String regex = expression.replace( ".", "\\." ).replace( "*", ".*" ).replace( ":", "\\:" ).replace( '?', '.' );
+            String regex =
+                expression.replace( ".", "\\." ).replace( "*", ".*" ).replace( ":", "\\:" ).replace( '?', '.' );
 
             //TODO: Check if this can be done better or prevented earlier.
-            if (input == null) {
+            if ( input == null )
+            {
                 input = "";
             }
 

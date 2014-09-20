@@ -150,7 +150,6 @@ public class RequireNoRepositories
             {
                 if ( banRepositories )
                 {
-                    @SuppressWarnings( "unchecked" )
                     List<Repository> repos = model.getRepositories();
                     if ( repos != null && !repos.isEmpty() )
                     {
@@ -167,7 +166,6 @@ public class RequireNoRepositories
                 }
                 if ( banPluginRepositories )
                 {
-                    @SuppressWarnings( "unchecked" )
                     List<Repository> repos = model.getPluginRepositories();
                     if ( repos != null && !repos.isEmpty() )
                     {
@@ -227,7 +225,8 @@ public class RequireNoRepositories
      * @param allowSnapshots 
      * @return
      */
-    private static List<String> findBannedRepositories( List<Repository> repos, List<String> allowedRepos, boolean allowSnapshots )
+    private static List<String> findBannedRepositories( List<Repository> repos, List<String> allowedRepos,
+                                                        boolean allowSnapshots )
     {
         List<String> bannedRepos = new ArrayList<String>( allowedRepos.size() );
         for ( Repository r : repos )

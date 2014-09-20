@@ -95,17 +95,17 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule
             
             Prerequisites prerequisites = project.getPrerequisites(); 
             
-            if( prerequisites == null )
+            if ( prerequisites == null )
             {
                 throw new EnforcerRuleException( "Requires prerequisite not set" );
             }
 
-            if( mavenVersion != null )
+            if ( mavenVersion != null )
             {
                 
                 VersionRange requiredVersionRange = VersionRange.createFromVersionSpec( mavenVersion );
-                
-                if( !requiredVersionRange.hasRestrictions() )
+
+                if ( !requiredVersionRange.hasRestrictions() )
                 {
                     requiredVersionRange = VersionRange.createFromVersionSpec( "[" + mavenVersion + ",)" );
                 }
@@ -116,7 +116,8 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule
                 
                 if ( restrictedVersionRange.getRecommendedVersion() == null )
                 {
-                    throw new EnforcerRuleException( "The specified Maven prerequisite( " + specifiedVersion + " ) doesn't match the required version: " + mavenVersion );
+                    throw new EnforcerRuleException( "The specified Maven prerequisite( " + specifiedVersion
+                        + " ) doesn't match the required version: " + mavenVersion );
                 }
             }
         }

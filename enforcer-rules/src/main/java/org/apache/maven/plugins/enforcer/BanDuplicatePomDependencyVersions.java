@@ -118,7 +118,6 @@ public class BanDuplicatePomDependencyVersions
     private void maven2Validation( EnforcerRuleHelper helper, Model model )
         throws EnforcerRuleException
     {
-        @SuppressWarnings( "unchecked" )
         List<Dependency> dependencies = model.getDependencies();
         Map<String, Integer> duplicateDependencies = validateDependencies( dependencies );
 
@@ -129,7 +128,6 @@ public class BanDuplicatePomDependencyVersions
 
         if ( model.getDependencyManagement() != null )
         {
-            @SuppressWarnings( "unchecked" )
             List<Dependency> managementDependencies = model.getDependencies();
             Map<String, Integer> duplicateManagementDependencies = validateDependencies( managementDependencies );
             duplicates += duplicateManagementDependencies.size();
@@ -137,12 +135,9 @@ public class BanDuplicatePomDependencyVersions
             messageBuilder( duplicateManagementDependencies, "dependencyManagement.dependencies.dependency", summary );
         }
         
-        
-        @SuppressWarnings( "unchecked" )
         List<Profile> profiles = model.getProfiles();
         for ( Profile profile : profiles )
         {
-            @SuppressWarnings( "unchecked" )
             List<Dependency> profileDependencies = profile.getDependencies();
 
             Map<String, Integer> duplicateProfileDependencies = validateDependencies( profileDependencies );
@@ -154,7 +149,6 @@ public class BanDuplicatePomDependencyVersions
 
             if ( model.getDependencyManagement() != null )
             {
-                @SuppressWarnings( "unchecked" )
                 List<Dependency> profileManagementDependencies = profile.getDependencies();
                 
                 Map<String, Integer> duplicateProfileManagementDependencies =
