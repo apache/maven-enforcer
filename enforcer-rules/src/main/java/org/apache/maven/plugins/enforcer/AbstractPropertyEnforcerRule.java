@@ -40,7 +40,7 @@ public abstract class AbstractPropertyEnforcerRule
      * @see {@link #setRegex(String)}
      * @see {@link #getRegex()}
      */
-    public String regex = null;
+    private String regex = null;
 
     /**
      * Specify a warning message if the regular expression is not matched.
@@ -49,7 +49,7 @@ public abstract class AbstractPropertyEnforcerRule
      * @see {@link #setRegexMessage(String)}
      * @see {@link #getRegexMessage()}
      */
-    public String regexMessage = null;
+    private String regexMessage = null;
 
     public AbstractPropertyEnforcerRule()
     {

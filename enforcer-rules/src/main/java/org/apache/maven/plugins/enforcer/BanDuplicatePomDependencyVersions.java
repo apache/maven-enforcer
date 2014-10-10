@@ -40,12 +40,11 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
- * Since Maven 3 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique.
- * Early versions of Maven 3 already warn, this rule can force to break a build for this reason. 
+ * Since Maven 3 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique. Early versions of Maven
+ * 3 already warn, this rule can force to break a build for this reason.
  * 
  * @author Robert Scholte
  * @since 1.3
- *
  */
 public class BanDuplicatePomDependencyVersions
     extends AbstractNonCacheableEnforcerRule
@@ -64,8 +63,7 @@ public class BanDuplicatePomDependencyVersions
         {
             throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
         }
-        
-        
+
         // re-read model, because M3 uses optimized model
         MavenXpp3Reader modelReader = new MavenXpp3Reader();
         FileReader pomReader = null;
@@ -94,25 +92,24 @@ public class BanDuplicatePomDependencyVersions
         }
 
         // @todo reuse ModelValidator when possible
-        
-//        Object modelValidator = null;
-//        try
-//        {
-//            modelValidator = helper.getComponent( "org.apache.maven.model.validation.ModelValidator" );
-//        }
-//        catch ( ComponentLookupException e1 )
-//        {
-//            // noop
-//        }
 
+        // Object modelValidator = null;
+        // try
+        // {
+        // modelValidator = helper.getComponent( "org.apache.maven.model.validation.ModelValidator" );
+        // }
+        // catch ( ComponentLookupException e1 )
+        // {
+        // // noop
+        // }
 
-//        if( modelValidator == null )
-//        {
-            maven2Validation( helper, model );            
-//        }
-//        else
-//        {
-//        }
+        // if( modelValidator == null )
+        // {
+        maven2Validation( helper, model );
+        // }
+        // else
+        // {
+        // }
     }
 
     private void maven2Validation( EnforcerRuleHelper helper, Model model )
@@ -122,7 +119,7 @@ public class BanDuplicatePomDependencyVersions
         Map<String, Integer> duplicateDependencies = validateDependencies( dependencies );
 
         int duplicates = duplicateDependencies.size();
-        
+
         StringBuilder summary = new StringBuilder();
         messageBuilder( duplicateDependencies, "dependencies.dependency", summary );
 
@@ -134,7 +131,7 @@ public class BanDuplicatePomDependencyVersions
 
             messageBuilder( duplicateManagementDependencies, "dependencyManagement.dependencies.dependency", summary );
         }
-        
+
         List<Profile> profiles = model.getProfiles();
         for ( Profile profile : profiles )
         {
@@ -143,24 +140,24 @@ public class BanDuplicatePomDependencyVersions
             Map<String, Integer> duplicateProfileDependencies = validateDependencies( profileDependencies );
 
             duplicates += duplicateProfileDependencies.size();
-            
+
             messageBuilder( duplicateProfileDependencies, "profiles.profile[" + profile.getId()
                 + "].dependencies.dependency", summary );
 
             if ( model.getDependencyManagement() != null )
             {
                 List<Dependency> profileManagementDependencies = profile.getDependencies();
-                
+
                 Map<String, Integer> duplicateProfileManagementDependencies =
                     validateDependencies( profileManagementDependencies );
 
                 duplicates += duplicateProfileManagementDependencies.size();
-                
+
                 messageBuilder( duplicateProfileManagementDependencies, "profiles.profile[" + profile.getId()
                     + "].dependencyManagement.dependencies.dependency", summary );
             }
         }
-            
+
         if ( summary.length() > 0 )
         {
             StringBuilder message = new StringBuilder();
@@ -181,7 +178,6 @@ public class BanDuplicatePomDependencyVersions
             }
         }
     }
-    
 
     private Map<String, Integer> validateDependencies( List<Dependency> dependencies )
         throws EnforcerRuleException

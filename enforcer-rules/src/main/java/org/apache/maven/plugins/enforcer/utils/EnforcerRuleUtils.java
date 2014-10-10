@@ -132,13 +132,11 @@ public class EnforcerRuleUtils
      * Gets the pom model for this file.
      *
      * @param pom the pom
-     *
      * @return the model
-     *
      * @throws IOException Signals that an I/O exception has occurred.
      * @throws XmlPullParserException the xml pull parser exception
      */
-    private Model readModel ( File pom )
+    private Model readModel( File pom )
         throws IOException, XmlPullParserException
     {
         Reader reader = ReaderFactory.newXmlReader( pom );
@@ -157,23 +155,20 @@ public class EnforcerRuleUtils
     }
 
     /**
-     * This method gets the model for the defined artifact.
-     * Looks first in the filesystem, then tries to get it
-     * from the repo.
+     * This method gets the model for the defined artifact. Looks first in the filesystem, then tries to get it from the
+     * repo.
      *
      * @param groupId the group id
      * @param artifactId the artifact id
      * @param version the version
      * @param pom the pom
-     *
      * @return the pom model
-     *
      * @throws ArtifactResolutionException the artifact resolution exception
      * @throws ArtifactNotFoundException the artifact not found exception
      * @throws XmlPullParserException the xml pull parser exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    private Model getPomModel ( String groupId, String artifactId, String version, File pom )
+    private Model getPomModel( String groupId, String artifactId, String version, File pom )
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
     {
         Model model = null;
@@ -219,22 +214,19 @@ public class EnforcerRuleUtils
     }
 
     /**
-     * This method loops through all the parents, getting
-     * each pom model and then its parent.
+     * This method loops through all the parents, getting each pom model and then its parent.
      *
      * @param groupId the group id
      * @param artifactId the artifact id
      * @param version the version
      * @param pom the pom
-     *
      * @return the models recursively
-     *
      * @throws ArtifactResolutionException the artifact resolution exception
      * @throws ArtifactNotFoundException the artifact not found exception
      * @throws IOException Signals that an I/O exception has occurred.
      * @throws XmlPullParserException the xml pull parser exception
      */
-    public List<Model> getModelsRecursively ( String groupId, String artifactId, String version, File pom )
+    public List<Model> getModelsRecursively( String groupId, String artifactId, String version, File pom )
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
     {
         List<Model> models = null;
@@ -279,10 +271,9 @@ public class EnforcerRuleUtils
      * @param artifactId the artifact id
      * @param version the version
      * @param model Model being checked.
-     *
      * @return true, if check if model matches
      */
-    protected boolean checkIfModelMatches ( String groupId, String artifactId, String version, Model model )
+    protected boolean checkIfModelMatches( String groupId, String artifactId, String version, Model model )
     {
         // try these first.
         String modelGroup = model.getGroupId();
@@ -310,7 +301,7 @@ public class EnforcerRuleUtils
                 // MENFORCER-30, handle cases where the value is a property like ${project.parent.version}
                 modelVersion = (String) helper.evaluate( modelVersion );
             }
-            
+
             // Is this only required for Maven2?
             modelArtifactId = (String) helper.evaluate( modelArtifactId );
         }
@@ -326,11 +317,10 @@ public class EnforcerRuleUtils
         {
             // as above
         }
-        return ( StringUtils.equals( groupId, modelGroup ) && StringUtils.equals( version, modelVersion ) && StringUtils
-            .equals( artifactId, modelArtifactId ) );
+        return ( StringUtils.equals( groupId, modelGroup ) && StringUtils.equals( version, modelVersion ) && StringUtils.equals( artifactId,
+                                                                                                                                 modelArtifactId ) );
     }
-    
- 
+
     private void resolve( Plugin plugin )
     {
         try
@@ -344,7 +334,7 @@ public class EnforcerRuleUtils
             // this should have gone already before
         }
     }
-    
+
     private void resolve( ReportPlugin plugin )
     {
         try
@@ -358,7 +348,7 @@ public class EnforcerRuleUtils
             // this should have gone already before
         }
     }
-    
+
     public List<Plugin> resolvePlugins( List<Plugin> plugins )
     {
         for ( Plugin plugin : plugins )
@@ -367,7 +357,7 @@ public class EnforcerRuleUtils
         }
         return plugins;
     }
-    
+
     public List<ReportPlugin> resolveReportPlugins( List<ReportPlugin> reportPlugins )
     {
         for ( ReportPlugin plugin : reportPlugins )
@@ -376,6 +366,5 @@ public class EnforcerRuleUtils
         }
         return reportPlugins;
     }
-
 
 }

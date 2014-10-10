@@ -162,7 +162,7 @@ public class ReactorModuleConvergence
     private void checkParentsInReactor( List<MavenProject> sortedProjects )
         throws EnforcerRuleException
     {
-        //After we are sure having consistent version we can simply use the first one?
+        // After we are sure having consistent version we can simply use the first one?
         String reactorVersion = sortedProjects.get( 0 ).getVersion();
 
         List<MavenProject> areParentsFromTheReactor = areParentsFromTheReactor( reactorVersion, sortedProjects );
@@ -173,10 +173,10 @@ public class ReactorModuleConvergence
             for ( MavenProject mavenProject : areParentsFromTheReactor )
             {
                 sb.append( " --> " );
-                sb.append(mavenProject.getId());
-                sb.append(" parent:");
-                sb.append(mavenProject.getParent().getId());
-                sb.append(SystemUtils.LINE_SEPARATOR );
+                sb.append( mavenProject.getId() );
+                sb.append( " parent:" );
+                sb.append( mavenProject.getParent().getId() );
+                sb.append( SystemUtils.LINE_SEPARATOR );
             }
             throw new EnforcerRuleException( "Reactor modules have parents which contain a wrong version."
                 + sb.toString() );
@@ -229,7 +229,7 @@ public class ReactorModuleConvergence
             }
             else
             {
-                //This situation is currently ignored, cause it's handled by existModulesWithoutParentsInReactor()
+                // This situation is currently ignored, cause it's handled by existModulesWithoutParentsInReactor()
             }
         }
 
@@ -278,8 +278,7 @@ public class ReactorModuleConvergence
     }
 
     /**
-     * This will check if the given <code>groupId/artifactId</code> is part of the 
-     * current reactor.
+     * This will check if the given <code>groupId/artifactId</code> is part of the current reactor.
      * 
      * @param groupId The groupId
      * @param artifactId The artifactId
@@ -318,7 +317,7 @@ public class ReactorModuleConvergence
             logger.debug( "Project: " + mavenProject.getId() );
             if ( !hasParent( mavenProject ) )
             {
-                //TODO: Should add an option to force having a parent?
+                // TODO: Should add an option to force having a parent?
                 if ( mavenProject.isExecutionRoot() )
                 {
                     logger.debug( "The root does not need having a parent." );

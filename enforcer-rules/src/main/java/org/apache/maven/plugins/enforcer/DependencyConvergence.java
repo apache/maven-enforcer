@@ -52,14 +52,14 @@ public class DependencyConvergence
     private static Log log;
 
     private static I18N i18n;
-    
-    private boolean uniqueVersions; 
+
+    private boolean uniqueVersions;
 
     public void setUniqueVersions( boolean uniqueVersions )
     {
         this.uniqueVersions = uniqueVersions;
     }
-    
+
     /**
      * Uses the {@link EnforcerRuleHelper} to populate the values of the
      * {@link DependencyTreeBuilder#buildDependencyTree(MavenProject, ArtifactRepository, ArtifactFactory, ArtifactMetadataSource, ArtifactFilter, ArtifactCollector)}

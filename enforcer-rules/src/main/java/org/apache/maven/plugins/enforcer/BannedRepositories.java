@@ -144,9 +144,9 @@ public class BannedRepositories
     // ----------------------------------------------------------------------
     // Private methods
     // ----------------------------------------------------------------------
-    
+
     /**
-     * Check whether specified repositories have banned repositories. 
+     * Check whether specified repositories have banned repositories.
      * 
      * @param repositories: candidate repositories.
      * @param includes : 'include' patterns.
@@ -161,13 +161,13 @@ public class BannedRepositories
         for ( ArtifactRepository repo : repositories )
         {
             String url = repo.getUrl().trim();
-            if ( includes.size()>0 && !match( url, includes ) )
+            if ( includes.size() > 0 && !match( url, includes ) )
             {
                 bannedRepos.add( repo );
                 continue;
             }
 
-            if ( excludes.size()>0 && match( url, excludes ) )
+            if ( excludes.size() > 0 && match( url, excludes ) )
             {
                 bannedRepos.add( repo );
             }
@@ -194,7 +194,7 @@ public class BannedRepositories
     {
         return text.matches( pattern.replace( "?", ".?" ).replace( "*", ".*?" ) );
     }
-    
+
     private String populateErrorMessage( List<ArtifactRepository> resultBannedRepos, String errorMessagePrefix )
     {
         StringBuffer errMsg = new StringBuffer( "" );

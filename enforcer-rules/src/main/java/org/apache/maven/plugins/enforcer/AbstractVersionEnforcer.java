@@ -53,7 +53,6 @@ public abstract class AbstractVersionEnforcer
      * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setVersion(String)}
      * @see {@link #getVersion()}
-
      */
     public String version = null;
 
@@ -97,7 +96,7 @@ public abstract class AbstractVersionEnforcer
                     else
                     {
                         String message = getMessage();
-                        
+
                         if ( StringUtils.isEmpty( message ) )
                         {
                             message = msg + " is not in the allowed range " + vr + ".";
@@ -132,7 +131,7 @@ public abstract class AbstractVersionEnforcer
         {
             @SuppressWarnings( "unchecked" )
             List<Restriction> restrictions = allowedRange.getRestrictions();
-            for ( Restriction restriction :  restrictions )
+            for ( Restriction restriction : restrictions )
             {
                 if ( restriction.containsVersion( theVersion ) )
                 {
@@ -153,7 +152,6 @@ public abstract class AbstractVersionEnforcer
 
     /*
      * (non-Javadoc)
-     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
     public String getCacheId()
@@ -172,7 +170,6 @@ public abstract class AbstractVersionEnforcer
 
     /*
      * (non-Javadoc)
-     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
     public boolean isCacheable()
@@ -183,8 +180,8 @@ public abstract class AbstractVersionEnforcer
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
+     * @see
+     * org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
     public boolean isResultValid( EnforcerRule theCachedRule )
     {

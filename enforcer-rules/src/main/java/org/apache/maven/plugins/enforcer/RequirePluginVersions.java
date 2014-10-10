@@ -84,7 +84,8 @@ public class RequirePluginVersions
     extends AbstractNonCacheableEnforcerRule
 {
 
-    /** Don't allow the LATEST identifier. 
+    /**
+     * Don't allow the LATEST identifier.
      * 
      * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setBanLatest(boolean)}
@@ -92,15 +93,17 @@ public class RequirePluginVersions
      */
     public boolean banLatest = true;
 
-    /** Don't allow the RELEASE identifier.
-     *  
+    /**
+     * Don't allow the RELEASE identifier.
+     * 
      * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setBanRelease(boolean)}
      * @see {@link #isBanRelease()}
      */
     public boolean banRelease = true;
 
-    /** Don't allow snapshot plugins. 
+    /**
+     * Don't allow snapshot plugins.
      * 
      * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setBanSnapshots(boolean)}
@@ -108,7 +111,8 @@ public class RequirePluginVersions
      */
     public boolean banSnapshots = true;
 
-    /** Don't allow timestamp snapshot plugins. 
+    /**
+     * Don't allow timestamp snapshot plugins.
      * 
      * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setBanTimestamps(boolean)}
@@ -150,8 +154,8 @@ public class RequirePluginVersions
     /**
      * Same as unCheckedPlugins but as a comma list to better support properties. Sample form:
      * <code>group:artifactId,group2:artifactId2</code>
-     * @since 1.0-beta-1
      * 
+     * @since 1.0-beta-1
      * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setUnCheckedPlugins(List)}
      * @see {@link #getUnCheckedPlugins()}
@@ -190,8 +194,8 @@ public class RequirePluginVersions
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+     * @see
+     * org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
      */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
@@ -217,7 +221,8 @@ public class RequirePluginVersions
                     (Map) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", defaultLifeCycles );
                 lifecycles = lifecyclesMap.values();
             }
-            else  // Using Maven 2
+            else
+            // Using Maven 2
             {
                 lifecycles = (Collection) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", life );
             }
@@ -237,7 +242,6 @@ public class RequirePluginVersions
             // insert any additional plugins specified by the user.
             allPlugins = addAdditionalPlugins( allPlugins, additionalPlugins );
             allPlugins.addAll( getProfilePlugins( project ) );
-
 
             // pull out any we should skip
             allPlugins =
@@ -395,16 +399,17 @@ public class RequirePluginVersions
 
     /**
      * Combines the old Collection with the new comma separated list.
+     * 
      * @param uncheckedPlugins
      * @param uncheckedPluginsList
      * @return
      */
     public Collection<String> combineUncheckedPlugins( Collection<String> uncheckedPlugins, String uncheckedPluginsList )
     {
-        //if the comma list is empty, then there's nothing to do here.
+        // if the comma list is empty, then there's nothing to do here.
         if ( StringUtils.isNotEmpty( uncheckedPluginsList ) )
         {
-            //make sure there is a collection to add to.
+            // make sure there is a collection to add to.
             if ( uncheckedPlugins == null )
             {
                 uncheckedPlugins = new HashSet<String>();
@@ -454,7 +459,7 @@ public class RequirePluginVersions
      * Helper method to parse and inject a Plugin.
      *
      * @param pluginString
-     * @param field 
+     * @param field
      * @throws MojoExecutionException
      * @return the plugin
      */
@@ -627,7 +632,8 @@ public class RequirePluginVersions
      * @param pluginWrappers the plugins
      * @return true, if successful
      */
-    protected boolean hasValidVersionSpecified( EnforcerRuleHelper helper, Plugin source, List<PluginWrapper> pluginWrappers )
+    protected boolean hasValidVersionSpecified( EnforcerRuleHelper helper, Plugin source,
+                                                List<PluginWrapper> pluginWrappers )
     {
         boolean found = false;
         boolean status = false;
@@ -790,7 +796,7 @@ public class RequirePluginVersions
             for ( Lifecycle lifecycle : lifecycles )
             {
                 @SuppressWarnings( "unchecked" )
-                List<String> phases = lifecycle.getPhases(); 
+                List<String> phases = lifecycle.getPhases();
                 for ( String phase : phases )
                 {
                     if ( phaseToLifecycleMap.containsKey( phase ) )
@@ -923,7 +929,7 @@ public class RequirePluginVersions
             catch ( ComponentLookupException e )
             {
                 log.debug( "Error looking up lifecycle mapping to retrieve optional mojos. Lifecycle ID: "
-                    + lifecycle.getId() + ". Error: " + e.getMessage(), e );
+                               + lifecycle.getId() + ". Error: " + e.getMessage(), e );
             }
         }
 
@@ -968,7 +974,7 @@ public class RequirePluginVersions
                 try
                 {
                     pluginComponent = pluginManager.getPluginComponent( plugin, role, roleHint );
-                    
+
                     if ( pluginComponent != null )
                     {
                         break;
@@ -1056,7 +1062,7 @@ public class RequirePluginVersions
     {
         List<PluginWrapper> plugins = new ArrayList<PluginWrapper>();
         // get all the pom models
-        
+
         String pomName = null;
         try
         {
@@ -1076,8 +1082,9 @@ public class RequirePluginVersions
         {
             try
             {
-                List<Plugin> modelPlugins =  model.getBuild().getPlugins();
-                plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ), model.getId() + ".build.plugins" ) );
+                List<Plugin> modelPlugins = model.getBuild().getPlugins();
+                plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ), model.getId()
+                    + ".build.plugins" ) );
             }
             catch ( NullPointerException e )
             {
@@ -1086,9 +1093,10 @@ public class RequirePluginVersions
 
             try
             {
-                List<ReportPlugin> modelReportPlugins =  model.getReporting().getPlugins();
+                List<ReportPlugin> modelReportPlugins = model.getReporting().getPlugins();
                 // add the reporting plugins
-                plugins.addAll( PluginWrapper.addAll( utils.resolveReportPlugins( modelReportPlugins ), model.getId() + ".reporting" ) );
+                plugins.addAll( PluginWrapper.addAll( utils.resolveReportPlugins( modelReportPlugins ), model.getId()
+                    + ".reporting" ) );
             }
             catch ( NullPointerException e )
             {
@@ -1097,9 +1105,9 @@ public class RequirePluginVersions
 
             try
             {
-                List<Plugin> modelPlugins =  model.getBuild().getPluginManagement().getPlugins();
-                plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ),
-                                                      model.getId() + ".build.pluginManagement.plugins" ) );
+                List<Plugin> modelPlugins = model.getBuild().getPluginManagement().getPlugins();
+                plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ), model.getId()
+                    + ".build.pluginManagement.plugins" ) );
             }
             catch ( NullPointerException e )
             {
@@ -1112,7 +1120,7 @@ public class RequirePluginVersions
             {
                 try
                 {
-                    List<Plugin> modelPlugins =  profile.getBuild().getPlugins();
+                    List<Plugin> modelPlugins = profile.getBuild().getPlugins();
                     plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ), model.getId()
                         + ".profiles.profile[" + profile.getId() + "].build.plugins" ) );
                 }
@@ -1123,10 +1131,11 @@ public class RequirePluginVersions
 
                 try
                 {
-                    List<ReportPlugin> modelReportPlugins =  profile.getReporting().getPlugins();
+                    List<ReportPlugin> modelReportPlugins = profile.getReporting().getPlugins();
                     // add the reporting plugins
-                    plugins.addAll( PluginWrapper.addAll( utils.resolveReportPlugins( modelReportPlugins ), model.getId()
-                        + "profile[" + profile.getId() + "].reporting.plugins" ) );
+                    plugins.addAll( PluginWrapper.addAll( utils.resolveReportPlugins( modelReportPlugins ),
+                                                          model.getId() + "profile[" + profile.getId()
+                                                              + "].reporting.plugins" ) );
                 }
                 catch ( NullPointerException e )
                 {
@@ -1134,10 +1143,9 @@ public class RequirePluginVersions
                 }
                 try
                 {
-                    List<Plugin> modelPlugins =  profile.getBuild().getPluginManagement().getPlugins();
-                    plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ),
-                                                          model.getId() + "profile[" + profile.getId()
-                                                              + "].build.pluginManagement.plugins" ) );
+                    List<Plugin> modelPlugins = profile.getBuild().getPluginManagement().getPlugins();
+                    plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ), model.getId()
+                        + "profile[" + profile.getId() + "].build.pluginManagement.plugins" ) );
                 }
                 catch ( NullPointerException e )
                 {
@@ -1258,22 +1266,22 @@ public class RequirePluginVersions
     {
         this.unCheckedPlugins = unCheckedPlugins;
     }
-    
+
     public final void setPhases( String phases )
     {
         this.phases = phases;
     }
-    
+
     public final String getPhases()
     {
         return phases;
     }
-    
+
     public final void setAdditionalPlugins( List<String> additionalPlugins )
     {
         this.additionalPlugins = additionalPlugins;
     }
-    
+
     public final List<String> getAdditionalPlugins()
     {
         return additionalPlugins;

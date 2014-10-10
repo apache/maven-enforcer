@@ -44,7 +44,7 @@ public abstract class AbstractBanDependencies
 
     /** Specify if transitive dependencies should be searched (default) or only look at direct dependencies. */
     private boolean searchTransitive = true;
-    
+
     private transient DependencyGraphBuilder graphBuilder;
 
     /**
@@ -74,17 +74,19 @@ public abstract class AbstractBanDependencies
         }
         catch ( ComponentLookupException e )
         {
-            // real cause is probably that one of the Maven3 graph builder could not be initiated and fails with a ClassNotFoundException
+            // real cause is probably that one of the Maven3 graph builder could not be initiated and fails with a
+            // ClassNotFoundException
             try
             {
-                graphBuilder = (DependencyGraphBuilder) helper.getComponent( DependencyGraphBuilder.class.getName(), "maven2" );
+                graphBuilder =
+                    (DependencyGraphBuilder) helper.getComponent( DependencyGraphBuilder.class.getName(), "maven2" );
             }
             catch ( ComponentLookupException e1 )
             {
                 throw new EnforcerRuleException( "Unable to lookup DependencyGraphBuilder: ", e );
             }
         }
-        
+
         // get the correct list of dependencies
         Set<Artifact> dependencies = getDependenciesToCheck( project );
 
@@ -95,7 +97,7 @@ public abstract class AbstractBanDependencies
         if ( foundExcludes != null && !foundExcludes.isEmpty() )
         {
             String message = getMessage();
-            
+
             StringBuilder buf = new StringBuilder();
             if ( message != null )
             {
@@ -125,12 +127,12 @@ public abstract class AbstractBanDependencies
             DependencyNode node = graphBuilder.buildDependencyGraph( project, null );
             if ( searchTransitive )
             {
-                dependencies  = getAllDescendants( node );
+                dependencies = getAllDescendants( node );
             }
             else if ( node.getChildren() != null )
             {
                 dependencies = new HashSet<Artifact>();
-                for( DependencyNode depNode : node.getChildren() )
+                for ( DependencyNode depNode : node.getChildren() )
                 {
                     dependencies.add( depNode.getArtifact() );
                 }
@@ -146,7 +148,7 @@ public abstract class AbstractBanDependencies
 
     private Set<Artifact> getAllDescendants( DependencyNode node )
     {
-        Set<Artifact> children = null; 
+        Set<Artifact> children = null;
         if ( node.getChildren() != null )
         {
             children = new HashSet<Artifact>();
@@ -172,7 +174,7 @@ public abstract class AbstractBanDependencies
      * @throws EnforcerRuleException the enforcer rule exception
      */
     protected abstract Set<Artifact> checkDependencies( Set<Artifact> dependencies, Log log )
-            throws EnforcerRuleException;
+        throws EnforcerRuleException;
 
     /**
      * Checks if is search transitive.

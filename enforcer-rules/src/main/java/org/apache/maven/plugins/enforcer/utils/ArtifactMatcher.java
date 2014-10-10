@@ -134,13 +134,13 @@ public final class ArtifactMatcher
             String regex =
                 expression.replace( ".", "\\." ).replace( "*", ".*" ).replace( ":", "\\:" ).replace( '?', '.' );
 
-            //TODO: Check if this can be done better or prevented earlier.
+            // TODO: Check if this can be done better or prevented earlier.
             if ( input == null )
             {
                 input = "";
             }
 
-            return java.util.regex.Pattern.matches( regex , input );
+            return java.util.regex.Pattern.matches( regex, input );
         }
 
         @Override

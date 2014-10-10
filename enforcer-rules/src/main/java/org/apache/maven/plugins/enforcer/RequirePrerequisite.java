@@ -30,28 +30,26 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
- * 
  * @author Robert Scholte
  * @since 1.3
  */
-public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule
+public class RequirePrerequisite
+    extends AbstractNonCacheableEnforcerRule
 {
     /**
      * Only the projects with one of these packagings will be enforced to have the correct prerequisite.
-     *  
+     * 
      * @since 1.4
      */
     private List<String> packagings;
-    
+
     /**
      * Can either be version or a range, e.g. {@code 2.2.1} or {@code [2.2.1,)}
      */
     private String mavenVersion;
 
     /**
-     * Set the mavenVersion
-     * 
-     * Can either be version or a range, e.g. {@code 2.2.1} or {@code [2.2.1,)}
+     * Set the mavenVersion Can either be version or a range, e.g. {@code 2.2.1} or {@code [2.2.1,)}
      * 
      * @param mavenVersion the version or {@code null}
      */
@@ -59,7 +57,7 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule
     {
         this.mavenVersion = mavenVersion;
     }
-    
+
     /**
      * Only the projects with one of these packagings will be enforced to have the correct prerequisite.
      * 
@@ -70,7 +68,7 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule
     {
         this.packagings = packagings;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -92,9 +90,9 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule
                 helper.getLog().debug( "Packaging is " + project.getPackaging() + ", skipping requirePrerequisite rule" );
                 return;
             }
-            
-            Prerequisites prerequisites = project.getPrerequisites(); 
-            
+
+            Prerequisites prerequisites = project.getPrerequisites();
+
             if ( prerequisites == null )
             {
                 throw new EnforcerRuleException( "Requires prerequisite not set" );
@@ -102,18 +100,18 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule
 
             if ( mavenVersion != null )
             {
-                
+
                 VersionRange requiredVersionRange = VersionRange.createFromVersionSpec( mavenVersion );
 
                 if ( !requiredVersionRange.hasRestrictions() )
                 {
                     requiredVersionRange = VersionRange.createFromVersionSpec( "[" + mavenVersion + ",)" );
                 }
-                
+
                 VersionRange specifiedVersion = VersionRange.createFromVersionSpec( prerequisites.getMaven() );
-                
+
                 VersionRange restrictedVersionRange = requiredVersionRange.restrict( specifiedVersion );
-                
+
                 if ( restrictedVersionRange.getRecommendedVersion() == null )
                 {
                     throw new EnforcerRuleException( "The specified Maven prerequisite( " + specifiedVersion

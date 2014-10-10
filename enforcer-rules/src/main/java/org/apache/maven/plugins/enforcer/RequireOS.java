@@ -65,7 +65,8 @@ public class RequireOS
      */
     public String family = null;
 
-    /** The OS name desired.
+    /**
+     * The OS name desired.
      *
      * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setName(String)}
@@ -73,7 +74,8 @@ public class RequireOS
      */
     public String name = null;
 
-    /** The OS version desired.
+    /**
+     * The OS version desired.
      * 
      * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setVersion(String)}
@@ -81,20 +83,22 @@ public class RequireOS
      */
     public String version = null;
 
-    /** The OS architecture desired.
-     *  
+    /**
+     * The OS architecture desired.
+     * 
      * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setArch(String)}
-     * @see {@link #getArch()} 
+     * @see {@link #getArch()}
      */
     public String arch = null;
 
-    /** Display detected OS information.
-     *  
+    /**
+     * Display detected OS information.
+     * 
      * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setDisplay(boolean)}
      * @see {@link #isDisplay()}
-     * */
+     */
     public boolean display = false;
 
     /**
@@ -107,8 +111,8 @@ public class RequireOS
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+     * @see
+     * org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
      */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
@@ -118,7 +122,8 @@ public class RequireOS
 
         if ( allParamsEmpty() )
         {
-            throw new EnforcerRuleException( "All parameters can not be empty. You must pick at least one of (family, name, version, arch) or use -Denforcer.os.display=true to see the current OS information." );
+            throw new EnforcerRuleException(
+                                             "All parameters can not be empty. You must pick at least one of (family, name, version, arch) or use -Denforcer.os.display=true to see the current OS information." );
         }
 
         if ( isValidFamily( this.family ) )
@@ -347,12 +352,12 @@ public class RequireOS
     {
         this.version = theVersion;
     }
-    
+
     public final void setDisplay( boolean display )
     {
         this.display = display;
     }
-    
+
     public final boolean isDisplay()
     {
         return display;
@@ -360,7 +365,6 @@ public class RequireOS
 
     /*
      * (non-Javadoc)
-     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
     public String getCacheId()
@@ -388,7 +392,6 @@ public class RequireOS
 
     /*
      * (non-Javadoc)
-     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
     public boolean isCacheable()
@@ -399,8 +402,8 @@ public class RequireOS
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
+     * @see
+     * org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
     public boolean isResultValid( EnforcerRule theCachedRule )
     {

@@ -35,7 +35,6 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
- * 
  * @author Robert Scholte
  * @since 1.3
  */
@@ -97,19 +96,19 @@ public class RequireSameVersions
                                                              String source )
     {
         Map<String, List<String>> versionMembers = new LinkedHashMap<String, List<String>>();
-        
+
         List<Pattern> regExs = new ArrayList<Pattern>();
         for ( String pattern : patterns )
         {
             String regex = pattern.replace( ".", "\\." ).replace( "*", ".*" ).replace( ":", "\\:" ).replace( '?', '.' );
 
             // pattern is groupId[:artifactId[:type[:classifier]]]
-            regExs.add( Pattern.compile( regex  + "(\\:.+)?" ) );
+            regExs.add( Pattern.compile( regex + "(\\:.+)?" ) );
         }
-        
+
         for ( Artifact artifact : artifacts )
         {
-            for ( Pattern regEx: regExs )
+            for ( Pattern regEx : regExs )
             {
                 if ( regEx.matcher( artifact.getDependencyConflictId() ).matches() )
                 {
