@@ -106,12 +106,12 @@ public class ReactorModuleConvergence
     private void checkMissingParentsInReactor( List<MavenProject> sortedProjects )
         throws EnforcerRuleException
     {
-        List<MavenProject> modulesWithoutParentsInReactory = existModulesWithoutParentsInReactor( sortedProjects );
-        if ( !modulesWithoutParentsInReactory.isEmpty() )
+        List<MavenProject> modulesWithoutParentsInReactor = existModulesWithoutParentsInReactor( sortedProjects );
+        if ( !modulesWithoutParentsInReactor.isEmpty() )
         {
             StringBuilder sb = new StringBuilder().append( SystemUtils.LINE_SEPARATOR );
             addMessageIfExist( sb );
-            for ( MavenProject mavenProject : modulesWithoutParentsInReactory )
+            for ( MavenProject mavenProject : modulesWithoutParentsInReactor )
             {
                 sb.append( " module: " );
                 sb.append( mavenProject.getId() );

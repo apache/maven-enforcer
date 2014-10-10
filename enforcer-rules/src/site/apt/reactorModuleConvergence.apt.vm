@@ -38,6 +38,7 @@ Reactor Module Convergence
     the reactor (default: false). 
 
   Note: The current state does not correctly handle a situation like this {{mvn -pl subproject validate}}.
+        This will be handled correctly with the next major release (2.X) of enforcer.
 
    []
 
