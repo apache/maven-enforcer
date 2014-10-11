@@ -61,13 +61,13 @@ public class RequireFilesSize
         this.log = helper.getLog();
 
         // if the file is already defined, use that. Otherwise get the main artifact.
-        if ( files.length == 0 )
+        if ( getFiles().length == 0 )
         {
             try
             {
                 MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-                files = new File[1];
-                files[0] = project.getArtifact().getFile();
+                setFiles( new File[1]);
+                getFiles()[0] = project.getArtifact().getFile();
 
                 super.execute( helper );
             }

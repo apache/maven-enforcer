@@ -46,7 +46,7 @@ public class TestRequireFilesSize
         File f = File.createTempFile( "enforcer", "tmp" );
         f.deleteOnExit();
 
-        rule.files = new File[] { f };
+        rule.setFiles( new File[] { f } );
 
         rule.execute( EnforcerTestUtils.getHelper() );
 
@@ -56,7 +56,7 @@ public class TestRequireFilesSize
     public void testEmptyFile()
         throws EnforcerRuleException, IOException
     {
-        rule.files = new File[] { null };
+        rule.setFiles( new File[] { null } );
         try
         {
             rule.execute( EnforcerTestUtils.getHelper() );
@@ -71,8 +71,8 @@ public class TestRequireFilesSize
     public void testEmptyFileAllowNull()
         throws EnforcerRuleException, IOException
     {
-        rule.files = new File[] { null };
-        rule.allowNulls = true;
+        rule.setFiles( new File[] { null } );
+        rule.setAllowNulls( true );
         try
         {
             rule.execute( EnforcerTestUtils.getHelper() );
@@ -86,9 +86,9 @@ public class TestRequireFilesSize
     public void testEmptyFileList()
         throws EnforcerRuleException, IOException
     {
-        rule.files = new File[] {};
+        rule.setFiles( new File[] {} );
 
-        assertEquals( 0, rule.files.length );
+        assertEquals( 0, rule.getFiles().length );
 
         MockProject project = new MockProject();
         File f = File.createTempFile( "enforcer", "tmp" );
@@ -112,7 +112,7 @@ public class TestRequireFilesSize
         File f = File.createTempFile( "enforcer", "tmp" );
         f.delete();
         assertTrue( !f.exists() );
-        rule.files = new File[] { f };
+        rule.setFiles( new File[] { f } );
 
         try
         {
@@ -130,7 +130,7 @@ public class TestRequireFilesSize
     {
         File f = File.createTempFile( "enforcer", "tmp" );
         f.deleteOnExit();
-        rule.files = new File[] { f };
+        rule.setFiles( new File[] { f } );
         rule.setMinsize( 10 );
         try
         {
@@ -163,7 +163,7 @@ public class TestRequireFilesSize
             System.err.println( "Error: " + e.getMessage() );
         }
 
-        rule.files = new File[] { f };
+        rule.setFiles( new File[] { f } );
         rule.setMaxsize( 10 );
         assertTrue( f.length() > 10 );
         try

@@ -37,10 +37,10 @@ public abstract class AbstractRequireFiles
 {
 
     /** Array of files to check. */
-    File[] files;
+    private File[] files;
 
     /** if null file handles should be allowed. If they are allowed, it means treat it as a success. */
-    boolean allowNulls = false;
+    private boolean allowNulls = false;
 
     // check the file for the specific condition
     /**
@@ -173,5 +173,25 @@ public abstract class AbstractRequireFiles
     public boolean isResultValid( EnforcerRule cachedRule )
     {
         return true;
+    }
+
+    public File[] getFiles()
+    {
+        return files;
+    }
+
+    public void setFiles( File[] files )
+    {
+        this.files = files;
+    }
+
+    public boolean isAllowNulls()
+    {
+        return allowNulls;
+    }
+
+    public void setAllowNulls( boolean allowNulls )
+    {
+        this.allowNulls = allowNulls;
     }
 }

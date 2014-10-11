@@ -42,7 +42,7 @@ public class TestRequireFilesExist
         File f = File.createTempFile( "enforcer", "tmp" );
         f.deleteOnExit();
 
-        rule.files = new File[] { f };
+        rule.setFiles( new File[] { f } );
 
         rule.execute( EnforcerTestUtils.getHelper() );
 
@@ -52,7 +52,7 @@ public class TestRequireFilesExist
     public void testEmptyFile()
         throws EnforcerRuleException, IOException
     {
-        rule.files = new File[] { null };
+        rule.setFiles( new File[] { null } );
         try
         {
             rule.execute( EnforcerTestUtils.getHelper() );
@@ -67,8 +67,8 @@ public class TestRequireFilesExist
     public void testEmptyFileAllowNull()
         throws EnforcerRuleException, IOException
     {
-        rule.files = new File[] { null };
-        rule.allowNulls = true;
+        rule.setFiles( new File[] { null } );
+        rule.setAllowNulls( true );
         try
         {
             rule.execute( EnforcerTestUtils.getHelper() );
@@ -82,8 +82,8 @@ public class TestRequireFilesExist
     public void testEmptyFileList()
         throws EnforcerRuleException, IOException
     {
-        rule.files = new File[] {};
-        assertEquals(0,rule.files.length);
+        rule.setFiles( new File[] {} );
+        assertEquals( 0, rule.getFiles().length );
         try
         {
             rule.execute( EnforcerTestUtils.getHelper() );
@@ -98,9 +98,9 @@ public class TestRequireFilesExist
     public void testEmptyFileListAllowNull()
         throws EnforcerRuleException, IOException
     {
-        rule.files = new File[] {};
-        assertEquals(0,rule.files.length);
-        rule.allowNulls = true;
+        rule.setFiles( new File[] {} );
+        assertEquals( 0, rule.getFiles().length );
+        rule.setAllowNulls( true );
         try
         {
             rule.execute( EnforcerTestUtils.getHelper() );
@@ -116,8 +116,8 @@ public class TestRequireFilesExist
     {
         File f = File.createTempFile( "enforcer", "tmp" );
         f.delete();
-        assertTrue(!f.exists());
-        rule.files = new File[] { f };
+        assertTrue( !f.exists() );
+        rule.setFiles( new File[] { f } );
 
         try
         {

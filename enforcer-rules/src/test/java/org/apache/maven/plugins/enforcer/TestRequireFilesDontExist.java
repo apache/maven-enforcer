@@ -42,7 +42,7 @@ public class TestRequireFilesDontExist
         File f = File.createTempFile( "enforcer", "tmp" );
         f.deleteOnExit();
 
-        rule.files = new File[] { f };
+        rule.setFiles( new File[] { f } );
 
         try
         {
@@ -59,7 +59,7 @@ public class TestRequireFilesDontExist
     public void testEmptyFile()
         throws EnforcerRuleException, IOException
     {
-        rule.files = new File[] { null };
+        rule.setFiles( new File[] { null } );
         try
         {
             rule.execute( EnforcerTestUtils.getHelper() );
@@ -74,8 +74,8 @@ public class TestRequireFilesDontExist
     public void testEmptyFileAllowNull()
         throws EnforcerRuleException, IOException
     {
-        rule.files = new File[] { null };
-        rule.allowNulls = true;
+        rule.setFiles( new File[] { null } );
+        rule.setAllowNulls( true );
         try
         {
             rule.execute( EnforcerTestUtils.getHelper() );
@@ -89,8 +89,8 @@ public class TestRequireFilesDontExist
     public void testEmptyFileList()
         throws EnforcerRuleException, IOException
     {
-        rule.files = new File[] {};
-        assertEquals( 0, rule.files.length );
+        rule.setFiles( new File[] {} );
+        assertEquals( 0, rule.getFiles().length );
         try
         {
             rule.execute( EnforcerTestUtils.getHelper() );
@@ -105,9 +105,9 @@ public class TestRequireFilesDontExist
     public void testEmptyFileListAllowNull()
         throws EnforcerRuleException, IOException
     {
-        rule.files = new File[] {};
-        assertEquals( 0, rule.files.length );
-        rule.allowNulls = true;
+        rule.setFiles( new File[] {} );
+        assertEquals( 0, rule.getFiles().length );
+        rule.setAllowNulls( true );
         try
         {
             rule.execute( EnforcerTestUtils.getHelper() );
@@ -126,7 +126,7 @@ public class TestRequireFilesDontExist
 
         assertTrue( !f.exists() );
 
-        rule.files = new File[] { f };
+        rule.setFiles( new File[] { f } );
 
         rule.execute( EnforcerTestUtils.getHelper() );
     }
