@@ -39,10 +39,10 @@ public class RequireFilesSize
 {
 
     /** the max size allowed. */
-    long maxsize = 10000;
+    private long maxsize = 10000;
 
     /** the min size allowed. */
-    long minsize = 0;
+    private long minsize = 0;
 
     /** The error msg. */
     private String errorMsg;
@@ -52,8 +52,8 @@ public class RequireFilesSize
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+     * @see
+     * org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
      */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
@@ -85,7 +85,6 @@ public class RequireFilesSize
 
     /*
      * (non-Javadoc)
-     *
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
     public boolean isCacheable()
@@ -95,22 +94,23 @@ public class RequireFilesSize
 
     /*
      * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
+     * @see
+     * org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
     public boolean isResultValid( EnforcerRule cachedRule )
     {
         return false;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.apache.maven.plugins.enforcer.AbstractRequireFiles#checkFile(java.io.File)
      */
     boolean checkFile( File file )
     {
         if ( file == null )
         {
-            //if we get here and it's null, treat it as a success.
+            // if we get here and it's null, treat it as a success.
             return true;
         }
 
@@ -148,11 +148,32 @@ public class RequireFilesSize
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.apache.maven.plugins.enforcer.AbstractRequireFiles#getErrorMsg()
      */
     String getErrorMsg()
     {
         return this.errorMsg;
+    }
+
+    public long getMaxsize()
+    {
+        return maxsize;
+    }
+
+    public void setMaxsize( long maxsize )
+    {
+        this.maxsize = maxsize;
+    }
+
+    public long getMinsize()
+    {
+        return minsize;
+    }
+
+    public void setMinsize( long minsize )
+    {
+        this.minsize = minsize;
     }
 }

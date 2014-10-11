@@ -97,12 +97,12 @@ public class TestRequireFilesSize
         Artifact a = factory.getReleaseArtifact();
         a.setFile( f );
 
-        project.setArtifact(a);
+        project.setArtifact( a );
 
         // sanity check the mockProject
         assertSame( f, project.getArtifact().getFile() );
 
-        rule.execute( EnforcerTestUtils.getHelper(project) );
+        rule.execute( EnforcerTestUtils.getHelper( project ) );
 
     }
 
@@ -131,7 +131,7 @@ public class TestRequireFilesSize
         File f = File.createTempFile( "enforcer", "tmp" );
         f.deleteOnExit();
         rule.files = new File[] { f };
-        rule.minsize = 10;
+        rule.setMinsize( 10 );
         try
         {
             rule.execute( EnforcerTestUtils.getHelper() );
@@ -164,7 +164,7 @@ public class TestRequireFilesSize
         }
 
         rule.files = new File[] { f };
-        rule.maxsize = 10;
+        rule.setMaxsize( 10 );
         assertTrue( f.length() > 10 );
         try
         {

@@ -571,9 +571,11 @@ public class RequirePluginVersions
         }
         catch ( ArtifactResolutionException e )
         {
+            //What does this mean?
         }
         catch ( ArtifactNotFoundException e )
         {
+            //What does this mean?
         }
 
         return plugin;

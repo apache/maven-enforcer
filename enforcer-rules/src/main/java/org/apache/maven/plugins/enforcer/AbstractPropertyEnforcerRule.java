@@ -36,7 +36,6 @@ public abstract class AbstractPropertyEnforcerRule
     /**
      * Match the property value to a given regular expression. Defaults to <code>null</code> (any value is ok).
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setRegex(String)}
      * @see {@link #getRegex()}
      */
@@ -45,7 +44,6 @@ public abstract class AbstractPropertyEnforcerRule
     /**
      * Specify a warning message if the regular expression is not matched.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setRegexMessage(String)}
      * @see {@link #getRegexMessage()}
      */

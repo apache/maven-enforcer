@@ -161,8 +161,11 @@ public class BanDuplicatePomDependencyVersions
         if ( summary.length() > 0 )
         {
             StringBuilder message = new StringBuilder();
-            message.append( "Found " ).append( duplicates ).append( " duplicate dependency " );
-            message.append( duplicateDependencies.size() == 1 ? "declaration" : "declarations" ).append( " in this project:\n" );
+            message.append( "Found " )
+                .append( duplicates )
+                .append( " duplicate dependency " );
+            message.append( duplicateDependencies.size() == 1 ? "declaration" : "declarations" )
+                .append( " in this project:\n" );
             message.append( summary );
             throw new EnforcerRuleException( message.toString() );
         }
@@ -174,7 +177,13 @@ public class BanDuplicatePomDependencyVersions
         {
             for ( Map.Entry<String, Integer> entry : duplicateDependencies.entrySet() )
             {
-                message.append( " - " ).append( prefix ).append( '[' ).append( entry.getKey() ).append( "] ( " ).append( entry.getValue() ).append( " times )\n" );
+                message.append( " - " )
+                    .append( prefix )
+                    .append( '[' )
+                    .append( entry.getKey() )
+                    .append( "] ( " )
+                    .append( entry.getValue() )
+                    .append( " times )\n" );
             }
         }
     }
