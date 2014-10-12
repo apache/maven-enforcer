@@ -50,11 +50,10 @@ public abstract class AbstractVersionEnforcer
      * <li><code>(,2.0.5],[2.1.1,)</code> Versions up to 2.0.5 (included) and 2.1.1 or higher</li>
      * </ul>
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setVersion(String)}
      * @see {@link #getVersion()}
      */
-    public String version = null;
+    private String version;
 
     /**
      * Compares the specified version to see if it is allowed by the defined version range.
@@ -201,7 +200,14 @@ public abstract class AbstractVersionEnforcer
     }
 
     /**
-     * Sets the required version.
+     * Specify the required version. Some examples are:
+     * <ul>
+     * <li><code>2.0.4</code> Version 2.0.4 and higher (different from Maven meaning)</li>
+     * <li><code>[2.0,2.1)</code> Versions 2.0 (included) to 2.1 (not included)</li>
+     * <li><code>[2.0,2.1]</code> Versions 2.0 to 2.1 (both included)</li>
+     * <li><code>[2.0.5,)</code> Versions 2.0.5 and higher</li>
+     * <li><code>(,2.0.5],[2.1.1,)</code> Versions up to 2.0.5 (included) and 2.1.1 or higher</li>
+     * </ul>
      *
      * @param theVersion the required version to set
      */

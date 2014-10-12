@@ -29,14 +29,13 @@ public abstract class AbstractStandardEnforcerRule
     implements EnforcerRule2
 {
 
-    /** Specify a friendly message if the rule fails.
+    /**
+     * Specify a friendly message if the rule fails.
      *
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setMessage(String)}
      * @see {@link #getMessage()}
-
      */
-    public String message = null;
+    private String message;
 
     private EnforcerLevel level = EnforcerLevel.ERROR;
 
@@ -55,7 +54,6 @@ public abstract class AbstractStandardEnforcerRule
      *
      * @return level
      */
-    //@Override
     public EnforcerLevel getLevel()
     {
         return level;

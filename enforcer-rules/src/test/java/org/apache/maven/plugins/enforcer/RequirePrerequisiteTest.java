@@ -19,6 +19,10 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.Collections;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -29,10 +33,6 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class RequirePrerequisiteTest
 {

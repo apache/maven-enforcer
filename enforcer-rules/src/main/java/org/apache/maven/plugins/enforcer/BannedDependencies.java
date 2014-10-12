@@ -47,9 +47,8 @@ public class BannedDependencies
      * 
      * @see {@link #setExcludes(List)}
      * @see {@link #getExcludes()}
-     * @deprecated the visibility will be reduced to private with the next major version
      */
-    public List<String> excludes = null;
+    private List<String> excludes = null;
 
     /**
      * Specify the allowed dependencies. This can be a list of artifacts in the format
@@ -60,9 +59,8 @@ public class BannedDependencies
      * 
      * @see {@link #setIncludes(List)}
      * @see {@link #getIncludes()}
-     * @deprecated the visibility will be reduced to private with the next major version
      */
-    public List<String> includes = null;
+    private List<String> includes = null;
 
     /**
      * {@inheritDoc}
@@ -165,8 +163,11 @@ public class BannedDependencies
     }
 
     /**
-     * Sets the excludes.
+     * Specify the banned dependencies. This can be a list of artifacts in the format
+     * <code>groupId[:artifactId][:version]</code>. Any of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
+     * The rule will fail if any dependency matches any exclude, unless it also matches an include rule.
      * 
+     * @see {@link #getExcludes()}
      * @param theExcludes the excludes to set
      */
     public void setExcludes( List<String> theExcludes )
@@ -185,8 +186,13 @@ public class BannedDependencies
     }
 
     /**
-     * Sets the includes.
+     * Specify the allowed dependencies. This can be a list of artifacts in the format
+     * <code>groupId[:artifactId][:version]</code>. Any of the sections can be a wildcard by using '*' (ie group:*:1.0) <br>
+     * Includes override the exclude rules. It is meant to allow wide exclusion rules with wildcards and still allow a
+     * smaller set of includes. <br>
+     * For example, to ban all xerces except xerces-api -> exclude "xerces", include "xerces:xerces-api"
      * 
+     * @see {@link #setIncludes(List)}
      * @param theIncludes the includes to set
      */
     public void setIncludes( List<String> theIncludes )
