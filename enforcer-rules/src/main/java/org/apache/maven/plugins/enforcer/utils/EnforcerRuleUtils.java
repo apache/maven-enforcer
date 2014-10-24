@@ -252,7 +252,10 @@ public class EnforcerRuleUtils
                 parentPom = new File( parentPom, "pom.xml" );
             }
 
-            models = getModelsRecursively( parent.getGroupId(), parent.getArtifactId(), parent.getVersion(), parentPom );
+            //@formatter:off
+            models = getModelsRecursively( parent.getGroupId(), parent.getArtifactId(), 
+                                           parent.getVersion(), parentPom );
+            //@formatter:on
         }
         else
         {
@@ -317,8 +320,10 @@ public class EnforcerRuleUtils
         {
             // as above
         }
+        // CHECKSTYLE_OFF: LineLength
         return ( StringUtils.equals( groupId, modelGroup ) && StringUtils.equals( version, modelVersion ) && StringUtils.equals( artifactId,
                                                                                                                                  modelArtifactId ) );
+        // CHECKSTYLE_ON: LineLength
     }
 
     private void resolve( Plugin plugin )

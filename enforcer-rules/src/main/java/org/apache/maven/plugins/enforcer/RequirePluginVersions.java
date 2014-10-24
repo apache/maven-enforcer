@@ -87,80 +87,72 @@ public class RequirePluginVersions
     /**
      * Don't allow the LATEST identifier.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setBanLatest(boolean)}
      * @see {@link #isBanLatest()}
      */
-    public boolean banLatest = true;
+    private boolean banLatest = true;
 
     /**
      * Don't allow the RELEASE identifier.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setBanRelease(boolean)}
      * @see {@link #isBanRelease()}
      */
-    public boolean banRelease = true;
+    private boolean banRelease = true;
 
     /**
      * Don't allow snapshot plugins.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setBanSnapshots(boolean)}
      * @see {@link #isBanSnapshots()}
      */
-    public boolean banSnapshots = true;
+    private boolean banSnapshots = true;
 
     /**
      * Don't allow timestamp snapshot plugins.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setBanTimestamps(boolean)}
      * @see {@link #isBanTimestamps()}
      */
-    public boolean banTimestamps = true;
+    private boolean banTimestamps = true;
 
     /**
      * The comma separated list of phases that should be used to find lifecycle plugin bindings. The default value is
      * "clean,deploy,site".
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setPhases(String)}
      * @see {@link #getPhases()}
      */
-    public String phases = "clean,deploy,site";
+    private String phases = "clean,deploy,site";
 
     /**
      * Additional plugins to enforce have versions. These are plugins that may not be in the poms but are used anyway,
      * like help, eclipse etc. <br>
      * The plugins should be specified in the form: <code>group:artifactId</code>.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setAdditionalPlugins(List)}
      * @see {@link #getAdditionalPlugins()}
      */
-    public List<String> additionalPlugins;
+    private List<String> additionalPlugins;
 
     /**
      * Plugins to skip for version enforcement. The plugins should be specified in the form:
      * <code>group:artifactId</code>. NOTE: This is deprecated, use unCheckedPluginList instead.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setUnCheckedPlugins(List)}
      * @see {@link #getUnCheckedPlugins()}
      */
-    public List unCheckedPlugins;
+    private List unCheckedPlugins;
 
     /**
      * Same as unCheckedPlugins but as a comma list to better support properties. Sample form:
      * <code>group:artifactId,group2:artifactId2</code>
      * 
      * @since 1.0-beta-1
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setUnCheckedPlugins(List)}
      * @see {@link #getUnCheckedPlugins()}
      */
-    public String unCheckedPluginList;
+    private String unCheckedPluginList;
 
     /** The plugin manager. */
     private PluginManager pluginManager;
@@ -404,7 +396,9 @@ public class RequirePluginVersions
      * @param uncheckedPluginsList
      * @return
      */
+    // CHECKSTYLE_OFF: LineLength
     public Collection<String> combineUncheckedPlugins( Collection<String> uncheckedPlugins, String uncheckedPluginsList )
+    // CHECKSTYLE_ON: LineLength
     {
         // if the comma list is empty, then there's nothing to do here.
         if ( StringUtils.isNotEmpty( uncheckedPluginsList ) )

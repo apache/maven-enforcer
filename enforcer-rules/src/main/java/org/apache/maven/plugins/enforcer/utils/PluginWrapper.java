@@ -25,6 +25,10 @@ import java.util.List;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
 
+/**
+ * @author Brian Fox
+ *
+ */
 public class PluginWrapper
 {
     private String groupId;

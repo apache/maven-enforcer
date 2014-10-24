@@ -32,15 +32,14 @@ public class RequireProperty
     extends AbstractPropertyEnforcerRule
 {
 
-    /** Specify the required property. 
+    /**
+     * Specify the required property.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setProperty(String)}
      * @see {@link #getPropertyName()}
      */
-    public String property = null;
-    
-    
+    private String property = null;
+
     public final void setProperty( String property )
     {
         this.property = property;

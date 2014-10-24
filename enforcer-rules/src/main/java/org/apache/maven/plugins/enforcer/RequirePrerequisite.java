@@ -87,8 +87,10 @@ public class RequirePrerequisite
 
             if ( packagings != null && !packagings.contains( project.getPackaging() ) )
             {
+                // CHECKSTYLE_OFF: LineLength
                 helper.getLog().debug( "Packaging is " + project.getPackaging() + ", skipping requirePrerequisite rule" );
                 return;
+                // CHECKSTYLE_ON: LineLength
             }
 
             Prerequisites prerequisites = project.getPrerequisites();

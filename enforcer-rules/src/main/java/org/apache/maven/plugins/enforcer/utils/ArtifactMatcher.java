@@ -36,6 +36,9 @@ import java.util.LinkedList;
 public final class ArtifactMatcher
 {
 
+    /**
+     * @author I don't know
+     */
     public static class Pattern
     {
         private String pattern;
@@ -109,9 +112,11 @@ public final class ArtifactMatcher
                 case 3:
                     if ( !matches( parts[2], artifact.getVersion() ) )
                     {
+                        // CHECKSTYLE_OFF: LineLength
                         if ( !AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( parts[2] ),
                                                                        new DefaultArtifactVersion(
                                                                                                    artifact.getVersion() ) ) )
+                        // CHECKSTYLE_ON: LineLength
                         {
                             return false;
                         }

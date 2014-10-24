@@ -48,43 +48,39 @@ public class RequireReleaseDeps
      *
      * @parameter
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setOnlyWhenRelease(boolean)}
      * @see {@link #isOnlyWhenRelease()}
 
      */
-    public boolean onlyWhenRelease = false;
+    private boolean onlyWhenRelease = false;
 
     /**
      * Allows this rule to fail when the parent is defined as a snapshot.
      *
      * @parameter
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setFailWhenParentIsSnapshot(boolean)}
      * @see {@link #isFailWhenParentIsSnapshot()}
      */
-    public boolean failWhenParentIsSnapshot = true;
+    private boolean failWhenParentIsSnapshot = true;
 
     /**
      * Dependencies to ignore when checking for release versions.  For example, inter-module dependencies 
      * can be excluded from the check and therefore allowed to contain snapshot versions.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setExcludes(List)}
      * @see {@link #getExcludes()}
      */
-    public List<String> excludes = null;
+    private List<String> excludes = null;
 
     /**
      * Dependencies to include when checking for release versions.  If any of the included dependencies
      * have snapshot versions, the rule will fail.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setIncludes(List)}
      * @see {@link #getIncludes()}
      */
-    public List<String> includes = null;
+    private List<String> includes = null;
 
     /**
      * Override parent to allow optional ignore of this rule.

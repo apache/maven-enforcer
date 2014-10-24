@@ -73,9 +73,11 @@ public class RequireSameVersions
         Set<String> reportPluginSet = new HashSet<String>( reportPlugins );
         reportPluginSet.addAll( plugins );
 
+        // CHECKSTYLE_OFF: LineLength
         versionMembers.putAll( collectVersionMembers( project.getArtifacts(), dependencies, " (dependency)" ) );
         versionMembers.putAll( collectVersionMembers( project.getPluginArtifacts(), buildPlugins, " (buildPlugin)" ) );
         versionMembers.putAll( collectVersionMembers( project.getReportArtifacts(), reportPlugins, " (reportPlugin)" ) );
+        // CHECKSTYLE_ON: LineLength
 
         if ( versionMembers.size() > 1 )
         {

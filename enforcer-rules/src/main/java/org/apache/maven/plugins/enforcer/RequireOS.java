@@ -59,47 +59,42 @@ public class RequireOS
      * <li>os/400</li>
      * </ul>
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setFamily(String)}
      * @see {@link #getFamily()}
      */
-    public String family = null;
+    private String family = null;
 
     /**
      * The OS name desired.
      *
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setName(String)}
      * @see {@link #getName()}
      */
-    public String name = null;
+    private String name = null;
 
     /**
      * The OS version desired.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setVersion(String)}
      * @see {@link #getVersion()}
      */
-    public String version = null;
+    private String version = null;
 
     /**
      * The OS architecture desired.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setArch(String)}
      * @see {@link #getArch()}
      */
-    public String arch = null;
+    private String arch = null;
 
     /**
      * Display detected OS information.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setDisplay(boolean)}
      * @see {@link #isDisplay()}
      */
-    public boolean display = false;
+    private boolean display = false;
 
     /**
      * Instantiates a new RequireOS.
@@ -109,10 +104,8 @@ public class RequireOS
 
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+    /**
+     * {@inheritDoc}
      */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
@@ -122,8 +115,9 @@ public class RequireOS
 
         if ( allParamsEmpty() )
         {
-            throw new EnforcerRuleException(
-                                             "All parameters can not be empty. You must pick at least one of (family, name, version, arch) or use -Denforcer.os.display=true to see the current OS information." );
+            throw new EnforcerRuleException( "All parameters can not be empty. "
+                + "You must pick at least one of (family, name, version, arch) "
+                + "or use -Denforcer.os.display=true to see the current OS information." );
         }
 
         if ( isValidFamily( this.family ) )
@@ -133,19 +127,25 @@ public class RequireOS
                 String message = getMessage();
                 if ( StringUtils.isEmpty( message ) )
                 {
+                    //@formatter:off
                     message =
-                        ( "OS Arch: " + Os.OS_ARCH + " Family: " + Os.OS_FAMILY + " Name: " + Os.OS_NAME + " Version: "
+                        ( "OS Arch: " 
+                            + Os.OS_ARCH + " Family: " 
+                            + Os.OS_FAMILY + " Name: " 
+                            + Os.OS_NAME + " Version: "
                             + Os.OS_VERSION + " is not allowed by" + ( arch != null ? " Arch=" + arch : "" )
-                            + ( family != null ? " Family=" + family : "" ) + ( name != null ? " Name=" + name : "" ) + ( version != null ? " Version="
-                            + version
-                                        : "" ) );
+                            + ( family != null ? " Family=" + family : "" ) 
+                            + ( name != null ? " Name=" + name : "" ) 
+                            + ( version != null ? " Version=" + version : "" ) );
+                    //@formatter:on
                 }
                 throw new EnforcerRuleException( message );
             }
         }
         else
         {
-            StringBuilder buffer = new StringBuilder( 50 );
+            final int minimumBufferSize = 50;
+            StringBuilder buffer = new StringBuilder( minimumBufferSize );
             Iterator<?> iter = Os.getValidFamilies().iterator();
             while ( iter.hasNext() )
             {
@@ -199,8 +199,9 @@ public class RequireOS
      */
     public boolean allParamsEmpty()
     {
+        // CHECKSTYLE_OFF: LineLength
         return ( StringUtils.isEmpty( family ) && StringUtils.isEmpty( arch ) && StringUtils.isEmpty( name ) && StringUtils.isEmpty( version ) );
-
+        // CHECKSTYLE_ON: LineLength
     }
 
     /**
@@ -353,6 +354,9 @@ public class RequireOS
         this.version = theVersion;
     }
 
+    /**
+     * @param display The value for the display.
+     */
     public final void setDisplay( boolean display )
     {
         this.display = display;
@@ -363,9 +367,8 @@ public class RequireOS
         return display;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
+    /**
+     * {@inheritDoc}
      */
     public String getCacheId()
     {
@@ -390,9 +393,8 @@ public class RequireOS
         return b.toString();
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
+    /**
+     * {@inheritDoc}
      */
     public boolean isCacheable()
     {
@@ -400,10 +402,8 @@ public class RequireOS
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
+    /**
+     * {@inheritDoc}
      */
     public boolean isResultValid( EnforcerRule theCachedRule )
     {

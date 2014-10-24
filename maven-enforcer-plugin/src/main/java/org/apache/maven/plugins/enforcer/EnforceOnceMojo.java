@@ -24,6 +24,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
+// CHECKSTYLE_OFF: LineLength
 /**
  * This goal has been deprecated.
  * 
@@ -31,8 +32,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
-@Mojo( name = "enforce-once", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true,
-                requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo( name = "enforce-once", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true, requiresDependencyResolution = ResolutionScope.TEST )
 public class EnforceOnceMojo
     extends EnforceMojo
 {
@@ -43,3 +43,4 @@ public class EnforceOnceMojo
         super.execute();
     }
 }
+// CHECKSTYLE_ON: LineLength

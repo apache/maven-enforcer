@@ -29,6 +29,10 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
 
+/**
+ * @author Brian Fox
+ *
+ */
 public class DependencyVersionMap
     implements DependencyNodeVisitor
 {

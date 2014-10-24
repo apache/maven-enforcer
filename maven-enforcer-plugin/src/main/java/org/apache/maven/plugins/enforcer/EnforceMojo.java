@@ -40,8 +40,7 @@ import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 
 /**
- * This goal executes the defined enforcer-rules once per
- * module.
+ * This goal executes the defined enforcer-rules once per module.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
@@ -53,26 +52,24 @@ public class EnforceMojo
     /**
      * Flag to fail the build if a version check fails.
      */
-    @Parameter(property = "enforcer.fail", defaultValue = "true")
+    @Parameter( property = "enforcer.fail", defaultValue = "true" )
     private boolean fail = true;
 
     /**
      * Fail on the first rule that doesn't pass
      */
-    @Parameter(property = "enforcer.failFast", defaultValue = "false")
+    @Parameter( property = "enforcer.failFast", defaultValue = "false" )
     private boolean failFast = false;
 
     /**
-     * Array of objects that implement the EnforcerRule
-     * interface to execute.
+     * Array of objects that implement the EnforcerRule interface to execute.
      */
     @Parameter( required = true )
     private EnforcerRule[] rules;
 
     /**
-     * Use this flag to disable rule result caching. This will cause
-     * all rules to execute on each project even if the rule indicates it can
-     * safely be cached.
+     * Use this flag to disable rule result caching. This will cause all rules to execute on each project even if the
+     * rule indicates it can safely be cached.
      */
     @Parameter( property = "enforcer.ignoreCache", defaultValue = "false" )
     protected boolean ignoreCache = false;
@@ -82,12 +79,11 @@ public class EnforceMojo
      */
     protected static Hashtable<String, EnforcerRule> cache = new Hashtable<String, EnforcerRule>();
 
-
     // set by the contextualize method. Only way to get the
     // plugin's container in 2.0.x
     protected PlexusContainer container;
 
-    public void contextualize ( Context context )
+    public void contextualize( Context context )
         throws ContextException
     {
         container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
@@ -95,9 +91,10 @@ public class EnforceMojo
 
     /**
      * Entry point to the mojo
+     * 
      * @throws MojoExecutionException
      */
-    public void execute ()
+    public void execute()
         throws MojoExecutionException
     {
         Log log = this.getLog();
@@ -145,10 +142,10 @@ public class EnforceMojo
                             if ( ignoreCache || shouldExecute( rule ) )
                             {
                                 // execute the rule
-                                //noinspection SynchronizationOnLocalVariableOrMethodParameter
+                                // noinspection SynchronizationOnLocalVariableOrMethodParameter
                                 synchronized ( rule )
                                 {
-                                   rule.execute( helper );
+                                    rule.execute( helper );
                                 }
                             }
                         }
@@ -167,13 +164,15 @@ public class EnforceMojo
                                 if ( level == EnforcerLevel.ERROR )
                                 {
                                     hasErrors = true;
-                                    list.add( "Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage() );
-                                    log.debug( "Adding failure due to exception" , e );
+                                    list.add( "Rule " + i + ": " + currentRule + " failed with message:\n"
+                                        + e.getMessage() );
+                                    log.debug( "Adding failure due to exception", e );
                                 }
                                 else
                                 {
-                                    list.add( "Rule " + i + ": " + currentRule + " warned with message:\n" + e.getMessage() );
-                                    log.debug( "Adding warning due to exception" , e );
+                                    list.add( "Rule " + i + ": " + currentRule + " warned with message:\n"
+                                        + e.getMessage() );
+                                    log.debug( "Adding warning due to exception", e );
                                 }
                             }
                         }
@@ -183,21 +182,25 @@ public class EnforceMojo
                 // if we found anything
                 if ( !list.isEmpty() )
                 {
-                    for ( String failure  : list )
+                    for ( String failure : list )
                     {
                         log.warn( failure );
                     }
                     if ( fail && hasErrors )
                     {
+                        // CHECKSTYLE_OFF: LineLength
                         throw new MojoExecutionException(
                                                           "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
+                        // CHECKSTYLE_ON: LineLength
                     }
                 }
             }
             else
             {
+                // CHECKSTYLE_OFF: LineLength
                 throw new MojoExecutionException(
                                                   "No rules are configured. Use the skip flag if you want to disable execution." );
+                // CHECKSTYLE_ON: LineLength
             }
         }
         else
@@ -207,13 +210,12 @@ public class EnforceMojo
     }
 
     /**
-     * This method determines if a rule should execute based
-     * on the cache
+     * This method determines if a rule should execute based on the cache
      *
      * @param rule the rule to verify
      * @return {@code true} if rule should be executed, otherwise {@code false}
      */
-    protected boolean shouldExecute ( EnforcerRule rule )
+    protected boolean shouldExecute( EnforcerRule rule )
     {
         if ( rule.isCacheable() )
         {
@@ -230,7 +232,7 @@ public class EnforceMojo
                 }
             }
 
-            //add it to the cache of executed rules
+            // add it to the cache of executed rules
             EnforceMojo.cache.put( key, rule );
         }
         return true;
@@ -239,7 +241,7 @@ public class EnforceMojo
     /**
      * @return the fail
      */
-    public boolean isFail ()
+    public boolean isFail()
     {
         return this.fail;
     }
@@ -247,7 +249,7 @@ public class EnforceMojo
     /**
      * @param theFail the fail to set
      */
-    public void setFail ( boolean theFail )
+    public void setFail( boolean theFail )
     {
         this.fail = theFail;
     }
@@ -256,7 +258,7 @@ public class EnforceMojo
      * @return the rules
      */
     @Override
-    public EnforcerRule[] getRules ()
+    public EnforcerRule[] getRules()
     {
         return this.rules;
     }
@@ -265,7 +267,7 @@ public class EnforceMojo
      * @param theRules the rules to set
      */
     @Override
-    public void setRules ( EnforcerRule[] theRules )
+    public void setRules( EnforcerRule[] theRules )
     {
         this.rules = theRules;
     }
@@ -274,19 +276,19 @@ public class EnforceMojo
      * @param theFailFast the failFast to set
      */
     @Override
-    public void setFailFast ( boolean theFailFast )
+    public void setFailFast( boolean theFailFast )
     {
         this.failFast = theFailFast;
     }
 
     @Override
-    public boolean isFailFast() {
+    public boolean isFailFast()
+    {
         return failFast;
     }
 
-
     @Override
-    protected String createRuleMessage( int i , String currentRule , EnforcerRuleException e )
+    protected String createRuleMessage( int i, String currentRule, EnforcerRuleException e )
     {
         return "Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage();
     }
@@ -294,14 +296,13 @@ public class EnforceMojo
     /**
      * @param theTranslator the translator to set
      */
-    public void setTranslator ( PathTranslator theTranslator )
+    public void setTranslator( PathTranslator theTranslator )
     {
         this.translator = theTranslator;
     }
 
     /**
-     * Returns the level of the rule, defaults to {@link EnforcerLevel#ERROR}
-     * for backwards compatibility.
+     * Returns the level of the rule, defaults to {@link EnforcerLevel#ERROR} for backwards compatibility.
      *
      * @param rule might be of type {@link EnforcerRule2}.
      * @return level of the rule.

@@ -133,6 +133,7 @@ public class ReactorModuleConvergence
         {
             StringBuilder sb = new StringBuilder().append( SystemUtils.LINE_SEPARATOR );
             addMessageIfExist( sb );
+            // CHECKSTYLE_OFF: LineLength
             for ( Entry<MavenProject, List<Dependency>> item : areThereDependenciesWhichAreNotPartOfTheReactor.entrySet() )
             {
                 sb.append( " module: " );
@@ -150,6 +151,7 @@ public class ReactorModuleConvergence
             throw new EnforcerRuleException(
                                              "Reactor modules contains dependencies which do not reference the reactor."
                                                  + sb.toString() );
+            // CHECKSTYLE_ON: LineLength
         }
     }
 
@@ -369,8 +371,9 @@ public class ReactorModuleConvergence
      * @param sortedProjects The list of existing projects within this build.
      * @return List of violations. Never null. If the list is empty than no violation has happened.
      */
-    private Map<MavenProject, List<Dependency>> areThereDependenciesWhichAreNotPartOfTheReactor( String reactorVersion,
-                                                                                                 List<MavenProject> sortedProjects )
+    // CHECKSTYLE_OFF: LineLength
+    private Map<MavenProject, List<Dependency>> areThereDependenciesWhichAreNotPartOfTheReactor( String reactorVersion, List<MavenProject> sortedProjects )
+    // CHECKSTYLE_ON: LineLength
     {
         Map<MavenProject, List<Dependency>> result = new HashMap<MavenProject, List<Dependency>>();
         for ( MavenProject mavenProject : sortedProjects )

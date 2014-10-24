@@ -51,50 +51,58 @@ public abstract class AbstractEnforceMojo
      * This is a static variable used to persist the cached results across plugin invocations.
      */
     protected static Hashtable<String, EnforcerRule> cache = new Hashtable<String, EnforcerRule>();
+
     /**
      * Path Translator needed by the ExpressionEvaluator
      */
-    @Component(role = PathTranslator.class)
+    @Component( role = PathTranslator.class )
     protected PathTranslator translator;
+
     /**
      * The MavenSession
      */
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
     protected MavenSession session;
+
     /**
      * POM
      */
     @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
+
     /**
      * Flag to easily skip all checks
      */
-    @Parameter(property = "enforcer.skip", defaultValue = "false")
+    @Parameter( property = "enforcer.skip", defaultValue = "false" )
     protected boolean skip = false;
+
     /**
-     * Use this flag to disable rule result caching. This will cause
-     * all rules to execute on each project even if the rule indicates it can
-     * safely be cached.
+     * Use this flag to disable rule result caching. This will cause all rules to execute on each project even if the
+     * rule indicates it can safely be cached.
      */
-    @Parameter(property = "enforcer.ignoreCache", defaultValue = "false")
+    @Parameter( property = "enforcer.ignoreCache", defaultValue = "false" )
     protected boolean ignoreCache = false;
+
     // set by the contextualize method. Only way to get the
     // plugin's container in 2.0.x
     protected PlexusContainer container;
 
-    public void contextualize(Context context) throws ContextException {
-        container = (PlexusContainer) context.get(PlexusConstants.PLEXUS_KEY);
+    public void contextualize( Context context )
+        throws ContextException
+    {
+        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
     /**
      * Entry point to the mojo
+     * 
      * @throws MojoExecutionException
      */
-    public void execute() throws MojoExecutionException
+    public void execute()
+        throws MojoExecutionException
     {
         Log log = this.getLog();
-        EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator(
-                session , translator , project );
+        EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator( session, translator, project );
         // the entire execution can be easily skipped
         if ( !skip )
         {
@@ -105,8 +113,7 @@ public abstract class AbstractEnforceMojo
             {
                 String currentRule = "Unknown";
                 // create my helper
-                EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper(
-                        session , evaluator , log , container );
+                EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( session, evaluator, log, container );
                 // if we are only warning, then disable
                 // failFast
                 if ( !isFail() )
@@ -129,7 +136,7 @@ public abstract class AbstractEnforceMojo
                             if ( ignoreCache || shouldExecute( rule ) )
                             {
                                 // execute the rule
-                                //noinspection SynchronizationOnLocalVariableOrMethodParameter
+                                // noinspection SynchronizationOnLocalVariableOrMethodParameter
                                 synchronized ( rule )
                                 {
                                     rule.execute( helper );
@@ -143,15 +150,13 @@ public abstract class AbstractEnforceMojo
                             // false if fail is false.
                             if ( isFailFast() )
                             {
-                                throw new MojoExecutionException(
-                                        currentRule + " failed with message:\n"
-                                        + e.getMessage() , e );
+                                throw new MojoExecutionException( currentRule + " failed with message:\n"
+                                    + e.getMessage(), e );
                             }
                             else
                             {
-                                list.add( createRuleMessage( i , currentRule , e ));
-                                log.debug( "Adding failure due to exception" ,
-                                        e );
+                                list.add( createRuleMessage( i, currentRule, e ) );
+                                log.debug( "Adding failure due to exception", e );
                             }
                         }
                     }
@@ -165,15 +170,19 @@ public abstract class AbstractEnforceMojo
                     }
                     if ( isFail() )
                     {
+                        // CHECKSTYLE_OFF: LineLength
                         throw new MojoExecutionException(
-                                "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
+                                                          "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
+                        // CHECKSTYLE_ON: LineLength
                     }
                 }
             }
             else
             {
+                // CHECKSTYLE_OFF: LineLength
                 throw new MojoExecutionException(
-                        "No rules are configured. Use the skip flag if you want to disable execution." );
+                                                  "No rules are configured. Use the skip flag if you want to disable execution." );
+                // CHECKSTYLE_ON: LineLength
             }
         }
         else
@@ -183,8 +192,7 @@ public abstract class AbstractEnforceMojo
     }
 
     /**
-     * This method determines if a rule should execute based
-     * on the cache
+     * This method determines if a rule should execute based on the cache
      *
      * @param rule the rule to verify
      * @return {@code true} if rule should be executed, otherwise {@code false}
@@ -201,14 +209,12 @@ public abstract class AbstractEnforceMojo
                 log.debug( "Key " + key + " was found in the cache" );
                 if ( rule.isResultValid( (EnforcerRule) cache.get( key ) ) )
                 {
-                    log.debug(
-                            "The cached results are still valid. Skipping the rule: "
-                            + rule.getClass().getName() );
+                    log.debug( "The cached results are still valid. Skipping the rule: " + rule.getClass().getName() );
                     return false;
                 }
             }
-            //add it to the cache of executed rules
-            EnforceMojo.cache.put( key , rule );
+            // add it to the cache of executed rules
+            EnforceMojo.cache.put( key, rule );
         }
         return true;
     }
@@ -231,14 +237,16 @@ public abstract class AbstractEnforceMojo
     /**
      * @return the skip
      */
-    public boolean isSkip() {
+    public boolean isSkip()
+    {
         return this.skip;
     }
 
     /**
      * @param theSkip the skip to set
      */
-    public void setSkip(boolean theSkip) {
+    public void setSkip( boolean theSkip )
+    {
         this.skip = theSkip;
     }
 
@@ -255,42 +263,48 @@ public abstract class AbstractEnforceMojo
     /**
      * @return the project
      */
-    public MavenProject getProject() {
+    public MavenProject getProject()
+    {
         return this.project;
     }
 
     /**
      * @param theProject the project to set
      */
-    public void setProject(MavenProject theProject) {
+    public void setProject( MavenProject theProject )
+    {
         this.project = theProject;
     }
 
     /**
      * @return the session
      */
-    public MavenSession getSession() {
+    public MavenSession getSession()
+    {
         return this.session;
     }
 
     /**
      * @param theSession the session to set
      */
-    public void setSession(MavenSession theSession) {
+    public void setSession( MavenSession theSession )
+    {
         this.session = theSession;
     }
 
     /**
      * @return the translator
      */
-    public PathTranslator getTranslator() {
+    public PathTranslator getTranslator()
+    {
         return this.translator;
     }
 
     /**
      * @param theTranslator the translator to set
      */
-    public void setTranslator(PathTranslator theTranslator) {
+    public void setTranslator( PathTranslator theTranslator )
+    {
         this.translator = theTranslator;
     }
 
@@ -302,5 +316,5 @@ public abstract class AbstractEnforceMojo
      * @param e rule exception
      * @return rule message
      */
-    protected abstract String createRuleMessage( int i , String currentRule , EnforcerRuleException e );
+    protected abstract String createRuleMessage( int i, String currentRule, EnforcerRuleException e );
 }

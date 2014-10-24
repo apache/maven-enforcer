@@ -19,7 +19,6 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -27,9 +26,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * This goal executes the defined enforcer-recommendations once per
- * module. In contrast to {@link EnforceMojo} it will never fail the
- * build, i.e. it will only warn.
+ * This goal executes the defined enforcer-recommendations once per module. In contrast to {@link EnforceMojo} it will
+ * never fail the build, i.e. it will only warn.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @author Mirko Friedenhagen
@@ -41,8 +39,7 @@ public class RecommendMojo
 {
 
     /**
-     * Array of objects that implement the EnforcerRule
-     * interface to execute.
+     * Array of objects that implement the EnforcerRule interface to execute.
      */
     @Parameter( required = true )
     private EnforcerRule[] recommendations;
@@ -51,7 +48,7 @@ public class RecommendMojo
      * @return the recommendedRules
      */
     @Override
-    public EnforcerRule[] getRules ()
+    public EnforcerRule[] getRules()
     {
         return this.recommendations;
     }
@@ -60,7 +57,7 @@ public class RecommendMojo
      * @param theRules the recommendedRules to set
      */
     @Override
-    public void setRules ( EnforcerRule[] theRules )
+    public void setRules( EnforcerRule[] theRules )
     {
         this.recommendations = theRules;
     }
@@ -69,31 +66,35 @@ public class RecommendMojo
      * @param theFailFast the failFast to set
      */
     @Override
-    public void setFailFast ( boolean theFailFast )
+    public void setFailFast( boolean theFailFast )
     {
         // intentionally blank
     }
 
     /**
      * Always return false, as this Mojo should never fail the build.
+     * 
      * @return false
      */
     @Override
-    public boolean isFail() {
+    public boolean isFail()
+    {
         return false;
     }
 
     /**
      * Always return false, as this Mojo should never fail the build.
+     * 
      * @return false
      */
     @Override
-    public boolean isFailFast() {
+    public boolean isFailFast()
+    {
         return false;
     }
 
     @Override
-    protected String createRuleMessage( int i , String currentRule , EnforcerRuleException e )
+    protected String createRuleMessage( int i, String currentRule, EnforcerRuleException e )
     {
         return "Recommendation " + i + ": " + currentRule + " failed with message:\n" + e.getMessage();
     }

@@ -48,50 +48,44 @@ public class RequireNoRepositories
     /**
      * Whether to ban non-plugin repositories. By default they are banned.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setBanRepositories(boolean)}
      */
-    public boolean banRepositories = true;
+    private boolean banRepositories = true;
 
     /**
      * Whether to ban plugin repositories. By default they are banned.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setBanPluginRepositories(boolean)}
      */
-    public boolean banPluginRepositories = true;
+    private boolean banPluginRepositories = true;
 
     /**
      * Specify explicitly allowed non-plugin repositories. This is a list of ids.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setAllowedRepositories(List)}
      */
-    public List<String> allowedRepositories = Collections.emptyList();
+    private List<String> allowedRepositories = Collections.emptyList();
 
     /**
      * Specify explicitly allowed plugin repositories. This is a list of ids.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setAllowedPluginRepositories(List)}
      */
-    public List<String> allowedPluginRepositories = Collections.emptyList();
+    private List<String> allowedPluginRepositories = Collections.emptyList();
 
     /**
      * Whether to allow repositories which only resolve snapshots. By default they are banned.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setAllowSnapshotRepositories(boolean)}
      */
-    public boolean allowSnapshotRepositories = false;
+    private boolean allowSnapshotRepositories = false;
 
     /**
      * Whether to allow plugin repositories which only resolve snapshots. By default they are banned.
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setAllowSnapshotPluginRepositories(boolean)}
      */
-    public boolean allowSnapshotPluginRepositories = false;
+    private boolean allowSnapshotPluginRepositories = false;
 
     public final void setBanRepositories( boolean banRepositories )
     {
@@ -123,10 +117,8 @@ public class RequireNoRepositories
         this.allowSnapshotPluginRepositories = allowSnapshotPluginRepositories;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+    /**
+     * {@inheritDoc}
      */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException

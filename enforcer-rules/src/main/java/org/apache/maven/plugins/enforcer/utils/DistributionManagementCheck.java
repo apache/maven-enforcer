@@ -23,6 +23,10 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.project.MavenProject;
 
+/**
+ * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
+ *
+ */
 public class DistributionManagementCheck
 {
     private DistributionManagement distributionManagement;

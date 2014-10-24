@@ -38,8 +38,10 @@ public class RequireFilesSize
     extends AbstractRequireFiles
 {
 
+    private static final long MAXSIZE = 10000;
+
     /** the max size allowed. */
-    private long maxsize = 10000;
+    private long maxsize = MAXSIZE;
 
     /** the min size allowed. */
     private long minsize = 0;
@@ -50,10 +52,8 @@ public class RequireFilesSize
     /** The log. */
     private Log log;
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
+    /**
+     * {@inheritDoc}
      */
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
@@ -66,7 +66,7 @@ public class RequireFilesSize
             try
             {
                 MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-                setFiles( new File[1]);
+                setFiles( new File[1] );
                 getFiles()[0] = project.getArtifact().getFile();
 
                 super.execute( helper );
@@ -83,28 +83,24 @@ public class RequireFilesSize
 
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
+    /**
+     * {@inheritDoc}
      */
     public boolean isCacheable()
     {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
+    /**
+     * {@inheritDoc}
      */
     public boolean isResultValid( EnforcerRule cachedRule )
     {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.maven.plugins.enforcer.AbstractRequireFiles#checkFile(java.io.File)
+    /**
+     * {@inheritDoc}
      */
     boolean checkFile( File file )
     {
@@ -148,9 +144,8 @@ public class RequireFilesSize
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.maven.plugins.enforcer.AbstractRequireFiles#getErrorMsg()
+    /**
+     * {@inheritDoc}
      */
     String getErrorMsg()
     {

@@ -39,11 +39,10 @@ public class RequireReleaseVersion
      *
      * @parameter
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setFailWhenParentIsSnapshot(boolean)}
      * @see {@link #isFailWhenParentIsSnapshot()}
      */
-    public boolean failWhenParentIsSnapshot = true;
+    private boolean failWhenParentIsSnapshot = true;
 
     /*
      * (non-Javadoc)

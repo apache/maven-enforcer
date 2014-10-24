@@ -38,15 +38,14 @@ public class EvaluateBeanshell
 {
 
     /** Beanshell interpreter. */
-    private static final Interpreter bsh = new Interpreter();
+    private static final Interpreter BSH = new Interpreter();
 
     /** The condition to be evaluated.
      *  
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setCondition(String)}
      * @see {@link #getCondition()}
      * */
-    public String condition;
+    private String condition;
 
     public final void setCondition( String condition )
     {
@@ -104,7 +103,7 @@ public class EvaluateBeanshell
         Boolean evaluation = Boolean.FALSE;
         try
         {
-            evaluation = (Boolean) bsh.eval( script );
+            evaluation = (Boolean) BSH.eval( script );
             log.debug( "Echo evaluating : " + evaluation );
         }
         catch ( EvalError ex )

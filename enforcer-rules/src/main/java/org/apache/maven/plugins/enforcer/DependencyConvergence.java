@@ -60,6 +60,7 @@ public class DependencyConvergence
         this.uniqueVersions = uniqueVersions;
     }
 
+    // CHECKSTYLE_OFF: LineLength
     /**
      * Uses the {@link EnforcerRuleHelper} to populate the values of the
      * {@link DependencyTreeBuilder#buildDependencyTree(MavenProject, ArtifactRepository, ArtifactFactory, ArtifactMetadataSource, ArtifactFilter, ArtifactCollector)}
@@ -70,6 +71,7 @@ public class DependencyConvergence
      * @return a Dependency Node which is the root of the project's dependency tree
      * @throws EnforcerRuleException
      */
+    // CHECKSTYLE_ON: LineLength
     private DependencyNode getNode( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

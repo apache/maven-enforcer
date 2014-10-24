@@ -188,9 +188,11 @@ public class BanTransitiveDependencies
     private DependencyGraphBuilder createDependencyGraphBuilder()
         throws ComponentLookupException
     {
+        // CHECKSTYLE_OFF: LineLength
         DefaultDependencyGraphBuilder builder =
             (DefaultDependencyGraphBuilder) helper.getContainer().lookup( DependencyGraphBuilder.class.getCanonicalName(),
                                                                           "default" );
+        // CHECKSTYLE_ON: LineLength
 
         builder.enableLogging( new ConsoleLogger( ConsoleLogger.LEVEL_DISABLED, "DefaultDependencyGraphBuilder" ) );
 

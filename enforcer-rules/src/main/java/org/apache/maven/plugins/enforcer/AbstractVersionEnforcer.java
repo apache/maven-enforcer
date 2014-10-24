@@ -64,8 +64,10 @@ public abstract class AbstractVersionEnforcer
      * @param actualVersion the version to be checked.
      * @throws EnforcerRuleException the enforcer rule exception
      */
+    // CHECKSTYLE_OFF: LineLength
     public void enforceVersion( Log log, String variableName, String requiredVersionRange, ArtifactVersion actualVersion )
         throws EnforcerRuleException
+    // CHECKSTYLE_ON: LineLength
     {
         if ( StringUtils.isEmpty( requiredVersionRange ) )
         {

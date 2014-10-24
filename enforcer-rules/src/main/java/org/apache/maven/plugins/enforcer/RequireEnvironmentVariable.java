@@ -34,12 +34,11 @@ public class RequireEnvironmentVariable
     /**
      * Specify the required variable.
      */
-    public String variableName = null;
+    private String variableName = null;
 
     /**
      * @param variableName the variable name
      * 
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setVariableName(String)}
      * @see {@link #getVariableName()}
      */

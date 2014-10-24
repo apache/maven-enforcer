@@ -40,19 +40,17 @@ public class RequireActiveProfile
 
     /** Comma separated list of profiles to check.
      *  
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setProfiles(String)}
      * @see {@link #getProfiles()}
      */
-    public String profiles = null;
+    private String profiles = null;
 
     /** If all profiles must be active. If false, only one must be active
      *
-     * @deprecated the visibility will be reduced to private with the next major version
      * @see {@link #setAll(boolean)}
      * @see {@link #isAll()}
      */
-    public boolean all = true;
+    private boolean all = true;
     
     public final String getProfiles()
     {

@@ -43,16 +43,16 @@ public class DefaultEnforcementRuleHelper
 {
 
     /** The log. */
-    Log log;
+    private Log log;
 
     /** The evaluator. */
-    ExpressionEvaluator evaluator;
+    private ExpressionEvaluator evaluator;
 
     /** The session. */
-    MavenSession session;
+    private MavenSession session;
 
     /** The container. */
-    PlexusContainer container;
+    private PlexusContainer container;
 
     /**
      * Instantiates a new default enforcement rule helper.
