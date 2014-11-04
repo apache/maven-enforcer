@@ -141,7 +141,7 @@
   </distributionManagement>
   <properties>
     <maven.version>2.2.1</maven.version>
-    <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
   </properties>
 
