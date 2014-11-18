@@ -47,11 +47,11 @@ Standard Rules
   
   * {{{./requireEnvironmentVariable.html}requireEnvironmentVariable}} - enforces the existence of an environment variable
   
-  * {{{./requireFilesDontExist.html}requireFilesDontExist}} - enforces that the list of files do not exist.
+  * {{{./requireFilesDontExist.html}requireFilesDontExist}} - enforces that the list of files does not exist.
   
-  * {{{./requireFilesExist.html}requireFilesExist}} - enforces that the list of files do exist.
+  * {{{./requireFilesExist.html}requireFilesExist}} - enforces that the list of files does exist.
 
-  * {{{./requireFilesSize.html}requireFilesSize}} - enforces that the list of files exist and are within a certain size range.
+  * {{{./requireFilesSize.html}requireFilesSize}} - enforces that the list of files exists and is within a certain size range.
 
   * {{{./requireJavaVersion.html}requireJavaVersion}} - enforces the JDK version.
 
