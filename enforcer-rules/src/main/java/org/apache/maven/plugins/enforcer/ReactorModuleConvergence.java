@@ -372,7 +372,8 @@ public class ReactorModuleConvergence
      * @return List of violations. Never null. If the list is empty than no violation has happened.
      */
     // CHECKSTYLE_OFF: LineLength
-    private Map<MavenProject, List<Dependency>> areThereDependenciesWhichAreNotPartOfTheReactor( String reactorVersion, List<MavenProject> sortedProjects )
+    private Map<MavenProject, List<Dependency>> areThereDependenciesWhichAreNotPartOfTheReactor( String reactorVersion,
+                                                                                                 List<MavenProject> sortedProjects )
     // CHECKSTYLE_ON: LineLength
     {
         Map<MavenProject, List<Dependency>> result = new HashMap<MavenProject, List<Dependency>>();
@@ -386,7 +387,8 @@ public class ReactorModuleConvergence
             {
                 for ( Dependency dependency : dependencies )
                 {
-                    logger.debug( " -> Dep:" + dependency.getGroupId() +":" + dependency.getArtifactId() + ":" + dependency.getVersion());
+                    logger.debug( " -> Dep:" + dependency.getGroupId() + ":" + dependency.getArtifactId() + ":"
+                        + dependency.getVersion() );
                     if ( isDependencyPartOfTheReactor( dependency, sortedProjects ) )
                     {
                         if ( !dependency.getVersion().equals( reactorVersion ) )
