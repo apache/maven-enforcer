@@ -386,6 +386,7 @@ public class ReactorModuleConvergence
             {
                 for ( Dependency dependency : dependencies )
                 {
+                    logger.debug( " -> Dep:" + dependency.getGroupId() +":" + dependency.getArtifactId() + ":" + dependency.getVersion());
                     if ( isDependencyPartOfTheReactor( dependency, sortedProjects ) )
                     {
                         if ( !dependency.getVersion().equals( reactorVersion ) )
