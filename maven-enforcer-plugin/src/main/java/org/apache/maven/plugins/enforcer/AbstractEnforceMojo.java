@@ -28,6 +28,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
@@ -57,6 +58,12 @@ public abstract class AbstractEnforceMojo
      */
     @Component( role = PathTranslator.class )
     protected PathTranslator translator;
+    
+    /**
+     * MojoExecution needed by the ExpressionEvaluator
+     */
+    @Component( role = MojoExecution.class )
+    protected MojoExecution mojoExecution;
 
     /**
      * The MavenSession
@@ -102,7 +109,8 @@ public abstract class AbstractEnforceMojo
         throws MojoExecutionException
     {
         Log log = this.getLog();
-        EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator( session, translator, project );
+        EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator( session, translator, project,
+                                                                                 mojoExecution );
         // the entire execution can be easily skipped
         if ( !skip )
         {
