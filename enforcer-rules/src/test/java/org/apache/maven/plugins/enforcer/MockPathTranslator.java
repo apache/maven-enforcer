@@ -24,7 +24,6 @@ import java.io.File;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.path.PathTranslator;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MockPathTranslator.
  *

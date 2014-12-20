@@ -32,6 +32,11 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.junit.Test;
 
+/**
+ * This class is intended to test the {@link BanDistributionManagement} rule.
+ *
+ * @author <a href="mailto:khmarbaise@apache.org">Karl Heinz Marbaise</a>
+ */
 public class BanDistributionManagementTest
 {
     private MavenProject project;

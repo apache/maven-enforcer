@@ -30,7 +30,6 @@ import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class EnforcerTestUtils.
  *

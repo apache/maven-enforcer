@@ -43,7 +43,6 @@ import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.logging.LoggerManager;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class MockPlexusContainer.
  *

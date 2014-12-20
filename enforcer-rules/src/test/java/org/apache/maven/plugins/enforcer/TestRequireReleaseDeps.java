@@ -30,7 +30,6 @@ import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.TestEnforcerRuleUtils;
 import org.apache.maven.project.MavenProject;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TestNoSnapshots.
  *

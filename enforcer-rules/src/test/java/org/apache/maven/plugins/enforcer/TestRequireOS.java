@@ -28,7 +28,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.codehaus.plexus.util.Os;
 
-// TODO: Auto-generated Javadoc
 /**
  * Exhaustively check the OS mojo.
  *
@@ -48,7 +47,7 @@ public class TestRequireOS
         RequireOS rule = new RequireOS();
         rule.displayOSInfo( log, true );
 
-        Iterator iter = Os.getValidFamilies().iterator();
+        Iterator<String> iter = Os.getValidFamilies().iterator();
         String validFamily = null;
         String invalidFamily = null;
         while ( iter.hasNext() )
