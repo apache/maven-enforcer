@@ -25,6 +25,8 @@ import java.util.Properties;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
@@ -97,7 +99,7 @@ public final class EnforcerTestUtils
         }
         else
         {
-            eval = new EnforcerExpressionEvaluator( session, new MockPathTranslator(), project );
+            eval = new EnforcerExpressionEvaluator( session, new MockPathTranslator(), project, new MojoExecution( new MojoDescriptor() ) );
         }
         return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(), null );
     }

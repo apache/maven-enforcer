@@ -22,7 +22,6 @@ package org.apache.maven.plugins.enforcer;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
-import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
 
@@ -44,9 +43,9 @@ public class EnforcerExpressionEvaluator
      * @param theProject the the project
      */
     public EnforcerExpressionEvaluator( MavenSession theContext, PathTranslator thePathTranslator,
-                                        MavenProject theProject )
+                                        MavenProject theProject, MojoExecution theExecution )
     {
-        super( theContext, new MojoExecution( new MojoDescriptor() ), thePathTranslator, null, theProject,
+        super( theContext, theExecution, thePathTranslator, null, theProject,
                theContext.getExecutionProperties() );
     }
 

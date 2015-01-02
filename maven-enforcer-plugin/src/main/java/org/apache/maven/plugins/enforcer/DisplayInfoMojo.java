@@ -23,6 +23,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -55,6 +56,12 @@ public class DisplayInfoMojo
     protected PathTranslator translator;
 
     /**
+     * MojoExecution needed by the ExpressionEvaluator
+     */
+    @Parameter( defaultValue = "${mojoExecution}", readonly = true, required = true )
+    protected MojoExecution mojoExecution;
+
+    /**
      * The MavenSession
      */
     @Parameter( defaultValue = "${session}", readonly = true, required = true )
@@ -84,7 +91,8 @@ public class DisplayInfoMojo
     {
         try
         {
-            EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator( session, translator, project );
+            EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator( session, translator, project, 
+                                                                                     mojoExecution );
             DefaultEnforcementRuleHelper helper = new DefaultEnforcementRuleHelper( session, evaluator, getLog(),
                                                                                     container );
             RuntimeInformation rti = (RuntimeInformation) helper.getComponent( RuntimeInformation.class );
