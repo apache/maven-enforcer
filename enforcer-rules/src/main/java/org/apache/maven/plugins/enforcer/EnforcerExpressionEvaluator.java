@@ -22,12 +22,13 @@ package org.apache.maven.plugins.enforcer;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
+import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
 
 /**
- * The Class EnforcerExpressionEvaluator. This class wraps the PluginParameterExpressionEvaluator
- * because it can't be accessed directly in 2.0.x so we must create a new one.
+ * The Class EnforcerExpressionEvaluator. This class wraps the PluginParameterExpressionEvaluator because it can't be
+ * accessed directly in 2.0.x so we must create a new one.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
@@ -38,15 +39,30 @@ public class EnforcerExpressionEvaluator
     /**
      * The Constructor.
      *
-     * @param theContext the the context
-     * @param thePathTranslator the the path translator
-     * @param theProject the the project
+     * @param theContext {@link MavenSession}
+     * @param thePathTranslator {@link PathTranslator}
+     * @param theProject {@link MavenProject}
+     * @param theExecution {@link MojoExecution}
      */
     public EnforcerExpressionEvaluator( MavenSession theContext, PathTranslator thePathTranslator,
                                         MavenProject theProject, MojoExecution theExecution )
     {
-        super( theContext, theExecution, thePathTranslator, null, theProject,
-               theContext.getExecutionProperties() );
+        super( theContext, theExecution, thePathTranslator, null, theProject, theContext.getExecutionProperties() );
     }
 
+    /**
+     * This constructor is kept for backward compatibility.
+     * 
+     * @param theContext {@link MavenSession}
+     * @param thePathTranslator {@link PathTranslator}
+     * @param theProject {@link MavenProject}
+     * 
+     * @deprecated Will be removed with 2.0
+     */
+    public EnforcerExpressionEvaluator( MavenSession theContext, PathTranslator thePathTranslator,
+                                        MavenProject theProject )
+    {
+        super( theContext, new MojoExecution( new MojoDescriptor() ), thePathTranslator, null, theProject,
+               theContext.getExecutionProperties() );
+    }
 }
