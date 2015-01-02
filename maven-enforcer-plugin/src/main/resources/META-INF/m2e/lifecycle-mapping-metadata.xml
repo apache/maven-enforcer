@@ -29,10 +29,7 @@
         </goals>
       </pluginExecutionFilter>
       <action>
-        <execute>
-          <runOnIncremental>false</runOnIncremental>
-          <runOnConfiguration>true</runOnConfiguration>
-        </execute>
+      	<ignore/>
       </action>
     </pluginExecution>
   </pluginExecutions>

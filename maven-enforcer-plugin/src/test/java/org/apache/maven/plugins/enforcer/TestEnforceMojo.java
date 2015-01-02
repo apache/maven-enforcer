@@ -19,25 +19,33 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.runners.MockitoJUnitRunner;
 
 /**
  * Exhaustively check the enforcer mojo.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * 
  */
+@RunWith( MockitoJUnitRunner.class )
 public class TestEnforceMojo
-    extends TestCase
 {
 
-    public void testEnforceMojo ()
+    @InjectMocks
+    EnforceMojo mojo;
+
+    @Test
+    public void testEnforceMojo()
         throws MojoExecutionException
     {
-        EnforceMojo mojo = new EnforceMojo();
         mojo.setFail( false );
         mojo.setSession( EnforcerTestUtils.getMavenSession() );
         mojo.setProject( new MockProject() );
@@ -89,27 +97,28 @@ public class TestEnforceMojo
 
     }
 
-    public void testCaching () throws MojoExecutionException
+    @Test
+    public void testCaching()
+        throws MojoExecutionException
     {
-        EnforceMojo mojo = new EnforceMojo();
         mojo.setFail( true );
         mojo.setSession( EnforcerTestUtils.getMavenSession() );
         mojo.setProject( new MockProject() );
 
         MockEnforcerRule[] rules = new MockEnforcerRule[10];
-        
-        //check that basic caching works.
+
+        // check that basic caching works.
         rules[0] = new MockEnforcerRule( false, "", true, true );
         rules[1] = new MockEnforcerRule( false, "", true, true );
         mojo.setRules( rules );
 
         EnforceMojo.cache.clear();
         mojo.execute();
-        
-        assertTrue( "Expected this rule to be executed.",rules[0].executed );
-        assertFalse( "Expected this rule not to be executed.",rules[1].executed);
-        
-        //check that skip caching works.
+
+        assertTrue( "Expected this rule to be executed.", rules[0].executed );
+        assertFalse( "Expected this rule not to be executed.", rules[1].executed );
+
+        // check that skip caching works.
         rules[0] = new MockEnforcerRule( false, "", true, true );
         rules[1] = new MockEnforcerRule( false, "", true, true );
         mojo.setRules( rules );
@@ -117,13 +126,13 @@ public class TestEnforceMojo
         EnforceMojo.cache.clear();
         mojo.ignoreCache = true;
         mojo.execute();
-        
-        assertTrue( "Expected this rule to be executed.",rules[0].executed );
-        assertTrue( "Expected this rule to be executed.",rules[1].executed );
-        
+
+        assertTrue( "Expected this rule to be executed.", rules[0].executed );
+        assertTrue( "Expected this rule to be executed.", rules[1].executed );
+
         mojo.ignoreCache = false;
-        
-        //check that different ids are compared.
+
+        // check that different ids are compared.
         rules[0] = new MockEnforcerRule( false, "1", true, true );
         rules[1] = new MockEnforcerRule( false, "2", true, true );
         rules[2] = new MockEnforcerRule( false, "2", true, true );
@@ -131,12 +140,12 @@ public class TestEnforceMojo
 
         EnforceMojo.cache.clear();
         mojo.execute();
-        
-        assertTrue( "Expected this rule to be executed.",rules[0].executed );
-        assertTrue( "Expected this rule to be executed.",rules[1].executed);
-        assertFalse( "Expected this rule not to be executed.",rules[2].executed);
-        
-        //check that future overrides are working
+
+        assertTrue( "Expected this rule to be executed.", rules[0].executed );
+        assertTrue( "Expected this rule to be executed.", rules[1].executed );
+        assertFalse( "Expected this rule not to be executed.", rules[2].executed );
+
+        // check that future overrides are working
         rules[0] = new MockEnforcerRule( false, "1", true, true );
         rules[1] = new MockEnforcerRule( false, "1", false, true );
         rules[2] = null;
@@ -144,11 +153,11 @@ public class TestEnforceMojo
 
         EnforceMojo.cache.clear();
         mojo.execute();
-        
-        assertTrue( "Expected this rule to be executed.",rules[0].executed );
-        assertTrue( "Expected this rule to be executed.",rules[1].executed);
 
-        //check that future isResultValid is used
+        assertTrue( "Expected this rule to be executed.", rules[0].executed );
+        assertTrue( "Expected this rule to be executed.", rules[1].executed );
+
+        // check that future isResultValid is used
         rules[0] = new MockEnforcerRule( false, "1", true, true );
         rules[1] = new MockEnforcerRule( false, "1", true, false );
         rules[2] = null;
@@ -156,59 +165,63 @@ public class TestEnforceMojo
 
         EnforceMojo.cache.clear();
         mojo.execute();
-        
-        assertTrue( "Expected this rule to be executed.",rules[0].executed );
-        assertTrue( "Expected this rule to be executed.",rules[1].executed);
+
+        assertTrue( "Expected this rule to be executed.", rules[0].executed );
+        assertTrue( "Expected this rule to be executed.", rules[1].executed );
 
     }
-    
-    public void testCachePersistence1() throws MojoExecutionException
+
+    @Test
+    public void testCachePersistence1()
+        throws MojoExecutionException
     {
-        EnforceMojo mojo = new EnforceMojo();
         mojo.setFail( true );
         mojo.setSession( EnforcerTestUtils.getMavenSession() );
         mojo.setProject( new MockProject() );
 
         MockEnforcerRule[] rules = new MockEnforcerRule[10];
-        
-        //check that basic caching works.
+
+        // check that basic caching works.
         rules[0] = new MockEnforcerRule( false, "", true, true );
         rules[1] = new MockEnforcerRule( false, "", true, true );
         mojo.setRules( rules );
 
         EnforceMojo.cache.clear();
         mojo.execute();
-        
-        assertTrue( "Expected this rule to be executed.",rules[0].executed );
-        assertFalse( "Expected this rule not to be executed.",rules[1].executed);
-        
+
+        assertTrue( "Expected this rule to be executed.", rules[0].executed );
+        assertFalse( "Expected this rule not to be executed.", rules[1].executed );
+
     }
-    
-    public void testCachePersistence2() throws MojoExecutionException
+
+    @Test
+    public void testCachePersistence2()
+        throws MojoExecutionException
     {
-        EnforceMojo mojo = new EnforceMojo();
         mojo.setFail( true );
         mojo.setSession( EnforcerTestUtils.getMavenSession() );
         mojo.setProject( new MockProject() );
 
         MockEnforcerRule[] rules = new MockEnforcerRule[10];
-        
-        //check that basic caching works.
+
+        // check that basic caching works.
         rules[0] = new MockEnforcerRule( false, "", true, true );
         rules[1] = new MockEnforcerRule( false, "", true, true );
         mojo.setRules( rules );
 
         mojo.execute();
-        
-        assertFalse( "Expected this rule not to be executed.",rules[0].executed);
-        assertFalse( "Expected this rule not to be executed.",rules[1].executed);
-        
+
+        assertFalse( "Expected this rule not to be executed.", rules[0].executed );
+        assertFalse( "Expected this rule not to be executed.", rules[1].executed );
+
     }
-    
-    public void testCachePersistence3() throws MojoExecutionException
+
+    @Test
+    public void testCachePersistence3()
+        throws MojoExecutionException
     {
         System.gc();
-        
+
         try
         {
             Thread.sleep( 1000 );
@@ -216,23 +229,22 @@ public class TestEnforceMojo
         catch ( InterruptedException e )
         {
         }
-        
-        EnforceMojo mojo = new EnforceMojo();
+
         mojo.setFail( true );
         mojo.setSession( EnforcerTestUtils.getMavenSession() );
         mojo.setProject( new MockProject() );
 
         MockEnforcerRule[] rules = new MockEnforcerRule[10];
-        
-        //check that basic caching works.
+
+        // check that basic caching works.
         rules[0] = new MockEnforcerRule( false, "", true, true );
         rules[1] = new MockEnforcerRule( false, "", true, true );
         mojo.setRules( rules );
 
         mojo.execute();
-        
-        assertFalse( "Expected this rule not to be executed.",rules[0].executed);
-        assertFalse( "Expected this rule not to be executed.",rules[1].executed);
-        
+
+        assertFalse( "Expected this rule not to be executed.", rules[0].executed );
+        assertFalse( "Expected this rule not to be executed.", rules[1].executed );
+
     }
 }

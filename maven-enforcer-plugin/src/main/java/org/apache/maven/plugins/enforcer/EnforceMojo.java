@@ -22,8 +22,8 @@ package org.apache.maven.plugins.enforcer;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 
+import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRule2;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -142,7 +142,8 @@ public class EnforceMojo
                             if ( ignoreCache || shouldExecute( rule ) )
                             {
                                 // execute the rule
-                                // noinspection SynchronizationOnLocalVariableOrMethodParameter
+                                // noinspection
+                                // SynchronizationOnLocalVariableOrMethodParameter
                                 synchronized ( rule )
                                 {
                                     rule.execute( helper );
@@ -180,6 +181,7 @@ public class EnforceMojo
                 }
 
                 // if we found anything
+                // CHECKSTYLE_OFF: LineLength
                 if ( !list.isEmpty() )
                 {
                     for ( String failure : list )
@@ -188,12 +190,11 @@ public class EnforceMojo
                     }
                     if ( fail && hasErrors )
                     {
-                        // CHECKSTYLE_OFF: LineLength
                         throw new MojoExecutionException(
                                                           "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
-                        // CHECKSTYLE_ON: LineLength
                     }
                 }
+                // CHECKSTYLE_ON: LineLength
             }
             else
             {
