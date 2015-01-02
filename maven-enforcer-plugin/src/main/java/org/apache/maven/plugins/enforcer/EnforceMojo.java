@@ -99,7 +99,8 @@ public class EnforceMojo
     {
         Log log = this.getLog();
 
-        EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator( session, translator, project );
+        EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator( session, translator, project, 
+                                                                                 mojoExecution );
 
         // the entire execution can be easily skipped
         if ( !skip )

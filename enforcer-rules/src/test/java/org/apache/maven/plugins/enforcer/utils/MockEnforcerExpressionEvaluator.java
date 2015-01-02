@@ -20,6 +20,8 @@ package org.apache.maven.plugins.enforcer.utils;
  */
 
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugins.enforcer.EnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
@@ -43,7 +45,7 @@ public class MockEnforcerExpressionEvaluator
     public MockEnforcerExpressionEvaluator( MavenSession theContext, PathTranslator thePathTranslator,
                                             MavenProject theProject )
     {
-        super( theContext, thePathTranslator, theProject );
+        super( theContext, thePathTranslator, theProject, new MojoExecution( new MojoDescriptor() ) );
         // TODO Auto-generated constructor stub
     }
 
