@@ -3,6 +3,7 @@ target
 .classpath
 .settings
 .idea/
+.svn
 *.iml
 .settings
 .classpath

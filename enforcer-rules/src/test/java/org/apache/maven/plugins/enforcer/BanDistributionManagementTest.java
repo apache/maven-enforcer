@@ -223,26 +223,18 @@ public class BanDistributionManagementTest
                                                                                     Site site )
         throws ExpressionEvaluationException
     {
-        project = mock( MavenProject.class );
-        when( project.getPackaging() ).thenReturn( "jar" );
-        when( project.getDistributionManagement() ).thenReturn( null );
-
-        MavenProject parentProject = mock( MavenProject.class );
+        project = setupProject( null );
 
         DistributionManagement dmParent = mock( DistributionManagement.class );
         when( dmParent.getRepository() ).thenReturn( repository );
         when( dmParent.getSnapshotRepository() ).thenReturn( snapshotRepository );
         when( dmParent.getSite() ).thenReturn( site );
 
+        MavenProject parentProject = mock( MavenProject.class );
         when( parentProject.getDistributionManagement() ).thenReturn( dmParent );
-
         when( project.getParent() ).thenReturn( parentProject );
 
-        helper = mock( EnforcerRuleHelper.class );
-        when( helper.evaluate( "${project}" ) ).thenReturn( project );
-        BanDistributionManagement rule = new BanDistributionManagement();
-
-        when( helper.getLog() ).thenReturn( mock( Log.class ) );
+        BanDistributionManagement rule = setupEnforcerRule();
 
         return rule;
     }
@@ -250,15 +242,9 @@ public class BanDistributionManagementTest
     private BanDistributionManagement setupProjectWithoutDistributionManagement()
         throws ExpressionEvaluationException
     {
-        project = mock( MavenProject.class );
-        when( project.getPackaging() ).thenReturn( "jar" );
-        when( project.getDistributionManagement() ).thenReturn( null );
+        project = setupProject( null );
 
-        helper = mock( EnforcerRuleHelper.class );
-        when( helper.evaluate( "${project}" ) ).thenReturn( project );
-        BanDistributionManagement rule = new BanDistributionManagement();
-
-        when( helper.getLog() ).thenReturn( mock( Log.class ) );
+        BanDistributionManagement rule = setupEnforcerRule();
 
         return rule;
     }
@@ -268,21 +254,35 @@ public class BanDistributionManagementTest
                                                                               Site site )
         throws ExpressionEvaluationException
     {
-        project = mock( MavenProject.class );
-        when( project.getPackaging() ).thenReturn( "jar" );
         DistributionManagement dm = mock( DistributionManagement.class );
         when( dm.getRepository() ).thenReturn( repository );
         when( dm.getSnapshotRepository() ).thenReturn( snapshotRepository );
         when( dm.getSite() ).thenReturn( site );
 
-        when( project.getDistributionManagement() ).thenReturn( dm );
+        project = setupProject( dm );
 
+        BanDistributionManagement rule = setupEnforcerRule();
+
+        return rule;
+    }
+
+    private MavenProject setupProject( DistributionManagement distributionManagement )
+    {
+        MavenProject project = mock( MavenProject.class );
+        when( project.getPackaging() ).thenReturn( "jar" );
+        when( project.getDistributionManagement() ).thenReturn( distributionManagement );
+        return project;
+    }
+
+    private BanDistributionManagement setupEnforcerRule()
+        throws ExpressionEvaluationException
+    {
         helper = mock( EnforcerRuleHelper.class );
         when( helper.evaluate( "${project}" ) ).thenReturn( project );
         BanDistributionManagement rule = new BanDistributionManagement();
 
         when( helper.getLog() ).thenReturn( mock( Log.class ) );
-
         return rule;
     }
+
 }
