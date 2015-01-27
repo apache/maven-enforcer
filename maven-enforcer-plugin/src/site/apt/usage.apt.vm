@@ -39,9 +39,9 @@ Usage
   
   []
 
-* The <<<enforcer:enforce>>> and <<<enforcer:enforce-once>>> mojos
+* The <<<enforcer:enforce>>> mojo
 
-   These goals are meant to be bound to a lifecycle phase and configured in your
+   This goal is meant to be bound to a lifecycle phase and configured in your
    <<<pom.xml>>>. The enforcers execute the configured rules to check for certain constraints. 
    The available standard rules are described {{{../enforcer-rules/index.html}here}}. Besides the rules to execute, these goals support three options:
    
@@ -58,10 +58,7 @@ Usage
    As of version 2.0 you may add a <<<level>>> element to the standard rules. Valid values are <<<WARN>>> and <<<ERROR>>>. When
    <<<level>>> <<<WARN>>> is specified, the rule will only spit out a warning but will not fail the build.
    
-   The <<<enforce>>> goal executes against each project in a multi-project build. The <<<enforce-once>>> goal executes
-   just once per build. This is most effective for the standard rules because the Maven, Java and OS versions will not change between projects in the same build.
-   
-   
+
    Sample Plugin Configuration:
    
 +---+
