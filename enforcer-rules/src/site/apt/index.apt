@@ -20,28 +20,32 @@
   ------
   Brian Fox
   ------
-  September 2012
+  2015-01-27
   ------
 
 Standard Rules
 
   The following standard rules ship along with the enforcer plugin:
 
+  * {{{./alwaysFail.html}alwaysFail}} - Always fail... used to test plugin configuration.
+
   * {{{./alwaysPass.html}alwaysPass}} - Always passes... used to test plugin configuration.
   
-  * {{{./alwaysFail.html}alwaysFail}} - Always fail... used to test plugin configuration.
- 
+  * {{{./banDistributionManagement.html}banDistributionManagement}} - enforces that project doesn't have distributionManagement.
+
   * {{{./bannedDependencies.html}bannedDependencies}} - enforces that excluded dependencies aren't included.
   
   * {{{./bannedPlugins.html}bannedPlugins}} - enforces that specific plugins aren't included in the build.
   
-  * {{{./banTransitiveDependencies.html}banTransitiveDependencies}} - enforces that project doesn't have transitive dependencies.
+  * {{{./bannedRepositories.html}bannedRepositories}} - enforces to not include banned repositories.
 
-  * {{{./banDistributionManagement.html}banDistributionManagement}} - enforces that project doesn't have distributionManagement.
+  * {{{./banTransitiveDependencies.html}banTransitiveDependencies}} - enforces that project doesn't have transitive dependencies.
 
   * {{{./dependencyConvergence.html}dependencyConvergence}} - ensure all dependencies converge to the same version.
 
   * {{{./evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
+
+  * {{{./reactorModuleConvergence.html}reactorModuleConvergence}} - enforces that a multi module build follows best practice.
 
   * {{{./requireActiveProfile.html}requireActiveProfile}} - enforces one or more active profiles.
   
@@ -59,8 +63,6 @@ Standard Rules
 
   * {{{./requireNoRepositories.html}requireNoRepositories}} - enforces to not include repositories.
 
-  * {{{./bannedRepositories.html}bannedRepositories}} - enforces to not include banned repositories.
-
   * {{{./requireOS.html}requireOS}} - enforces the OS / CPU Architecture.
 
   * {{{./requirePluginVersions.html}requirePluginVersions}} - enforces that all plugins have a specified version.
@@ -76,8 +78,6 @@ Standard Rules
   * {{{./requireSameVersions.html}requireSameVersions}} - enforces that specific dependencies and/or plugins have the same version.
 
   * {{{./requireUpperBoundDeps.html}requireUpperBoundDeps}} - ensures that every (transitive) dependency is resolved to it's specified version or higher.
-
-  * {{{./reactorModuleConvergence.html}reactorModuleConvergence}} - enforces that a multi module build follows best practice.
 
   []
 
