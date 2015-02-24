@@ -137,7 +137,8 @@ public final class ArtifactMatcher
         private boolean matches( String expression, String input )
         {
             String regex =
-                expression.replace( ".", "\\." ).replace( "*", ".*" ).replace( ":", "\\:" ).replace( '?', '.' );
+                    expression.replace( ".", "\\." ).replace( "*", ".*" ).replace( ":", "\\:" ).replace( '?', '.' )
+                            .replace( "[", "\\[" ).replace( "]", "\\]" ).replace( "(", "\\(" ).replace( ")", "\\)" );
 
             // TODO: Check if this can be done better or prevented earlier.
             if ( input == null )
