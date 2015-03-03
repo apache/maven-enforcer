@@ -19,6 +19,9 @@ package org.apache.maven.enforcer.rule.api;
  * under the License.
  */
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Interface to be implemented by any rules executed by the enforcer.
  *
@@ -40,7 +43,7 @@ public interface EnforcerRule
      *
      * @throws EnforcerRuleException the enforcer rule exception
      */
-    void execute( EnforcerRuleHelper helper )
+    void execute( @Nonnull EnforcerRuleHelper helper )
         throws EnforcerRuleException;
 
     /**
@@ -61,7 +64,7 @@ public interface EnforcerRule
      *
      * @return <code>true</code> if the stored results are valid for the same id.
      */
-    boolean isResultValid( EnforcerRule cachedRule );
+    boolean isResultValid( @Nonnull EnforcerRule cachedRule );
 
     /**
      * If the rule is to be cached, this id is used as part of the key. This can allow rules to take parameters
@@ -70,6 +73,7 @@ public interface EnforcerRule
      * @return id to be used by the enforcer to determine uniqueness of cache results. The ids only need to be unique
      * within a given rule implementation as the full key will be [classname]-[id]
      */
+    @Nullable
     String getCacheId();
 
 }

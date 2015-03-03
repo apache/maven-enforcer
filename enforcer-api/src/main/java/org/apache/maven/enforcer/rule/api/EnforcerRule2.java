@@ -19,6 +19,8 @@ package org.apache.maven.enforcer.rule.api;
  * under the License.
  */
 
+import javax.annotation.Nonnull;
+
 /**
  * Interface to be implemented by any rules as of version 2.0 executed by the enforcer.
  *
@@ -33,6 +35,7 @@ public interface EnforcerRule2 extends EnforcerRule
      *
      * @return level
      */
+    @Nonnull
     EnforcerLevel getLevel();
 
 }

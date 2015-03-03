@@ -22,6 +22,8 @@ package org.apache.maven.enforcer.rule.api;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
@@ -44,6 +46,7 @@ public interface EnforcerRuleHelper
      *
      * @return the log
      */
+    @Nonnull
     Log getLog ();
 
     /**
@@ -55,6 +58,7 @@ public interface EnforcerRuleHelper
      *
      * @throws ComponentLookupException the component lookup exception
      */
+    @Nonnull
     Object getComponent ( Class clazz )
         throws ComponentLookupException;
 
@@ -67,6 +71,7 @@ public interface EnforcerRuleHelper
      *
      * @throws ComponentLookupException the component lookup exception
      */
+    @Nonnull
     Object getComponent ( String componentKey )
         throws ComponentLookupException;
 
