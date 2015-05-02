@@ -55,7 +55,7 @@ Usage
    
    Each rule to be executed should be added to the rules element along with the specific configuration for that rule.
 
-   As of version 2.0 you may add a <<<level>>> element to the standard rules. Valid values are <<<WARN>>> and <<<ERROR>>>. When
+   As of version 1.4 you may add a <<<level>>> element to the standard rules. Valid values are <<<WARN>>> and <<<ERROR>>>. When
    <<<level>>> <<<WARN>>> is specified, the rule will only spit out a warning but will not fail the build.
    
 
