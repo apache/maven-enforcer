@@ -25,7 +25,6 @@
       <pluginExecutionFilter>
         <goals>
           <goal>enforce</goal>
-          <goal>recommend</goal>
         </goals>
       </pluginExecutionFilter>
       <action>
