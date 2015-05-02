@@ -28,16 +28,22 @@ import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRule2;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.path.PathTranslator;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
  * This goal executes the defined enforcer-rules once per module.
@@ -47,8 +53,44 @@ import org.codehaus.plexus.context.ContextException;
  */
 @Mojo( name = "enforce", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true )
 public class EnforceMojo
-    extends AbstractEnforceMojo
+    extends AbstractMojo
+    implements Contextualizable
 {
+    /**
+     * This is a static variable used to persist the cached results across plugin invocations.
+     */
+    protected static Hashtable<String, EnforcerRule> cache = new Hashtable<String, EnforcerRule>();
+
+    /**
+     * Path Translator needed by the ExpressionEvaluator
+     */
+    @Component( role = PathTranslator.class )
+    protected PathTranslator translator;
+
+    /**
+     * MojoExecution needed by the ExpressionEvaluator
+     */
+    @Parameter( defaultValue = "${mojoExecution}", readonly = true, required = true )
+    protected MojoExecution mojoExecution;
+
+    /**
+     * The MavenSession
+     */
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    protected MavenSession session;
+
+    /**
+     * POM
+     */
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
+    protected MavenProject project;
+
+    /**
+     * Flag to easily skip all checks
+     */
+    @Parameter( property = "enforcer.skip", defaultValue = "false" )
+    protected boolean skip = false;
+
     /**
      * Flag to fail the build if a version check fails.
      */
@@ -73,11 +115,6 @@ public class EnforceMojo
      */
     @Parameter( property = "enforcer.ignoreCache", defaultValue = "false" )
     protected boolean ignoreCache = false;
-
-    /**
-     * This is a static variable used to persist the cached results across plugin invocations.
-     */
-    protected static Hashtable<String, EnforcerRule> cache = new Hashtable<String, EnforcerRule>();
 
     // set by the contextualize method. Only way to get the
     // plugin's container in 2.0.x
@@ -259,7 +296,6 @@ public class EnforceMojo
     /**
      * @return the rules
      */
-    @Override
     public EnforcerRule[] getRules()
     {
         return this.rules;
@@ -268,7 +304,6 @@ public class EnforceMojo
     /**
      * @param theRules the rules to set
      */
-    @Override
     public void setRules( EnforcerRule[] theRules )
     {
         this.rules = theRules;
@@ -277,19 +312,16 @@ public class EnforceMojo
     /**
      * @param theFailFast the failFast to set
      */
-    @Override
     public void setFailFast( boolean theFailFast )
     {
         this.failFast = theFailFast;
     }
 
-    @Override
     public boolean isFailFast()
     {
         return failFast;
     }
 
-    @Override
     protected String createRuleMessage( int i, String currentRule, EnforcerRuleException e )
     {
         return "Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage();
@@ -319,5 +351,61 @@ public class EnforceMojo
         {
             return EnforcerLevel.ERROR;
         }
+    }
+
+    /**
+     * @return the skip
+     */
+    public boolean isSkip()
+    {
+        return this.skip;
+    }
+
+    /**
+     * @param theSkip the skip to set
+     */
+    public void setSkip( boolean theSkip )
+    {
+        this.skip = theSkip;
+    }
+
+    /**
+     * @return the project
+     */
+    public MavenProject getProject()
+    {
+        return this.project;
+    }
+
+    /**
+     * @param theProject the project to set
+     */
+    public void setProject( MavenProject theProject )
+    {
+        this.project = theProject;
+    }
+
+    /**
+     * @return the session
+     */
+    public MavenSession getSession()
+    {
+        return this.session;
+    }
+
+    /**
+     * @param theSession the session to set
+     */
+    public void setSession( MavenSession theSession )
+    {
+        this.session = theSession;
+    }
+
+    /**
+     * @return the translator
+     */
+    public PathTranslator getTranslator()
+    {
+        return this.translator;
     }
 }
