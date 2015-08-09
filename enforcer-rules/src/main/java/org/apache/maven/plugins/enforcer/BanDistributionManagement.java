@@ -40,6 +40,7 @@ public class BanDistributionManagement
 
     /**
      * If we turn on the <code>ignoreParent</code> the parent will be ignored.
+     * @deprecated
      */
     private boolean ignoreParent = true;
 
@@ -58,11 +59,6 @@ public class BanDistributionManagement
      */
     private boolean allowSite = false;
 
-    /**
-     * Execute checking only in root of project.
-     */
-    private boolean executeRootOnly = false;
-
     private Log logger;
 
     /**
@@ -77,21 +73,33 @@ public class BanDistributionManagement
         {
             MavenProject project = (MavenProject) helper.evaluate( "${project}" );
 
-            if ( !project.isExecutionRoot() && !executeRootOnly )
+            if ( project.isExecutionRoot() )
             {
+                if ( project.getParent() == null )
+                {
+                    // Does it make sense to check something? If yes please make a JIRA ticket for it.
+                    logger.debug( "We have no parent and in the root of a build we don't check anything," );
+                    logger.debug( "because that is the location where we defined maven-enforcer-plugin." );
+                }
+                else
+                {
+                    logger.debug( "We are in the root of the execution and we have a parent." );
 
-                logger.debug( "distributionManagement: " + project.getDistributionManagement() );
-
+                    DistributionManagementCheck check = new DistributionManagementCheck( project );
+                    check.execute( isAllowRepository(), isAllowSnapshotRepository(), isAllowSite() );
+                }
+            }
+            else
+            {
+                logger.debug( "We are in a deeper level." );
                 DistributionManagementCheck check = new DistributionManagementCheck( project );
-
                 check.execute( isAllowRepository(), isAllowSnapshotRepository(), isAllowSite() );
 
-                if ( !isIgnoreParent() && ( project.getParent() != null ) )
+                if ( !isIgnoreParent() )
                 {
-                    DistributionManagementCheck checkParent = new DistributionManagementCheck( project.getParent() );
-                    checkParent.execute( isAllowRepository(), isAllowSnapshotRepository(), isAllowSite() );
+                    logger.warn( "You have configured not to ignore the parent." );
+                    logger.warn( "This configuration is deprecated and will be ignored." );
                 }
-
             }
         }
         catch ( ExpressionEvaluationException e )

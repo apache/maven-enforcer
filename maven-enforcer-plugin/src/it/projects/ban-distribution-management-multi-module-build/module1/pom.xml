@@ -29,4 +29,14 @@ under the License.
   </parent>
   <artifactId>module1</artifactId>
 
+  <!--
+    ! This entry will fail the build.
+  -->
+  <distributionManagement>
+    <repository>
+      <id>first</id>
+      <name>This is the name</name>
+      <url>file:///Test</url>
+    </repository>
+  </distributionManagement>
 </project>

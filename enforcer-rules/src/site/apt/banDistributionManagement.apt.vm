@@ -38,7 +38,7 @@ Ban Distribution Management
 
   * allowSite - You can allow site entry (default: false).
   
-  * ignoreParent - You can control if the parent will be checked or not (default: true).
+  * ignoreParent - You can control if the parent will be checked or not (default: true) (deprecated don't use it anymore).
    
   []
 
@@ -74,23 +74,101 @@ Ban Distribution Management
 </project>
 +---+
 
-  The above configuration will prevent any declaration of distributionManagement
-  in your pom files except in the parent.
-  
-  Let use take a look at the following project which is a typical multi-module project.
+* Best Practice
+
+ Usually you should define the <<distributionManagement>> only in a limited number of cases.
+ If you are in a corporate environment it makes usually only sense to define the <<distributionManagement>>
+ in the corporate pom and forbid the usage in any other pom's. Sometimes it makes sense to
+ allow for example the site repository definition in your other pom's which can be defined by using the
+ <<banDistributionManagement>> rule. For this use case the following has to be defined in your 
+ corporate pom file:
  
-+-----+ 
-   +-- root (pom.xml)
-        +-- m1 (pom.xml)
-        +-- m2 (pom.xml)
-+-----+ 
+ 
+ +---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>no-distribution-management-at-all</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <banDistributionManagement>
+                  <allowSite>true</allowSite>
+                </banDistributionManagement>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+ 
 
-  Usually you should define the distributionManagement only once in your hierarchy.
-  
-  company-parent (pom.xml)
-  
-     
-   +-- root (pom.xml)
-        +-- m1 (pom.xml)
-        +-- m2 (pom.xml)
+* The Project Types
 
+ If we take a closer look to the possible project structures you will find the following cases where
+ the green arrow will show our current position.
+
+ * The Project without Parent.
+
+  We have no parent and no modules at all. This could be the situation where we are creating
+  a corporate pom file or another simple Maven project. So the definition of maven-enforcer-plugin
+  is within this pom file.
+  
+[images/root.png] Root Project.
+
+  In consequence it does not really make sense to check if the pom contains distributionManagement
+  entries or not.
+
+ * Project with Parent.
+
+ We have a project with a parent. The parent is likely a kind of a corporate pom file which
+ contains the definition of maven-enforcer-plugin. So in this case it makes sense to check
+ if distributionManagement entries are made or not. 
+ 
+ <<Note>>: At the moment it is not possible to 
+ check if the parent does not contain the definition of maven-enforcer-plugin which would change
+ the situation.
+
+[images/root-with-parent.png] Root project.
+
+
+ * Project with Parent and Modules.
+ 
+  This situation is more or less the same as the one before. So banDistributionManagement rule will check
+  the distributionManagement entries.
+  
+[images/root-with-parent-and-modules.png] Root project with parent and modules.
+
+
+ * Root Project With Modules.
+
+  If we don't have a parent this means the definition of maven-enforcer-plugin
+  is likely done in the current pom file which means it does not make really sense
+  to check the distributionManagement.
+  
+[images/root-with-modules.png] Root with Modules.
+
+
+ * Module of a Multi Module Build
+
+  In this case we have the scenario that the module m1 has a parent <<p1>> which could contain
+  the definition of the maven-enforcer-plugin or the <<parent>> of which in consequence means to check the
+  distributionManagement entries.
+
+[images/module.png] Root with Modules.
+
+
+ []

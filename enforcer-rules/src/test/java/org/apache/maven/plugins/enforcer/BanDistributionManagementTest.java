@@ -26,6 +26,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.DeploymentRepository;
 import org.apache.maven.model.DistributionManagement;
+import org.apache.maven.model.Model;
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -115,7 +116,8 @@ public class BanDistributionManagementTest
         throws Exception
     {
         BanDistributionManagement rule =
-            setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(), new Site() );
+            setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(),
+                                                    new Site() );
         rule.execute( helper );
         // intentionally no assert cause we expect an exception.
     }
@@ -184,25 +186,13 @@ public class BanDistributionManagementTest
         throws Exception
     {
         BanDistributionManagement rule =
-            setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(), new Site() );
+            setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(),
+                                                    new Site() );
         rule.setAllowRepository( true );
         rule.setAllowSnapshotRepository( true );
         rule.setAllowSite( true );
         rule.execute( helper );
         // intentionally no assert cause in case of an exception the test will be red.
-    }
-
-    @Test( expected = EnforcerRuleException.class )
-    public void shouldThrowExceptionCauseParentProjectHasDistributionManagement()
-        throws Exception
-    {
-        BanDistributionManagement rule =
-            setupProjectWithParentDistributionManagement( new DeploymentRepository(), null, null );
-
-        rule.setIgnoreParent( false );
-
-        rule.execute( helper );
-        // intentionally no assert cause we expect an exception.
     }
 
     @Test
@@ -221,7 +211,7 @@ public class BanDistributionManagementTest
     private BanDistributionManagement setupProjectWithParentDistributionManagement( DeploymentRepository repository,
                                                                                     DeploymentRepository snapshotRepository,
                                                                                     Site site )
-        throws ExpressionEvaluationException
+                                                                                        throws ExpressionEvaluationException
     {
         project = setupProject( null );
 
@@ -231,7 +221,9 @@ public class BanDistributionManagementTest
         when( dmParent.getSite() ).thenReturn( site );
 
         MavenProject parentProject = mock( MavenProject.class );
-        when( parentProject.getDistributionManagement() ).thenReturn( dmParent );
+        Model model = mock( Model.class );
+        when( model.getDistributionManagement() ).thenReturn( dmParent );
+        when( parentProject.getOriginalModel() ).thenReturn( model );
         when( project.getParent() ).thenReturn( parentProject );
 
         BanDistributionManagement rule = setupEnforcerRule();
@@ -252,7 +244,7 @@ public class BanDistributionManagementTest
     private BanDistributionManagement setupProjectWithDistributionManagement( DeploymentRepository repository,
                                                                               DeploymentRepository snapshotRepository,
                                                                               Site site )
-        throws ExpressionEvaluationException
+                                                                                  throws ExpressionEvaluationException
     {
         DistributionManagement dm = mock( DistributionManagement.class );
         when( dm.getRepository() ).thenReturn( repository );
@@ -260,6 +252,9 @@ public class BanDistributionManagementTest
         when( dm.getSite() ).thenReturn( site );
 
         project = setupProject( dm );
+
+        when( project.getParent() ).thenReturn( mock( MavenProject.class ) );
+        when( project.isExecutionRoot() ).thenReturn( true );
 
         BanDistributionManagement rule = setupEnforcerRule();
 
@@ -270,7 +265,9 @@ public class BanDistributionManagementTest
     {
         MavenProject project = mock( MavenProject.class );
         when( project.getPackaging() ).thenReturn( "jar" );
-        when( project.getDistributionManagement() ).thenReturn( distributionManagement );
+        Model mavenModel = mock( Model.class );
+        when( project.getOriginalModel() ).thenReturn( mavenModel );
+        when( mavenModel.getDistributionManagement() ).thenReturn( distributionManagement );
         return project;
     }
 

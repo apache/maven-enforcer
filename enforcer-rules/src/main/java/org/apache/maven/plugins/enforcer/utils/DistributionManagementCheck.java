@@ -25,7 +25,6 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * @author Karl Heinz Marbaise <a href="mailto:khmarbaise@apache.org">khmarbaise@apache.org</a>
- *
  */
 public class DistributionManagementCheck
 {
@@ -33,7 +32,7 @@ public class DistributionManagementCheck
 
     public DistributionManagementCheck( MavenProject project )
     {
-        this.distributionManagement = project.getDistributionManagement();
+        this.distributionManagement = project.getOriginalModel().getDistributionManagement();
     }
 
     public void execute( boolean isAllowRepository, boolean isAllowSnapshotRepository, boolean isAllowSite )
