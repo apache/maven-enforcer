@@ -51,7 +51,12 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
-@Mojo( name = "enforce", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true )
+@Mojo( 
+    name = "enforce", 
+    defaultPhase = LifecyclePhase.VALIDATE, 
+    requiresDependencyCollection = ResolutionScope.TEST, 
+    threadSafe = true 
+)
 public class EnforceMojo
     extends AbstractMojo
     implements Contextualizable
