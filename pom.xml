@@ -33,7 +33,7 @@
 
   <name>Apache Maven Enforcer</name>
   <description>Enforcer is a build rule execution framework.</description>
-  <url>http://maven.apache.org/enforcer</url>
+  <url>http://maven.apache.org/enforcer/</url>
   <inceptionYear>2007</inceptionYear>
 
   <prerequisites>
