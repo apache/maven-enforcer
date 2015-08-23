@@ -45,7 +45,7 @@ Ban Distribution Management
    
   Sample Plugin Configuration:
   
-+---+
++------+
 <project>
   [...]
   <build>
@@ -72,7 +72,7 @@ Ban Distribution Management
   </build>
   [...]
 </project>
-+---+
++-------+
 
 * Best Practice
 
@@ -84,7 +84,7 @@ Ban Distribution Management
  corporate pom file:
  
  
- +---+
++------+
 <project>
   [...]
   <build>
@@ -113,7 +113,7 @@ Ban Distribution Management
   </build>
   [...]
 </project>
-+---+
++------+
  
 
 * The Project Types
