@@ -18,11 +18,31 @@ specific language governing permissions and limitations
 under the License.
 -->
 <project>
+  <bannerLeft>
+    <src>http://maven.apache.org/images/apache-maven-project.png</src>
+    <href>http://www.apache.org/</href>
+  </bannerLeft>
+
+  <bannerRight>
+    <src>http://maven.apache.org/images/maven-logo-black-on-white.png</src>
+    <href>http://maven.apache.org/</href>
+  </bannerRight>
   <skin>
     <groupId>org.apache.maven.skins</groupId>
-    <artifactId>maven-stylus-skin</artifactId>
+    <artifactId>maven-fluido-skin</artifactId>
     <version>1.4</version>
   </skin>
+
+  <custom>
+    <fluidoSkin>
+      <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
+      <googlePlusOne />
+      <googleSearch>
+        <sitesearch>https://maven.apache.org/enforcer/</sitesearch>
+      </googleSearch>
+    </fluidoSkin>
+  </custom>
+
   <body>
     <breadcrumbs>
       <!-- TODO: This breadcrumb should be removed when it has been solved in the parent -->
