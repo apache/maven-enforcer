@@ -39,8 +39,8 @@ public class RequireEnvironmentVariable
     /**
      * @param variableName the variable name
      * 
-     * @see {@link #setVariableName(String)}
-     * @see {@link #getVariableName()}
+     * @see #setVariableName(String)
+     * @see #getVariableName()
      */
     public final void setVariableName( String variableName )
     {

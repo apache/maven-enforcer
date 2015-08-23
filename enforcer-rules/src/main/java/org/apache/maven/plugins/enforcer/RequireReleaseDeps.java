@@ -125,7 +125,7 @@ public class RequireReleaseDeps
 
     /**
      * @param helper
-     * @return
+     * @return The evaluated {@link MavenProject}.
      * @throws EnforcerRuleException
      */
     private MavenProject getProject( EnforcerRuleHelper helper )

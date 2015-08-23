@@ -48,35 +48,35 @@ public class RequireNoRepositories
     /**
      * Whether to ban non-plugin repositories. By default they are banned.
      * 
-     * @see {@link #setBanRepositories(boolean)}
+     * @see #setBanRepositories(boolean)
      */
     private boolean banRepositories = true;
 
     /**
      * Whether to ban plugin repositories. By default they are banned.
      * 
-     * @see {@link #setBanPluginRepositories(boolean)}
+     * @see #setBanPluginRepositories(boolean)
      */
     private boolean banPluginRepositories = true;
 
     /**
      * Specify explicitly allowed non-plugin repositories. This is a list of ids.
      * 
-     * @see {@link #setAllowedRepositories(List)}
+     * @see #setAllowedRepositories(List)
      */
     private List<String> allowedRepositories = Collections.emptyList();
 
     /**
      * Specify explicitly allowed plugin repositories. This is a list of ids.
      * 
-     * @see {@link #setAllowedPluginRepositories(List)}
+     * @see #setAllowedPluginRepositories(List)
      */
     private List<String> allowedPluginRepositories = Collections.emptyList();
 
     /**
      * Whether to allow repositories which only resolve snapshots. By default they are banned.
      * 
-     * @see {@link #setAllowSnapshotRepositories(boolean)}
+     * @see #setAllowSnapshotRepositories(boolean)
      */
     private boolean allowSnapshotRepositories = false;
 
@@ -215,7 +215,7 @@ public class RequireNoRepositories
      * @param repos all repositories, never {@code null}
      * @param allowedRepos allowed repositories, never {@code null}
      * @param allowSnapshots 
-     * @return
+     * @return List of banned repositoreis.
      */
     private static List<String> findBannedRepositories( List<Repository> repos, List<String> allowedRepos,
                                                         boolean allowSnapshots )

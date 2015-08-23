@@ -173,7 +173,7 @@ public class BannedDependencies
      * The rule will fail if any dependency matches any exclude, unless it also matches an 
      * include rule.
      * 
-     * @see {@link #getExcludes()}
+     * @see #getExcludes()
      * @param theExcludes the excludes to set
      */
     public void setExcludes( List<String> theExcludes )
@@ -201,7 +201,7 @@ public class BannedDependencies
      * For example, to ban all xerces except xerces-api -> exclude "xerces", 
      * include "xerces:xerces-api"
      * 
-     * @see {@link #setIncludes(List)}
+     * @see #setIncludes(List)
      * @param theIncludes the includes to set
      */
     public void setIncludes( List<String> theIncludes )

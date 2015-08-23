@@ -373,7 +373,7 @@ public class RequirePluginVersions
      * @param uncheckedPlugins
      * @param plugins
      * @throws MojoExecutionException
-     * @return
+     * @return The plugins which have been removed.
      */
     public Collection<Plugin> removeUncheckedPlugins( Collection<String> uncheckedPlugins, Collection<Plugin> plugins )
         throws MojoExecutionException
@@ -394,7 +394,7 @@ public class RequirePluginVersions
      * 
      * @param uncheckedPlugins
      * @param uncheckedPluginsList
-     * @return
+     * @return List of unchecked plugins.
      */
     // CHECKSTYLE_OFF: LineLength
     public Collection<String> combineUncheckedPlugins( Collection<String> uncheckedPlugins, String uncheckedPluginsList )

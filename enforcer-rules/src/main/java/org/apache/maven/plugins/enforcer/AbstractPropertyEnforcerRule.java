@@ -57,7 +57,7 @@ public abstract class AbstractPropertyEnforcerRule
     /**
      * Set the property value to a given regular expression. Defaults to <code>null</code> (any value is ok).
      * 
-     * @param the regular expression
+     * @param regex The regular expression
      */
     public final void setRegex( String regex )
     {
