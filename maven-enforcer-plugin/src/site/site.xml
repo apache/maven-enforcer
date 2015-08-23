@@ -36,8 +36,5 @@ under the License.
     <menu name="Custom Rules">
       <item name="Writing a custom rule" href="../../enforcer/enforcer-api/writing-a-custom-rule.html"/>
     </menu>
-    <menu name="Resources">
-      <item name="Maven 2.0.x Version Range Syntax" href="http://docs.codehaus.org/display/MAVEN/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges" />
-    </menu>
   </body>
 </project>
