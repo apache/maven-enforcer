@@ -37,7 +37,7 @@ under the License.
       <item name="Writing a custom rule" href="../../enforcer/enforcer-api/writing-a-custom-rule.html"/>
     </menu>
     <menu name="Resources">
-      <item name="" href="https://cwiki.apache.org/confluence/display/MAVENOLD/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges"/>
+      <item name="Version Ranges" href="https://cwiki.apache.org/confluence/display/MAVENOLD/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges"/>
     </menu>
   </body>
 </project>
