@@ -86,9 +86,8 @@ public class DependencyConvergence
                 (ArtifactMetadataSource) helper.getComponent( ArtifactMetadataSource.class );
             ArtifactCollector collector = (ArtifactCollector) helper.getComponent( ArtifactCollector.class );
             ArtifactFilter filter = null; // we need to evaluate all scopes
-            DependencyNode node =
-                dependencyTreeBuilder.buildDependencyTree( project, repository, factory, metadataSource, filter,
-                                                           collector );
+            DependencyNode node = dependencyTreeBuilder.buildDependencyTree( project, repository, factory,
+                                                                             metadataSource, filter, collector );
             return node;
         }
         catch ( ExpressionEvaluationException e )
@@ -130,7 +129,7 @@ public class DependencyConvergence
             }
             if ( errorMsgs.size() > 0 )
             {
-                throw new EnforcerRuleException( "Failed while enforcing releasability the error(s) are " + errorMsgs );
+                throw new EnforcerRuleException( "Failed while enforcing releasability. See above detailed error message." );
             }
         }
         catch ( ComponentLookupException e )
