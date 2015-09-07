@@ -22,7 +22,7 @@ under the License.
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
       <item name="Rule API" href="../enforcer-api/"/>
-      <item name="Maven Enforcer Plugin" href="../../plugins/maven-enforcer-plugin/"/>
+      <item name="Maven Enforcer Plugin" href="../maven-enforcer-plugin/"/>
     </menu>
     <menu name="Custom Rules">
       <item name="Writing a custom rule" href="../enforcer-api/writing-a-custom-rule.html"/>

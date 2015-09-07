@@ -24,7 +24,7 @@ under the License.
       <item name="Writing a custom rule" href="writing-a-custom-rule.html"/>
     </menu>
     <menu name="Rule Execution Engines">
-      <item name="Maven Enforcer Plugin" href="../../plugins/maven-enforcer-plugin"/>
+      <item name="Maven Enforcer Plugin" href="../maven-enforcer-plugin"/>
     </menu>
   </body>
 </project>
