@@ -129,7 +129,8 @@ public class DependencyConvergence
             }
             if ( errorMsgs.size() > 0 )
             {
-                throw new EnforcerRuleException( "Failed while enforcing releasability. See above detailed error message." );
+                throw new EnforcerRuleException( "Failed while enforcing releasability. "
+                    + "See above detailed error message." );
             }
         }
         catch ( ComponentLookupException e )
