@@ -25,7 +25,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.enforcer.DependencyConvergence.Degree;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
 
@@ -37,20 +39,29 @@ public class DependencyVersionMap
     implements DependencyNodeVisitor
 {
     private Log log;
-    
-    private boolean uniqueVersions;
+
+    private Degree degree = Degree.PATCH;
 
     private Map<String, List<DependencyNode>> idsToNode;
+
 
     public DependencyVersionMap( Log log )
     {
         this.log = log;
         idsToNode = new HashMap<String, List<DependencyNode>>();
     }
-    
+
     public void setUniqueVersions( boolean uniqueVersions )
     {
-        this.uniqueVersions = uniqueVersions;
+        if ( uniqueVersions )
+        {
+            setDegree( Degree.UNIQUE );
+        }
+    }
+
+    public void setDegree( Degree degree )
+    {
+        this.degree = degree == null ? Degree.PATCH : degree;
     }
 
     public boolean visit( DependencyNode node )
@@ -85,10 +96,33 @@ public class DependencyVersionMap
         }
         nodes.add( node );
     }
-    
+
     private String getVersion( Artifact artifact )
     {
-        return uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
+        if ( degree == Degree.UNIQUE )
+        {
+            return artifact.getVersion();
+        }
+        else if ( degree == Degree.PATCH )
+        {
+            return artifact.getBaseVersion();
+        }
+        else
+        {
+            DefaultArtifactVersion v = new DefaultArtifactVersion( artifact.getBaseVersion() );
+            if ( degree == Degree.MINOR )
+            {
+                return v.getMajorVersion() + "." + v.getMinorVersion();
+            }
+            else if ( degree == Degree.MAJOR )
+            {
+                return Integer.toString( v.getMajorVersion() );
+            }
+            else
+            {
+                throw new IllegalStateException( "undexpected degree: " + degree );
+            }
+        }
     }
 
     private boolean containsConflicts( DependencyNode node )

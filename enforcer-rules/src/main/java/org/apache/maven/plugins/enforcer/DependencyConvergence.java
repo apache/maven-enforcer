@@ -49,15 +49,31 @@ public class DependencyConvergence
     implements EnforcerRule
 {
 
+    /**
+     * @author <a href="mailto:stf@molindo.at">Stefan Fussenegger</a>
+     */
+    public enum Degree
+    {
+        MAJOR, MINOR, PATCH, UNIQUE;
+    }
+
     private static Log log;
 
     private static I18N i18n;
 
-    private boolean uniqueVersions;
+    private Degree degree = Degree.PATCH;
 
     public void setUniqueVersions( boolean uniqueVersions )
     {
-        this.uniqueVersions = uniqueVersions;
+        if ( uniqueVersions )
+        {
+            setDegree( Degree.UNIQUE );
+        }
+    }
+
+    public void setDegree( Degree degree )
+    {
+        this.degree = degree == null ? Degree.PATCH : degree;
     }
 
     // CHECKSTYLE_OFF: LineLength
@@ -119,7 +135,7 @@ public class DependencyConvergence
             }
             DependencyNode node = getNode( helper );
             DependencyVersionMap visitor = new DependencyVersionMap( log );
-            visitor.setUniqueVersions( uniqueVersions );
+            visitor.setDegree( degree );
             node.accept( visitor );
             List<CharSequence> errorMsgs = new ArrayList<CharSequence>();
             errorMsgs.addAll( getConvergenceErrorMsgs( visitor.getConflictedVersionNumbers() ) );
