@@ -52,12 +52,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
-@Mojo( 
-    name = "enforce", 
-    defaultPhase = LifecyclePhase.VALIDATE, 
-    requiresDependencyCollection = ResolutionScope.TEST, 
-    threadSafe = true 
-)
+@Mojo( name = "enforce", defaultPhase = LifecyclePhase.VALIDATE, requiresDependencyCollection = ResolutionScope.TEST, threadSafe = true )
 public class EnforceMojo
     extends AbstractMojo
     implements Contextualizable
@@ -132,6 +127,11 @@ public class EnforceMojo
         container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
 
+    private boolean havingRules()
+    {
+        return rules != null && rules.length > 0;
+    }
+
     /**
      * Entry point to the mojo
      * 
@@ -142,116 +142,106 @@ public class EnforceMojo
     {
         Log log = this.getLog();
 
-        EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator( session, translator, project, 
-                                                                                 mojoExecution );
+        EnforcerExpressionEvaluator evaluator =
+            new EnforcerExpressionEvaluator( session, translator, project, mojoExecution );
 
-        // the entire execution can be easily skipped
-        if ( !skip )
-        {
-            // list to store exceptions
-            List<String> list = new ArrayList<String>();
-
-            // make sure the rules exist
-            if ( rules != null && rules.length > 0 )
-            {
-                String currentRule = "Unknown";
-
-                // create my helper
-                EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( session, evaluator, log, container );
-
-                // if we are only warning, then disable
-                // failFast
-                if ( !fail )
-                {
-                    failFast = false;
-                }
-
-                boolean hasErrors = false;
-
-                // go through each rule
-                for ( int i = 0; i < rules.length; i++ )
-                {
-
-                    // prevent against empty rules
-                    EnforcerRule rule = rules[i];
-                    final EnforcerLevel level = getLevel( rule );
-                    if ( rule != null )
-                    {
-                        // store the current rule for
-                        // logging purposes
-                        currentRule = rule.getClass().getName();
-                        log.debug( "Executing rule: " + currentRule );
-                        try
-                        {
-                            if ( ignoreCache || shouldExecute( rule ) )
-                            {
-                                // execute the rule
-                                // noinspection
-                                // SynchronizationOnLocalVariableOrMethodParameter
-                                synchronized ( rule )
-                                {
-                                    rule.execute( helper );
-                                }
-                            }
-                        }
-                        catch ( EnforcerRuleException e )
-                        {
-                            // i can throw an exception
-                            // because failfast will be
-                            // false if fail is false.
-                            if ( failFast && level == EnforcerLevel.ERROR )
-                            {
-                                throw new MojoExecutionException( currentRule + " failed with message:\n"
-                                    + e.getMessage(), e );
-                            }
-                            else
-                            {
-                                if ( level == EnforcerLevel.ERROR )
-                                {
-                                    hasErrors = true;
-                                    list.add( "Rule " + i + ": " + currentRule + " failed with message:\n"
-                                        + e.getMessage() );
-                                    log.debug( "Adding failure due to exception", e );
-                                }
-                                else
-                                {
-                                    list.add( "Rule " + i + ": " + currentRule + " warned with message:\n"
-                                        + e.getMessage() );
-                                    log.debug( "Adding warning due to exception", e );
-                                }
-                            }
-                        }
-                    }
-                }
-
-                // if we found anything
-                // CHECKSTYLE_OFF: LineLength
-                if ( !list.isEmpty() )
-                {
-                    for ( String failure : list )
-                    {
-                        log.warn( failure );
-                    }
-                    if ( fail && hasErrors )
-                    {
-                        throw new MojoExecutionException(
-                                                          "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
-                    }
-                }
-                // CHECKSTYLE_ON: LineLength
-            }
-            else
-            {
-                // CHECKSTYLE_OFF: LineLength
-                throw new MojoExecutionException(
-                                                  "No rules are configured. Use the skip flag if you want to disable execution." );
-                // CHECKSTYLE_ON: LineLength
-            }
-        }
-        else
+        if ( isSkip() )
         {
             log.info( "Skipping Rule Enforcement." );
+            return;
         }
+
+        if ( !havingRules() )
+        {
+            // CHECKSTYLE_OFF: LineLength
+            throw new MojoExecutionException( "No rules are configured. Use the skip flag if you want to disable execution." );
+            // CHECKSTYLE_ON: LineLength
+        }
+
+        // list to store exceptions
+        List<String> list = new ArrayList<String>();
+
+        String currentRule = "Unknown";
+
+        // create my helper
+        EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( session, evaluator, log, container );
+
+        // if we are only warning, then disable
+        // failFast
+        if ( !fail )
+        {
+            failFast = false;
+        }
+
+        boolean hasErrors = false;
+
+        // go through each rule
+        for ( int i = 0; i < rules.length; i++ )
+        {
+
+            // prevent against empty rules
+            EnforcerRule rule = rules[i];
+            final EnforcerLevel level = getLevel( rule );
+            if ( rule != null )
+            {
+                // store the current rule for
+                // logging purposes
+                currentRule = rule.getClass().getName();
+                log.debug( "Executing rule: " + currentRule );
+                try
+                {
+                    if ( ignoreCache || shouldExecute( rule ) )
+                    {
+                        // execute the rule
+                        // noinspection
+                        // SynchronizationOnLocalVariableOrMethodParameter
+                        synchronized ( rule )
+                        {
+                            rule.execute( helper );
+                        }
+                    }
+                }
+                catch ( EnforcerRuleException e )
+                {
+                    // i can throw an exception
+                    // because failfast will be
+                    // false if fail is false.
+                    if ( failFast && level == EnforcerLevel.ERROR )
+                    {
+                        throw new MojoExecutionException( currentRule + " failed with message:\n" + e.getMessage(), e );
+                    }
+                    else
+                    {
+                        if ( level == EnforcerLevel.ERROR )
+                        {
+                            hasErrors = true;
+                            list.add( "Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage() );
+                            log.debug( "Adding failure due to exception", e );
+                        }
+                        else
+                        {
+                            list.add( "Rule " + i + ": " + currentRule + " warned with message:\n" + e.getMessage() );
+                            log.debug( "Adding warning due to exception", e );
+                        }
+                    }
+                }
+            }
+        }
+
+        // if we found anything
+        // CHECKSTYLE_OFF: LineLength
+        if ( !list.isEmpty() )
+        {
+            for ( String failure : list )
+            {
+                log.warn( failure );
+            }
+            if ( fail && hasErrors )
+            {
+                throw new MojoExecutionException( "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
+            }
+        }
+        // CHECKSTYLE_ON: LineLength
     }
 
     /**
