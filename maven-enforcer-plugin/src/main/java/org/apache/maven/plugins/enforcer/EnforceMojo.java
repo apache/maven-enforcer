@@ -52,7 +52,9 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * @version $Id$
  */
+// CHECKSTYLE_OFF: LineLength
 @Mojo( name = "enforce", defaultPhase = LifecyclePhase.VALIDATE, requiresDependencyCollection = ResolutionScope.TEST, threadSafe = true )
+//CHECKSTYLE_ON: LineLength
 public class EnforceMojo
     extends AbstractMojo
     implements Contextualizable
