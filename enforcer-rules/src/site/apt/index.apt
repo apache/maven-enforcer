@@ -51,6 +51,8 @@ Standard Rules
   
   * {{{./requireEnvironmentVariable.html}requireEnvironmentVariable}} - enforces the existence of an environment variable
   
+  * {{{./requireFileChecksum.html}requireFileChecksum}} - enforces the specified file to produce a certain checksum.
+
   * {{{./requireFilesDontExist.html}requireFilesDontExist}} - enforces that the list of files does not exist.
   
   * {{{./requireFilesExist.html}requireFilesExist}} - enforces that the list of files does exist.
