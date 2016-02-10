@@ -22,9 +22,9 @@ package org.apache.maven.plugins.enforcer;
 import java.io.File;
 import java.io.IOException;
 
-import junit.framework.TestCase;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.codehaus.plexus.util.FileUtils;
+import org.junit.Test;
 
 /**
  * Test the "RequireFileChecksum" rule
@@ -32,11 +32,11 @@ import org.codehaus.plexus.util.FileUtils;
  * @author Lyubomyr Shaydariv
  */
 public class TestRequireFileChecksum
-    extends TestCase
 {
 
     RequireFileChecksum rule = new RequireFileChecksum();
 
+    @Test
     public void testFileChecksumMd5()
         throws IOException, EnforcerRuleException
     {
@@ -53,6 +53,7 @@ public class TestRequireFileChecksum
         f.delete();
     }
 
+    @Test
     public void testFileChecksumMd5UpperCase()
         throws IOException, EnforcerRuleException
     {
@@ -69,6 +70,7 @@ public class TestRequireFileChecksum
         f.delete();
     }
 
+    @Test( expected = EnforcerRuleException.class )
     public void testFileChecksumMd5NoFileFailure()
         throws IOException, EnforcerRuleException
     {
@@ -78,17 +80,10 @@ public class TestRequireFileChecksum
         rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
         rule.setType( "md5" );
 
-        try
-        {
-            rule.execute( EnforcerTestUtils.getHelper() );
-            fail( "Should get exception" );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            assertTrue( true );
-        }
+        rule.execute( EnforcerTestUtils.getHelper() );
     }
 
+    @Test( expected = EnforcerRuleException.class )
     public void testFileChecksumMd5NoFileSpecifiedFailure()
         throws IOException, EnforcerRuleException
     {
@@ -97,17 +92,10 @@ public class TestRequireFileChecksum
         rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
         rule.setType( "md5" );
 
-        try
-        {
-            rule.execute( EnforcerTestUtils.getHelper() );
-            fail( "Should get exception" );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            assertTrue( true );
-        }
+        rule.execute( EnforcerTestUtils.getHelper() );
     }
 
+    @Test( expected = EnforcerRuleException.class )
     public void testFileChecksumMd5NoChecksumSpecifiedFailure()
         throws IOException, EnforcerRuleException
     {
@@ -116,17 +104,10 @@ public class TestRequireFileChecksum
         rule.setFile(f);
         rule.setType( "md5" );
 
-        try
-        {
-            rule.execute( EnforcerTestUtils.getHelper() );
-            fail( "Should get exception" );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            assertTrue( true );
-        }
+        rule.execute( EnforcerTestUtils.getHelper() );
     }
 
+    @Test( expected = EnforcerRuleException.class )
     public void testFileChecksumMd5NoTypeSpecifiedFailure()
         throws IOException, EnforcerRuleException
     {
@@ -135,17 +116,10 @@ public class TestRequireFileChecksum
         rule.setFile(f);
         rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
 
-        try
-        {
-            rule.execute( EnforcerTestUtils.getHelper() );
-            fail( "Should get exception" );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            assertTrue( true );
-        }
+        rule.execute( EnforcerTestUtils.getHelper() );
     }
 
+    @Test( expected = EnforcerRuleException.class )
     public void testFileChecksumMd5ChecksumMismatchFailure()
         throws IOException, EnforcerRuleException
     {
@@ -160,11 +134,6 @@ public class TestRequireFileChecksum
         try
         {
             rule.execute( EnforcerTestUtils.getHelper() );
-            fail( "Should get exception" );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            assertTrue( true );
         }
         finally
         {
@@ -172,6 +141,7 @@ public class TestRequireFileChecksum
         }
     }
 
+    @Test
     public void testFileChecksumSha1()
         throws IOException, EnforcerRuleException
     {
@@ -188,6 +158,7 @@ public class TestRequireFileChecksum
         f.delete();
     }
 
+    @Test
     public void testFileChecksumSha256()
         throws IOException, EnforcerRuleException
     {
@@ -204,6 +175,7 @@ public class TestRequireFileChecksum
         f.delete();
     }
 
+    @Test
     public void testFileChecksumSha384()
         throws IOException, EnforcerRuleException
     {
@@ -220,6 +192,7 @@ public class TestRequireFileChecksum
         f.delete();
     }
 
+    @Test
     public void testFileChecksumSha512()
         throws IOException, EnforcerRuleException
     {
