@@ -137,6 +137,13 @@ public abstract class AbstractBanDependencies
                     dependencies.add( depNode.getArtifact() );
                 }
             }
+            
+            //add the parent artifact to the list of dependencies to check, since the parent could be a banned artifact
+            if ( project.getParentArtifact() != null )
+            {
+              dependencies.add( project.getParentArtifact() );
+            }
+            
         }
         catch ( DependencyGraphBuilderException e )
         {

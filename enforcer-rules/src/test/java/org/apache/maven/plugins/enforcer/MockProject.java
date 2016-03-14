@@ -1483,7 +1483,10 @@ public class MockProject
      */
     public void setParentArtifact( Artifact artifact )
     {
-
+      if (parent !=null)
+      {
+        parent.setArtifact(artifact);
+      }
     }
 
     /*

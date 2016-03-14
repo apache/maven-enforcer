@@ -37,13 +37,19 @@ public class BannedDependenciesTestSetup
     {
         this.excludes = new ArrayList<String>();
         this.includes = new ArrayList<String>();
-
+        this.excludesUrl = null;
+        
         ArtifactStubFactory factory = new ArtifactStubFactory();
 
         MockProject project = new MockProject();
         project.setArtifacts( factory.getMixedArtifacts() );
         project.setDependencyArtifacts( factory.getScopedArtifacts() );
-
+        
+        MockProject project1 = new MockProject();
+        project1.setArtifact( factory.createArtifact( "pg1", "pa1", "4.0",Artifact.SCOPE_COMPILE, "pom","") );
+        project.setParent( project1 );
+        project.setParentArtifact( factory.createArtifact( "pg1", "pa1", "4.0",Artifact.SCOPE_COMPILE, "pom","") );    
+        
         this.helper = EnforcerTestUtils.getHelper( project );
 
         this.rule = newBannedDependenciesRule();
@@ -51,11 +57,13 @@ public class BannedDependenciesTestSetup
 
         this.rule.setExcludes( this.excludes );
         this.rule.setIncludes( this.includes );
+        this.rule.setExcludesUrl( this.excludesUrl );
     }
 
     private List<String> excludes;
     private List<String> includes;
-
+    private String excludesUrl;
+    
     private BannedDependencies rule;
 
     private EnforcerRuleHelper helper;
@@ -71,6 +79,15 @@ public class BannedDependenciesTestSetup
         excludes.add( toAdd );
         rule.execute( helper );
     }
+    
+    public void addExcludeUrlAndRunRule( String url )
+      throws EnforcerRuleException
+  {
+      excludesUrl = url;
+      rule.setExcludesUrl(excludesUrl);
+      rule.execute( helper );
+  
+  }
 
     public void addIncludeExcludeAndRunRule (String incAdd, String excAdd) throws EnforcerRuleException {
         excludes.add( excAdd );
@@ -87,6 +104,16 @@ public class BannedDependenciesTestSetup
     {
         this.excludes = excludes;
     }
+    
+    public String getExcludesUrl()
+    {
+        return excludesUrl;
+    }
+
+    public void setExcludesUrl( String excludesUrl )
+    {
+        this.excludesUrl = excludesUrl;
+    }
 
     private BannedDependencies newBannedDependenciesRule()
     {
@@ -98,7 +125,14 @@ public class BannedDependenciesTestSetup
             {
                 // the integration with dependencyGraphTree is verified with the integration tests
                 // for unit-testing
-                return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
+                Set<Artifact> artifacts1 = project.getArtifacts();
+                artifacts1.add(project.getParentArtifact());
+                
+                Set<Artifact> artifacts2 = project.getDependencyArtifacts();
+                artifacts2.add(project.getParentArtifact());
+                
+                //return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
+                return isSearchTransitive() ? artifacts1 : artifacts2;
             }
         };
         return rule;

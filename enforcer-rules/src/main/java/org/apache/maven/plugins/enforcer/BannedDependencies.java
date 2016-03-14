@@ -20,12 +20,24 @@ package org.apache.maven.plugins.enforcer;
  */
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher;
 import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher.Pattern;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +52,8 @@ public class BannedDependencies
     extends AbstractBanDependencies
 {
 
+    private static final Integer STATUS_SUCCESS = 200;
+    
     /**
      * Specify the banned dependencies. This can be a list of artifacts in the format
      * <code>groupId[:artifactId][:version]</code>. Any of the sections can be a wildcard 
@@ -49,8 +63,25 @@ public class BannedDependencies
      * 
      * @see {@link #setExcludes(List)}
      * @see {@link #getExcludes()}
+     * 
+     * @see {@link #excludesUrl}
      */
     private List<String> excludes = null;
+    
+    /**
+     * URL pointing to a list of banned dependencies at a specific location. This can be 
+     * a list of artifacts in the format <code>groupId[:artifactId][:version]</code>. 
+     * Any of the sections can be a wildcard by using '*' (ie group:*:1.0) <br> 
+     * Either <b>excludes</b> or <b>excludesUrl</b> or both can be used.
+     * If both are used, all banned dependencies specified at this <b>excludesUrl</b> location 
+     * will be combined with the list of banned dependencies specified in <b>excludes</b>.
+     * The rule will fail if any dependency matches any exclude, unless it also matches 
+     * an include rule.
+     * 
+     * @see {@link #setExcludesUrl(String)}
+     * @see {@link #getExcludesUrl()}
+     */
+    private String excludesUrl = null;
 
     /**
      * Specify the allowed dependencies. This can be a list of artifacts in the format
@@ -65,16 +96,28 @@ public class BannedDependencies
      * @see {@link #getIncludes()}
      */
     private List<String> includes = null;
-
+    
     /**
      * {@inheritDoc}
      */
     protected Set<Artifact> checkDependencies( Set<Artifact> theDependencies, Log log )
         throws EnforcerRuleException
     {
-
+        log.info( "excludesUrl=" + excludesUrl + ", excludes=" + excludes );
+        log.info( "No of excludes before reading from excludesUrl=" 
+                      + ( ( excludes != null ) ? excludes.size() : "0" ) );
+        
+        if ( excludesUrl != null && !excludesUrl.isEmpty() )
+        {
+          fetchExcludedList( log );
+        }
+        
+        log.info( "No of excludes after reading from excludesUrl=" + ( ( excludes != null ) ? excludes.size() : "0" ) );
+        
         Set<Artifact> excluded = checkDependencies( theDependencies, excludes );
-
+        
+        log.debug( "No of excluded artifacts = " + ( excluded != null ? excluded.size() : 0 ) ); 
+        
         // anything specifically included should be removed
         // from the ban list.
         if ( excluded != null )
@@ -89,6 +132,88 @@ public class BannedDependencies
         return excluded;
 
     }
+    
+    private void fetchExcludedList ( Log logger ) throws EnforcerRuleException
+    {
+      logger.debug( "Inside getExcludedList()..." );
+      int timeout = 3 * 1000; // milliseconds
+      CloseableHttpClient httpClient = null;
+      HttpRequestBase httpRequest = null;
+      try
+      {
+       
+        RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout( timeout )
+                                                      .setSocketTimeout( timeout ).build();
+        httpClient = HttpClientBuilder.create()
+                              .setDefaultRequestConfig( requestConfig )
+                              .setMaxConnPerRoute( 1000 ).setMaxConnTotal( 1000 )
+                              .setRetryHandler( new DefaultHttpRequestRetryHandler() )
+                              .build( );
+      
+        httpRequest = new HttpGet( excludesUrl );
+        
+        HttpResponse response = httpClient.execute( httpRequest );
+        int statusCode = 0;
+        String line = null;
+        if ( response != null )
+        {
+          if ( response.getStatusLine( ) != null )
+          {
+            statusCode = response.getStatusLine( ).getStatusCode( );
+            logger.info( "Response status code from excludesUrl: " + statusCode );
+          }
+          
+          if ( statusCode == STATUS_SUCCESS && response.getEntity() != null )
+          {
+            BufferedReader br = new BufferedReader( new InputStreamReader( response.getEntity().getContent() ) );
+      
+            if ( br != null ) 
+            {
+              while ( ( line = br.readLine() ) != null ) 
+              {
+                if ( excludes == null )
+                {
+                  excludes = new ArrayList<String>();
+                }
+                if ( line != null && !line.trim().isEmpty() )
+                {
+                  logger.debug( "blacklisted artifact=" + line );
+                  excludes.add( line );
+                }
+              }
+                
+            }
+          }
+        }
+        
+      }
+      catch ( UnknownHostException uhe )
+      {
+        logger.info( "Invalid excludesUrl value --> " + excludesUrl );
+        throw new EnforcerRuleException( "Invalid excludesUrl value --> " + excludesUrl, uhe );
+      }
+      catch ( Exception e )
+      {
+        logger.info( "Error while reading from excludesUrl, error=" + e.getMessage() );
+        throw new EnforcerRuleException( "Error reading blacklist artifacts from url " + excludesUrl, e );
+      }
+      finally
+      {
+        httpRequest.releaseConnection();
+        try 
+        {
+          if ( httpClient != null )
+          {
+            httpClient.close();
+          }
+        } 
+        catch ( Exception e ) 
+        {
+          logger.info( "Error occured while closing http client, error=" + e.getMessage() );
+        }
+      }
+      
+    }
 
     /**
      * Checks the set of dependencies against the list of patterns.
@@ -102,7 +227,7 @@ public class BannedDependencies
         throws EnforcerRuleException
     {
         Set<Artifact> foundMatches = null;
-
+        
         if ( thePatterns != null && thePatterns.size() > 0 )
         {
 
@@ -208,5 +333,19 @@ public class BannedDependencies
     {
         this.includes = theIncludes;
     }
+
+    public String getExcludesUrl() 
+    {
+      return excludesUrl;
+    }
+    
+
+    public void setExcludesUrl( String excludesUrl ) 
+    {
+      this.excludesUrl = excludesUrl;
+    }
+    
+    
+    
 
 }

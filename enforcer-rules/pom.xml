@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.maven.enforcer</groupId>
     <artifactId>enforcer</artifactId>
-    <version>1.4.2-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT-walmart-01</version>
   </parent>
 
   <artifactId>enforcer-rules</artifactId>
@@ -93,9 +93,20 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-i18n</artifactId>
       <version>1.0-beta-6</version>
-    </dependency>    
+    </dependency>  
+    <!-- httpclient 4.4+ or takari webserver cannot be used since enforcer is restricted to JDK 1.5 (enforced by enforce-bytecode-version)--> 
+	<dependency>
+         <groupId>org.apache.httpcomponents</groupId>
+         <artifactId>httpclient</artifactId>
+         <version>4.3.6</version>
+     </dependency> 
+     <!-- Jetty 7 is needed since enforcer is restricted to JDK 1.5 and hence cannot run with Jetty 9 (enforced by enforce-bytecode-version)-->
+     <dependency>
+		<groupId>org.eclipse.jetty</groupId>
+		<artifactId>jetty-server</artifactId>
+		<version>7.6.19.v20160209</version>
+	</dependency>
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -109,6 +120,15 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+         <groupId>org.apache.rat</groupId>
+         <artifactId>apache-rat-plugin</artifactId>
+         <configuration>
+           <excludes combine.children="append">
+             <exclude>src/test/resources/testBannedDependencies/blacklist.txt</exclude>
+           </excludes>
+         </configuration>
+       </plugin>
     </plugins>
   </build>
 </project>

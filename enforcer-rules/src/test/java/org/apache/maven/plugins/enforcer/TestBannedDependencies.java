@@ -22,6 +22,13 @@ package org.apache.maven.plugins.enforcer;
 import java.io.IOException;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+
+import org.codehaus.plexus.util.FileUtils;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -149,6 +156,7 @@ public class TestBannedDependencies
     {
 
         private BannedDependenciesTestSetup setup;
+        
 
         @Before
         public void beforeMethod()
@@ -157,7 +165,7 @@ public class TestBannedDependencies
             this.setup = new BannedDependenciesTestSetup();
             this.setup.setSearchTransitive( true );
         }
-
+        
         private void addExcludeAndRunRule( String toAdd )
             throws EnforcerRuleException
         {
@@ -190,6 +198,203 @@ public class TestBannedDependencies
             throws Exception
         {
             addExcludeAndRunRule( "*:release:*" );
+        }
+        
+    }
+    
+    public static class ExcludesUsingExcludesUrl
+    {
+
+        private BannedDependenciesTestSetup setup;
+        private Server server = null;
+        private String excludesUrl = "http://localhost:8081/";
+        private String invalidExcludesUrl = "http://hgggkhkh";
+        private String blacklistFilename = "./target/test-classes/testBannedDependencies/blacklist.txt";
+        
+        @Before
+        public void beforeMethod()
+            throws Exception
+        {
+            this.setup = new BannedDependenciesTestSetup();
+            this.setup.setSearchTransitive( true );
+            startEmbeddedJettyServer();
+        }
+        
+        private void startEmbeddedJettyServer() throws Exception{
+          
+          if (server == null) {
+            server = new Server(8081);
+            server.setStopAtShutdown(true);
+            ResourceHandler resourceHandler = new ResourceHandler();
+            resourceHandler.setResourceBase(blacklistFilename);
+
+            HandlerList handlers = new HandlerList();
+            handlers.setHandlers(new Handler[] { resourceHandler });
+            server.setHandler(handlers);
+            server.start();
+            //System.out.println("Jetty server started..isServerRunning="+server.isRunning());  
+          }
+        }
+ 
+        private void addExcludeUrlAndRunRule( String url )
+            throws EnforcerRuleException
+        { 
+            this.setup.addExcludeUrlAndRunRule( url);
+        }
+        
+        @Test( expected = EnforcerRuleException.class ) 
+        public void testInvalidExcludesUrl()
+            throws Exception
+        {
+          addExcludeUrlAndRunRule( invalidExcludesUrl );
+        }
+        
+        @Test( expected = EnforcerRuleException.class )
+        public void testBlacklistedParent()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\npg1:pa1:[4.0]" );
+          addExcludeUrlAndRunRule( excludesUrl );
+        }
+        
+        @Test( expected = EnforcerRuleException.class )
+        public void testWildcardBlacklistedParent()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\npg1:pa1:*" );
+          addExcludeUrlAndRunRule( excludesUrl );
+        }
+
+        @Test
+        public void testWildcardForGroupIdArtifactIdVersion()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\n*:release:1.2" );
+          addExcludeUrlAndRunRule( excludesUrl );
+          
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void testWildCardForGroupIdArtifactId()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\n*:release" );
+          addExcludeUrlAndRunRule( excludesUrl );
+          
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void testWildcardForGroupIdWildcardForArtifactIdVersion()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\n*:*:1.0" );
+          addExcludeUrlAndRunRule( excludesUrl );
+          
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void testWildcardForGroupIdArtifactIdWildcardForVersion()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\n*:release:*" );
+          addExcludeUrlAndRunRule( excludesUrl );
+        }
+        
+        @Test( expected = EnforcerRuleException.class )
+        public void testGroupId()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\ntestGroupId" );
+          addExcludeUrlAndRunRule( excludesUrl );
+        }
+        
+        @Test( expected = EnforcerRuleException.class )
+        public void testGroupIdArtifactIdVersion()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\ntestGroupId:release:1.0" );
+          addExcludeUrlAndRunRule( excludesUrl );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void testGroupIdArtifactId()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\ntestGroupId:release" );
+          addExcludeUrlAndRunRule( excludesUrl );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void testSpaceTrimmingGroupIdArtifactIdVersion()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\n  testGroupId  :  release   :   1.0    " );
+          addExcludeUrlAndRunRule( excludesUrl );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void groupIdArtifactIdVersionType()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\ng:a:1.0:war" );
+          addExcludeUrlAndRunRule( excludesUrl );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void groupIdArtifactIdVersionTypeScope()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\ng:a:1.0:war:compile" );
+          addExcludeUrlAndRunRule( excludesUrl );
+        }
+        
+        @Test( expected = IllegalArgumentException.class )
+        public void onlyThreeColonsWithoutAnythingElse()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\n:::" );
+          addExcludeUrlAndRunRule( excludesUrl );
+        }
+
+        @Test( expected = IllegalArgumentException.class )
+        public void onlySevenColonsWithoutAnythingElse()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\n:::::::" );
+          addExcludeUrlAndRunRule( excludesUrl );
+        }
+        
+        @Test( expected = EnforcerRuleException.class )
+        public void groupIdArtifactIdWithWildcard()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\ntestGroupId:re*" );
+          addExcludeUrlAndRunRule( excludesUrl );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void groupIdArtifactIdVersionTypeWildcardScope()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\ng:a:1.0:war:co*" );
+          addExcludeUrlAndRunRule( excludesUrl );
+        }
+
+        @Test( expected = EnforcerRuleException.class )
+        public void groupIdArtifactIdVersionWildcardTypeScope()
+            throws Exception
+        {
+          FileUtils.fileAppend( blacklistFilename, "\ng:a:1.0:w*:compile" );
+          addExcludeUrlAndRunRule( excludesUrl );
+        }
+        
+        @After
+        public void shutDownEmbeddedJettyServer() throws Exception{
+          if (server != null)
+          {
+            server.stop();
+          }
+          FileUtils.fileDelete(blacklistFilename);
         }
 
     }
