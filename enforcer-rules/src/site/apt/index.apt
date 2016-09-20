@@ -75,6 +75,8 @@ Standard Rules
 
   * {{{./requireReleaseVersion.html}requireReleaseVersion}} - enforces that the artifact is not a snapshot.
 
+  * {{{./requireSnapshotVersion.html}requireSnapshotVersion}} - enforces that the artifact is not a release.
+
   * {{{./requireSameVersions.html}requireSameVersions}} - enforces that specific dependencies and/or plugins have the same version.
 
   * {{{./requireUpperBoundDeps.html}requireUpperBoundDeps}} - ensures that every (transitive) dependency is resolved to it's specified version or higher.
