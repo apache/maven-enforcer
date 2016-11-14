@@ -24,10 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -35,9 +31,9 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.enforcer.utils.DependencyVersionMap;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.i18n.I18N;
@@ -63,7 +59,7 @@ public class DependencyConvergence
     // CHECKSTYLE_OFF: LineLength
     /**
      * Uses the {@link EnforcerRuleHelper} to populate the values of the
-     * {@link DependencyTreeBuilder#buildDependencyTree(MavenProject, ArtifactRepository, ArtifactFactory, ArtifactMetadataSource, ArtifactFilter, ArtifactCollector)}
+     * {@link DependencyGraphBuilder#buildDependencyGraph(MavenProject, ArtifactFilter)}
      * factory method. <br/>
      * This method simply exists to hide all the ugly lookup that the {@link EnforcerRuleHelper} has to do.
      * 
@@ -78,17 +74,11 @@ public class DependencyConvergence
         try
         {
             MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-            DependencyTreeBuilder dependencyTreeBuilder =
-                (DependencyTreeBuilder) helper.getComponent( DependencyTreeBuilder.class );
-            ArtifactRepository repository = (ArtifactRepository) helper.evaluate( "${localRepository}" );
-            ArtifactFactory factory = (ArtifactFactory) helper.getComponent( ArtifactFactory.class );
-            ArtifactMetadataSource metadataSource =
-                (ArtifactMetadataSource) helper.getComponent( ArtifactMetadataSource.class );
-            ArtifactCollector collector = (ArtifactCollector) helper.getComponent( ArtifactCollector.class );
+            DependencyGraphBuilder dependencyGraphBuilder =
+                (DependencyGraphBuilder) helper.getComponent( DependencyGraphBuilder.class );
             ArtifactFilter filter = null; // we need to evaluate all scopes
-            DependencyNode node = dependencyTreeBuilder.buildDependencyTree( project, repository, factory,
-                                                                             metadataSource, filter, collector );
-            return node;
+
+            return dependencyGraphBuilder.buildDependencyGraph( project, filter );
         }
         catch ( ExpressionEvaluationException e )
         {
@@ -98,7 +88,7 @@ public class DependencyConvergence
         {
             throw new EnforcerRuleException( "Unable to lookup a component " + e.getLocalizedMessage(), e );
         }
-        catch ( DependencyTreeBuilderException e )
+        catch ( DependencyGraphBuilderException e )
         {
             throw new EnforcerRuleException( "Could not build dependency tree " + e.getLocalizedMessage(), e );
         }
