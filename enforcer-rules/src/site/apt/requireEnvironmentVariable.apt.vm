@@ -57,7 +57,7 @@ Require Environment Variable
             <configuration>
               <rules>
                 <requireEnvironmentVariable>
-                  <variableName>the_name_you_wish_to_be_checked</variablename>
+                  <variableName>the_name_you_wish_to_be_checked</variableName>
                 </requireEnvironmentVariable>
               </rules>
               <fail>true</fail>
