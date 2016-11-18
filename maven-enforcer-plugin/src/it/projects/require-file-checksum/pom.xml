@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.apache.maven.its.enforcer</groupId>
+  <artifactId>test</artifactId>
+  <version>1.0</version>
+
+  <description>
+  </description>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>@project.version@</version>
+        <executions>
+          <execution>
+            <id>test</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireFileChecksum>
+                  <file>${project.basedir}/file.txt</file>
+                  <type>md5</type>
+                  <checksum>37c4b87edffc5d198ff5a185cee7ee09</checksum>
+                </requireFileChecksum>
+                <requireFileChecksum>
+                  <file>${project.basedir}/file.txt</file>
+                  <type>sha1</type>
+                  <checksum>be417768b5c3c5c1d9bcb2e7c119196dd76b5570</checksum>
+                </requireFileChecksum>
+                <requireFileChecksum>
+                  <file>${project.basedir}/file.txt</file>
+                  <type>sha256</type>
+                  <checksum>c03905fcdab297513a620ec81ed46ca44ddb62d41cbbd83eb4a5a3592be26a69</checksum>
+                </requireFileChecksum>
+                <requireFileChecksum>
+                  <file>${project.basedir}/file.txt</file>
+                  <type>sha384</type>
+                  <checksum>f565ad8f9c76cf8c4a2e145e712df740702e066a5908f6285eafa1a83a623e882207643ce5ec29628ff0186150275ef3</checksum>
+                </requireFileChecksum>
+                <requireFileChecksum>
+                  <file>${project.basedir}/file.txt</file>
+                  <type>sha512</type>
+                  <checksum>a12ac6bdd854ac30c5cc5b576e1ee2c060c0d8c2bec8797423d7119aa2b962f7f30ce2e39879cbff0109c8f0a3fd9389a369daae45df7d7b286d7d98272dc5b1</checksum>
+                </requireFileChecksum>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
