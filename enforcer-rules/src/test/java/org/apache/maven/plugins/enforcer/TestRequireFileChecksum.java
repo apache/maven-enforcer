@@ -24,7 +24,9 @@ import java.io.IOException;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.codehaus.plexus.util.FileUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Test the "RequireFileChecksum" rule
@@ -36,12 +38,14 @@ public class TestRequireFileChecksum
 
     RequireFileChecksum rule = new RequireFileChecksum();
 
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+
     @Test
     public void testFileChecksumMd5()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "enforcer", "tmp" );
-        f.deleteOnExit();
+        File f = temporaryFolder.newFile();
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile(f);
@@ -49,16 +53,13 @@ public class TestRequireFileChecksum
         rule.setType( "md5" );
 
         rule.execute( EnforcerTestUtils.getHelper() );
-
-        f.delete();
     }
 
     @Test
     public void testFileChecksumMd5UpperCase()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "enforcer", "tmp" );
-        f.deleteOnExit();
+        File f = temporaryFolder.newFile();
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile(f);
@@ -66,15 +67,18 @@ public class TestRequireFileChecksum
         rule.setType( "md5" );
 
         rule.execute( EnforcerTestUtils.getHelper() );
-
-        f.delete();
     }
 
     @Test( expected = EnforcerRuleException.class )
     public void testFileChecksumMd5NoFileFailure()
         throws IOException, EnforcerRuleException
     {
-        File f = new File( "enforcer-not-existing", "tmp" );
+        File f = new File( "foo" ) {
+            @Override
+            public boolean canRead() {
+                return false;
+            }
+        };
 
         rule.setFile(f);
         rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
@@ -87,7 +91,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumMd5NoFileSpecifiedFailure()
         throws IOException, EnforcerRuleException
     {
-        File f = new File( "enforcer-not-existing", "tmp" );
+        File f = temporaryFolder.newFile();
 
         rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
         rule.setType( "md5" );
@@ -99,7 +103,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumMd5NoChecksumSpecifiedFailure()
         throws IOException, EnforcerRuleException
     {
-        File f = new File( "enforcer-not-existing", "tmp" );
+        File f = temporaryFolder.newFile();
 
         rule.setFile(f);
         rule.setType( "md5" );
@@ -111,7 +115,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumMd5NoTypeSpecifiedFailure()
         throws IOException, EnforcerRuleException
     {
-        File f = new File( "enforcer-not-existing", "tmp" );
+        File f = temporaryFolder.newFile();
 
         rule.setFile(f);
         rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
@@ -123,30 +127,21 @@ public class TestRequireFileChecksum
     public void testFileChecksumMd5ChecksumMismatchFailure()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "enforcer", "tmp" );
-        f.deleteOnExit();
+        File f = temporaryFolder.newFile();
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile(f);
         rule.setChecksum( "ffeeddccbbaa99887766554433221100" );
         rule.setType( "md5" );
 
-        try
-        {
-            rule.execute( EnforcerTestUtils.getHelper() );
-        }
-        finally
-        {
-            f.delete();
-        }
+        rule.execute( EnforcerTestUtils.getHelper() );
     }
 
     @Test
     public void testFileChecksumSha1()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "enforcer", "tmp" );
-        f.deleteOnExit();
+        File f = temporaryFolder.newFile();
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile(f);
@@ -154,16 +149,13 @@ public class TestRequireFileChecksum
         rule.setType( "sha1" );
 
         rule.execute( EnforcerTestUtils.getHelper() );
-
-        f.delete();
     }
 
     @Test
     public void testFileChecksumSha256()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "enforcer", "tmp" );
-        f.deleteOnExit();
+        File f = temporaryFolder.newFile();
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile(f);
@@ -171,16 +163,13 @@ public class TestRequireFileChecksum
         rule.setType( "sha256" );
 
         rule.execute( EnforcerTestUtils.getHelper() );
-
-        f.delete();
     }
 
     @Test
     public void testFileChecksumSha384()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "enforcer", "tmp" );
-        f.deleteOnExit();
+        File f = temporaryFolder.newFile();
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile(f);
@@ -188,16 +177,13 @@ public class TestRequireFileChecksum
         rule.setType( "sha384" );
 
         rule.execute( EnforcerTestUtils.getHelper() );
-
-        f.delete();
     }
 
     @Test
     public void testFileChecksumSha512()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "enforcer", "tmp" );
-        f.deleteOnExit();
+        File f = temporaryFolder.newFile();
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile(f);
@@ -205,8 +191,6 @@ public class TestRequireFileChecksum
         rule.setType( "sha512" );
 
         rule.execute( EnforcerTestUtils.getHelper() );
-
-        f.delete();
     }
 
 }
