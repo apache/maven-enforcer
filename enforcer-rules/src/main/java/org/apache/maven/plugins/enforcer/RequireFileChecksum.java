@@ -94,14 +94,29 @@ public class RequireFileChecksum
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
-        if ( this.file == null || !this.file.canRead() )
+        if ( this.file == null )
         {
-            throw new EnforcerRuleException( "Missing file: " + this.file );
+            throw new EnforcerRuleException( "Input file unspecified" );
+        }
+
+        if ( this.type == null )
+        {
+            throw new EnforcerRuleException( "Hash type unspecified" );
+        }
+
+        if ( this.checksum == null )
+        {
+            throw new EnforcerRuleException( "Checksum unspecified" );
         }
 
         InputStream inputStream = null;
         try
         {
+            if ( !this.file.canRead() )
+            {
+                throw new EnforcerRuleException( "Missing file: " + this.file );
+            }
+
             inputStream = new FileInputStream( this.file );
             String checksum;
             if ( "md5".equals( this.type ) )
