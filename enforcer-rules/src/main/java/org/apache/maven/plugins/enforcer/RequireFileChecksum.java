@@ -112,9 +112,9 @@ public class RequireFileChecksum
         InputStream inputStream = null;
         try
         {
-            if ( !this.file.canRead() )
+            if ( this.file.isDirectory() || !this.file.canRead() )
             {
-                throw new EnforcerRuleException( "Missing file: " + this.file );
+                throw new EnforcerRuleException( "Cannot read file: " + this.file.getAbsolutePath() );
             }
 
             inputStream = new FileInputStream( this.file );

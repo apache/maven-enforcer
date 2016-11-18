@@ -77,15 +77,31 @@ public class TestRequireFileChecksum
     public void testFileChecksumMd5NoFileFailure()
         throws IOException, EnforcerRuleException
     {
-        expectedException.expect( EnforcerRuleException.class );
-        expectedException.expectMessage( "Missing file: foo" );
-
         File f = new File( "foo" ) {
             @Override
             public boolean canRead() {
                 return false;
             }
         };
+
+        expectedException.expect( EnforcerRuleException.class );
+        expectedException.expectMessage( "Cannot read file: " + f.getAbsolutePath() );
+
+        rule.setFile( f );
+        rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
+        rule.setType( "md5" );
+
+        rule.execute( EnforcerTestUtils.getHelper() );
+    }
+
+    @Test
+    public void testFileChecksumMd5GivenFileIsADirectoryFailure()
+        throws IOException, EnforcerRuleException
+    {
+        File f = temporaryFolder.newFolder();
+
+        expectedException.expect( EnforcerRuleException.class );
+        expectedException.expectMessage( "Cannot read file: " + f.getAbsolutePath() );
 
         rule.setFile( f );
         rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
