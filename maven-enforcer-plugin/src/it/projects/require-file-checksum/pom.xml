@@ -44,29 +44,29 @@ under the License.
             <configuration>
               <rules>
                 <requireFileChecksum>
-                  <file>${project.basedir}/file.txt</file>
+                  <file>${project.basedir}/LICENSE</file>
                   <type>md5</type>
-                  <checksum>37c4b87edffc5d198ff5a185cee7ee09</checksum>
+                  <checksum>7c5b65d44e8123e70d24d9eef17e9fa2</checksum>
                 </requireFileChecksum>
                 <requireFileChecksum>
-                  <file>${project.basedir}/file.txt</file>
+                  <file>${project.basedir}/LICENSE</file>
                   <type>sha1</type>
-                  <checksum>be417768b5c3c5c1d9bcb2e7c119196dd76b5570</checksum>
+                  <checksum>278661cbaf6a1bcbd34e3877b6de0e8bd7097846</checksum>
                 </requireFileChecksum>
                 <requireFileChecksum>
-                  <file>${project.basedir}/file.txt</file>
+                  <file>${project.basedir}/LICENSE</file>
                   <type>sha256</type>
-                  <checksum>c03905fcdab297513a620ec81ed46ca44ddb62d41cbbd83eb4a5a3592be26a69</checksum>
+                  <checksum>61b825d68516541151e5ce0145e54765c48cd5802b886aee8fb8cf1953f02d10</checksum>
                 </requireFileChecksum>
                 <requireFileChecksum>
-                  <file>${project.basedir}/file.txt</file>
+                  <file>${project.basedir}/LICENSE</file>
                   <type>sha384</type>
-                  <checksum>f565ad8f9c76cf8c4a2e145e712df740702e066a5908f6285eafa1a83a623e882207643ce5ec29628ff0186150275ef3</checksum>
+                  <checksum>6f9e6b81487911c5a339c541016a459acaf8312e430ccabe5c10cb2ddf9a307f4595c78555f911377f4fb853ffe87046</checksum>
                 </requireFileChecksum>
                 <requireFileChecksum>
-                  <file>${project.basedir}/file.txt</file>
+                  <file>${project.basedir}/LICENSE</file>
                   <type>sha512</type>
-                  <checksum>a12ac6bdd854ac30c5cc5b576e1ee2c060c0d8c2bec8797423d7119aa2b962f7f30ce2e39879cbff0109c8f0a3fd9389a369daae45df7d7b286d7d98272dc5b1</checksum>
+                  <checksum>c51c3cf07c87af78dd7af4407ae3993ea1051d8a7c260cf34bbaa41c468dcd3b62d2be3d9a09807a8595d0065e2d75d1bf9ffc8276d567a983ff057f6b51b0cc</checksum>
                 </requireFileChecksum>
               </rules>
             </configuration>
