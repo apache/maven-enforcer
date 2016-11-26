@@ -1,0 +1,98 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+  ------
+  Require Files Checksum
+  ------
+  Edward Samson, Lyubomyr Shaydariv
+  ------
+  February 2016
+  ------
+
+Require Files Checksum
+
+  This rule checks that the specified file has an given checksum.
+
+
+   The following parameters are supported by this rule:
+
+   * message - an optional message to the user if the rule fails.
+
+   * file - A file to check.
+
+   * checksum - Expected file checksum.
+
+   * type - Type of hashing algorithm to calculate the checksum. May be one of "md5", "sha1", "sha256", "sha384", or "sha512".
+
+   []
+
+
+  Sample Plugin Configuration:
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-checksum</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireFileChecksum>
+                  <file>${project.build.outputDirectory}/foo.txt</file>
+                  <checksum>d41d8cd98f00b204e9800998ecf8427e</checksum>
+                  <type>md5</type>
+                </requireFileChecksum>
+                <requireFileChecksum>
+                  <file>${project.build.outputDirectory}/bar.txt</file>
+                  <checksum>da39a3ee5e6b4b0d3255bfef95601890afd80709</checksum>
+                  <type>sha1</type>
+                </requireFileChecksum>
+                <requireFileChecksum>
+                  <file>${project.build.outputDirectory}/baz.txt</file>
+                  <checksum>e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</checksum>
+                  <type>sha256</type>
+                </requireFileChecksum>
+                <requireFileChecksum>
+                  <file>${project.build.outputDirectory}/qux.txt</file>
+                  <checksum>38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</checksum>
+                  <type>sha384</type>
+                </requireFileChecksum>
+                <requireFileChecksum>
+                  <file>${project.build.outputDirectory}/quux.txt</file>
+                  <checksum>cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</checksum>
+                  <type>sha512</type>
+                </requireFileChecksum>
+              </rules>
+              <fail>true</fail>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
