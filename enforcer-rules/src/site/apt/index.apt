@@ -32,7 +32,9 @@ Standard Rules
   * {{{./alwaysPass.html}alwaysPass}} - Always passes... used to test plugin configuration.
   
   * {{{./banDistributionManagement.html}banDistributionManagement}} - enforces that project doesn't have distributionManagement.
-
+  
+  * {{{./banDuplicatePomDependencyVersions.html}banDuplicatePomDependencyVersions}} - enforces that the project doesn't have duplicate declared dependencies.
+  
   * {{{./bannedDependencies.html}bannedDependencies}} - enforces that excluded dependencies aren't included.
   
   * {{{./bannedPlugins.html}bannedPlugins}} - enforces that specific plugins aren't included in the build.
