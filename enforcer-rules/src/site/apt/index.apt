@@ -39,6 +39,8 @@ Standard Rules
   
   * {{{./bannedPlugins.html}bannedPlugins}} - enforces that specific plugins aren't included in the build.
   
+  * {{{./banProfiles.html}banProfiles}} - enforces one or more profiles are not active.
+
   * {{{./bannedRepositories.html}bannedRepositories}} - enforces to not include banned repositories.
 
   * {{{./banTransitiveDependencies.html}banTransitiveDependencies}} - enforces that project doesn't have transitive dependencies.

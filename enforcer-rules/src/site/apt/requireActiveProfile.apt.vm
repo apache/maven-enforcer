@@ -27,6 +27,8 @@ Require Active Profile
 
   This rule checks that a specified list of profiles is activated.
 
+  For the opposite, please see rule {{{./banProfiles.html}banProfiles}}.
+ 
 
    The following parameters are supported by this rule:
    

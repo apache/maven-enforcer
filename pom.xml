@@ -165,6 +165,18 @@
       <email>wangyf2010@gmail.com</email>
       <organization>eBay Inc.</organization>
     </contributor>
+    <contributor>
+      <name>Mikko Koivunalho</name>
+      <email>mikko.koivunalho@iki.fi</email>
+      <url>http://www.linkedin.com/in/mikkokoivunalho/</url>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>Europe/Stockholm</timezone>
+      <properties>
+        <gitHubUrl>https://github.com/mikkoi</gitHubUrl>
+      </properties>
+    </contributor>
   </contributors>
   <build>
     <pluginManagement>
