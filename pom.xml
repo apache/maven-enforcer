@@ -36,10 +36,6 @@
   <url>http://maven.apache.org/enforcer/</url>
   <inceptionYear>2007</inceptionYear>
 
-  <prerequisites>
-    <maven>2.2.1</maven>
-  </prerequisites>
-
   <modules>
     <module>enforcer-api</module>
     <module>enforcer-rules</module>
