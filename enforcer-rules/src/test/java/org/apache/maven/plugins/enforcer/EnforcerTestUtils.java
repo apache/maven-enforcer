@@ -19,18 +19,25 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.util.Date;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.Properties;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecution;
-import org.apache.maven.plugin.descriptor.MojoDescriptor;
+import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.sonatype.aether.RepositorySystemSession;
 
 /**
  * The Class EnforcerTestUtils.
@@ -46,8 +53,33 @@ public final class EnforcerTestUtils
      */
     public static MavenSession getMavenSession()
     {
-        return new MavenSession( new MockPlexusContainer(), null, null, null, null, null, null, new Properties(),
-                                 new Date() );
+        PlexusContainer mock = mock( PlexusContainer.class );
+
+        try
+        {
+            when( mock.lookup( "xx" ) ).thenReturn( new MavenProject() );
+        }
+        catch ( ComponentLookupException e )
+        {
+            e.printStackTrace();
+        }
+
+        MavenExecutionRequest mer = mock( MavenExecutionRequest.class );
+
+        Properties systemProperties = new Properties();
+        systemProperties.put( "maven.version", "3.0" );
+        when( mer.getUserProperties() ).thenReturn( new Properties() );
+        when(mer.getSystemProperties()).thenReturn( systemProperties );
+
+        MavenExecutionResult meresult = mock( MavenExecutionResult.class );
+        return new MavenSession( mock, (RepositorySystemSession) null, mer, meresult );
+
+        // return new MavenSession( new MockPlexusContainer(), (MavenExecutionRequest)null, null,
+        // null );
+
+        // new MavenSession();
+        // return new MavenSession( new MockPlexusContainer(), null, null, null, null, null, null, new Properties(),
+        // new Date() );
     }
 
     /**
@@ -99,7 +131,10 @@ public final class EnforcerTestUtils
         }
         else
         {
-            eval = new EnforcerExpressionEvaluator( session, new MockPathTranslator(), project, new MojoExecution( new MojoDescriptor() ) );
+//            eval = new DefaultExpressionEvaluator();
+            MojoExecution mockExecution = mock( MojoExecution.class );
+            session.setCurrentProject( project );
+            eval = new PluginParameterExpressionEvaluator( session, mockExecution );
         }
         return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(), null );
     }

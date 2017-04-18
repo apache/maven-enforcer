@@ -83,7 +83,6 @@ public class BannedRepositories
      * @see
      * org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
      */
-    @SuppressWarnings( "unchecked" )
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

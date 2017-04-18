@@ -1,5 +1,8 @@
 package org.apache.maven.plugins.enforcer;
 
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,10 +24,6 @@ package org.apache.maven.plugins.enforcer;
 
 import junit.framework.TestCase;
 
-import org.apache.maven.execution.RuntimeInformation;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  * 
@@ -40,7 +39,6 @@ public class TestDefaultEnforcementRuleHelper
         assertNotNull( helper.getLog() );
         assertNotNull( helper.evaluate( "${session}" ) );
         assertNotNull( helper.evaluate( "${project}" ) );
-        assertNotNull( helper.getComponent( RuntimeInformation.class ) );
 
     }
 }

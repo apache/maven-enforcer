@@ -19,13 +19,12 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import junit.framework.TestCase;
-
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
-// TODO: Auto-generated Javadoc
+import junit.framework.TestCase;
+
 /**
  * The Class TestRequireJavaVersion.
  *
@@ -68,7 +67,7 @@ public class TestRequireJavaVersion
     public void testRule()
         throws EnforcerRuleException
     {
-        String thisVersion = RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED );
+        String thisVersion = RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION);
 
         RequireJavaVersion rule = new RequireJavaVersion();
         rule.setVersion( thisVersion );
@@ -92,7 +91,7 @@ public class TestRequireJavaVersion
         }
 
         // this shouldn't crash
-        rule.setVersion( SystemUtils.JAVA_VERSION_TRIMMED );
+        rule.setVersion( SystemUtils.JAVA_VERSION );
         rule.execute( helper );
 
     }

@@ -21,18 +21,14 @@ package org.apache.maven.plugins.enforcer;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.path.PathTranslator;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
@@ -48,12 +44,6 @@ public class DisplayInfoMojo
     extends AbstractMojo
     implements Contextualizable
 {
-
-    /**
-     * Path Translator needed by the ExpressionEvaluator
-     */
-    @Component( role = PathTranslator.class )
-    protected PathTranslator translator;
 
     /**
      * MojoExecution needed by the ExpressionEvaluator
@@ -77,7 +67,7 @@ public class DisplayInfoMojo
     // plugin's container in 2.0.x
     protected PlexusContainer container;
 
-    public void contextualize ( Context context )
+    public void contextualize( Context context )
         throws ContextException
     {
         container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
@@ -86,26 +76,15 @@ public class DisplayInfoMojo
     /**
      * Entry point to the mojo
      */
-    public void execute ()
+    public void execute()
         throws MojoExecutionException
     {
-        try
-        {
-            EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator( session, translator, project, 
-                                                                                     mojoExecution );
-            DefaultEnforcementRuleHelper helper = new DefaultEnforcementRuleHelper( session, evaluator, getLog(),
-                                                                                    container );
-            RuntimeInformation rti = (RuntimeInformation) helper.getComponent( RuntimeInformation.class );
-            getLog().info( "Maven Version: " + rti.getApplicationVersion() );
-            getLog().info( "JDK Version: " + SystemUtils.JAVA_VERSION + " normalized as: "
-                               + RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
-            RequireOS os = new RequireOS();
-            os.displayOSInfo( getLog(), true );
-        }
-        catch ( ComponentLookupException e )
-        {
-            getLog().warn( "Unable to Lookup component: " + e.getLocalizedMessage() );
-        }
+        String mavenVersion = session.getSystemProperties().getProperty( "maven.version" );
+        getLog().info( "Maven Version: " + mavenVersion );
+        getLog().info( "JDK Version: " + SystemUtils.JAVA_VERSION + " normalized as: "
+            + RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
+        RequireOS os = new RequireOS();
+        os.displayOSInfo( getLog(), true );
     }
 
 }

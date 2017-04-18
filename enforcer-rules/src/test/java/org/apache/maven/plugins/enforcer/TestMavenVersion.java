@@ -19,13 +19,12 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import junit.framework.TestCase;
-
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
-// TODO: Auto-generated Javadoc
+import junit.framework.TestCase;
+
 /**
  * The Class TestMavenVersion.
  *
@@ -66,7 +65,7 @@ public class TestMavenVersion
         }
 
         // this shouldn't crash
-        rule.setVersion( SystemUtils.JAVA_VERSION_TRIMMED );
+        rule.setVersion( SystemUtils.JAVA_VERSION );
         rule.execute( helper );
 
     }

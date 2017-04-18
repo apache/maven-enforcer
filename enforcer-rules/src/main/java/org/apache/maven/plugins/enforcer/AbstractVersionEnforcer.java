@@ -130,7 +130,6 @@ public abstract class AbstractVersionEnforcer
         ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
         if ( recommendedVersion == null )
         {
-            @SuppressWarnings( "unchecked" )
             List<Restriction> restrictions = allowedRange.getRestrictions();
             for ( Restriction restriction : restrictions )
             {

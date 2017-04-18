@@ -33,7 +33,6 @@ public class BannedPlugins
     extends BannedDependencies
 {
 
-    @SuppressWarnings( "unchecked" )
     protected Set<Artifact> getDependenciesToCheck( MavenProject project )
     {
         return project.getPluginArtifacts();

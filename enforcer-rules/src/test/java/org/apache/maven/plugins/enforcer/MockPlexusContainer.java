@@ -30,7 +30,6 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.classworlds.ClassRealm;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
-import org.codehaus.plexus.component.composition.CompositionException;
 import org.codehaus.plexus.component.composition.UndefinedComponentComposerException;
 import org.codehaus.plexus.component.discovery.ComponentDiscoveryListener;
 import org.codehaus.plexus.component.factory.ComponentInstantiationException;
@@ -38,6 +37,7 @@ import org.codehaus.plexus.component.repository.ComponentDescriptor;
 import org.codehaus.plexus.component.repository.exception.ComponentLifecycleException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.component.repository.exception.ComponentRepositoryException;
+import org.codehaus.plexus.configuration.PlexusConfigurationException;
 import org.codehaus.plexus.configuration.PlexusConfigurationResourceException;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.logging.Logger;
@@ -78,7 +78,6 @@ public class MockPlexusContainer
      * @see org.codehaus.plexus.PlexusContainer#addComponentDescriptor(org.codehaus.plexus.component.repository.ComponentDescriptor)
      */
     public void addComponentDescriptor( ComponentDescriptor theComponentDescriptor )
-        throws ComponentRepositoryException
     {
         // TODO Auto-generated method stub
 
@@ -125,7 +124,7 @@ public class MockPlexusContainer
      *      org.codehaus.plexus.component.repository.ComponentDescriptor)
      */
     public void composeComponent( Object theComponent, ComponentDescriptor theComponentDescriptor )
-        throws CompositionException, UndefinedComponentComposerException
+        throws UndefinedComponentComposerException
     {
         // TODO Auto-generated method stub
 
@@ -230,17 +229,6 @@ public class MockPlexusContainer
      * @see org.codehaus.plexus.PlexusContainer#getComponentRealm(java.lang.String)
      */
     public ClassRealm getComponentRealm( String theComponentKey )
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.codehaus.plexus.PlexusContainer#getContainerRealm()
-     */
-    public ClassRealm getContainerRealm()
     {
         // TODO Auto-generated method stub
         return null;
@@ -530,6 +518,145 @@ public class MockPlexusContainer
     {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public <T> T lookup( Class<T> role )
+        throws ComponentLookupException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T> T lookup( Class<T> role, String hint )
+        throws ComponentLookupException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T> T lookup( Class<T> type, String role, String hint )
+        throws ComponentLookupException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T> List<T> lookupList( Class<T> role )
+        throws ComponentLookupException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T> Map<String, T> lookupMap( Class<T> role )
+        throws ComponentLookupException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean hasComponent( Class<?> role )
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean hasComponent( Class<?> role, String hint )
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean hasComponent( Class<?> type, String role, String hint )
+    {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void addComponent( Object component, String role )
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public <T> void addComponent( T component, Class<?> role, String hint )
+    {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public ComponentDescriptor<?> getComponentDescriptor( String role, String hint )
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T> ComponentDescriptor<T> getComponentDescriptor( Class<T> type, String role, String hint )
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T> List<ComponentDescriptor<T>> getComponentDescriptorList( Class<T> type, String role )
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public <T> Map<String, ComponentDescriptor<T>> getComponentDescriptorMap( Class<T> type, String role )
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<ComponentDescriptor<?>> discoverComponents( org.codehaus.plexus.classworlds.realm.ClassRealm classRealm )
+        throws PlexusConfigurationException
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public org.codehaus.plexus.classworlds.realm.ClassRealm getContainerRealm()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public org.codehaus.plexus.classworlds.realm.ClassRealm setLookupRealm( org.codehaus.plexus.classworlds.realm.ClassRealm realm )
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public org.codehaus.plexus.classworlds.realm.ClassRealm getLookupRealm()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public org.codehaus.plexus.classworlds.realm.ClassRealm createChildRealm( String id )
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

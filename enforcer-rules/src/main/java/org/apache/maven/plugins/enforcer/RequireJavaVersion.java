@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -49,7 +49,7 @@ public class RequireJavaVersion
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
-        String javaVersion = SystemUtils.JAVA_VERSION_TRIMMED;
+        String javaVersion = SystemUtils.JAVA_VERSION;
         Log log = helper.getLog();
 
         log.debug( "Detected Java String: " + javaVersion );

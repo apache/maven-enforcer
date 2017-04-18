@@ -19,11 +19,11 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.execution.RuntimeInformation;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.apache.maven.execution.MavenSession;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
  * This rule checks that the Maven version is allowed.
@@ -45,14 +45,14 @@ public class RequireMavenVersion
     {
         try
         {
-            RuntimeInformation rti = (RuntimeInformation) helper.getComponent( RuntimeInformation.class );
-            ArtifactVersion detectedMavenVersion = rti.getApplicationVersion();
-            helper.getLog().debug( "Detected Maven Version: " + detectedMavenVersion );
-            enforceVersion( helper.getLog(), "Maven", getVersion(), detectedMavenVersion );
+            MavenSession mavenSession = (MavenSession) helper.evaluate( "${session}" );
+            String mavenVersion = mavenSession.getSystemProperties().getProperty( "maven.version" );
+            helper.getLog().debug( "Detected Maven Version: " + mavenVersion );
+            DefaultArtifactVersion detectedVersion = new DefaultArtifactVersion( mavenVersion );
+            enforceVersion( helper.getLog(), "Maven", getVersion(), detectedVersion );
         }
-        catch ( ComponentLookupException e )
+        catch ( ExpressionEvaluationException e )
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
