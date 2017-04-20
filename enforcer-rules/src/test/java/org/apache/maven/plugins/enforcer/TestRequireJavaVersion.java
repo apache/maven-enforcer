@@ -19,11 +19,13 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-
-import junit.framework.TestCase;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * The Class TestRequireJavaVersion.
@@ -31,32 +33,34 @@ import junit.framework.TestCase;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestRequireJavaVersion
-    extends TestCase
 {
 
     /**
      * Test fix jdk version.
      */
+    @Test
     public void testFixJDKVersion()
     {
         // test that we only take the first 3 versions for
-        // comparision
-        assertEquals( "1.5.0-11", RequireJavaVersion.normalizeJDKVersion( "1.5.0_11" ) );
-        assertEquals( "1.5.1", RequireJavaVersion.normalizeJDKVersion( "1.5.1" ) );
-        assertEquals( "1.5.2-1", RequireJavaVersion.normalizeJDKVersion( "1.5.2-1.b11" ) );
-        assertEquals( "1.5.3-11", RequireJavaVersion.normalizeJDKVersion( "1.5.3_11" ) );
-        assertEquals( "1.5.4-5", RequireJavaVersion.normalizeJDKVersion( "1.5.4.5_11" ) );
-        assertEquals( "1.5.5-6", RequireJavaVersion.normalizeJDKVersion( "1.5.5.6_11.2" ) );
+        // comparison
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1.5.0_11" ) ).isEqualTo( "1.5.0-11" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1.5.1" ) ).isEqualTo( "1.5.1" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1.5.2-1.b11" ) ).isEqualTo( "1.5.2-1" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1.5.3_11" ) ).isEqualTo( "1.5.3-11" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1.5.4.5_11" ) ).isEqualTo( "1.5.4-5" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1.5.5.6_11.2" ) ).isEqualTo( "1.5.5-6" );
 
         // test for non-standard versions
-        assertEquals( "1.5.0-11", RequireJavaVersion.normalizeJDKVersion( "1-5-0-11" ) );
-        assertEquals( "1.5.0-11", RequireJavaVersion.normalizeJDKVersion( "1-_5-_0-_11" ) );
-        assertEquals( "1.5.0-11", RequireJavaVersion.normalizeJDKVersion( "1_5_0_11" ) );
-        assertEquals( "1.5.0-7", RequireJavaVersion.normalizeJDKVersion( "1.5.0-07" ) );
-        assertEquals( "1.5.0-7", RequireJavaVersion.normalizeJDKVersion( "1.5.0-b7" ) );
-        assertEquals( "1.5.0-7", RequireJavaVersion.normalizeJDKVersion( "1.5.0-;7" ) );
-        assertEquals( "1.6.0", RequireJavaVersion.normalizeJDKVersion( "1.6.0-dp" ) );
-        assertEquals( "1.6.0-2", RequireJavaVersion.normalizeJDKVersion( "1.6.0-dp2" ) );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1-5-0-11" ) ).isEqualTo( "1.5.0-11" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1-_5-_0-_11" ) ).isEqualTo( "1.5.0-11" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1_5_0_11" ) ).isEqualTo( "1.5.0-11" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1.5.0-07" ) ).isEqualTo( "1.5.0-7" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1.5.0-b7" ) ).isEqualTo( "1.5.0-7" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1.5.0-;7" ) ).isEqualTo( "1.5.0-7" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1.6.0-dp" ) ).isEqualTo( "1.6.0" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1.6.0-dp2" ) ).isEqualTo( "1.6.0-2" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "1.8.0_73" ) ).isEqualTo( "1.8.0-73" );
+
     }
 
     /**
@@ -64,44 +68,58 @@ public class TestRequireJavaVersion
      *
      * @throws EnforcerRuleException the enforcer rule exception
      */
-    public void testRule()
+    @Test
+    public void settingsTheJavaVersionAsNormalizedVersionShouldNotFail()
         throws EnforcerRuleException
     {
-        String thisVersion = RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION);
+        String normalizedJDKVersion = RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION );
 
         RequireJavaVersion rule = new RequireJavaVersion();
-        rule.setVersion( thisVersion );
+        rule.setVersion( normalizedJDKVersion );
 
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
 
         // test the singular version
         rule.execute( helper );
+        // intentionally no assertThat(...) because we don't expect and exception.
+    }
 
+    @Test( expected = EnforcerRuleException.class )
+    public void excludingTheCurrentJavaVersionViaRangeThisShouldFailWithException()
+        throws EnforcerRuleException
+    {
+        String thisVersion = RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION );
+
+        RequireJavaVersion rule = new RequireJavaVersion();
         // exclude this version
         rule.setVersion( "(" + thisVersion );
 
-        try
-        {
-            rule.execute( helper );
-            fail( "Expected an exception." );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            // expected to catch this.
-        }
-
-        // this shouldn't crash
-        rule.setVersion( SystemUtils.JAVA_VERSION );
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
         rule.execute( helper );
+        // intentionally no assertThat(...) because we expect and exception.
+    }
 
+    @Test
+    @Ignore
+    // TODO: Think about the intention of this test? What should it prove?
+    public void thisShouldNotCrash()
+        throws EnforcerRuleException
+    {
+        RequireJavaVersion rule = new RequireJavaVersion();
+        rule.setVersion( SystemUtils.JAVA_VERSION );
+
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
+        rule.execute( helper );
+        // intentionally no assertThat(...) because we don't expect and exception.
     }
 
     /**
      * Test id.
      */
+    @Test
     public void testId()
     {
         RequireJavaVersion rule = new RequireJavaVersion();
-        rule.getCacheId();
+        assertThat( rule.getCacheId() ).isEqualTo( "0" );
     }
 }

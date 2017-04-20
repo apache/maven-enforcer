@@ -52,9 +52,9 @@ public class RequireJavaVersion
         String javaVersion = SystemUtils.JAVA_VERSION;
         Log log = helper.getLog();
 
-        log.debug( "Detected Java String: " + javaVersion );
+        log.debug( "Detected Java String: '" + javaVersion + "'" );
         javaVersion = normalizeJDKVersion( javaVersion );
-        log.debug( "Normalized Java String: " + javaVersion );
+        log.debug( "Normalized Java String: '" + javaVersion + "'" );
 
         ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion( javaVersion );
 
