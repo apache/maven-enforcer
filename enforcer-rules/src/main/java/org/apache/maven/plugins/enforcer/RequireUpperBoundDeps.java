@@ -65,6 +65,13 @@ public class RequireUpperBoundDeps
     private boolean uniqueVersions;
 
     /**
+     * Dependencies to ignore.
+     *
+     * @since TBD
+     */
+    private List<String> excludes = null;
+
+    /**
      * Set to {@code true} if timestamped snapshots should be used.
      * 
      * @param uniqueVersions 
@@ -73,6 +80,15 @@ public class RequireUpperBoundDeps
     public void setUniqueVersions( boolean uniqueVersions )
     {
         this.uniqueVersions = uniqueVersions;
+    }
+
+    /**
+     * Sets dependencies to exclude.
+     * @param excludes a list of {@code groupId:artifactId} names
+     */
+    public void setExcludes( List<String> excludes )
+    {
+        this.excludes = excludes;
     }
 
     // CHECKSTYLE_OFF: LineLength
@@ -159,7 +175,16 @@ public class RequireUpperBoundDeps
         List<String> errorMessages = new ArrayList<String>( conflicts.size() );
         for ( List<DependencyNode> conflict : conflicts )
         {
-            errorMessages.add( buildErrorMessage( conflict ) );
+            Artifact artifact = conflict.get( 0 ).getArtifact();
+            String groupArt = artifact.getGroupId() + ":" + artifact.getArtifactId();
+            if ( excludes != null && excludes.contains( groupArt ) )
+            {
+                log.info( "Ignoring requireUpperBoundDeps in " + groupArt );
+            }
+            else
+            {
+                errorMessages.add( buildErrorMessage( conflict ) );
+            }
         }
         return errorMessages;
     }

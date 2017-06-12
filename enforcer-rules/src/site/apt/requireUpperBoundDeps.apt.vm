@@ -104,6 +104,11 @@ and
                 <requireUpperBoundDeps>
                   <!-- 'uniqueVersions' (default:false) can be set to true if you want to compare the timestamped SNAPSHOTs  -->
                   <!-- <uniqueVersions>true</uniqueVersions> -->
+                  <!-- If you wish to ignore certain cases:
+                  <excludes>
+                    <exclude>com.google.guava:guava</exclude>
+                  </excludes>
+                  -->
                 </requireUpperBoundDeps>
               </rules>
             </configuration>
