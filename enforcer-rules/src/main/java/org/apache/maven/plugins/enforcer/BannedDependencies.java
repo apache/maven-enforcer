@@ -199,7 +199,7 @@ public class BannedDependencies
      * Includes override the exclude rules. It is meant to allow wide exclusion rules with 
      * wildcards and still allow a
      * smaller set of includes. <br>
-     * For example, to ban all xerces except xerces-api -> exclude "xerces", 
+     * For example, to ban all xerces except xerces-api → exclude "xerces",
      * include "xerces:xerces-api"
      * 
      * @see #setIncludes(List)
