@@ -30,8 +30,8 @@
 
   <artifactId>enforcer-rules</artifactId>
 
-  <name>Apache Maven Enforcer Rules</name>
-  <description>This component contains the standard Enforcer Rules</description>
+  <name>Apache Maven Enforcer Built-In Rules</name>
+  <description>This component contains the built-in Enforcer Rules</description>
 
   <dependencies>
     <dependency>
