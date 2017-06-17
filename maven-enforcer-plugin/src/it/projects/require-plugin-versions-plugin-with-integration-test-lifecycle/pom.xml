@@ -53,7 +53,7 @@
         </executions>
       </plugin>
       <plugin>
-        <!-- For http://jira.codehaus.org/browse/MENFORCER-11 This plugin
+        <!-- For https://issues.apache.org/jira/browse/MENFORCER-11 This plugin
           attaches additional lifecycles "integration-test" which were failed to be
           handled correctly. -->
         <groupId>org.eclipse.tycho</groupId>
