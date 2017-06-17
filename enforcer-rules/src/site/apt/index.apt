@@ -16,16 +16,16 @@
 ~~ under the License.    
  
   ------
-  Standard Rules
+  Built-In Rules
   ------
   Brian Fox
   ------
   2015-01-27
   ------
 
-Standard Rules
+Built-In Rules
 
-  The following standard rules ship along with the enforcer plugin:
+  The following built-in rules ship along with the enforcer plugin:
 
   * {{{./alwaysFail.html}alwaysFail}} - Always fail... used to test plugin configuration.
 

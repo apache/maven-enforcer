@@ -28,7 +28,7 @@ under the License.
       <item name="Goals" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
-      <item name="Standard Rules" href="../../enforcer/enforcer-rules/index.html"/>
+      <item name="Built-In Rules" href="../../enforcer/enforcer-rules/index.html"/>
       <!-- According to https://issues.apache.org/jira/browse/MNGSITE-152 -->
       <item name="License" href="http://www.apache.org/licenses/"/>
       <item name="Download" href="../download.html"/>

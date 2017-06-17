@@ -43,7 +43,7 @@ Usage
 
    This goal is meant to be bound to a lifecycle phase and configured in your
    <<<pom.xml>>>. The enforcers execute the configured rules to check for certain constraints. 
-   The available standard rules are described {{{../enforcer-rules/index.html}here}}. Besides the rules to execute, these goals support three options:
+   The available built-in rules are described {{{../enforcer-rules/index.html}here}}. Besides the rules to execute, these goals support three options:
    
    * {{{./enforce-mojo.html#skip}skip}} - a quick way to skip checks via a profile or using <<<-Denforcer.skip=true>>> from the command line.
    
@@ -55,7 +55,7 @@ Usage
    
    Each rule to be executed should be added to the rules element along with the specific configuration for that rule.
 
-   As of version 1.4 you may add a <<<level>>> element to the standard rules. Valid values are <<<WARN>>> and <<<ERROR>>>. When
+   As of version 1.4, you may add a <<<level>>> element to the rules. Valid values are <<<WARN>>> and <<<ERROR>>>. When
    <<<level>>> <<<WARN>>> is specified, the rule will only spit out a warning but will not fail the build.
    
 
