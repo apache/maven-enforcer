@@ -19,7 +19,6 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
@@ -65,7 +64,7 @@ public class TestMavenVersion
         }
 
         // this shouldn't crash
-        rule.setVersion( SystemUtils.JAVA_VERSION );
+        rule.setVersion( "2.0.5_01" );
         rule.execute( helper );
 
     }

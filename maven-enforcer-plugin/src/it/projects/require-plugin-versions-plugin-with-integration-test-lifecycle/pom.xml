@@ -25,7 +25,7 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   <properties>
-    <tycho-version>0.19.0</tycho-version><!-- minimum 0.18.1: depends on https://bugs.eclipse.org/bugs/show_bug.cgi?id=406056 -->
+    <tycho-version>0.22.0</tycho-version><!-- minimum 0.22.0: depends on https://bugs.eclipse.org/bugs/show_bug.cgi?id=435313 -->
   </properties>
   <build>
     <plugins>
@@ -68,6 +68,7 @@
         <configuration>
           <!-- recommended: use p2-based target platform resolver -->
           <resolver>p2</resolver>
+          <executionEnvironment>JavaSE-@maven.compiler.source@</executionEnvironment>
         </configuration>
       </plugin>
       <plugin>
