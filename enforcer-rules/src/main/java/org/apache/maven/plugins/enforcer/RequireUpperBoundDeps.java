@@ -44,7 +44,6 @@ import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.i18n.I18N;
 
 /**
  * Rule to enforce that the resolved dependency is also the most recent one of all transitive dependencies.
@@ -56,8 +55,6 @@ public class RequireUpperBoundDeps
     extends AbstractNonCacheableEnforcerRule
 {
     private static Log log;
-
-    private static I18N i18n;
 
     /**
      * @since 1.3
@@ -145,10 +142,6 @@ public class RequireUpperBoundDeps
         }
         try
         {
-            if ( i18n == null )
-            {
-                i18n = (I18N) helper.getComponent( I18N.class );
-            }
             DependencyNode node = getNode( helper );
             RequireUpperBoundDepsVisitor visitor = new RequireUpperBoundDepsVisitor();
             visitor.setUniqueVersions( uniqueVersions );
@@ -159,10 +152,6 @@ public class RequireUpperBoundDeps
                 throw new EnforcerRuleException( "Failed while enforcing RequireUpperBoundDeps. The error(s) are "
                     + errorMessages );
             }
-        }
-        catch ( ComponentLookupException e )
-        {
-            throw new EnforcerRuleException( "Unable to lookup a component " + e.getLocalizedMessage(), e );
         }
         catch ( Exception e )
         {

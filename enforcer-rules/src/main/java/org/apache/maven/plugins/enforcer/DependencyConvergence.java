@@ -40,7 +40,6 @@ import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.i18n.I18N;
 
 /**
  * @author <a href="mailto:rex@e-hoffman.org">Rex Hoffman</a>
@@ -50,8 +49,6 @@ public class DependencyConvergence
 {
 
     private static Log log;
-
-    private static I18N i18n;
 
     private boolean uniqueVersions;
 
@@ -113,10 +110,6 @@ public class DependencyConvergence
         }
         try
         {
-            if ( i18n == null )
-            {
-                i18n = (I18N) helper.getComponent( I18N.class );
-            }
             DependencyNode node = getNode( helper );
             DependencyVersionMap visitor = new DependencyVersionMap( log );
             visitor.setUniqueVersions( uniqueVersions );
@@ -132,10 +125,6 @@ public class DependencyConvergence
                 throw new EnforcerRuleException( "Failed while enforcing releasability. "
                     + "See above detailed error message." );
             }
-        }
-        catch ( ComponentLookupException e )
-        {
-            throw new EnforcerRuleException( "Unable to lookup a component " + e.getLocalizedMessage(), e );
         }
         catch ( Exception e )
         {
