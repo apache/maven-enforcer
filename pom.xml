@@ -129,9 +129,9 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>2.6</version>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.5</version> <!-- commons-lang3 >= 3.6 require at least Java 7 -->
       </dependency>
       <dependency>
         <groupId>commons-codec</groupId>

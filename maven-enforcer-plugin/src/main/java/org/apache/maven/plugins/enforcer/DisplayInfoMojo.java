@@ -19,7 +19,6 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
@@ -80,9 +79,10 @@ public class DisplayInfoMojo
         throws MojoExecutionException
     {
         String mavenVersion = session.getSystemProperties().getProperty( "maven.version" );
+        String javaVersion = System.getProperty( "java.version" );
         getLog().info( "Maven Version: " + mavenVersion );
-        getLog().info( "JDK Version: " + SystemUtils.JAVA_VERSION + " normalized as: "
-            + RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION_TRIMMED ) );
+        getLog().info( "JDK Version: " + javaVersion + " normalized as: "
+            + RequireJavaVersion.normalizeJDKVersion( javaVersion ) );
         RequireOS os = new RequireOS();
         os.displayOSInfo( getLog(), true );
     }
