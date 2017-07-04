@@ -121,7 +121,19 @@ public final class EnforcerTestUtils
      * @param mockExpression the mock expression
      * @return the helper
      */
-    public static EnforcerRuleHelper getHelper( MavenProject project, boolean mockExpression )
+    public static EnforcerRuleHelper getHelper( MavenProject project, boolean mockExpression ) {
+        return getHelper(project, mockExpression, null);
+    }
+    
+    /**
+     * Gets the helper.
+     *
+     * @param project the project
+     * @param mockExpression the mock expression
+     * @param container Plexus container to be used. If {@code null}, a default Maven Session one will be used.
+     * @return the helper
+     */
+    public static EnforcerRuleHelper getHelper( MavenProject project, boolean mockExpression, PlexusContainer container)
     {
         MavenSession session = getMavenSession();
         ExpressionEvaluator eval;
@@ -136,7 +148,7 @@ public final class EnforcerTestUtils
             session.setCurrentProject( project );
             eval = new PluginParameterExpressionEvaluator( session, mockExecution );
         }
-        return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(), null );
+        return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(), container );
     }
 
     /**
