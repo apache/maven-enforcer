@@ -71,7 +71,7 @@ public class RequireUpperBoundDeps
     private List<String> excludes = null;
     
     /**
-     * If {@code true}, upper bounds from test dependencies will be ignored.
+     * Dependency scopes to ignore.
      * 
      * @since TBD
      */
