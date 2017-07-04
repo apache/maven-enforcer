@@ -21,9 +21,11 @@ package org.apache.maven.plugins.enforcer;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -67,6 +69,13 @@ public class RequireUpperBoundDeps
      * @since TBD
      */
     private List<String> excludes = null;
+    
+    /**
+     * If {@code true}, upper bounds from test dependencies will be ignored.
+     * 
+     * @since TBD
+     */
+    private List<String> ignoredDependencyScopes;
 
     /**
      * Set to {@code true} if timestamped snapshots should be used.
@@ -86,6 +95,17 @@ public class RequireUpperBoundDeps
     public void setExcludes( List<String> excludes )
     {
         this.excludes = excludes;
+    }
+
+    /**
+     * Ignores particular dependency scopes.
+     * 
+     * @param scopes a list of ignored scopes
+     * @since TBD
+     */
+    public void setIgnoreDependencyScopes( List<String> scopes ) 
+    {
+        this.ignoredDependencyScopes = scopes;
     }
 
     // CHECKSTYLE_OFF: LineLength
@@ -143,8 +163,8 @@ public class RequireUpperBoundDeps
         try
         {
             DependencyNode node = getNode( helper );
-            RequireUpperBoundDepsVisitor visitor = new RequireUpperBoundDepsVisitor();
-            visitor.setUniqueVersions( uniqueVersions );
+            RequireUpperBoundDepsVisitor visitor = new RequireUpperBoundDepsVisitor
+                    ( uniqueVersions, ignoredDependencyScopes, log );
             node.accept( visitor );
             List<String> errorMessages = buildErrorMessages( visitor.getConflicts() );
             if ( errorMessages.size() > 0 )
@@ -242,11 +262,16 @@ public class RequireUpperBoundDeps
         implements DependencyNodeVisitor
     {
 
-        private boolean uniqueVersions;
+        private final boolean uniqueVersions;
+        private final Set<String> ignoredDependencyScopes;
+        private final Log log;
 
-        public void setUniqueVersions( boolean uniqueVersions )
+        public RequireUpperBoundDepsVisitor( boolean uniqueVersions, List<String> ignoredDependencyScopes, Log log )
         {
             this.uniqueVersions = uniqueVersions;
+            this.ignoredDependencyScopes = ignoredDependencyScopes != null 
+                    ? new HashSet<String>( ignoredDependencyScopes ) : null;
+            this.log = log;
         }
 
         private Map<String, List<DependencyNodeHopCountPair>> keyToPairsMap =
@@ -254,6 +279,16 @@ public class RequireUpperBoundDeps
 
         public boolean visit( DependencyNode node )
         {
+            Artifact artifact = node.getArtifact();
+            String artifactScope = artifact.getScope();
+            if ( ignoredDependencyScopes != null && ignoredDependencyScopes.contains( artifactScope ) ) 
+            {
+                // If the scope is ignored, skip the artifact and its children
+                String groupArt = artifact.getGroupId() + ":" + artifact.getArtifactId();
+                log.warn( "Skipping dependency " + groupArt + ". Its scope is ignored: " + artifactScope );
+                return false;
+            }
+            
             DependencyNodeHopCountPair pair = new DependencyNodeHopCountPair( node );
             String key = pair.constructKey();
             List<DependencyNodeHopCountPair> pairs = keyToPairsMap.get( key );

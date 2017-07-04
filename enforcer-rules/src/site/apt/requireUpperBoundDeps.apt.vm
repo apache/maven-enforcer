@@ -109,6 +109,11 @@ and
                     <exclude>com.google.guava:guava</exclude>
                   </excludes>
                   -->
+                  <!-- If you wish to ignore certain dependency scopes:
+                  <ignoreDependencyScopes>
+                    <scope>test</scope>
+                  </ignoreDependencyScopes>
+                  -->
                 </requireUpperBoundDeps>
               </rules>
             </configuration>

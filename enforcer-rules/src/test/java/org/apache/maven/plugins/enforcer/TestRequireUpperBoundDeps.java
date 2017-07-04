@@ -107,6 +107,7 @@ public class TestRequireUpperBoundDeps {
         TestEnforcerRuleUtils.execute(rule, helper, false);
     }
     
+    // MENFORCER-273
     @Test
     public void testShouldPassForOlderDependencyIfExcluded() throws Exception {
         dependencyTree.addDependency(library1_10);
@@ -116,6 +117,28 @@ public class TestRequireUpperBoundDeps {
                 
         rule.setExcludes(Arrays.asList("my:library1"));
         TestEnforcerRuleUtils.execute(rule, helper, false);
+    }
+    
+    // MENFORCER-276
+    @Test
+    public void testShouldPassIfTestArtifactsAreIgnored() throws Exception {
+        dependencyTree.addDependency(library1_10);
+        
+        library2_10.setScope("test");
+        DependencyNode n = new DependencyNode(library2_10);
+        n.addChild(new DependencyNode(library1_20));
+        dependencyTree.addDependency(n);
+                
+        rule.setIgnoreDependencyScopes(Arrays.asList("test"));
+        TestEnforcerRuleUtils.execute(rule, helper, false);
+    }
+    
+    // MENFORCER-276
+    @Test
+    public void testShouldFailIfWrongScopeIsIgnored() throws Exception {
+        testShouldPassIfTestArtifactsAreIgnored();   
+        rule.setIgnoreDependencyScopes(Arrays.asList("provided"));
+        TestEnforcerRuleUtils.execute(rule, helper, true);
     }
     
     // TODO: make it a generic class
