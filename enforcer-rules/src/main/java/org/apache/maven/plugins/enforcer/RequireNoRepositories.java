@@ -117,9 +117,7 @@ public class RequireNoRepositories
         this.allowSnapshotPluginRepositories = allowSnapshotPluginRepositories;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

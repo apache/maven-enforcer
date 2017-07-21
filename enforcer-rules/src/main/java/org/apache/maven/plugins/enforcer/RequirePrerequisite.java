@@ -69,9 +69,7 @@ public class RequirePrerequisite
         this.packagings = packagings;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

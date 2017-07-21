@@ -34,12 +34,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 public class RequireMavenVersion
     extends AbstractVersionEnforcer
 {
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
-     */
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

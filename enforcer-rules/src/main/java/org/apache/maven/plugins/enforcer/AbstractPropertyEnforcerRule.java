@@ -93,14 +93,8 @@ public abstract class AbstractPropertyEnforcerRule
     {
         return regexMessage;
     }
-    
 
-    /**
-     * Execute the rule.
-     *
-     * @param helper the helper
-     * @throws EnforcerRuleException the enforcer rule exception
-     */
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

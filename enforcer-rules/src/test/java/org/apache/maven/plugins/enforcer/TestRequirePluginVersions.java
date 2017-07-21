@@ -38,7 +38,6 @@ import org.apache.maven.plugins.enforcer.utils.PluginWrapper;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TestRequirePluginVersions.
  *

@@ -28,7 +28,6 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.TestEnforcerRuleUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TestRequireReleaseVersion.
  *

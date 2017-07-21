@@ -24,7 +24,6 @@ import junit.framework.TestCase;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TestRequireProperty.
  *

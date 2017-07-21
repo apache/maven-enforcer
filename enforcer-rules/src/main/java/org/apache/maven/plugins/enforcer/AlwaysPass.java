@@ -31,9 +31,7 @@ public class AlwaysPass
     extends AbstractNonCacheableEnforcerRule
 {
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

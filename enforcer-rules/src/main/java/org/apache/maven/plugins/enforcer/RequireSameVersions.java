@@ -51,6 +51,7 @@ public class RequireSameVersions
 
     private Set<String> reportPlugins = new HashSet<String>();
 
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

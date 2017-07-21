@@ -45,7 +45,6 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class EnforcerRuleUtils.
  *
@@ -101,7 +100,6 @@ public class EnforcerRuleUtils
      *
      * @param helper the helper
      */
-    @SuppressWarnings( "unchecked" )
     public EnforcerRuleUtils( EnforcerRuleHelper helper )
     {
 

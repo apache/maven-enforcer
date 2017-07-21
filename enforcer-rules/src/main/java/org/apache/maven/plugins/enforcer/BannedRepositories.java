@@ -78,11 +78,7 @@ public class BannedRepositories
     // Public methods
     // ----------------------------------------------------------------------
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
-     */
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

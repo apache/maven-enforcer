@@ -36,7 +36,6 @@ import org.apache.maven.plugins.enforcer.MockProject;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TestEnforcerRuleUtils.
  *

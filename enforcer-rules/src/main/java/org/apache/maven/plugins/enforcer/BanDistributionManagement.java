@@ -61,9 +61,7 @@ public class BanDistributionManagement
 
     private Log logger;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

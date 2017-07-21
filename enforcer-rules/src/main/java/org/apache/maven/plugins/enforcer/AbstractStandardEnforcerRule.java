@@ -49,11 +49,7 @@ public abstract class AbstractStandardEnforcerRule
         return message;
     }
 
-    /**
-     * Returns the level of enforcement.
-     *
-     * @return level
-     */
+    @Override
     public EnforcerLevel getLevel()
     {
         return level;

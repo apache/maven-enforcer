@@ -28,7 +28,6 @@ import org.apache.maven.plugins.enforcer.MockPathTranslator;
 import org.apache.maven.plugins.enforcer.MockProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TestMockEnforcerExpressionEvaluator.
  */

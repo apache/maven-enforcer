@@ -59,12 +59,14 @@ public class RequireEnvironmentVariable
         return envValue;
     }
 
+    @Override
     public boolean isCacheable()
     {
         // environment variables won't change while maven is on the run
         return true;
     }
 
+    @Override
     public boolean isResultValid( EnforcerRule cachedRule )
     {
         // this rule shall always have the same result, since environment
@@ -72,6 +74,7 @@ public class RequireEnvironmentVariable
         return true;
     }
 
+    @Override
     public String getCacheId()
     {
         return variableName;

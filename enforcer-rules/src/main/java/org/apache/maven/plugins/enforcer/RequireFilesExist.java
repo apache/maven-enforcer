@@ -27,23 +27,14 @@ import java.io.File;
 public class RequireFilesExist
     extends AbstractRequireFiles
 {
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.plugins.enforcer.AbstractRequireFiles#checkFile(java.io.File)
-     */
+    @Override
     boolean checkFile( File file )
     {
         // if we get here and the handle is null, treat it as a success
         return file == null ? true : file.exists();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.maven.plugins.enforcer.AbstractRequireFiles#getErrorMsg()
-     */
+    @Override
     String getErrorMsg()
     {
         return "Some required files are missing:\n";

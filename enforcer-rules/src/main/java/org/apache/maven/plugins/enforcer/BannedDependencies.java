@@ -67,9 +67,7 @@ public class BannedDependencies
      */
     private List<String> includes = null;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     protected Set<Artifact> checkDependencies( Set<Artifact> theDependencies, Log log )
         throws EnforcerRuleException
     {

@@ -48,6 +48,7 @@ public class ReactorModuleConvergence
 
     private Log logger;
 
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
@@ -382,7 +383,6 @@ public class ReactorModuleConvergence
         {
             logger.debug( "Project: " + mavenProject.getId() );
 
-            @SuppressWarnings( "unchecked" )
             List<Dependency> dependencies = mavenProject.getDependencies();
             if ( hasDependencies( dependencies ) )
             {

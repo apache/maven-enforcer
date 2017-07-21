@@ -29,7 +29,6 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class TestAbstractVersionEnforcer.
  *

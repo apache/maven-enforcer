@@ -136,6 +136,7 @@ public class BanTransitiveDependencies
         return hasTransitiveDependencies;
     }
 
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

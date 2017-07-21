@@ -49,7 +49,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class BanDuplicatePomDependencyVersions
     extends AbstractNonCacheableEnforcerRule
 {
-
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

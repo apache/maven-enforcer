@@ -37,6 +37,7 @@ public class RequireSnapshotVersion
      */
     private boolean failWhenParentIsRelease = true;
 
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

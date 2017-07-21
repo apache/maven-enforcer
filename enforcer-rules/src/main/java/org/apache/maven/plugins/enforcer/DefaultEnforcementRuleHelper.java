@@ -48,9 +48,6 @@ public class DefaultEnforcementRuleHelper
     /** The evaluator. */
     private ExpressionEvaluator evaluator;
 
-    /** The session. */
-    private MavenSession session;
-
     /** The container. */
     private PlexusContainer container;
 
@@ -67,7 +64,6 @@ public class DefaultEnforcementRuleHelper
     {
         this.evaluator = evaluator;
         this.log = log;
-        this.session = session;
         if ( container != null )
         {
             this.container = container;
@@ -78,97 +74,68 @@ public class DefaultEnforcementRuleHelper
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#getLog()
-     */
+    @Override
     public Log getLog()
     {
         return log;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator#alignToBaseDirectory(java.io.File)
-     */
+    @Override
     public File alignToBaseDirectory( File theFile )
     {
         return evaluator.alignToBaseDirectory( theFile );
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator#evaluate(java.lang.String)
-     */
+    @Override
     public Object evaluate( String theExpression )
         throws ExpressionEvaluationException
     {
         return evaluator.evaluate( theExpression );
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.shared.enforcer.rule.api.EnforcerRuleHelper#getRuntimeInformation()
-     */
-    public Object getComponent( Class clazz )
+    @Override
+    public <T> T getComponent( Class<T> clazz )
         throws ComponentLookupException
     {
-        return getComponent( clazz.getName() );
+        return container.lookup( clazz );
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#lookup(java.lang.String)
-     */
+    @Override
     public Object getComponent( String theComponentKey )
         throws ComponentLookupException
     {
         return container.lookup( theComponentKey );
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#lookup(java.lang.String, java.lang.String)
-     */
+    @Override
     public Object getComponent( String theRole, String theRoleHint )
         throws ComponentLookupException
     {
         return container.lookup( theRole, theRoleHint );
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#lookupList(java.lang.String)
-     */
-    public List getComponentList( String theRole )
+    @Override
+    public List<Object> getComponentList( String theRole )
         throws ComponentLookupException
     {
         return container.lookupList( theRole );
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#lookupMap(java.lang.String)
-     */
-    public Map getComponentMap( String theRole )
+    @Override
+    public Map<String, Object> getComponentMap( String theRole )
         throws ComponentLookupException
     {
         return container.lookupMap( theRole );
     }
+    
+    @Override
+    public <T> T getComponent( Class<T> clazz, String roleHint )
+        throws ComponentLookupException
+    {
+        return container.lookup( clazz, roleHint );
+    }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRuleHelper#getContainer()
-     */
+    @Override
     public PlexusContainer getContainer()
     {
         return container;

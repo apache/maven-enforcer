@@ -101,6 +101,7 @@ public class DependencyConvergence
         }
     }
 
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
@@ -187,35 +188,19 @@ public class DependencyConvergence
         return builder.toString();
     }
 
-    /**
-     * If your rule is cacheable, you must return a unique id when parameters or conditions change that would cause the
-     * result to be different. Multiple cached results are stored based on their id. The easiest way to do this is to
-     * return a hash computed from the values of your parameters. If your rule is not cacheable, then the result here is
-     * not important, you may return anything.
-     */
+    @Override
     public String getCacheId()
     {
         return "";
     }
 
-    /**
-     * This tells the system if the results are cacheable at all. Keep in mind that during forked builds and other
-     * things, a given rule may be executed more than once for the same project. This means that even things that change
-     * from project to project may still be cacheable in certain instances.
-     */
+    @Override
     public boolean isCacheable()
     {
         return false;
     }
 
-    /**
-     * If the rule is cacheable and the same id is found in the cache, the stored results are passed to this method to
-     * allow double checking of the results. Most of the time this can be done by generating unique ids, but sometimes
-     * the results of objects returned by the helper need to be queried. You may for example, store certain objects in
-     * your rule and then query them later.
-     * 
-     * @param rule
-     */
+    @Override
     public boolean isResultValid( EnforcerRule rule )
     {
         return false;

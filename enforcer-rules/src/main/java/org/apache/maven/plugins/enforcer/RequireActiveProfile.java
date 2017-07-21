@@ -72,11 +72,7 @@ public class RequireActiveProfile
         this.all = all;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
-     */
+    @Override
     public void execute( EnforcerRuleHelper theHelper )
         throws EnforcerRuleException
     {
@@ -140,7 +136,6 @@ public class RequireActiveProfile
      */
     protected boolean isProfileActive( MavenProject project, String profileName )
     {
-        @SuppressWarnings( "unchecked" )
         List<Profile> activeProfiles = project.getActiveProfiles();
         if ( activeProfiles != null && !activeProfiles.isEmpty() )
         {

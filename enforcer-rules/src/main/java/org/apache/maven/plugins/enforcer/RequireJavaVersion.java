@@ -40,12 +40,7 @@ import org.codehaus.plexus.util.StringUtils;
 public class RequireJavaVersion
     extends AbstractVersionEnforcer
 {
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
-     */
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

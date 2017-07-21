@@ -150,10 +150,7 @@ public abstract class AbstractVersionEnforcer
         return matched;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
-     */
+    @Override
     public String getCacheId()
     {
         if ( StringUtils.isNotEmpty( version ) )
@@ -168,21 +165,14 @@ public abstract class AbstractVersionEnforcer
 
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
-     */
+    @Override
     public boolean isCacheable()
     {
         // the maven version is not going to change between projects in the same build.
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
-     */
+    @Override
     public boolean isResultValid( EnforcerRule theCachedRule )
     {
         // i will always return the hash of the parameters as my id. If my parameters are the same, this

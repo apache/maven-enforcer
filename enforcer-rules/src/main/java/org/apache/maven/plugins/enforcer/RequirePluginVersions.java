@@ -28,11 +28,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.apache.maven.BuildFailureException;
 import org.apache.maven.artifact.Artifact;
@@ -83,6 +81,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class RequirePluginVersions
     extends AbstractNonCacheableEnforcerRule
 {
+    
+    private EnforcerRuleHelper helper;
 
     /**
      * Don't allow the LATEST identifier.
@@ -142,7 +142,7 @@ public class RequirePluginVersions
      * @see {@link #setUnCheckedPlugins(List)}
      * @see {@link #getUnCheckedPlugins()}
      */
-    private List unCheckedPlugins;
+    private List<String> unCheckedPlugins;
 
     /**
      * Same as unCheckedPlugins but as a comma list to better support properties. Sample form:
@@ -184,15 +184,12 @@ public class RequirePluginVersions
     /** The utils. */
     EnforcerRuleUtils utils;
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.apache.maven.enforcer.rule.api.EnforcerRule#execute(org.apache.maven.enforcer.rule.api.EnforcerRuleHelper)
-     */
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
-        log = helper.getLog();
+        this.log = helper.getLog();
+        this.helper = helper;
 
         MavenProject project;
         try
@@ -237,8 +234,7 @@ public class RequirePluginVersions
 
             // pull out any we should skip
             allPlugins =
-                (Set) removeUncheckedPlugins( combineUncheckedPlugins( unCheckedPlugins, unCheckedPluginList ),
-                                              allPlugins );
+                removeUncheckedPlugins( combineUncheckedPlugins( unCheckedPlugins, unCheckedPluginList ), allPlugins );
 
             // there's nothing to do here
             if ( allPlugins.isEmpty() )
@@ -375,7 +371,7 @@ public class RequirePluginVersions
      * @throws MojoExecutionException
      * @return The plugins which have been removed.
      */
-    public Collection<Plugin> removeUncheckedPlugins( Collection<String> uncheckedPlugins, Collection<Plugin> plugins )
+    public Set<Plugin> removeUncheckedPlugins( Collection<String> uncheckedPlugins, Set<Plugin> plugins )
         throws MojoExecutionException
     {
         if ( uncheckedPlugins != null && !uncheckedPlugins.isEmpty() )
@@ -492,7 +488,6 @@ public class RequirePluginVersions
     public Set<Plugin> getProfilePlugins( MavenProject project )
     {
         Set<Plugin> result = new HashSet<Plugin>();
-        @SuppressWarnings( "unchecked" )
         List<Profile> profiles = project.getActiveProfiles();
         if ( profiles != null && !profiles.isEmpty() )
         {
@@ -525,7 +520,6 @@ public class RequirePluginVersions
         try
         {
             Model model = project.getModel();
-            @SuppressWarnings( "unchecked" )
             Map<String, Plugin> plugins = model.getBuild().getPluginsAsMap();
             found = plugins.get( plugin.getKey() );
         }
@@ -552,7 +546,6 @@ public class RequirePluginVersions
     protected Plugin resolvePlugin( Plugin plugin, MavenProject project )
     {
 
-        @SuppressWarnings( "unchecked" )
         List<ArtifactRepository> pluginRepositories = project.getPluginArtifactRepositories();
         Artifact artifact =
             factory.createPluginArtifact( plugin.getGroupId(), plugin.getArtifactId(),
@@ -720,7 +713,6 @@ public class RequirePluginVersions
      * @throws PluginNotFoundException the plugin not found exception
      * @throws LifecycleExecutionException the lifecycle execution exception
      */
-    @SuppressWarnings( "unchecked" )
     private Set<Plugin> getAllPlugins( MavenProject project, Lifecycle lifecycle )
         throws PluginNotFoundException, LifecycleExecutionException
 
@@ -729,12 +721,10 @@ public class RequirePluginVersions
 
         Set<Plugin> plugins = new HashSet<Plugin>();
         // first, bind those associated with the packaging
-        Map mappings = findMappingsForLifecycle( project, lifecycle );
+        Map<String, String> mappings = findMappingsForLifecycle( project, lifecycle );
 
-        Iterator iter = mappings.entrySet().iterator();
-        while ( iter.hasNext() )
+        for ( Map.Entry<String, String> entry : mappings.entrySet() )
         {
-            Entry entry = (Entry) iter.next();
             log.debug( "  lifecycleMapping = " + entry.getKey() );
             String pluginsForLifecycle = (String) entry.getValue();
             log.debug( "  plugins = " + pluginsForLifecycle );
@@ -791,7 +781,6 @@ public class RequirePluginVersions
 
             for ( Lifecycle lifecycle : lifecycles )
             {
-                @SuppressWarnings( "unchecked" )
                 List<String> phases = lifecycle.getPhases();
                 for ( String phase : phases )
                 {
@@ -841,11 +830,11 @@ public class RequirePluginVersions
      * @throws LifecycleExecutionException the lifecycle execution exception
      * @throws PluginNotFoundException the plugin not found exception
      */
-    private Map findMappingsForLifecycle( MavenProject project, Lifecycle lifecycle )
+    private Map<String, String> findMappingsForLifecycle( MavenProject project, Lifecycle lifecycle )
         throws LifecycleExecutionException, PluginNotFoundException
     {
         String packaging = project.getPackaging();
-        Map mappings = null;
+        Map<String, String> mappings = null;
 
         LifecycleMapping m =
             (LifecycleMapping) findExtension( project, LifecycleMapping.ROLE, packaging, session.getSettings(),
@@ -855,13 +844,13 @@ public class RequirePluginVersions
             mappings = m.getPhases( lifecycle.getId() );
         }
 
-        Map defaultMappings = lifecycle.getDefaultPhases();
+        Map<String, String> defaultMappings = lifecycle.getDefaultPhases();
 
         if ( mappings == null )
         {
             try
             {
-                m = (LifecycleMapping) session.lookup( LifecycleMapping.ROLE, packaging );
+                m = helper.getComponent( LifecycleMapping.class, packaging );
                 mappings = m.getPhases( lifecycle.getId() );
             }
             catch ( ComponentLookupException e )
@@ -899,7 +888,6 @@ public class RequirePluginVersions
      * @throws LifecycleExecutionException the lifecycle execution exception
      * @throws PluginNotFoundException the plugin not found exception
      */
-    @SuppressWarnings( "unchecked" )
     private List<String> findOptionalMojosForLifecycle( MavenProject project, Lifecycle lifecycle )
         throws LifecycleExecutionException, PluginNotFoundException
     {
@@ -919,7 +907,7 @@ public class RequirePluginVersions
         {
             try
             {
-                m = (LifecycleMapping) session.lookup( LifecycleMapping.ROLE, packaging );
+                m = (LifecycleMapping) helper.getComponent( LifecycleMapping.class, packaging );
                 optionalMojos = m.getOptionalMojos( lifecycle.getId() );
             }
             catch ( ComponentLookupException e )
@@ -955,7 +943,6 @@ public class RequirePluginVersions
     {
         Object pluginComponent = null;
 
-        @SuppressWarnings( "unchecked" )
         List<Plugin> buildPlugins = project.getBuildPlugins();
         for ( Plugin plugin : buildPlugins )
         {
@@ -1253,12 +1240,12 @@ public class RequirePluginVersions
         this.banTimestamps = theBanTimestamps;
     }
 
-    public List getUnCheckedPlugins()
+    public List<String> getUnCheckedPlugins()
     {
         return unCheckedPlugins;
     }
 
-    public void setUnCheckedPlugins( List unCheckedPlugins )
+    public void setUnCheckedPlugins( List<String> unCheckedPlugins )
     {
         this.unCheckedPlugins = unCheckedPlugins;
     }

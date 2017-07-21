@@ -45,6 +45,7 @@ public class RequireFileChecksum
 
     private String type;
 
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {

@@ -32,12 +32,13 @@ import org.apache.maven.project.MavenProject;
 public class BannedPlugins
     extends BannedDependencies
 {
-
+    @Override
     protected Set<Artifact> getDependenciesToCheck( MavenProject project )
     {
         return project.getPluginArtifacts();
     }
 
+    @Override
     protected CharSequence getErrorMessage( Artifact artifact )
     {
         return "Found Banned Plugin: " + artifact.getId() + "\n";

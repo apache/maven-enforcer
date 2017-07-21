@@ -82,12 +82,8 @@ public class RequireReleaseDeps
      */
     private List<String> includes = null;
 
-    /**
-     * Override parent to allow optional ignore of this rule.
-     * 
-     * @param helper the enforcerRuleHelper
-     * @throws EnforcerRuleException when an exception occurs
-     */
+    // Override parent to allow optional ignore of this rule.
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
@@ -141,10 +137,7 @@ public class RequireReleaseDeps
         }
     }
 
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     protected Set<Artifact> checkDependencies( Set<Artifact> dependencies, Log log )
         throws EnforcerRuleException
     {

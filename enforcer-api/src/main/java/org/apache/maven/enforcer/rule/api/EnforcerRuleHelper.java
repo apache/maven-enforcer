@@ -59,7 +59,7 @@ public interface EnforcerRuleHelper
      * @throws ComponentLookupException the component lookup exception
      */
     @Nonnull
-    Object getComponent ( Class clazz )
+    <T> T getComponent ( Class<T> clazz )
         throws ComponentLookupException;
 
     /**
@@ -89,6 +89,19 @@ public interface EnforcerRuleHelper
         throws ComponentLookupException;
 
     /**
+     * Gets the component.
+     *
+     * @param clazz the clazz
+     * @param roleHint the role hint
+     *
+     * @return the component
+     *
+     * @throws ComponentLookupException the component lookup exception
+     */
+    <T> T getComponent ( Class<T> clazz, String roleHint )
+        throws ComponentLookupException;
+    
+    /**
      * Gets the component map.
      *
      * @param role the role
@@ -97,7 +110,7 @@ public interface EnforcerRuleHelper
      *
      * @throws ComponentLookupException the component lookup exception
      */
-    Map getComponentMap ( String role )
+    Map<String, ?> getComponentMap ( String role )
         throws ComponentLookupException;
 
     /**
@@ -109,7 +122,7 @@ public interface EnforcerRuleHelper
      *
      * @throws ComponentLookupException the component lookup exception
      */
-    List getComponentList ( String role )
+    List<?> getComponentList ( String role )
         throws ComponentLookupException;
 
     /**

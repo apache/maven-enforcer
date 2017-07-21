@@ -52,9 +52,7 @@ public class RequireFilesSize
     /** The log. */
     private Log log;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
@@ -83,25 +81,19 @@ public class RequireFilesSize
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean isCacheable()
     {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean isResultValid( EnforcerRule cachedRule )
     {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     boolean checkFile( File file )
     {
         if ( file == null )
@@ -144,9 +136,7 @@ public class RequireFilesSize
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     String getErrorMsg()
     {
         return this.errorMsg;

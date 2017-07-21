@@ -57,7 +57,10 @@ public interface EnforcerRule
     boolean isCacheable();
 
     /**
-     * Checks if cached result is valid.
+     * If the rule is cacheable and the same id is found in the cache, the stored results are passed to this method to
+     * allow double checking of the results. Most of the time this can be done by generating unique ids, but sometimes
+     * the results of objects returned by the helper need to be queried. You may for example, store certain objects in
+     * your rule and then query them later.
      *
      * @param cachedRule the last cached instance of the rule. This is to be used by the rule to
      * potentially determine if the results are still valid (ie if the configuration has been overridden)

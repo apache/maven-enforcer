@@ -104,9 +104,7 @@ public class RequireOS
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
@@ -367,9 +365,7 @@ public class RequireOS
         return display;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public String getCacheId()
     {
         // return the hashcodes of all the parameters
@@ -393,18 +389,14 @@ public class RequireOS
         return b.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean isCacheable()
     {
         // the os is not going to change between projects in the same build.
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public boolean isResultValid( EnforcerRule theCachedRule )
     {
         // i will always return the hash of the parameters as my id. If my parameters are the same, this

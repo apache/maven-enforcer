@@ -36,15 +36,12 @@ import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
 public class DependencyVersionMap
     implements DependencyNodeVisitor
 {
-    private Log log;
-    
     private boolean uniqueVersions;
 
     private Map<String, List<DependencyNode>> idsToNode;
 
     public DependencyVersionMap( Log log )
     {
-        this.log = log;
         idsToNode = new HashMap<String, List<DependencyNode>>();
     }
     
@@ -53,12 +50,14 @@ public class DependencyVersionMap
         this.uniqueVersions = uniqueVersions;
     }
 
+    @Override
     public boolean visit( DependencyNode node )
     {
         addDependency( node );
         return !containsConflicts( node );
     }
 
+    @Override
     public boolean endVisit( DependencyNode node )
     {
         return true;

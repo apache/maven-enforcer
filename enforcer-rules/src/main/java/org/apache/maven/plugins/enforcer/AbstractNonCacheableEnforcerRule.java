@@ -31,35 +31,21 @@ import org.apache.maven.enforcer.rule.api.EnforcerRule;
 public abstract class AbstractNonCacheableEnforcerRule
     extends AbstractStandardEnforcerRule
 {
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
-     */
+    @Override
     public String getCacheId()
     {
         return "0";
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
-     */
+    @Override
     public boolean isCacheable()
     {
         return false;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
-     */
+    @Override
     public boolean isResultValid( EnforcerRule cachedRule )
     {
         return false;
     }
-
 }
