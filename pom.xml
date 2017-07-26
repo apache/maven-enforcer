@@ -168,13 +168,16 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-plugin-plugin</artifactId>
           <version>${mavenPluginPluginVersion}</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
           <configuration>
             <tagBase>https://svn.apache.org/repos/asf/maven/enforcer/tags</tagBase>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
           </configuration>
         </plugin>
         <plugin>
