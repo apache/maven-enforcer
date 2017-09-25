@@ -73,6 +73,8 @@ Built-In Rules
 
   * {{{./requirePrerequisite.html}requirePrerequisite}} - enforces that prerequisites have been specified.
    
+  * {{{./requireProfileIdsExist.html}requireProfileIdsExist}} - enforces the existence of profiles specified on the commandline.
+   
   * {{{./requireProperty.html}requireProperty}} - enforces the existence and values of properties.
    
   * {{{./requireReleaseDeps.html}requireReleaseDeps}} - enforces that no snapshots are included as dependencies.
