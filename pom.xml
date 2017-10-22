@@ -43,9 +43,10 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/enforcer/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/enforcer/trunk/</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/enforcer/trunk</url>
+    <connection>scm:git:https://gitbox.apache.org/repos/asf/maven-enforcer.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/maven-enforcer.git</developerConnection>
+    <url>https://github.com/apache/maven-enforcer/tree/${project.scm.tag}</url>
+    <tag>HEAD</tag>
   </scm>
   <issueManagement>
     <system>jira</system>
