@@ -121,12 +121,12 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.11</version>
+        <version>4.12</version>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>1.9.5</version>
+        <version>2.11.0</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -201,6 +201,12 @@
             <version>1.0-beta-6</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+              <compilerArgument>-Xlint:deprecation</compilerArgument>
+          </configuration>
       </plugin>
     </plugins>
   </build>

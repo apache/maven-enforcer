@@ -36,7 +36,6 @@ import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.sonatype.aether.RepositorySystemSession;
 
 /**
@@ -54,16 +53,6 @@ public final class EnforcerTestUtils
     public static MavenSession getMavenSession()
     {
         PlexusContainer mock = mock( PlexusContainer.class );
-
-        try
-        {
-            when( mock.lookup( "xx" ) ).thenReturn( new MavenProject() );
-        }
-        catch ( ComponentLookupException e )
-        {
-            e.printStackTrace();
-        }
-
         MavenExecutionRequest mer = mock( MavenExecutionRequest.class );
 
         Properties systemProperties = new Properties();
