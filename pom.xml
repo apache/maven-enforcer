@@ -64,7 +64,7 @@
   </distributionManagement>
   <properties>
     <maven.version>3.0</maven.version>
-    <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.5</mavenPluginPluginVersion>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
   </properties>
 
