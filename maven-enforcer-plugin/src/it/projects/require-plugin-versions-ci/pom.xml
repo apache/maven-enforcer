@@ -24,10 +24,17 @@ under the License.
 
   <groupId>org.apache.maven.its.enforcer</groupId>
   <artifactId>test</artifactId>
-  <version>1.0</version>
+  <version>${revision}</version>
+  <packaging>pom</packaging>
 
+  <properties>
+    <revision>1.0-SNAPSHOT</revision>
+  </properties>
+  <modules>
+    <module>child</module>
+  </modules>
   <description>
-    This IT demonstrates having no repositories defined at all.
+    This IT demonstrates the use of properties for the versions for requirePluginVersions.
   </description>
 
   <build>
@@ -44,8 +51,8 @@ under the License.
             </goals>
             <configuration>
               <rules>
-                <requireNoRepositories>
-                </requireNoRepositories>
+                <requirePluginVersions>
+                </requirePluginVersions>
               </rules>
             </configuration>
           </execution>
