@@ -33,13 +33,11 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.path.PathTranslator;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.context.Context;
@@ -63,12 +61,6 @@ public class EnforceMojo
      * This is a static variable used to persist the cached results across plugin invocations.
      */
     protected static Hashtable<String, EnforcerRule> cache = new Hashtable<String, EnforcerRule>();
-
-    /**
-     * Path Translator needed by the ExpressionEvaluator
-     */
-    @Component( role = PathTranslator.class )
-    protected PathTranslator translator;
 
     /**
      * MojoExecution needed by the ExpressionEvaluator
@@ -145,7 +137,7 @@ public class EnforceMojo
         Log log = this.getLog();
 
         EnforcerExpressionEvaluator evaluator =
-            new EnforcerExpressionEvaluator( session, translator, project, mojoExecution );
+            new EnforcerExpressionEvaluator( session, mojoExecution );
 
         if ( isSkip() )
         {
@@ -326,14 +318,6 @@ public class EnforceMojo
     }
 
     /**
-     * @param theTranslator the translator to set
-     */
-    public void setTranslator( PathTranslator theTranslator )
-    {
-        this.translator = theTranslator;
-    }
-
-    /**
      * Returns the level of the rule, defaults to {@link EnforcerLevel#ERROR} for backwards compatibility.
      *
      * @param rule might be of type {@link EnforcerRule2}.
@@ -399,11 +383,4 @@ public class EnforceMojo
         this.session = theSession;
     }
 
-    /**
-     * @return the translator
-     */
-    public PathTranslator getTranslator()
-    {
-        return this.translator;
-    }
 }

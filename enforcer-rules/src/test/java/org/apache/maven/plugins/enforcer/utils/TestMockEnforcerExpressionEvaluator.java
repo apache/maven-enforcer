@@ -1,5 +1,10 @@
 package org.apache.maven.plugins.enforcer.utils;
 
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugins.enforcer.EnforcerExpressionEvaluator;
+import org.apache.maven.plugins.enforcer.EnforcerTestUtils;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,13 +26,6 @@ package org.apache.maven.plugins.enforcer.utils;
 
 import junit.framework.TestCase;
 
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugins.enforcer.EnforcerExpressionEvaluator;
-import org.apache.maven.plugins.enforcer.EnforcerTestUtils;
-import org.apache.maven.plugins.enforcer.MockPathTranslator;
-import org.apache.maven.plugins.enforcer.MockProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-
 /**
  * The Class TestMockEnforcerExpressionEvaluator.
  */
@@ -43,7 +41,7 @@ public class TestMockEnforcerExpressionEvaluator
         MavenSession session = EnforcerTestUtils.getMavenSession();
 
         EnforcerExpressionEvaluator ev =
-            new MockEnforcerExpressionEvaluator( session, new MockPathTranslator(), new MockProject() );
+            new MockEnforcerExpressionEvaluator( session );
         assertMatch( ev, "SNAPSHOT" );
         assertMatch( ev, "RELEASE" );
         assertMatch( ev, "SNAPSHOT" );

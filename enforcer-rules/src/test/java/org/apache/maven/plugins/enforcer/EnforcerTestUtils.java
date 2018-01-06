@@ -127,11 +127,10 @@ public final class EnforcerTestUtils
         ExpressionEvaluator eval;
         if ( mockExpression )
         {
-            eval = new MockEnforcerExpressionEvaluator( session, new MockPathTranslator(), project );
+            eval = new MockEnforcerExpressionEvaluator( session );
         }
         else
         {
-//            eval = new DefaultExpressionEvaluator();
             MojoExecution mockExecution = mock( MojoExecution.class );
             session.setCurrentProject( project );
             eval = new PluginParameterExpressionEvaluator( session, mockExecution );

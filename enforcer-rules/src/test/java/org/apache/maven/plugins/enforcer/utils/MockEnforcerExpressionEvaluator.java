@@ -23,8 +23,6 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugins.enforcer.EnforcerExpressionEvaluator;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.path.PathTranslator;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
@@ -41,11 +39,9 @@ public class MockEnforcerExpressionEvaluator
      * @param thePathTranslator the the path translator
      * @param theProject the the project
      */
-    public MockEnforcerExpressionEvaluator( MavenSession theContext, PathTranslator thePathTranslator,
-                                            MavenProject theProject )
+    public MockEnforcerExpressionEvaluator( MavenSession theContext )
     {
-        super( theContext, thePathTranslator, theProject, new MojoExecution( new MojoDescriptor() ) );
-        // TODO Auto-generated constructor stub
+        super( theContext, new MojoExecution( new MojoDescriptor() ) );
     }
 
     /*
