@@ -21,7 +21,7 @@ package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
-import org.apache.maven.plugins.enforcer.utils.TestEnforcerRuleUtils;
+import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtilsHelper;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,10 +56,10 @@ public class TestRequireSnapshotVersion
         throws IOException
     {
         project.setArtifact( factory.getReleaseArtifact() );
-        TestEnforcerRuleUtils.execute( rule, helper, true );
+        EnforcerRuleUtilsHelper.execute( rule, helper, true );
 
         project.setArtifact( factory.getSnapshotArtifact() );
-        TestEnforcerRuleUtils.execute( rule, helper, false );
+        EnforcerRuleUtilsHelper.execute( rule, helper, false );
     }
 
     @Test
@@ -72,12 +72,12 @@ public class TestRequireSnapshotVersion
         MockProject parent = new MockProject();
         parent.setArtifact( factory.getReleaseArtifact() );
         project.setParent( parent );
-        TestEnforcerRuleUtils.execute( rule, helper, true );
+        EnforcerRuleUtilsHelper.execute( rule, helper, true );
 
         parent = new MockProject();
         parent.setArtifact( factory.getSnapshotArtifact() );
         project.setParent( parent );
-        TestEnforcerRuleUtils.execute( rule, helper, false );
+        EnforcerRuleUtilsHelper.execute( rule, helper, false );
     }
 
     @Test
@@ -90,12 +90,12 @@ public class TestRequireSnapshotVersion
         MockProject parent = new MockProject();
         parent.setArtifact( factory.getReleaseArtifact() );
         project.setParent( parent );
-        TestEnforcerRuleUtils.execute( rule, helper, false );
+        EnforcerRuleUtilsHelper.execute( rule, helper, false );
 
         parent = new MockProject();
         parent.setArtifact( factory.getSnapshotArtifact() );
         project.setParent( parent );
-        TestEnforcerRuleUtils.execute( rule, helper, false );
+        EnforcerRuleUtilsHelper.execute( rule, helper, false );
     }
 
 }

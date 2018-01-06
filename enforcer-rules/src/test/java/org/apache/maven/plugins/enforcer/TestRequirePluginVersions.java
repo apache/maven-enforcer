@@ -19,24 +19,17 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtils;
 import org.apache.maven.plugins.enforcer.utils.PluginWrapper;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * The Class TestRequirePluginVersions.
@@ -187,37 +180,6 @@ public class TestRequirePluginVersions
         // release versions should pass everything
         source.setArtifactId( "b-artifact" );
         assertTrue( rule.hasValidVersionSpecified( helper, source, pluginWrappers ) );
-    }
-
-    /**
-     * Test get all plugins.
-     *
-     * @throws ArtifactResolutionException the artifact resolution exception
-     * @throws ArtifactNotFoundException the artifact not found exception
-     * @throws IOException Signals that an I/O exception has occurred.
-     * @throws XmlPullParserException the xml pull parser exception
-     */
-    public void testGetAllPlugins()
-        throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
-    {
-        RequirePluginVersions rule = new RequirePluginVersions();
-        String path = "target/test-classes/requirePluginVersions/getPomRecursively/b/c";
-
-        StringUtils.replace( path, "/", File.separator );
-
-        File projectDir = new File( getBasedir(), path );
-
-        MockProject project = new MockProject();
-        project.setArtifactId( "c" );
-        project.setGroupId( "group" );
-        project.setVersion( "1.0" );
-        project.setBaseDir( projectDir );
-
-        rule.setUtils( new EnforcerRuleUtils( EnforcerTestUtils.getHelper( project ) ) );
-        List<PluginWrapper> plugins = rule.getAllPluginEntries( project );
-
-        // there should be 3
-        assertEquals( 3, plugins.size() );
     }
 
     /**

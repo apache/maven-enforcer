@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
-import org.apache.maven.plugins.enforcer.utils.TestEnforcerRuleUtils;
+import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtilsHelper;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -56,25 +56,25 @@ public class TestRequireReleaseDeps
         RequireReleaseDeps rule = newRequireReleaseDeps();
         rule.setSearchTransitive( false );
 
-        TestEnforcerRuleUtils.execute( rule, helper, false );
+        EnforcerRuleUtilsHelper.execute( rule, helper, false );
 
         rule.setSearchTransitive( true );
 
-        TestEnforcerRuleUtils.execute( rule, helper, true );
+        EnforcerRuleUtilsHelper.execute( rule, helper, true );
 
         // test onlyWhenRelease in each case
 
         project.setArtifact( factory.getSnapshotArtifact() );
 
-        TestEnforcerRuleUtils.execute( rule, helper, true );
+        EnforcerRuleUtilsHelper.execute( rule, helper, true );
 
         rule.setOnlyWhenRelease( true );
 
-        TestEnforcerRuleUtils.execute( rule, helper, false );
+        EnforcerRuleUtilsHelper.execute( rule, helper, false );
 
         project.setArtifact( factory.getReleaseArtifact() );
 
-        TestEnforcerRuleUtils.execute( rule, helper, true );
+        EnforcerRuleUtilsHelper.execute( rule, helper, true );
 
         MockProject parent = new MockProject();
         parent.setArtifact( factory.getSnapshotArtifact() );
@@ -84,10 +84,10 @@ public class TestRequireReleaseDeps
         helper = EnforcerTestUtils.getHelper(project);
 
         rule.setFailWhenParentIsSnapshot( true );
-        TestEnforcerRuleUtils.execute( rule, helper, true );
+        EnforcerRuleUtilsHelper.execute( rule, helper, true );
 
         rule.setFailWhenParentIsSnapshot( false );
-        TestEnforcerRuleUtils.execute( rule, helper, false );
+        EnforcerRuleUtilsHelper.execute( rule, helper, false );
 
 
     }
