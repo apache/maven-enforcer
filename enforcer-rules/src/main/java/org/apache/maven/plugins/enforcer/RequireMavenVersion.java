@@ -48,7 +48,7 @@ public class RequireMavenVersion
         }
         catch ( ExpressionEvaluationException e )
         {
-            e.printStackTrace();
+            throw new EnforcerRuleException( "Unable to retrieve the session.", e );
         }
 
     }

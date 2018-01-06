@@ -44,6 +44,8 @@ import org.codehaus.plexus.util.StringUtils;
 public class ReactorModuleConvergence
     extends AbstractNonCacheableEnforcerRule
 {
+    private static final String MODULE_TEXT = " module: ";
+
     private boolean ignoreModuleDependencies = false;
 
     private Log logger;
@@ -90,7 +92,7 @@ public class ReactorModuleConvergence
             addMessageIfExist( sb );
             for ( MavenProject mavenProject : parentsWhichAreNotPartOfTheReactor )
             {
-                sb.append( " module: " );
+                sb.append( MODULE_TEXT );
                 sb.append( mavenProject.getId() );
                 sb.append( SystemUtils.LINE_SEPARATOR );
             }
@@ -115,7 +117,7 @@ public class ReactorModuleConvergence
             addMessageIfExist( sb );
             for ( MavenProject mavenProject : modulesWithoutParentsInReactor )
             {
-                sb.append( " module: " );
+                sb.append( MODULE_TEXT );
                 sb.append( mavenProject.getId() );
                 sb.append( SystemUtils.LINE_SEPARATOR );
             }
@@ -138,7 +140,7 @@ public class ReactorModuleConvergence
             // CHECKSTYLE_OFF: LineLength
             for ( Entry<MavenProject, List<Dependency>> item : areThereDependenciesWhichAreNotPartOfTheReactor.entrySet() )
             {
-                sb.append( " module: " );
+                sb.append( MODULE_TEXT );
                 sb.append( item.getKey().getId() );
                 sb.append( SystemUtils.LINE_SEPARATOR );
                 for ( Dependency dependency : item.getValue() )
