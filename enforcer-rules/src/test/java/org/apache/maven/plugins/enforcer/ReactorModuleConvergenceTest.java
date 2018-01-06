@@ -22,6 +22,7 @@ package org.apache.maven.plugins.enforcer;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.execution.ProjectDependencyGraph;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
@@ -44,8 +45,6 @@ import java.util.List;
  */
 public class ReactorModuleConvergenceTest
 {
-    private MavenProject project;
-
     private MavenSession session;
 
     private EnforcerRuleHelper helper;
@@ -56,25 +55,30 @@ public class ReactorModuleConvergenceTest
     public void before()
         throws ExpressionEvaluationException
     {
-        project = mock( MavenProject.class );
         session = mock( MavenSession.class );
         helper = mock( EnforcerRuleHelper.class );
-        when( helper.evaluate( "${project}" ) ).thenReturn( project );
         when( helper.evaluate( "${session}" ) ).thenReturn( session );
         when( helper.getLog() ).thenReturn( mock( Log.class ) );
 
         rule = new ReactorModuleConvergence();
     }
 
+    private void setupSortedProjects( List<MavenProject> projectList )
+    {
+        ProjectDependencyGraph pdg = mock( ProjectDependencyGraph.class );
+        when( session.getProjectDependencyGraph() ).thenReturn( pdg );
+        when( pdg.getSortedProjects() ).thenReturn( projectList );
+    }
+
     @Test
     public void shouldNotFailWithNoProject()
         throws EnforcerRuleException
     {
-        when( session.getSortedProjects() ).thenReturn( Collections.<MavenProject> emptyList() );
+        setupSortedProjects( Collections.<MavenProject>emptyList() );
 
         rule.execute( helper );
 
-        //intentionally only assertTrue cause we don't expect an exception.
+        // intentionally only assertTrue cause we don't expect an exception.
         assertTrue( true );
     }
 
@@ -87,11 +91,11 @@ public class ReactorModuleConvergenceTest
         MavenProject mp3 = createProjectChild2( mp1 );
 
         List<MavenProject> theList = Arrays.asList( mp1, mp2, mp3 );
-        when( session.getSortedProjects() ).thenReturn( theList );
+        setupSortedProjects( theList );
 
         rule.execute( helper );
 
-        //intentionally only assertTrue cause we don't expect an exception.
+        // intentionally only assertTrue cause we don't expect an exception.
         assertTrue( true );
     }
 
@@ -104,11 +108,11 @@ public class ReactorModuleConvergenceTest
         MavenProject mp3 = createProjectChild2WithWrongVersion( mp1 );
 
         List<MavenProject> theList = Arrays.asList( mp1, mp2, mp3 );
-        when( session.getSortedProjects() ).thenReturn( theList );
+        setupSortedProjects( theList );
 
         rule.execute( helper );
 
-        //intentionally no assertTrue() cause we expect getting an exception.
+        // intentionally no assertTrue() cause we expect getting an exception.
     }
 
     @Test( expected = EnforcerRuleException.class )
@@ -128,11 +132,11 @@ public class ReactorModuleConvergenceTest
         MavenProject mp3 = createProjectChild2( mp1 );
 
         List<MavenProject> theList = Arrays.asList( mp1, mp2, mp3 );
-        when( session.getSortedProjects() ).thenReturn( theList );
+        setupSortedProjects( theList );
 
         rule.execute( helper );
 
-        //intentionally no assertTrue() cause we expect getting an exception.
+        // intentionally no assertTrue() cause we expect getting an exception.
     }
 
     @Test
@@ -146,11 +150,11 @@ public class ReactorModuleConvergenceTest
         MavenProject mp3 = createProjectChild2( mp1 );
 
         List<MavenProject> theList = Arrays.asList( mp1, mp2, mp3 );
-        when( session.getSortedProjects() ).thenReturn( theList );
+        setupSortedProjects( theList );
 
         rule.execute( helper );
 
-        //intentionally only assertTrue cause we don't expect an exception.
+        // intentionally only assertTrue cause we don't expect an exception.
         assertTrue( true );
     }
 
@@ -163,11 +167,11 @@ public class ReactorModuleConvergenceTest
         MavenProject mp3 = createProjectChild2( null );
 
         List<MavenProject> theList = Arrays.asList( mp1, mp2, mp3 );
-        when( session.getSortedProjects() ).thenReturn( theList );
+        setupSortedProjects( theList );
 
         rule.execute( helper );
 
-        //intentionally only assertTrue cause we don't expect an exception.
+        // intentionally only assertTrue cause we don't expect an exception.
         assertTrue( true );
     }
 
@@ -188,11 +192,11 @@ public class ReactorModuleConvergenceTest
         MavenProject mp3 = createProjectChild2( mp1 );
 
         List<MavenProject> theList = Arrays.asList( mp1, mp2, mp3 );
-        when( session.getSortedProjects() ).thenReturn( theList );
+        setupSortedProjects( theList );
 
         rule.execute( helper );
 
-        //intentionally no assertTrue() cause we expect getting an exception.
+        // intentionally no assertTrue() cause we expect getting an exception.
     }
 
     @Test
@@ -212,11 +216,11 @@ public class ReactorModuleConvergenceTest
         when( mp3.getDependencies() ).thenReturn( depListMP3 );
 
         List<MavenProject> theList = Arrays.asList( mp1, mp2, mp3 );
-        when( session.getSortedProjects() ).thenReturn( theList );
+        setupSortedProjects( theList );
 
         rule.execute( helper );
 
-        //intentionally no assertTrue() cause we do not expect to get an exception.
+        // intentionally no assertTrue() cause we do not expect to get an exception.
         assertTrue( true );
     }
 
@@ -236,11 +240,11 @@ public class ReactorModuleConvergenceTest
         MavenProject mp3 = createProjectChild2( mp1 );
 
         List<MavenProject> theList = Arrays.asList( mp1, mp2, mp3 );
-        when( session.getSortedProjects() ).thenReturn( theList );
+        setupSortedProjects( theList );
 
         rule.execute( helper );
 
-        //intentionally no assertTrue() cause we expect getting an exception.
+        // intentionally no assertTrue() cause we expect getting an exception.
     }
 
     /**
@@ -298,11 +302,11 @@ public class ReactorModuleConvergenceTest
     private MavenProject createCompanyParent()
     {
         MavenProject nonReactorParent = mock( MavenProject.class );
-        when( nonReactorParent.getGroupId() ).thenReturn("org.apache.enforcer.parent");
-        when( nonReactorParent.getArtifactId() ).thenReturn("parent");
+        when( nonReactorParent.getGroupId() ).thenReturn( "org.apache.enforcer.parent" );
+        when( nonReactorParent.getArtifactId() ).thenReturn( "parent" );
         when( nonReactorParent.getVersion() ).thenReturn( "1.1" );
-        when( nonReactorParent.getId() ).thenReturn("org.apache.enforcer.parent:parent:jar:1.1");
-        when( nonReactorParent.getDependencies() ).thenReturn(Collections.<Dependency>emptyList());
+        when( nonReactorParent.getId() ).thenReturn( "org.apache.enforcer.parent:parent:jar:1.1" );
+        when( nonReactorParent.getDependencies() ).thenReturn( Collections.<Dependency>emptyList() );
         return nonReactorParent;
     }
 

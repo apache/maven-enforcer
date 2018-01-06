@@ -64,7 +64,7 @@ public class ReactorModuleConvergence
             throw new EnforcerRuleException( "Unable to retrieve the MavenSession: ", eee );
         }
 
-        List<MavenProject> sortedProjects = session.getSortedProjects();
+        List<MavenProject> sortedProjects = session.getProjectDependencyGraph().getSortedProjects();
         if ( sortedProjects != null && !sortedProjects.isEmpty() )
         {
             checkReactor( sortedProjects );
