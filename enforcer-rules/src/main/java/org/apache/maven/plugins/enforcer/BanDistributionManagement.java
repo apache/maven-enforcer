@@ -39,12 +39,6 @@ public class BanDistributionManagement
 {
 
     /**
-     * If we turn on the <code>ignoreParent</code> the parent will be ignored.
-     * @deprecated
-     */
-    private boolean ignoreParent = true;
-
-    /**
      * Allow using a repository entry in the distributionManagement area.
      */
     private boolean allowRepository = false;
@@ -93,27 +87,12 @@ public class BanDistributionManagement
                 DistributionManagementCheck check = new DistributionManagementCheck( project );
                 check.execute( isAllowRepository(), isAllowSnapshotRepository(), isAllowSite() );
 
-                if ( !isIgnoreParent() )
-                {
-                    logger.warn( "You have configured not to ignore the parent." );
-                    logger.warn( "This configuration is deprecated and will be ignored." );
-                }
             }
         }
         catch ( ExpressionEvaluationException e )
         {
             throw new EnforcerRuleException( e.getMessage(), e );
         }
-    }
-
-    public boolean isIgnoreParent()
-    {
-        return ignoreParent;
-    }
-
-    public void setIgnoreParent( boolean ignoreParent )
-    {
-        this.ignoreParent = ignoreParent;
     }
 
     public boolean isAllowRepository()

@@ -202,7 +202,6 @@ public class BanDistributionManagementTest
         BanDistributionManagement rule =
             setupProjectWithParentDistributionManagement( null, new DeploymentRepository(), null );
 
-        rule.setIgnoreParent( false );
         rule.setAllowSnapshotRepository( true );
 
         rule.execute( helper );
