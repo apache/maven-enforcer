@@ -36,7 +36,6 @@ import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.sonatype.aether.RepositorySystemSession;
 
 /**
@@ -55,31 +54,15 @@ public final class EnforcerTestUtils
     {
         PlexusContainer mock = mock( PlexusContainer.class );
 
-        try
-        {
-            when( mock.lookup( "xx" ) ).thenReturn( new MavenProject() );
-        }
-        catch ( ComponentLookupException e )
-        {
-            e.printStackTrace();
-        }
-
         MavenExecutionRequest mer = mock( MavenExecutionRequest.class );
 
         Properties systemProperties = new Properties();
         systemProperties.put( "maven.version", "3.0" );
         when( mer.getUserProperties() ).thenReturn( new Properties() );
-        when(mer.getSystemProperties()).thenReturn( systemProperties );
+        when( mer.getSystemProperties() ).thenReturn( systemProperties );
 
         MavenExecutionResult meresult = mock( MavenExecutionResult.class );
         return new MavenSession( mock, (RepositorySystemSession) null, mer, meresult );
-
-        // return new MavenSession( new MockPlexusContainer(), (MavenExecutionRequest)null, null,
-        // null );
-
-        // new MavenSession();
-        // return new MavenSession( new MockPlexusContainer(), null, null, null, null, null, null, new Properties(),
-        // new Date() );
     }
 
     /**
