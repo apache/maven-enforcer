@@ -64,7 +64,7 @@
   </distributionManagement>
   <properties>
     <maven.version>3.0</maven.version>
-    <mavenPluginPluginVersion>3.3</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.5</mavenPluginPluginVersion>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
   </properties>
 
@@ -116,7 +116,7 @@
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-utils</artifactId>
-        <version>3.0.24</version>
+        <version>3.1.0</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>

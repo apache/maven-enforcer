@@ -19,23 +19,19 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Repository;
-import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtils;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * This rule checks that this pom or its parents don't define a repository.
@@ -45,6 +41,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class RequireNoRepositories
     extends AbstractNonCacheableEnforcerRule
 {
+    private static final String VERSION = " version:";
+
     /**
      * Whether to ban non-plugin repositories. By default they are banned.
      * 
@@ -117,23 +115,32 @@ public class RequireNoRepositories
         this.allowSnapshotPluginRepositories = allowSnapshotPluginRepositories;
     }
     
+    private Log logger;
+
     @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
-        EnforcerRuleUtils utils = new EnforcerRuleUtils( helper );
+        logger = helper.getLog();
 
-        MavenProject project;
+        MavenSession session;
         try
         {
-            project = (MavenProject) helper.evaluate( "${project}" );
+            session = (MavenSession) helper.evaluate( "${session}" );
 
-            List<Model> models =
-                utils.getModelsRecursively( project.getGroupId(), project.getArtifactId(), project.getVersion(),
-                                            new File( project.getBasedir(), "pom.xml" ) );
+            List<MavenProject> sortedProjects = session.getProjectDependencyGraph().getSortedProjects();
+
+            List<Model> models = new ArrayList<Model>();
+            for ( MavenProject mavenProject : sortedProjects )
+            {
+                logger.debug( "Scanning project: " + mavenProject.getGroupId() + ":" + mavenProject.getArtifactId()
+                    + VERSION + mavenProject.getVersion() );
+                models.add( mavenProject.getOriginalModel() );
+            }
+            
             List<Model> badModels = new ArrayList<Model>();
 
-            StringBuffer newMsg = new StringBuffer();
+            StringBuilder newMsg = new StringBuilder();
             newMsg.append( "Some poms have repositories defined:\n" );
 
             for ( Model model : models )
@@ -149,7 +156,7 @@ public class RequireNoRepositories
                         {
                             badModels.add( model );
                             newMsg.append(
-                                model.getGroupId() + ":" + model.getArtifactId() + " version:" + model.getVersion()
+                                model.getGroupId() + ":" + model.getArtifactId() + VERSION + model.getVersion()
                                     + " has repositories " + bannedRepos );
                         }
                     }
@@ -165,7 +172,7 @@ public class RequireNoRepositories
                         {
                             badModels.add( model );
                             newMsg.append(
-                                model.getGroupId() + ":" + model.getArtifactId() + " version:" + model.getVersion()
+                                model.getGroupId() + ":" + model.getArtifactId() + VERSION + model.getVersion()
                                     + " has plugin repositories " + bannedRepos );
                         }
                     }
@@ -187,22 +194,6 @@ public class RequireNoRepositories
 
         }
         catch ( ExpressionEvaluationException e )
-        {
-            throw new EnforcerRuleException( e.getLocalizedMessage() );
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new EnforcerRuleException( e.getLocalizedMessage() );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new EnforcerRuleException( e.getLocalizedMessage() );
-        }
-        catch ( IOException e )
-        {
-            throw new EnforcerRuleException( e.getLocalizedMessage() );
-        }
-        catch ( XmlPullParserException e )
         {
             throw new EnforcerRuleException( e.getLocalizedMessage() );
         }

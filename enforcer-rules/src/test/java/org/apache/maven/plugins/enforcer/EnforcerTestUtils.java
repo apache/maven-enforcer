@@ -53,22 +53,16 @@ public final class EnforcerTestUtils
     public static MavenSession getMavenSession()
     {
         PlexusContainer mock = mock( PlexusContainer.class );
+
         MavenExecutionRequest mer = mock( MavenExecutionRequest.class );
 
         Properties systemProperties = new Properties();
         systemProperties.put( "maven.version", "3.0" );
         when( mer.getUserProperties() ).thenReturn( new Properties() );
-        when(mer.getSystemProperties()).thenReturn( systemProperties );
+        when( mer.getSystemProperties() ).thenReturn( systemProperties );
 
         MavenExecutionResult meresult = mock( MavenExecutionResult.class );
         return new MavenSession( mock, (RepositorySystemSession) null, mer, meresult );
-
-        // return new MavenSession( new MockPlexusContainer(), (MavenExecutionRequest)null, null,
-        // null );
-
-        // new MavenSession();
-        // return new MavenSession( new MockPlexusContainer(), null, null, null, null, null, null, new Properties(),
-        // new Date() );
     }
 
     /**
@@ -116,11 +110,10 @@ public final class EnforcerTestUtils
         ExpressionEvaluator eval;
         if ( mockExpression )
         {
-            eval = new MockEnforcerExpressionEvaluator( session, new MockPathTranslator(), project );
+            eval = new MockEnforcerExpressionEvaluator( session );
         }
         else
         {
-//            eval = new DefaultExpressionEvaluator();
             MojoExecution mockExecution = mock( MojoExecution.class );
             session.setCurrentProject( project );
             eval = new PluginParameterExpressionEvaluator( session, mockExecution );

@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
-import org.apache.maven.plugins.enforcer.utils.TestEnforcerRuleUtils;
+import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtilsHelper;
 
 /**
  * The Class TestRequireReleaseVersion.
@@ -53,11 +53,11 @@ public class TestRequireReleaseVersion
 
         EnforcerRule rule = new RequireReleaseVersion();
 
-        TestEnforcerRuleUtils.execute( rule, helper, false );
+        EnforcerRuleUtilsHelper.execute( rule, helper, false );
 
         project.setArtifact( factory.getSnapshotArtifact() );
 
-        TestEnforcerRuleUtils.execute( rule, helper, true );
+        EnforcerRuleUtilsHelper.execute( rule, helper, true );
 
         project.setArtifact( factory.getReleaseArtifact() );
 
@@ -67,10 +67,10 @@ public class TestRequireReleaseVersion
         helper = EnforcerTestUtils.getHelper(project);
 
         ( (RequireReleaseVersion) rule ).setFailWhenParentIsSnapshot( true );
-        TestEnforcerRuleUtils.execute( rule, helper, true );
+        EnforcerRuleUtilsHelper.execute( rule, helper, true );
 
         ( (RequireReleaseVersion) rule ).setFailWhenParentIsSnapshot( false );
-        TestEnforcerRuleUtils.execute( rule, helper, false );
+        EnforcerRuleUtilsHelper.execute( rule, helper, false );
 
     }
 

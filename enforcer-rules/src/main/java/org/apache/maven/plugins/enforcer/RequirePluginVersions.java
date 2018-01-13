@@ -19,7 +19,6 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -1046,19 +1045,14 @@ public class RequirePluginVersions
         List<PluginWrapper> plugins = new ArrayList<PluginWrapper>();
         // get all the pom models
 
-        String pomName = null;
-        try
+        List<Model> models = new ArrayList<Model>();
+        
+        List<MavenProject> sortedProjects = session.getProjectDependencyGraph().getSortedProjects();
+        for ( MavenProject mavenProject : sortedProjects )
         {
-            pomName = project.getFile().getName();
+            models.add( mavenProject.getOriginalModel() );
         }
-        catch ( Exception e )
-        {
-            pomName = "pom.xml";
-        }
-        List<Model> models =
-            utils.getModelsRecursively( project.getGroupId(), project.getArtifactId(), project.getVersion(),
-                                        new File( project.getBasedir(), pomName ) );
-
+                        
         // now find all the plugin entries, either in
         // build.plugins or build.pluginManagement.plugins, profiles.plugins and reporting
         for ( Model model : models )

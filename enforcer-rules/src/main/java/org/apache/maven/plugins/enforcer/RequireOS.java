@@ -28,7 +28,8 @@ import org.apache.maven.model.Activation;
 import org.apache.maven.model.ActivationOS;
 import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.profiles.activation.OperatingSystemProfileActivator;
+import org.apache.maven.model.profile.activation.ProfileActivator;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -42,6 +43,7 @@ import org.codehaus.plexus.util.StringUtils;
 public class RequireOS
     extends AbstractStandardEnforcerRule
 {
+    private ProfileActivator activator;
 
     /**
      * The OS family type desired<br />
@@ -103,6 +105,13 @@ public class RequireOS
     {
 
     }
+    
+    // For testing
+    RequireOS( ProfileActivator activator ) 
+    {
+        this.activator = activator;
+    }
+    
 
     @Override
     public void execute( EnforcerRuleHelper helper )
@@ -116,6 +125,15 @@ public class RequireOS
             throw new EnforcerRuleException( "All parameters can not be empty. "
                 + "You must pick at least one of (family, name, version, arch) "
                 + "or use -Denforcer.os.display=true to see the current OS information." );
+        }
+        
+        try
+        {
+            activator = helper.getComponent( ProfileActivator.class, "os" );
+        }
+        catch ( ComponentLookupException e )
+        {
+            throw new EnforcerRuleException( e.getMessage() );
         }
 
         if ( isValidFamily( this.family ) )
@@ -185,9 +203,7 @@ public class RequireOS
      */
     public boolean isAllowed()
     {
-        OperatingSystemProfileActivator activator = new OperatingSystemProfileActivator();
-
-        return activator.isActive( createProfile() );
+        return activator.isActive( createProfile(), null, null );
     }
 
     /**

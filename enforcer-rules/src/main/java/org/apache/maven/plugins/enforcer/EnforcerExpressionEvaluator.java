@@ -22,9 +22,6 @@ package org.apache.maven.plugins.enforcer;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
-import org.apache.maven.plugin.descriptor.MojoDescriptor;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.path.PathTranslator;
 
 /**
  * The Class EnforcerExpressionEvaluator. This class wraps the PluginParameterExpressionEvaluator because it can't be
@@ -39,30 +36,12 @@ public class EnforcerExpressionEvaluator
     /**
      * The Constructor.
      *
-     * @param theContext {@link MavenSession}
-     * @param thePathTranslator {@link PathTranslator}
-     * @param theProject {@link MavenProject}
+     * @param mavenSession {@link MavenSession}
      * @param theExecution {@link MojoExecution}
      */
-    public EnforcerExpressionEvaluator( MavenSession theContext, PathTranslator thePathTranslator,
-                                        MavenProject theProject, MojoExecution theExecution )
+    public EnforcerExpressionEvaluator( MavenSession mavenSession, MojoExecution theExecution )
     {
-        super( theContext, theExecution, thePathTranslator, null, theProject, theContext.getExecutionProperties() );
+        super( mavenSession, theExecution );
     }
 
-    /**
-     * This constructor is kept for backward compatibility.
-     * 
-     * @param theContext {@link MavenSession}
-     * @param thePathTranslator {@link PathTranslator}
-     * @param theProject {@link MavenProject}
-     * 
-     * @deprecated Will be removed with 2.0
-     */
-    public EnforcerExpressionEvaluator( MavenSession theContext, PathTranslator thePathTranslator,
-                                        MavenProject theProject )
-    {
-        super( theContext, new MojoExecution( new MojoDescriptor() ), thePathTranslator, null, theProject,
-               theContext.getExecutionProperties() );
-    }
 }
