@@ -43,7 +43,7 @@ Require Java Version
   
   [[3]] Remove all non digit characters "[^0-9] and convert each section using Integer.parseInt() (1.5.0_07-b03 becomes 1.5.0.7.3)
   
-  [[3]] Split the string on '.' and take the first 3 sections, separated by '.' and add '-' followed by the forth section (1.5.0.7.3 becomes 1.5.0-7)
+  [[3]] Split the string on '.' and take the first 3 sections, separated by '.' and add '-' followed by the fourth section (1.5.0.7.3 becomes 1.5.0-7)
   
   []
    
