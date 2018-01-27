@@ -54,7 +54,7 @@
   </issueManagement>
   <ciManagement>
     <system>Jenkins</system>
-    <url>https://builds.apache.org/hudson/job/maven-enforcer/</url>
+    <url>https://builds.apache.org/job/maven-box/job/maven-enforcer/</url>
   </ciManagement>
   <distributionManagement>
     <site>
