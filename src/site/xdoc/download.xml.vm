@@ -107,9 +107,9 @@ under the License.
         <tbody>
           <tr>
             <td>${project.name} ${project.version} (Source zip)</td>
-            <td><a href="[preferred]maven/archetype/${project.artifactId}-${project.version}-source-release.zip">maven/archetype/${project.artifactId}-${project.version}-source-release.zip</a></td>
-            <td><a href="http://www.apache.org/dist/maven/archetype/${project.artifactId}-${project.version}-source-release.zip.md5">maven/archetype/${project.artifactId}-${project.version}-source-release.zip.md5</a></td>
-            <td><a href="http://www.apache.org/dist/maven/archetype/${project.artifactId}-${project.version}-source-release.zip.asc">maven/archetype/${project.artifactId}-${project.version}-source-release.zip.asc</a></td>
+            <td><a href="[preferred]maven/enforcer/${project.artifactId}-${project.version}-source-release.zip">maven/enforcer/${project.artifactId}-${project.version}-source-release.zip</a></td>
+            <td><a href="http://www.apache.org/dist/maven/enforcer/${project.artifactId}-${project.version}-source-release.zip.md5">maven/enforcer/${project.artifactId}-${project.version}-source-release.zip.md5</a></td>
+            <td><a href="http://www.apache.org/dist/maven/enforcer/${project.artifactId}-${project.version}-source-release.zip.asc">maven/enforcer/${project.artifactId}-${project.version}-source-release.zip.asc</a></td>
           </tr>
         </tbody>
       </table>
@@ -117,7 +117,7 @@ under the License.
 
       <subsection name="Previous Versions">
         
-      <p>Older non-recommended releases can be found on our <a href="http://archive.apache.org/dist/maven/archetype/">archive site</a>.</p>
+      <p>Older non-recommended releases can be found on our <a href="http://archive.apache.org/dist/maven/enforcer/">archive site</a>.</p>
 
       </subsection>
     </section>
