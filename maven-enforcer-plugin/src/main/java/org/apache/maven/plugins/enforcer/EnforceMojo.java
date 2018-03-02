@@ -101,8 +101,14 @@ public class EnforceMojo
     /**
      * Array of objects that implement the EnforcerRule interface to execute.
      */
-    @Parameter( required = true )
+    @Parameter( required = false )
     private EnforcerRule[] rules;
+
+    /**
+     * Array of Strings that matches the EnforcerRules to execute.
+     */
+    @Parameter( required = false, property = "rules" )
+    private String[] commandLineRules;
 
     /**
      * Use this flag to disable rule result caching. This will cause all rules to execute on each project even if the
@@ -115,6 +121,7 @@ public class EnforceMojo
     // plugin's container in 2.0.x
     protected PlexusContainer container;
 
+    @Override
     public void contextualize( Context context )
         throws ContextException
     {
@@ -131,6 +138,7 @@ public class EnforceMojo
      * 
      * @throws MojoExecutionException
      */
+    @Override
     public void execute()
         throws MojoExecutionException
     {
@@ -138,7 +146,11 @@ public class EnforceMojo
 
         EnforcerExpressionEvaluator evaluator =
             new EnforcerExpressionEvaluator( session, mojoExecution );
-
+        if ( commandLineRules != null && commandLineRules.length > 0 )
+        {
+            this.rules = createRulesFromCommandLineOptions();
+        }
+        
         if ( isSkip() )
         {
             log.info( "Skipping Rule Enforcement." );
@@ -238,6 +250,30 @@ public class EnforceMojo
         // CHECKSTYLE_ON: LineLength
     }
 
+    private EnforcerRule[] createRulesFromCommandLineOptions() throws MojoExecutionException 
+    {
+        EnforcerRule[] rules = new EnforcerRule[commandLineRules.length];
+        for ( int i = 0; i < commandLineRules.length; i++ ) 
+        {
+            String rule = commandLineRules[i];
+            if ( !rule.contains( "." ) )
+            {
+                rule = getClass().getPackage().getName() 
+                    + "." + Character.toUpperCase( rule.charAt( 0 ) ) + rule.substring( 1 ); 
+            }
+            
+            try 
+            {
+                rules[i] = ( EnforcerRule ) Class.forName( rule ).newInstance();
+            }
+            catch ( Exception e ) 
+            {
+                throw new MojoExecutionException( "Failed to create enforcer rules from command line argument", e );
+            }
+        }
+        return rules;
+    }
+
     /**
      * This method determines if a rule should execute based on the cache
      *
@@ -254,7 +290,7 @@ public class EnforceMojo
             if ( EnforceMojo.cache.containsKey( key ) )
             {
                 log.debug( "Key " + key + " was found in the cache" );
-                if ( rule.isResultValid( (EnforcerRule) cache.get( key ) ) )
+                if ( rule.isResultValid( cache.get( key ) ) )
                 {
                     log.debug( "The cached results are still valid. Skipping the rule: " + rule.getClass().getName() );
                     return false;
