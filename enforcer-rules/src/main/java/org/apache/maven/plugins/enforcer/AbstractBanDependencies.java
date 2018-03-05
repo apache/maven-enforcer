@@ -63,22 +63,25 @@ public abstract class AbstractBanDependencies
             throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
         }
 
-        try
+        if ( ! searchTransitive )
         {
-            graphBuilder = (DependencyGraphBuilder) helper.getComponent( DependencyGraphBuilder.class );
-        }
-        catch ( ComponentLookupException e )
-        {
-            // real cause is probably that one of the Maven3 graph builder could not be initiated and fails with a
-            // ClassNotFoundException
             try
             {
-                graphBuilder =
-                    (DependencyGraphBuilder) helper.getComponent( DependencyGraphBuilder.class.getName(), "maven2" );
+                graphBuilder = (DependencyGraphBuilder) helper.getComponent( DependencyGraphBuilder.class );
             }
-            catch ( ComponentLookupException e1 )
+            catch ( ComponentLookupException e )
             {
-                throw new EnforcerRuleException( "Unable to lookup DependencyGraphBuilder: ", e );
+                // real cause is probably that one of the Maven3 graph builder could not be initiated and fails with a
+                // ClassNotFoundException
+                try
+                {
+                    graphBuilder = (DependencyGraphBuilder)
+                        helper.getComponent( DependencyGraphBuilder.class.getName(), "maven2" );
+                }
+                catch ( ComponentLookupException e1 )
+                {
+                    throw new EnforcerRuleException( "Unable to lookup DependencyGraphBuilder: ", e );
+                }
             }
         }
 
@@ -116,48 +119,33 @@ public abstract class AbstractBanDependencies
 
     protected Set<Artifact> getDependenciesToCheck( MavenProject project )
     {
-        Set<Artifact> dependencies = null;
-        try
+        if ( searchTransitive )
         {
-            DependencyNode node = graphBuilder.buildDependencyGraph( project, null );
-            if ( searchTransitive )
+            return project.getArtifacts();
+        }
+        else
+        {
+            // TODO consider simply: return project.getDependencyArtifacts();
+            Set<Artifact> dependencies = null;
+            try
             {
-                dependencies = getAllDescendants( node );
-            }
-            else if ( node.getChildren() != null )
-            {
-                dependencies = new HashSet<Artifact>();
-                for ( DependencyNode depNode : node.getChildren() )
+                DependencyNode node = graphBuilder.buildDependencyGraph( project, null );
+                if ( node.getChildren() != null )
                 {
-                    dependencies.add( depNode.getArtifact() );
+                    dependencies = new HashSet<Artifact>();
+                    for ( DependencyNode depNode : node.getChildren() )
+                    {
+                        dependencies.add( depNode.getArtifact() );
+                    }
                 }
             }
-        }
-        catch ( DependencyGraphBuilderException e )
-        {
-            // otherwise we need to change the signature of this protected method
-            throw new RuntimeException( e );
-        }
-        return dependencies;
-    }
-
-    private Set<Artifact> getAllDescendants( DependencyNode node )
-    {
-        Set<Artifact> children = null;
-        if ( node.getChildren() != null )
-        {
-            children = new HashSet<Artifact>();
-            for ( DependencyNode depNode : node.getChildren() )
+            catch ( DependencyGraphBuilderException e )
             {
-                children.add( depNode.getArtifact() );
-                Set<Artifact> subNodes = getAllDescendants( depNode );
-                if ( subNodes != null )
-                {
-                    children.addAll( subNodes );
-                }
+                // otherwise we need to change the signature of this protected method
+                throw new RuntimeException( e );
             }
+            return dependencies;
         }
-        return children;
     }
 
     /**
