@@ -109,7 +109,7 @@ public class BanDuplicatePomDependencyVersions
 
         if ( model.getDependencyManagement() != null )
         {
-            List<Dependency> managementDependencies = model.getDependencies();
+            List<Dependency> managementDependencies = model.getDependencyManagement().getDependencies();
             Map<String, Integer> duplicateManagementDependencies = validateDependencies( managementDependencies );
             duplicates += duplicateManagementDependencies.size();
 
@@ -128,9 +128,9 @@ public class BanDuplicatePomDependencyVersions
             messageBuilder( duplicateProfileDependencies, "profiles.profile[" + profile.getId()
                 + "].dependencies.dependency", summary );
 
-            if ( model.getDependencyManagement() != null )
+            if ( profile.getDependencyManagement() != null )
             {
-                List<Dependency> profileManagementDependencies = profile.getDependencies();
+                List<Dependency> profileManagementDependencies = profile.getDependencyManagement().getDependencies();
 
                 Map<String, Integer> duplicateProfileManagementDependencies =
                     validateDependencies( profileManagementDependencies );
