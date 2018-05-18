@@ -30,7 +30,9 @@ import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -47,6 +49,11 @@ public abstract class AbstractBanDependencies
 
     private transient DependencyGraphBuilder graphBuilder;
 
+    /**
+     * Contains the full list of projects in the reactor.
+     */
+    private transient List<MavenProject> reactorProjects;
+
     @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
@@ -61,6 +68,16 @@ public abstract class AbstractBanDependencies
         catch ( ExpressionEvaluationException eee )
         {
             throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
+        }
+
+        // get the reactor projects
+        try
+        {
+            reactorProjects = (List<MavenProject>) helper.evaluate( "${reactorProjects}" );
+        }
+        catch ( ExpressionEvaluationException eee )
+        {
+            throw new EnforcerRuleException( "Unable to retrieve the reactor MavenProject: ", eee );
         }
 
         try
@@ -119,7 +136,7 @@ public abstract class AbstractBanDependencies
         Set<Artifact> dependencies = null;
         try
         {
-            DependencyNode node = graphBuilder.buildDependencyGraph( project, null );
+            DependencyNode node = graphBuilder.buildDependencyGraph( project, null, reactorProjects );
             if ( searchTransitive )
             {
                 dependencies = ArtifactUtils.getAllDescendants( node );
