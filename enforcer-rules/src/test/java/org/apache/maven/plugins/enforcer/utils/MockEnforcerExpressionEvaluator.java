@@ -31,24 +31,17 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 public class MockEnforcerExpressionEvaluator
     extends EnforcerExpressionEvaluator
 {
-
     /**
      * Instantiates a new mock enforcer expression evaluator.
      *
-     * @param theContext the the context
-     * @param thePathTranslator the the path translator
-     * @param theProject the the project
+     * @param theContext the context
      */
     public MockEnforcerExpressionEvaluator( MavenSession theContext )
     {
         super( theContext, new MojoExecution( new MojoDescriptor() ) );
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.plugin.PluginParameterExpressionEvaluator#evaluate(java.lang.String)
-     */
+    @Override 
     public Object evaluate( String expr )
         throws ExpressionEvaluationException
     {
