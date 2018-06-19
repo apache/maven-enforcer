@@ -80,6 +80,7 @@ public class TestRequirePluginVersions
         rule.setBanRelease( false );
         rule.setBanSnapshots( false );
 
+
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
 
         assertTrue( rule.hasValidVersionSpecified( helper, source, pluginWrappers ) );
