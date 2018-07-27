@@ -24,7 +24,7 @@
 
 Dependency Convergence
 
-  This rule requires that dependency version numbers converge.  If a project has two dependencies, A and B, both depending on the same artifact, C, this rule will fail the build if A depends on a different version of C then the version of C depended on by B.
+  This rule requires that dependency version numbers converge.  If a project has two dependencies, A and B, both depending on the same artifact, C, this rule will fail the build if A depends on a different version of C than the version of C depended on by B.
 
   Here is a concrete example.
 
