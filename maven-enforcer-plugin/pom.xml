@@ -112,6 +112,9 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
+        <configuration>
+          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+        </configuration>
         <executions>
           <execution>
             <id>descriptor-help</id>
@@ -163,6 +166,10 @@
               <goals>
                 <goal>validate</goal>
               </goals>
+              <properties>
+                <!-- e.g. ensure that Java7 picks up TLSv1.2 when connecting with Central -->
+                <https.protocols>${https.protocols}</https.protocols>
+              </properties>
             </configuration>
             <executions>
               <execution>

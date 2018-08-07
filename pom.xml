@@ -23,7 +23,7 @@
   <parent>
     <artifactId>maven-parent</artifactId>
     <groupId>org.apache.maven</groupId>
-    <version>31</version>
+    <version>33</version>
     <relativePath>../pom/maven/pom.xml</relativePath>
   </parent>
   <groupId>org.apache.maven.enforcer</groupId>
@@ -65,7 +65,6 @@
   <properties>
     <maven.version>3.0</maven.version>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
-	<surefire.version>2.21.0</surefire.version>
   </properties>
 
   <dependencyManagement>
