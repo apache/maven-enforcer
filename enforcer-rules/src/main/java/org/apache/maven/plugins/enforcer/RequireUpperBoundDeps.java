@@ -42,6 +42,7 @@ import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
+import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
@@ -253,7 +254,18 @@ public class RequireUpperBoundDeps
         {
             version = uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
         }
-        return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + version;
+        String result = artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + version;
+
+        if ( "compile".equals( artifact.getScope() ) )
+        {
+            return MessageUtils.buffer().strong( result ).toString();
+        }
+        if ( artifact.getScope() != null )
+        {
+            return result + " [" + artifact.getScope() + ']';
+        }
+
+        return result;
     }
 
     private static class RequireUpperBoundDepsVisitor
