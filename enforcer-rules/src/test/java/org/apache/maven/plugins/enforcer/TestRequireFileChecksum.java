@@ -74,10 +74,45 @@ public class TestRequireFileChecksum
     }
 
     @Test
-    public void testFileChecksumMd5NoFileFailure()
+    public void testFileChecksumMd5GivenFileDoesNotExistFailure()
         throws IOException, EnforcerRuleException
     {
-        File f = new File( "foo" )
+        File f = new File( "nonExistent" );
+
+        expectedException.expect( EnforcerRuleException.class );
+        expectedException.expectMessage( "File does not exist: " + f.getAbsolutePath() );
+
+        rule.setFile( f );
+        rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
+        rule.setType( "md5" );
+
+        rule.execute( EnforcerTestUtils.getHelper() );
+    }
+
+    @Test
+    public void testFileChecksumMd5GivenFileDoesNotExistFailureWithMessage()
+        throws IOException, EnforcerRuleException
+    {
+        File f = new File( "nonExistent" );
+        String configuredMessage = "testMessageFileDoesNotExist";
+
+        expectedException.expect( EnforcerRuleException.class );
+        expectedException.expectMessage( configuredMessage );
+
+        rule.setFile( f );
+        rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
+        rule.setType( "md5" );
+        rule.setNonexistentFileMessage( configuredMessage );
+
+        rule.execute( EnforcerTestUtils.getHelper() );
+    }
+
+    @Test
+    public void testFileChecksumMd5GivenFileIsNotReadableFailure()
+        throws IOException, EnforcerRuleException
+    {
+        File f = temporaryFolder.newFile();
+        f = new File( f.getAbsolutePath() )
         {
             private static final long serialVersionUID = 6987790643999338089L;
 
@@ -105,7 +140,7 @@ public class TestRequireFileChecksum
         File f = temporaryFolder.newFolder();
 
         expectedException.expect( EnforcerRuleException.class );
-        expectedException.expectMessage( "Cannot read file: " + f.getAbsolutePath() );
+        expectedException.expectMessage( "Cannot calculate the checksum of directory: " + f.getAbsolutePath() );
 
         rule.setFile( f );
         rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
@@ -171,6 +206,25 @@ public class TestRequireFileChecksum
         rule.setFile( f );
         rule.setChecksum( "ffeeddccbbaa99887766554433221100" );
         rule.setType( "md5" );
+
+        rule.execute( EnforcerTestUtils.getHelper() );
+    }
+
+    @Test
+    public void testFileChecksumMd5ChecksumMismatchFailureWithMessage()
+        throws IOException, EnforcerRuleException
+    {
+        File f = temporaryFolder.newFile();
+        FileUtils.fileWrite( f, "message" );
+        String configuredMessage = "testMessage";
+
+        expectedException.expect( EnforcerRuleException.class );
+        expectedException.expectMessage( configuredMessage );
+
+        rule.setFile( f );
+        rule.setChecksum( "ffeeddccbbaa99887766554433221100" );
+        rule.setType( "md5" );
+        rule.setMessage( configuredMessage );
 
         rule.execute( EnforcerTestUtils.getHelper() );
     }

@@ -45,6 +45,8 @@ public class RequireFileChecksum
 
     private String type;
 
+    private String nonexistentFileMessage;
+
     @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
@@ -64,53 +66,38 @@ public class RequireFileChecksum
             throw new EnforcerRuleException( "Checksum unspecified" );
         }
 
-        InputStream inputStream = null;
-        try
+        if ( !this.file.exists() )
         {
-            if ( this.file.isDirectory() || !this.file.canRead() )
+            String message = nonexistentFileMessage;
+            if ( message == null )
             {
-                throw new EnforcerRuleException( "Cannot read file: " + this.file.getAbsolutePath() );
+                message = "File does not exist: " + this.file.getAbsolutePath();
             }
+            throw new EnforcerRuleException( message );
+        }
 
-            inputStream = new FileInputStream( this.file );
-            String checksum;
-            if ( "md5".equals( this.type ) )
-            {
-                checksum = DigestUtils.md5Hex( inputStream );
-            }
-            else if ( "sha1".equals( this.type ) )
-            {
-                checksum = DigestUtils.shaHex( inputStream );
-            }
-            else if ( "sha256".equals( this.type ) )
-            {
-                checksum = DigestUtils.sha256Hex( inputStream );
-            }
-            else if ( "sha384".equals( this.type ) )
-            {
-                checksum = DigestUtils.sha384Hex( inputStream );
-            }
-            else if ( "sha512".equals( this.type ) )
-            {
-                checksum = DigestUtils.sha512Hex( inputStream );
-            }
-            else
-            {
-                throw new EnforcerRuleException( "Unsupported hash type: " + this.type );
-            }
-            if ( !checksum.equalsIgnoreCase( this.checksum ) )
-            {
-                throw new EnforcerRuleException( this.type + " hash of " + this.file + " was " + checksum
-                    + " but expected " + this.checksum );
-            }
-        }
-        catch ( IOException e )
+        if ( this.file.isDirectory() )
         {
-            throw new EnforcerRuleException( "Unable to calculate checksum", e );
+            throw new EnforcerRuleException( "Cannot calculate the checksum of directory: "
+                + this.file.getAbsolutePath() );
         }
-        finally
+
+        if ( !this.file.canRead() )
         {
-            IOUtil.close( inputStream );
+            throw new EnforcerRuleException( "Cannot read file: " + this.file.getAbsolutePath() );
+        }
+
+        String checksum = calculateChecksum();
+
+        if ( !checksum.equalsIgnoreCase( this.checksum ) )
+        {
+            String exceptionMessage = getMessage();
+            if ( exceptionMessage == null )
+            {
+                exceptionMessage = this.type + " hash of " + this.file + " was " + checksum
+                    + " but expected " + this.checksum;
+            }
+            throw new EnforcerRuleException( exceptionMessage );
         }
     }
 
@@ -144,4 +131,57 @@ public class RequireFileChecksum
         this.type = type;
     }
 
+    /**
+     * The friendly message to use when the file does not exist.
+     *
+     * @param nonexistentFileMessage message
+     */
+    public void setNonexistentFileMessage( String nonexistentFileMessage )
+    {
+        this.nonexistentFileMessage = nonexistentFileMessage;
+    }
+
+    private String calculateChecksum()
+        throws EnforcerRuleException
+    {
+        InputStream inputStream = null;
+        try
+        {
+            inputStream = new FileInputStream( this.file );
+            String checksum;
+            if ( "md5".equals( this.type ) )
+            {
+                checksum = DigestUtils.md5Hex( inputStream );
+            }
+            else if ( "sha1".equals( this.type ) )
+            {
+                checksum = DigestUtils.shaHex( inputStream );
+            }
+            else if ( "sha256".equals( this.type ) )
+            {
+                checksum = DigestUtils.sha256Hex( inputStream );
+            }
+            else if ( "sha384".equals( this.type ) )
+            {
+                checksum = DigestUtils.sha384Hex( inputStream );
+            }
+            else if ( "sha512".equals( this.type ) )
+            {
+                checksum = DigestUtils.sha512Hex( inputStream );
+            }
+            else
+            {
+                throw new EnforcerRuleException( "Unsupported hash type: " + this.type );
+            }
+            return checksum;
+        }
+        catch ( IOException e )
+        {
+            throw new EnforcerRuleException( "Unable to calculate checksum", e );
+        }
+        finally
+        {
+            IOUtil.close( inputStream );
+        }
+    }
 }
