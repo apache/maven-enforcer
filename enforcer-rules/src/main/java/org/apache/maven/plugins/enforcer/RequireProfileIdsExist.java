@@ -64,13 +64,13 @@ public class RequireProfileIdsExist extends AbstractNonCacheableEnforcerRule
             for ( org.apache.maven.settings.Profile profile : session.getSettings().getProfiles() )
             {
                 profileIds.remove( profile.getId() );
-                
-                if ( profileIds.isEmpty() )
-                {
-                    return;
-                }
             }
-            
+
+            if ( profileIds.isEmpty() )
+            {
+                return;
+            }
+
             StringBuilder sb = new StringBuilder();
             if ( profileIds.size() > 1 )
             {
