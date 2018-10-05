@@ -58,7 +58,9 @@
             <configuration>
               <rules>
                 <requireNoRepositories>
-                  <allowedRepositories>com.asual.maven.public</allowedRepositories>
+                  <allowedRepositories>
+                    <allowedRepository>com.asual.maven.public</allowedRepository>
+                  </allowedRepositories>
                 </requireNoRepositories>
               </rules>
             </configuration>

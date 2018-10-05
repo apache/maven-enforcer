@@ -58,7 +58,10 @@
             <configuration>
               <rules>
                 <requireNoRepositories>
-                  <allowedPluginRepositories>plugin-repo,com.asual.maven.public</allowedPluginRepositories>
+                  <allowedPluginRepositories>
+                    <allowedPluginRepository>plugin-repo</allowedPluginRepository>
+                    <allowedPluginRepository>com.asual.maven.public</allowedPluginRepository>
+                  </allowedPluginRepositories>
                 </requireNoRepositories>
               </rules>
             </configuration>

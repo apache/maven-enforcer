@@ -58,7 +58,9 @@
             <configuration>
               <rules>
                 <requireNoRepositories>
-                  <allowedPluginRepositories>plugin-repo</allowedPluginRepositories>
+                  <allowedPluginRepositories>
+                    <allowedPluginRepository>plugin-repo</allowedPluginRepository>
+                  </allowedPluginRepositories>
                 </requireNoRepositories>
               </rules>
             </configuration>
