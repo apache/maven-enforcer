@@ -100,8 +100,13 @@ public class RequireFileChecksum
             }
             if ( !checksum.equalsIgnoreCase( this.checksum ) )
             {
-                throw new EnforcerRuleException( this.type + " hash of " + this.file + " was " + checksum
-                    + " but expected " + this.checksum );
+                String exceptionMessage = getMessage();
+                if ( exceptionMessage == null )
+                {
+                    exceptionMessage = this.type + " hash of " + this.file + " was " + checksum
+                        + " but expected " + this.checksum;
+                }
+                throw new EnforcerRuleException( exceptionMessage );
             }
         }
         catch ( IOException e )

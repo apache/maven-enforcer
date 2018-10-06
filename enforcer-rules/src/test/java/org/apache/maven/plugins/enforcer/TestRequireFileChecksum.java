@@ -176,6 +176,25 @@ public class TestRequireFileChecksum
     }
 
     @Test
+    public void testFileChecksumMd5ChecksumMismatchFailureWithMessage()
+        throws IOException, EnforcerRuleException
+    {
+        File f = temporaryFolder.newFile();
+        FileUtils.fileWrite( f, "message" );
+        String configuredMessage = "testMessage";
+
+        expectedException.expect( EnforcerRuleException.class );
+        expectedException.expectMessage( configuredMessage );
+
+        rule.setFile( f );
+        rule.setChecksum( "ffeeddccbbaa99887766554433221100" );
+        rule.setType( "md5" );
+        rule.setMessage( configuredMessage );
+
+        rule.execute( EnforcerTestUtils.getHelper() );
+    }
+
+    @Test
     public void testFileChecksumSha1()
         throws IOException, EnforcerRuleException
     {
