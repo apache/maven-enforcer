@@ -26,7 +26,6 @@ import org.apache.maven.enforcer.rule.api.EnforcerRule;
  * that don't need caching... it saves implementing a bunch of methods.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
  */
 public abstract class AbstractNonCacheableEnforcerRule
     extends AbstractStandardEnforcerRule

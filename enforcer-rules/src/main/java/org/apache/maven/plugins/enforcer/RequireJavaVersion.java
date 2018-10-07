@@ -35,7 +35,6 @@ import org.codehaus.plexus.util.StringUtils;
  * This rule checks that the Java version is allowed.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
  */
 public class RequireJavaVersion
     extends AbstractVersionEnforcer

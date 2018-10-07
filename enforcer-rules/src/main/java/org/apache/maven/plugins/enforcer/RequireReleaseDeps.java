@@ -37,7 +37,6 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * This rule checks that no snapshots are included.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
  */
 public class RequireReleaseDeps
     extends AbstractBanDependencies

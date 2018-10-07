@@ -36,7 +36,6 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  * session and provide useful elements like the log.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
  */
 public class DefaultEnforcementRuleHelper
     implements EnforcerRuleHelper

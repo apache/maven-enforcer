@@ -36,7 +36,6 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
  * This goal displays the current platform information.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
  */
 @Mojo( name = "display-info", threadSafe = true )
 public class DisplayInfoMojo

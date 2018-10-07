@@ -34,7 +34,6 @@ import org.codehaus.plexus.util.StringUtils;
  * Contains the common code to compare a version against a version range.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
  */
 public abstract class AbstractVersionEnforcer
     extends AbstractStandardEnforcerRule

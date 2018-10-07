@@ -36,7 +36,6 @@ import java.util.Set;
  * Abstract Rule for banning dependencies.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
  */
 public abstract class AbstractBanDependencies
     extends AbstractNonCacheableEnforcerRule

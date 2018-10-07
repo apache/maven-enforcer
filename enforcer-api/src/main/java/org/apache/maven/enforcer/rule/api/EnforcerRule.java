@@ -26,7 +26,6 @@ import javax.annotation.Nullable;
  * Interface to be implemented by any rules executed by the enforcer.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
  */
 public interface EnforcerRule
 {

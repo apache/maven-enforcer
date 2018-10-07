@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
  * Interface to be implemented by any rules as of version 2.0 executed by the enforcer.
  *
  * @author Mirko Friedenhagen
- * @version $Id$
  * @since 1.4
  */
 public interface EnforcerRule2 extends EnforcerRule

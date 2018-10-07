@@ -27,7 +27,6 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
  *
  * @author Paul Gier
  * @author <a href='mailto:marvin[at]marvinformatics[dot]com'>Marvin Froeder</a>
- * @version $Id$
  */
 public abstract class AbstractPropertyEnforcerRule
     extends AbstractNonCacheableEnforcerRule

@@ -35,7 +35,6 @@ import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher.Pattern;
  * This rule checks that lists of dependencies are not included.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @version $Id$
  */
 public class BannedDependencies
     extends AbstractBanDependencies
