@@ -24,10 +24,14 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 
 /**
@@ -46,9 +50,7 @@ public class TestEnforceMojo
     public void testEnforceMojo()
         throws MojoExecutionException
     {
-        mojo.setFail( false );
-        mojo.setSession( EnforcerTestUtils.getMavenSession() );
-        mojo.setProject( new MockProject() );
+        setupBasics( false );
 
         try
         {
@@ -101,9 +103,7 @@ public class TestEnforceMojo
     public void testCaching()
         throws MojoExecutionException
     {
-        mojo.setFail( true );
-        mojo.setSession( EnforcerTestUtils.getMavenSession() );
-        mojo.setProject( new MockProject() );
+        setupBasics( true );
 
         MockEnforcerRule[] rules = new MockEnforcerRule[10];
 
@@ -175,9 +175,7 @@ public class TestEnforceMojo
     public void testCachePersistence1()
         throws MojoExecutionException
     {
-        mojo.setFail( true );
-        mojo.setSession( EnforcerTestUtils.getMavenSession() );
-        mojo.setProject( new MockProject() );
+        setupBasics( true );
 
         MockEnforcerRule[] rules = new MockEnforcerRule[10];
 
@@ -198,9 +196,7 @@ public class TestEnforceMojo
     public void testCachePersistence2()
         throws MojoExecutionException
     {
-        mojo.setFail( true );
-        mojo.setSession( EnforcerTestUtils.getMavenSession() );
-        mojo.setProject( new MockProject() );
+        setupBasics( true );
 
         MockEnforcerRule[] rules = new MockEnforcerRule[10];
 
@@ -230,9 +226,7 @@ public class TestEnforceMojo
         {
         }
 
-        mojo.setFail( true );
-        mojo.setSession( EnforcerTestUtils.getMavenSession() );
-        mojo.setProject( new MockProject() );
+        setupBasics( true );
 
         MockEnforcerRule[] rules = new MockEnforcerRule[10];
 
@@ -246,5 +240,73 @@ public class TestEnforceMojo
         assertFalse( "Expected this rule not to be executed.", rules[0].executed );
         assertFalse( "Expected this rule not to be executed.", rules[1].executed );
 
+    }
+
+    @Test
+    public void testLoggingOnEnforcerRuleExceptionWithMessage()
+        throws MojoExecutionException, EnforcerRuleException
+    {
+        // fail=false because this is out of scope here (also allows for cleaner test code without catch block)
+        setupBasics( false );
+
+        // the regular kind of EnforcerRuleException:
+        EnforcerRuleException ruleException = new EnforcerRuleException( "testMessage" );
+
+        EnforcerRule ruleMock = Mockito.mock( EnforcerRule.class );
+        Mockito.doThrow( ruleException ).when( ruleMock ).execute( Mockito.any( EnforcerRuleHelper.class ) );
+
+        mojo.setRules( new EnforcerRule[] { ruleMock } );
+
+        Log logSpy = setupLogSpy();
+
+        mojo.execute();
+
+        Mockito.verify( logSpy ).debug(
+                Mockito.anyString() , Mockito.same( ruleException ) );
+
+        Mockito.verify( logSpy, Mockito.never() ).warn(
+                Mockito.anyString(), Mockito.any( Throwable.class ) );
+
+        Mockito.verify( logSpy ).warn(
+                Mockito.matches( ".* failed with message:" + System.lineSeparator() + ruleException.getMessage() ) );
+    }
+
+    @Test
+    public void testLoggingOnEnforcerRuleExceptionWithoutMessage()
+        throws MojoExecutionException, EnforcerRuleException
+    {
+        // fail=false because this is out of scope here (also allows for cleaner test code without catch block)
+        setupBasics( false );
+
+        // emulate behaviour of various rules that just catch Exception and wrap into EnforcerRuleException:
+        NullPointerException npe = new NullPointerException();
+        EnforcerRuleException enforcerRuleException = new EnforcerRuleException( npe.getLocalizedMessage(), npe );
+
+        EnforcerRule ruleMock = Mockito.mock( EnforcerRule.class );
+        Mockito.doThrow( enforcerRuleException ).when( ruleMock ).execute( Mockito.any( EnforcerRuleHelper.class ) );
+
+        mojo.setRules( new EnforcerRule[] { ruleMock } );
+
+        Log logSpy = setupLogSpy();
+
+        mojo.execute();
+
+        Mockito.verify( logSpy ).warn(
+                Mockito.contains("failed without a message"), Mockito.same( enforcerRuleException ) );
+
+        Mockito.verify( logSpy ).warn(
+                Mockito.matches( ".* failed with message:" + System.lineSeparator() + "null" ) );
+    }
+
+    private void setupBasics( boolean fail ) {
+        mojo.setFail( fail );
+        mojo.setSession( EnforcerTestUtils.getMavenSession() );
+        mojo.setProject( new MockProject() );
+    }
+
+    private Log setupLogSpy() {
+        Log spy = Mockito.spy( mojo.getLog() );
+        mojo.setLog( spy );
+        return spy;
     }
 }
