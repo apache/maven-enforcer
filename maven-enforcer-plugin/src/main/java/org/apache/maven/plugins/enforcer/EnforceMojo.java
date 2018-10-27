@@ -19,6 +19,8 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -218,15 +220,23 @@ public class EnforceMojo
                     }
                     else
                     {
+                        String exceptionMessage = e.getMessage();
+                        // include entire exception instead of just null if exception message is missing in rare cases
+                        if ( exceptionMessage == null )
+                        {
+                            StringWriter stringWriter = new StringWriter();
+                            e.printStackTrace( new PrintWriter( stringWriter ) );
+                            exceptionMessage = stringWriter.toString();
+                        }
                         if ( level == EnforcerLevel.ERROR )
                         {
                             hasErrors = true;
-                            list.add( "Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage() );
+                            list.add( "Rule " + i + ": " + currentRule + " failed with message:\n" + exceptionMessage );
                             log.debug( "Adding failure due to exception", e );
                         }
                         else
                         {
-                            list.add( "Rule " + i + ": " + currentRule + " warned with message:\n" + e.getMessage() );
+                            list.add( "Rule " + i + ": " + currentRule + " warned with message:\n" + exceptionMessage );
                             log.debug( "Adding warning due to exception", e );
                         }
                     }
