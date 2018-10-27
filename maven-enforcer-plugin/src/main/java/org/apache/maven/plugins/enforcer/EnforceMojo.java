@@ -218,18 +218,29 @@ public class EnforceMojo
                     }
                     else
                     {
+                        // log a warning in case the exception message is missing
+                        // so that the user can figure out what is going on
+                        final String exceptionMessage = e.getMessage();
+                        if ( exceptionMessage != null )
+                        {
+                            log.debug( "Adding " + level + " message due to exception", e );
+                        }
+                        else
+                        {
+                            log.warn( "Rule " + i + ": " + currentRule + " failed without a message", e );
+                        }
+                        // add the 'failed/warned' message including exceptionMessage
+                        // which might be null in rare cases
                         if ( level == EnforcerLevel.ERROR )
                         {
                             hasErrors = true;
                             list.add( "Rule " + i + ": " + currentRule + " failed with message:"
-                                 + System.lineSeparator() + e.getMessage() );
-                            log.debug( "Adding failure due to exception", e );
+                                 + System.lineSeparator() + exceptionMessage );
                         }
                         else
                         {
                             list.add( "Rule " + i + ": " + currentRule + " warned with message:"
-                                 + System.lineSeparator() + e.getMessage() );
-                            log.debug( "Adding warning due to exception", e );
+                                 + System.lineSeparator() + exceptionMessage );
                         }
                     }
                 }
