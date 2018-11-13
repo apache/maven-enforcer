@@ -19,8 +19,8 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -66,13 +66,13 @@ public class BanDuplicatePomDependencyVersions
 
         // re-read model, because M3 uses optimized model
         MavenXpp3Reader modelReader = new MavenXpp3Reader();
-        FileReader pomReader = null;
+        FileInputStream pomInputStream = null;
         Model model;
         try
         {
-            pomReader = new FileReader( project.getFile() );
+            pomInputStream = new FileInputStream( project.getFile() );
 
-            model = modelReader.read( pomReader );
+            model = modelReader.read( pomInputStream, false );
         }
         catch ( FileNotFoundException e )
         {
@@ -88,7 +88,7 @@ public class BanDuplicatePomDependencyVersions
         }
         finally
         {
-            IOUtil.close( pomReader );
+            IOUtil.close( pomInputStream );
         }
 
         // @todo reuse ModelValidator when possible
