@@ -50,11 +50,30 @@ public class DependencyVersionMap
         this.uniqueVersions = uniqueVersions;
     }
 
+    private boolean isIncluded( DependencyNode parent, Artifact artifact )
+    {
+        if ( parent == null || parent.getArtifact().getDependencyFilter() == null )
+        {
+            return true;
+        }
+        else
+        {
+            return parent.getArtifact().getDependencyFilter().include( artifact )
+                && isIncluded( parent.getParent(), artifact );
+
+        }
+    }
+
     @Override
     public boolean visit( DependencyNode node )
     {
-        addDependency( node );
-        return !containsConflicts( node );
+        if ( isIncluded( node.getParent(), node.getArtifact() ) )
+        {
+            addDependency( node );
+            return !containsConflicts( node );
+        }
+
+        return true;
     }
 
     @Override
