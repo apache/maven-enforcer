@@ -19,17 +19,13 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher;
-import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher.Pattern;
+import org.apache.maven.plugins.enforcer.utils.ArtifactUtils;
 
 /**
  * This rule checks that lists of dependencies are not included.
@@ -71,13 +67,13 @@ public class BannedDependencies
         throws EnforcerRuleException
     {
 
-        Set<Artifact> excluded = checkDependencies( theDependencies, excludes );
+        Set<Artifact> excluded = ArtifactUtils.checkDependencies( theDependencies, excludes );
 
         // anything specifically included should be removed
         // from the ban list.
         if ( excluded != null )
         {
-            Set<Artifact> included = checkDependencies( theDependencies, includes );
+            Set<Artifact> included = ArtifactUtils.checkDependencies( theDependencies, includes );
 
             if ( included != null )
             {
@@ -86,72 +82,6 @@ public class BannedDependencies
         }
         return excluded;
 
-    }
-
-    /**
-     * Checks the set of dependencies against the list of patterns.
-     * 
-     * @param thePatterns the patterns
-     * @param dependencies the dependencies
-     * @return a set containing artifacts matching one of the patterns or <code>null</code>
-     * @throws EnforcerRuleException the enforcer rule exception
-     */
-    private Set<Artifact> checkDependencies( Set<Artifact> dependencies, List<String> thePatterns )
-        throws EnforcerRuleException
-    {
-        Set<Artifact> foundMatches = null;
-
-        if ( thePatterns != null && thePatterns.size() > 0 )
-        {
-
-            for ( String pattern : thePatterns )
-            {
-                String[] subStrings = pattern.split( ":" );
-                subStrings = StringUtils.stripAll( subStrings );
-                String resultPattern = StringUtils.join( subStrings, ":" );
-
-                for ( Artifact artifact : dependencies )
-                {
-                    if ( compareDependency( resultPattern, artifact ) )
-                    {
-                        // only create if needed
-                        if ( foundMatches == null )
-                        {
-                            foundMatches = new HashSet<Artifact>();
-                        }
-                        foundMatches.add( artifact );
-                    }
-                }
-            }
-        }
-        return foundMatches;
-    }
-
-    /**
-     * Compares the given pattern against the given artifact. The pattern should follow the format
-     * <code>groupId:artifactId:version:type:scope:classifier</code>.
-     * 
-     * @param pattern The pattern to compare the artifact with.
-     * @param artifact the artifact
-     * @return <code>true</code> if the artifact matches one of the patterns
-     * @throws EnforcerRuleException the enforcer rule exception
-     */
-    protected boolean compareDependency( String pattern, Artifact artifact )
-        throws EnforcerRuleException
-    {
-
-        ArtifactMatcher.Pattern am = new Pattern( pattern );
-        boolean result;
-        try
-        {
-            result = am.match( artifact );
-        }
-        catch ( InvalidVersionSpecificationException e )
-        {
-            throw new EnforcerRuleException( "Invalid Version Range: ", e );
-        }
-
-        return result;
     }
 
     /**

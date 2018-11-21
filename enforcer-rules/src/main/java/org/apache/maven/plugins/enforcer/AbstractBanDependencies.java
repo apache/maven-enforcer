@@ -23,6 +23,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.enforcer.utils.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
@@ -121,7 +122,7 @@ public abstract class AbstractBanDependencies
             DependencyNode node = graphBuilder.buildDependencyGraph( project, null );
             if ( searchTransitive )
             {
-                dependencies = getAllDescendants( node );
+                dependencies = ArtifactUtils.getAllDescendants( node );
             }
             else if ( node.getChildren() != null )
             {
@@ -138,25 +139,6 @@ public abstract class AbstractBanDependencies
             throw new RuntimeException( e );
         }
         return dependencies;
-    }
-
-    private Set<Artifact> getAllDescendants( DependencyNode node )
-    {
-        Set<Artifact> children = null;
-        if ( node.getChildren() != null )
-        {
-            children = new HashSet<Artifact>();
-            for ( DependencyNode depNode : node.getChildren() )
-            {
-                children.add( depNode.getArtifact() );
-                Set<Artifact> subNodes = getAllDescendants( depNode );
-                if ( subNodes != null )
-                {
-                    children.addAll( subNodes );
-                }
-            }
-        }
-        return children;
     }
 
     /**
