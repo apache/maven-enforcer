@@ -33,6 +33,7 @@ import org.codehaus.plexus.util.StringUtils;
  * Ensure that all profiles mentioned on the commandline do exist. 
  * 
  * @author Robert Scholte
+ * @author Gabriel Belingueres
  */
 public class RequireProfileIdsExist extends AbstractNonCacheableEnforcerRule
 {
@@ -43,24 +44,32 @@ public class RequireProfileIdsExist extends AbstractNonCacheableEnforcerRule
         try
         {
             MavenSession session = (MavenSession) helper.evaluate( "${session}" );
-            
+
             List<String> profileIds = new ArrayList<String>();
             profileIds.addAll( session.getProjectBuildingRequest().getActiveProfileIds() );
             profileIds.addAll( session.getProjectBuildingRequest().getInactiveProfileIds() );
-            
+
             for ( MavenProject project : session.getProjects() )
             {
-                for ( org.apache.maven.model.Profile profile : project.getModel().getProfiles() )
+                // iterate over all parents
+                MavenProject currentProject = project;
+                do
                 {
-                    profileIds.remove( profile.getId() );
-                    
-                    if ( profileIds.isEmpty() )
+                    for ( org.apache.maven.model.Profile profile : currentProject.getModel().getProfiles() )
                     {
-                        return;
+                        profileIds.remove( profile.getId() );
+
+                        if ( profileIds.isEmpty() )
+                        {
+                            return;
+                        }
                     }
+
+                    currentProject = currentProject.getParent();
                 }
+                while ( currentProject != null );
             }
-            
+
             for ( org.apache.maven.settings.Profile profile : session.getSettings().getProfiles() )
             {
                 profileIds.remove( profile.getId() );
@@ -81,7 +90,7 @@ public class RequireProfileIdsExist extends AbstractNonCacheableEnforcerRule
                 sb.append( "The requested profile doesn't exist: " );
             }
             sb.append( StringUtils.join( profileIds.iterator(), ", " ) );
-            
+
             throw new EnforcerRuleException( sb.toString() );
         }
         catch ( ExpressionEvaluationException e )
