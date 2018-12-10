@@ -265,7 +265,7 @@ public class RequirePluginVersions
                 newMsg.append( "Some plugins are missing valid versions:" );
                 if ( banLatest || banRelease || banSnapshots || banTimestamps )
                 {
-                    newMsg.append( "(" );
+                    newMsg.append( " (" );
                     if ( banLatest )
                     {
                         newMsg.append( "LATEST " );
@@ -278,8 +278,9 @@ public class RequirePluginVersions
                     {
                         newMsg.append( "SNAPSHOT " );
                     }
-                    newMsg.append( "are not allowed )\n" );
+                    newMsg.append( "are not allowed)" );
                 }
+                newMsg.append( "\n" );
                 for ( Plugin plugin : failures )
                 {
                     newMsg.append( plugin.getGroupId() );
