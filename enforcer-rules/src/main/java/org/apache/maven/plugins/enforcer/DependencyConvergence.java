@@ -156,7 +156,7 @@ public class DependencyConvergence
                 builder.append( "  " );
             }
             builder.append( "+-" + loc.get( i ) );
-            builder.append( "\n" );
+            builder.append( System.lineSeparator() );
         }
         return builder;
     }
@@ -174,15 +174,16 @@ public class DependencyConvergence
     private String buildConvergenceErrorMsg( List<DependencyNode> nodeList )
     {
         StringBuilder builder = new StringBuilder();
-        builder.append( "\nDependency convergence error for " + getFullArtifactName( nodeList.get( 0 ).getArtifact() )
-            + " paths to dependency are:\n" );
+        builder.append( System.lineSeparator() + "Dependency convergence error for "
+            + getFullArtifactName( nodeList.get( 0 ).getArtifact() )
+            + " paths to dependency are:" + System.lineSeparator() );
         if ( nodeList.size() > 0 )
         {
             builder.append( buildTreeString( nodeList.get( 0 ) ) );
         }
         for ( DependencyNode node : nodeList.subList( 1, nodeList.size() ) )
         {
-            builder.append( "and\n" );
+            builder.append( "and" + System.lineSeparator() );
             builder.append( buildTreeString( node ) );
         }
         return builder.toString();

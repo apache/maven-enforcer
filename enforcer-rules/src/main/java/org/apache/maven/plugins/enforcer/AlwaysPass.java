@@ -42,7 +42,7 @@ public class AlwaysPass
         StringBuffer buf = new StringBuffer();
         if ( message != null )
         {
-            buf.append( message ).append( '\n' );
+            buf.append( message ).append( System.lineSeparator() );
         }
         buf.append( "Always pass!" );
         log.info( buf.toString() );

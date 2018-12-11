@@ -41,7 +41,7 @@ public class BannedPlugins
     @Override
     protected CharSequence getErrorMessage( Artifact artifact )
     {
-        return "Found Banned Plugin: " + artifact.getId() + "\n";
+        return "Found Banned Plugin: " + artifact.getId() + System.lineSeparator();
     }
 
 }

@@ -165,7 +165,7 @@ public class BanDuplicatePomDependencyVersions
                 .append( duplicates )
                 .append( " duplicate dependency " );
             message.append( duplicateDependencies.size() == 1 ? "declaration" : "declarations" )
-                .append( " in this project:\n" );
+                .append( " in this project:" + System.lineSeparator() );
             message.append( summary );
             throw new EnforcerRuleException( message.toString() );
         }
@@ -183,7 +183,7 @@ public class BanDuplicatePomDependencyVersions
                     .append( entry.getKey() )
                     .append( "] ( " )
                     .append( entry.getValue() )
-                    .append( " times )\n" );
+                    .append( " times )" + System.lineSeparator() );
             }
         }
     }

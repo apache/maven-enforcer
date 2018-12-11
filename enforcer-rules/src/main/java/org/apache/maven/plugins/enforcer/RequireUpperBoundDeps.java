@@ -182,15 +182,15 @@ public class RequireUpperBoundDeps
     private String buildErrorMessage( List<DependencyNode> conflict )
     {
         StringBuilder errorMessage = new StringBuilder();
-        errorMessage.append( "\nRequire upper bound dependencies error for "
-            + getFullArtifactName( conflict.get( 0 ), false ) + " paths to dependency are:\n" );
+        errorMessage.append( System.lineSeparator() + "Require upper bound dependencies error for "
+            + getFullArtifactName( conflict.get( 0 ), false ) + " paths to dependency are:" + System.lineSeparator() );
         if ( conflict.size() > 0 )
         {
             errorMessage.append( buildTreeString( conflict.get( 0 ) ) );
         }
         for ( DependencyNode node : conflict.subList( 1, conflict.size() ) )
         {
-            errorMessage.append( "and\n" );
+            errorMessage.append( "and" + System.lineSeparator() );
             errorMessage.append( buildTreeString( node ) );
         }
         return errorMessage.toString();
@@ -222,7 +222,7 @@ public class RequireUpperBoundDeps
                 builder.append( "  " );
             }
             builder.append( "+-" ).append( loc.get( i ) );
-            builder.append( "\n" );
+            builder.append( System.lineSeparator() );
         }
         return builder;
     }

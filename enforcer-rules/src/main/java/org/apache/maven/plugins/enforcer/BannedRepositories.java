@@ -196,8 +196,8 @@ public class BannedRepositories
         if ( !resultBannedRepos.isEmpty() )
         {
             errMsg.append( "Current maven session contains banned" + errorMessagePrefix
-                + "repository urls, please double check your pom or settings.xml:\n"
-                + getRepositoryUrlString( resultBannedRepos ) + "\n\n" );
+                + "repository urls, please double check your pom or settings.xml:" + System.lineSeparator()
+                + getRepositoryUrlString( resultBannedRepos ) + System.lineSeparator() + System.lineSeparator() );
         }
 
         return errMsg.toString();
@@ -208,7 +208,7 @@ public class BannedRepositories
         StringBuffer urls = new StringBuffer( "" );
         for ( ArtifactRepository repo : resultBannedRepos )
         {
-            urls.append( repo.getId() + " - " + repo.getUrl() + "\n" );
+            urls.append( repo.getId() + " - " + repo.getUrl() + System.lineSeparator() );
         }
         return urls.toString();
     }

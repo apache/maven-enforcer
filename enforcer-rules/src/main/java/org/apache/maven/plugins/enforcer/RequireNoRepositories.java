@@ -141,7 +141,7 @@ public class RequireNoRepositories
             List<Model> badModels = new ArrayList<Model>();
 
             StringBuilder newMsg = new StringBuilder();
-            newMsg.append( "Some poms have repositories defined:\n" );
+            newMsg.append( "Some poms have repositories defined:" + System.lineSeparator() );
 
             for ( Model model : models )
             {
