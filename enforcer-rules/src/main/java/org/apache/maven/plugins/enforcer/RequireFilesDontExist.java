@@ -37,7 +37,7 @@ public class RequireFilesDontExist
     @Override
     String getErrorMsg()
     {
-        return "Some files should not exist:\n";
+        return "Some files should not exist:" + System.lineSeparator();
     }
 
 }

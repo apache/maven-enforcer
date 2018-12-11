@@ -278,7 +278,7 @@ public class RequirePluginVersions
                     {
                         newMsg.append( "SNAPSHOT " );
                     }
-                    newMsg.append( "are not allowed)" );
+                    newMsg.append( "are not allowed)" + System.lineSeparator() );
                 }
                 newMsg.append( "\n" );
                 for ( Plugin plugin : failures )
@@ -309,7 +309,7 @@ public class RequirePluginVersions
                         log.debug( "Exception while determining plugin Version.", e );
                         newMsg.append( ". Unable to determine the plugin version." );
                     }
-                    newMsg.append( "\n" );
+                    newMsg.append( System.lineSeparator() );
                 }
                 String message = getMessage();
                 if ( StringUtils.isNotEmpty( message ) )

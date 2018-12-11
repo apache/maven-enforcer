@@ -82,13 +82,14 @@ public class RequireSameVersions
 
         if ( versionMembers.size() > 1 )
         {
-            StringBuilder builder = new StringBuilder( "Found entries with different versions\n" );
+            StringBuilder builder = new StringBuilder( "Found entries with different versions"
+                + System.lineSeparator() );
             for ( Map.Entry<String, List<String>> entry : versionMembers.entrySet() )
             {
-                builder.append( "Entries with version " ).append( entry.getKey() ).append( '\n' );
+                builder.append( "Entries with version " ).append( entry.getKey() ).append( System.lineSeparator() );
                 for ( String conflictId : entry.getValue() )
                 {
-                    builder.append( "- " ).append( conflictId ).append( '\n' );
+                    builder.append( "- " ).append( conflictId ).append( System.lineSeparator() );
                 }
             }
             throw new EnforcerRuleException( builder.toString() );

@@ -119,7 +119,7 @@ public class BanTransitiveDependencies
 
             if ( excluded )
             {
-                message.append( " [excluded]\n" );
+                message.append( " [excluded]" + System.lineSeparator() );
             }
 
             if ( hasTransitiveDependencies )
@@ -129,7 +129,7 @@ public class BanTransitiveDependencies
                     message.append( " has transitive dependencies:" );
                 }
 
-                message.append( "\n" ).append( messageFromChildren );
+                message.append( System.lineSeparator() ).append( messageFromChildren );
             }
         }
 

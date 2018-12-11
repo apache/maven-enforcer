@@ -37,7 +37,7 @@ public class RequireFilesExist
     @Override
     String getErrorMsg()
     {
-        return "Some required files are missing:\n";
+        return "Some required files are missing:" + System.lineSeparator();
     }
 
 }

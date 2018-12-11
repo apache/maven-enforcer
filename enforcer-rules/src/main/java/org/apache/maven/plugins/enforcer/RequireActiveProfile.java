@@ -106,12 +106,12 @@ public class RequireActiveProfile
                     StringBuilder buf = new StringBuilder();
                     if ( message != null )
                     {
-                        buf.append( message + "\n" );
+                        buf.append( message + System.lineSeparator() );
                     }
 
                     for ( String profile : missingProfiles )
                     {
-                        buf.append( "Profile \"" + profile + "\" is not activated.\n" );
+                        buf.append( "Profile \"" + profile + "\" is not activated." + System.lineSeparator() );
                     }
 
                     throw new EnforcerRuleException( buf.toString() );
