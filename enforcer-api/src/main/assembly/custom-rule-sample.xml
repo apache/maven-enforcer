@@ -32,4 +32,17 @@
       <outputDirectory>/custom-rule-sample</outputDirectory>
     </fileSet>
   </fileSets>
+  <files>
+    <!-- filters custom-rule's pom.xml to replace 'api.version' property with the current project version -->
+    <file>
+      <source>src/custom-rule-sample/pom.xml</source>
+      <outputDirectory>/custom-rule-sample</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+    <file>
+      <source>src/custom-rule-sample/usage-pom.xml</source>
+      <outputDirectory>/custom-rule-sample</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+  </files>
 </assembly>

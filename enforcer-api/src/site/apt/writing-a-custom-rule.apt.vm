@@ -33,71 +33,50 @@ Writing a custom rule
   [[1]] First make a new jar project starting with the sample pom below:
   
 +---+
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
-  <groupId>custom-rule</groupId>
-  <artifactId>custom-rule-sample</artifactId>
-  <packaging>jar</packaging>
-  <version>1.0</version>
-
-  <name>My Custom Rule</name>
-  <description>This is my custom rule.</description>
-
-  <properties>
-    <api.version>${project.version}</api.version>
-    <maven.version>2.0.9</maven.version>
-  </properties>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.maven.enforcer</groupId>
-      <artifactId>enforcer-api</artifactId>
-      <version>${api.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
-      <version>${maven.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
-      <version>${maven.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-      <version>${maven.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-      <version>${maven.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-9</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.2</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-  </build>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>custom-rule</groupId>
+    <artifactId>custom-rule-sample</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0</version>
+    <name>My Custom Rule</name>
+    <description>This is my custom rule.</description>
+    <properties>
+        <api.version>${project.version}</api.version>
+        <maven.version>3.0</maven.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven.enforcer</groupId>
+            <artifactId>enforcer-api</artifactId>
+            <version>${api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>${maven.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+    </build>
 </project>
 +---+
 
   [[2]] Create your rule class. The rule must implement the {{{./apidocs/index.html}EnforcerRule}} interface.
    The rule can get access to components and the log via the {{{./apidocs/index.html}EnforcerRuleHelper}} interface.
+   In addition, the rule must provide a setter method for each parameter allowed to be configured in the pom.xml file (like the shown in point 5).
+   
    If the rule succeeds, it should just simply return. If the rule fails, it should throw an {{{./apidocs/index.html}EnforcerRuleException}} with a descriptive message telling the user why the rule failed.
    
    There are several methods that must be implemented related to caching.
@@ -107,12 +86,11 @@ Writing a custom rule
 +---+
 package org.apache.maven.enforcer.rule;
 
-import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.ProjectDependenciesResolver;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.execution.RuntimeInformation;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
@@ -120,6 +98,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @author <a href="mailto:belingueres@gmail.com">Gabriel Belingueres</a>
  */
 public class MyCustomRule
     implements EnforcerRule
@@ -141,15 +120,15 @@ public class MyCustomRule
             MavenSession session = (MavenSession) helper.evaluate( "${session}" );
             String target = (String) helper.evaluate( "\${project.build.directory}" );
             String artifactId = (String) helper.evaluate( "\${project.artifactId}" );
+            String mavenVersion = (String) helper.evaluate( "${maven.version}" );
 
             // retrieve any component out of the session directly
-            ArtifactResolver resolver = (ArtifactResolver) helper.getComponent( ArtifactResolver.class );
-            RuntimeInformation rti = (RuntimeInformation) helper.getComponent( RuntimeInformation.class );
+            ProjectDependenciesResolver resolver = helper.getComponent( ProjectDependenciesResolver.class );
 
             log.info( "Retrieved Target Folder: " + target );
             log.info( "Retrieved ArtifactId: " +artifactId );
             log.info( "Retrieved Project: " + project );
-            log.info( "Retrieved RuntimeInfo: " + rti );
+            log.info( "Retrieved Maven version: " + mavenVersion );
             log.info( "Retrieved Session: " + session );
             log.info( "Retrieved Resolver: " + resolver );
 
@@ -180,7 +159,7 @@ public class MyCustomRule
     public String getCacheId()
     {
         //no hash on boolean...only parameter so no hash is needed.
-        return ""+this.shouldIfail;
+        return Boolean.toString( this.shouldIfail );
     }
 
     /**
@@ -205,6 +184,17 @@ public class MyCustomRule
     {
         return false;
     }
+
+    /**
+     * Injects the value of the shouldIfail parameter into the custom rule.
+     * 
+     * @param shouldIfail set to true if you want the rule to fail. false to succeed.
+     */
+    public void setShouldIfail( boolean shouldIfail )
+    {
+        this.shouldIfail = shouldIfail;
+    }
+
 }
 +---+   
 
