@@ -29,7 +29,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.0-beta-1</version>
+                <version>${project.version}</version>
                 <dependencies>
                     <dependency>
                         <groupId>custom-rule</groupId>
