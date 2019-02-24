@@ -32,6 +32,13 @@ under the License.
   <build>
     <plugins>
       <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <target>1.7</target>
+          <source>1.7</source>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>@project.version@</version>
@@ -61,12 +68,16 @@ under the License.
                 <requireFileChecksum>
                   <file>${project.basedir}/LICENSE</file>
                   <type>sha384</type>
-                  <checksum>6f9e6b81487911c5a339c541016a459acaf8312e430ccabe5c10cb2ddf9a307f4595c78555f911377f4fb853ffe87046</checksum>
+                  <checksum>
+                    6f9e6b81487911c5a339c541016a459acaf8312e430ccabe5c10cb2ddf9a307f4595c78555f911377f4fb853ffe87046
+                  </checksum>
                 </requireFileChecksum>
                 <requireFileChecksum>
                   <file>${project.basedir}/LICENSE</file>
                   <type>sha512</type>
-                  <checksum>c51c3cf07c87af78dd7af4407ae3993ea1051d8a7c260cf34bbaa41c468dcd3b62d2be3d9a09807a8595d0065e2d75d1bf9ffc8276d567a983ff057f6b51b0cc</checksum>
+                  <checksum>
+                    c51c3cf07c87af78dd7af4407ae3993ea1051d8a7c260cf34bbaa41c468dcd3b62d2be3d9a09807a8595d0065e2d75d1bf9ffc8276d567a983ff057f6b51b0cc
+                  </checksum>
                 </requireFileChecksum>
               </rules>
             </configuration>

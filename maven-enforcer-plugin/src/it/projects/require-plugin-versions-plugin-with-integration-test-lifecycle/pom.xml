@@ -18,17 +18,27 @@
   * under the License. 
   *
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.its.enforcer</groupId>
   <artifactId>pluginWithIntegrationTestLifecycle</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
   <properties>
-    <tycho-version>0.22.0</tycho-version><!-- minimum 0.22.0: depends on https://bugs.eclipse.org/bugs/show_bug.cgi?id=435313 -->
+    <tycho-version>0.22.0
+    </tycho-version><!-- minimum 0.22.0: depends on https://bugs.eclipse.org/bugs/show_bug.cgi?id=435313 -->
   </properties>
   <build>
     <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+        <configuration>
+          <target>1.7</target>
+          <source>1.7</source>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>

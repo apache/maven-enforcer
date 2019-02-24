@@ -36,6 +36,10 @@ Maven Enforcer Plugin - The Loving Iron Fist of Maven\x99
 
   *{{{./display-info-mojo.html}enforcer:display-info}} display the current information as detected by the built-in rules.
 
+* Using 3.0.0-M2+
+
+  The minimum needed JDK is now JDK7+.
+  
 * Usage
 
   General instructions on how to use the Enforcer Plugin can be found on the {{{./usage.html}usage page}}.

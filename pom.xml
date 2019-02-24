@@ -65,6 +65,7 @@
   <properties>
     <maven.version>3.0</maven.version>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
+		<javaVersion>7</javaVersion>
   </properties>
 
   <dependencyManagement>

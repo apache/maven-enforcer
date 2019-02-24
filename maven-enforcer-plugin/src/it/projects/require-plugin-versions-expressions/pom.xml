@@ -18,7 +18,8 @@
   * under the License. 
   *
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.enforcer.its</groupId>
   <artifactId>requirePluginVersions_Expressions</artifactId>
@@ -33,6 +34,13 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <target>1.7</target>
+            <source>1.7</source>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
@@ -82,6 +90,13 @@
     </pluginManagement>
     <plugins>
       <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <target>1.7</target>
+          <source>1.7</source>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>@project.version@</version>
@@ -112,6 +127,13 @@
   <reporting>
     <plugins>
       <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <target>1.7</target>
+          <source>1.7</source>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>${expressionplugin.groupId}</groupId>
         <artifactId>${expressionplugin.artifactId}</artifactId>
         <version>${expressionplugin.version}</version>
@@ -126,6 +148,13 @@
         <pluginManagement>
           <plugins>
             <plugin>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <configuration>
+                <target>1.7</target>
+                <source>1.7</source>
+              </configuration>
+            </plugin>
+            <plugin>
               <groupId>${expressionplugin.groupId}</groupId>
               <artifactId>${expressionplugin.artifactId}</artifactId>
               <version>${expressionplugin.version}</version>
@@ -133,6 +162,13 @@
           </plugins>
         </pluginManagement>
         <plugins>
+          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <target>1.7</target>
+              <source>1.7</source>
+            </configuration>
+          </plugin>
           <plugin>
             <groupId>${expressionplugin.groupId}</groupId>
             <artifactId>${expressionplugin.artifactId}</artifactId>
@@ -142,6 +178,13 @@
       </build>
       <reporting>
         <plugins>
+          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <target>1.7</target>
+              <source>1.7</source>
+            </configuration>
+          </plugin>
           <plugin>
             <groupId>${expressionplugin.groupId}</groupId>
             <artifactId>${expressionplugin.artifactId}</artifactId>

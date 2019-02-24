@@ -32,10 +32,17 @@ under the License.
       <name>Asual Public Repository</name>
       <url>http://localhost</url>
     </repository>
-  </repositories> 
+  </repositories>
 
   <build>
     <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <target>1.7</target>
+          <source>1.7</source>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
