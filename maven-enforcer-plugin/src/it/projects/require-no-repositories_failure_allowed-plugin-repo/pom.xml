@@ -26,9 +26,7 @@
   <artifactId>test</artifactId>
   <version>1.0</version>
 
-  <description>This IT makes sure to prevent having defined pluginRepository and repository in
-    allowedPluginRepositories
-  </description>
+  <description>This IT makes sure to prevent having defined pluginRepository and repository in allowedPluginRepositories</description>
 
   <pluginRepositories>
     <pluginRepository>
@@ -47,13 +45,6 @@
 
   <build>
     <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <target>1.7</target>
-          <source>1.7</source>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>

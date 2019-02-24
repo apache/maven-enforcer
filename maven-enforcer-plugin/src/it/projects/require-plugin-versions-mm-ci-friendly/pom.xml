@@ -29,7 +29,7 @@ under the License.
 
   <description>
   </description>
-
+  
   <properties>
     <revision>0.0.1-SNAPSHOT</revision>
   </properties>
@@ -51,10 +51,6 @@ under the License.
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>2.5.1</version>
-          <configuration>
-            <target>1.7</target>
-            <source>1.7</source>
-          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -106,20 +102,13 @@ under the License.
 
     <plugins>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <target>1.7</target>
-          <source>1.7</source>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>@project.version@</version>
       </plugin>
     </plugins>
   </build>
-
+  
   <modules>
     <module>menforcer281-module</module>
   </modules>
