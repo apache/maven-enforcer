@@ -19,6 +19,7 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,9 +35,11 @@ import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
-import org.sonatype.aether.RepositorySystemSession;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.eclipse.aether.RepositorySystemSession;
 
 /**
  * The Class EnforcerTestUtils.
@@ -52,9 +55,12 @@ public final class EnforcerTestUtils
      */
     public static MavenSession getMavenSession()
     {
-        PlexusContainer mock = mock( PlexusContainer.class );
+        PlexusContainer container = mock( PlexusContainer.class );
 
         MavenExecutionRequest mer = mock( MavenExecutionRequest.class );
+        ProjectBuildingRequest pbr = mock( ProjectBuildingRequest.class );
+        when( pbr.setRepositorySession( nullable( RepositorySystemSession.class ) ) ).thenReturn( pbr );
+        when( mer.getProjectBuildingRequest() ).thenReturn( pbr );
 
         Properties systemProperties = new Properties();
         systemProperties.put( "maven.version", "3.0" );
@@ -62,7 +68,15 @@ public final class EnforcerTestUtils
         when( mer.getSystemProperties() ).thenReturn( systemProperties );
 
         MavenExecutionResult meresult = mock( MavenExecutionResult.class );
-        return new MavenSession( mock, (RepositorySystemSession) null, mer, meresult );
+        MavenSession session = new MavenSession( container, null, mer, meresult );
+        try
+        {
+            when( container.lookup( MavenSession.class ) ).thenReturn( session );
+        }
+        catch (ComponentLookupException ignored)
+        {
+        }
+        return session;
     }
 
     /**

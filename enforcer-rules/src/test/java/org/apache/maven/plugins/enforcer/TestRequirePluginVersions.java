@@ -25,10 +25,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import junit.framework.TestCase;
+
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugins.enforcer.utils.PluginWrapper;
 
 /**
@@ -37,7 +38,7 @@ import org.apache.maven.plugins.enforcer.utils.PluginWrapper;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestRequirePluginVersions
-    extends AbstractMojoTestCase
+    extends TestCase
 {
 
     /**

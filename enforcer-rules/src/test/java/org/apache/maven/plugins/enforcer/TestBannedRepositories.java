@@ -23,7 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.DefaultArtifactRepository;
+import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
+import org.apache.maven.bridge.MavenRepositorySystem;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.PlexusTestCase;
@@ -36,6 +37,7 @@ import org.codehaus.plexus.PlexusTestCase;
 public class TestBannedRepositories
     extends PlexusTestCase
 {
+    private DefaultRepositoryLayout defaultRepositoryLayout = new DefaultRepositoryLayout();
     private EnforcerRuleHelper helper;
 
     private BannedRepositories rule;
@@ -58,9 +60,9 @@ public class TestBannedRepositories
     }
 
     public void testNoCheckRules()
-        throws EnforcerRuleException
+            throws Exception
     {
-        DefaultArtifactRepository repo1 = new DefaultArtifactRepository( "repo1", "http://repo1/", null );
+        ArtifactRepository repo1 = MavenRepositorySystem.createArtifactRepository( "repo1", "http://repo1/", defaultRepositoryLayout , null, null);
         List<ArtifactRepository> repos = new ArrayList<ArtifactRepository>();
         repos.add( repo1 );
 
@@ -70,11 +72,10 @@ public class TestBannedRepositories
         rule.execute( helper );
     }
 
-    public void testBannedRepositories()
-    {
-        DefaultArtifactRepository repo1 = new DefaultArtifactRepository( "repo1", "http://repo1/", null );
-        DefaultArtifactRepository repo2 = new DefaultArtifactRepository( "repo1", "http://repo1/test", null );
-        DefaultArtifactRepository repo3 = new DefaultArtifactRepository( "repo1", "http://repo2/test", null );
+    public void testBannedRepositories() {
+        ArtifactRepository repo1 = MavenRepositorySystem.createArtifactRepository( "repo1", "http://repo1/", defaultRepositoryLayout, null, null );
+        ArtifactRepository repo2 = MavenRepositorySystem.createArtifactRepository( "repo1", "http://repo1/test", defaultRepositoryLayout, null, null );
+        ArtifactRepository repo3 = MavenRepositorySystem.createArtifactRepository( "repo2", "http://repo2/test", defaultRepositoryLayout, null, null );
         List<ArtifactRepository> repos = new ArrayList<ArtifactRepository>();
         repos.add( repo1 );
         repos.add( repo2 );
@@ -104,8 +105,8 @@ public class TestBannedRepositories
     public void testAllowedRepositoriesAllOK()
         throws EnforcerRuleException
     {
-        DefaultArtifactRepository repo1 = new DefaultArtifactRepository( "repo1", "http://repo1/", null );
-        DefaultArtifactRepository repo2 = new DefaultArtifactRepository( "repo1", "http://repo1/test", null );
+        ArtifactRepository repo1 = MavenRepositorySystem.createArtifactRepository( "repo1", "http://repo1/", defaultRepositoryLayout, null, null );
+        ArtifactRepository repo2 = MavenRepositorySystem.createArtifactRepository( "repo1", "http://repo1/test", defaultRepositoryLayout, null, null );
 
         List<ArtifactRepository> repos = new ArrayList<ArtifactRepository>();
         repos.add( repo1 );
@@ -127,9 +128,9 @@ public class TestBannedRepositories
 
     public void testAllowedRepositoriesException()
     {
-        DefaultArtifactRepository repo1 = new DefaultArtifactRepository( "repo1", "http://repo1/", null );
-        DefaultArtifactRepository repo2 = new DefaultArtifactRepository( "repo1", "http://repo1/test", null );
-        DefaultArtifactRepository repo3 = new DefaultArtifactRepository( "repo1", "http://repo2/test", null );
+        ArtifactRepository repo1 = MavenRepositorySystem.createArtifactRepository( "repo1", "http://repo1/", defaultRepositoryLayout, null, null );
+        ArtifactRepository repo2 = MavenRepositorySystem.createArtifactRepository( "repo1", "http://repo1/test", defaultRepositoryLayout, null, null );
+        ArtifactRepository repo3 = MavenRepositorySystem.createArtifactRepository( "repo2", "http://repo2/test", defaultRepositoryLayout, null, null );
         List<ArtifactRepository> repos = new ArrayList<ArtifactRepository>();
         repos.add( repo1 );
         repos.add( repo2 );

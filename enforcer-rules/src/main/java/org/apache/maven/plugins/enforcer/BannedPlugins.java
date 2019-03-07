@@ -22,7 +22,7 @@ package org.apache.maven.plugins.enforcer;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
 
 /**
  * This rule checks that lists of plugins are not included.
@@ -33,9 +33,9 @@ public class BannedPlugins
     extends BannedDependencies
 {
     @Override
-    protected Set<Artifact> getDependenciesToCheck( MavenProject project )
+    protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest buildingRequest )
     {
-        return project.getPluginArtifacts();
+        return buildingRequest.getProject().getPluginArtifacts();
     }
 
     @Override

@@ -22,8 +22,11 @@ package org.apache.maven.plugins.enforcer;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
@@ -64,25 +67,27 @@ public abstract class AbstractBanDependencies
 
         try
         {
-            graphBuilder = (DependencyGraphBuilder) helper.getComponent( DependencyGraphBuilder.class );
+            graphBuilder = helper.getComponent( DependencyGraphBuilder.class );
         }
         catch ( ComponentLookupException e )
         {
-            // real cause is probably that one of the Maven3 graph builder could not be initiated and fails with a
-            // ClassNotFoundException
-            try
-            {
-                graphBuilder =
-                    (DependencyGraphBuilder) helper.getComponent( DependencyGraphBuilder.class.getName(), "maven2" );
-            }
-            catch ( ComponentLookupException e1 )
-            {
-                throw new EnforcerRuleException( "Unable to lookup DependencyGraphBuilder: ", e );
-            }
+            throw new EnforcerRuleException( "Unable to lookup DependencyGraphBuilder: ", e );
         }
 
+        ProjectBuildingRequest sessionRequest;
+        try
+        {
+            MavenSession session = helper.getComponent( MavenSession.class );
+            sessionRequest = session.getProjectBuildingRequest();
+        }
+        catch ( ComponentLookupException e )
+        {
+            throw new EnforcerRuleException( "Unable to lookup existing ProjectBuildingRequest: ", e );
+        }
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest( sessionRequest );
+        buildingRequest.setProject( project );
         // get the correct list of dependencies
-        Set<Artifact> dependencies = getDependenciesToCheck( project );
+        Set<Artifact> dependencies = getDependenciesToCheck( buildingRequest );
 
         // look for banned dependencies
         Set<Artifact> foundExcludes = checkDependencies( dependencies, helper.getLog() );
@@ -113,12 +118,12 @@ public abstract class AbstractBanDependencies
         return "Found Banned Dependency: " + artifact.getId() + System.lineSeparator();
     }
 
-    protected Set<Artifact> getDependenciesToCheck( MavenProject project )
+    protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest buildingRequest )
     {
         Set<Artifact> dependencies = null;
         try
         {
-            DependencyNode node = graphBuilder.buildDependencyGraph( project, null );
+            DependencyNode node = graphBuilder.buildDependencyGraph( buildingRequest, null );
             if ( searchTransitive )
             {
                 dependencies = getAllDescendants( node );

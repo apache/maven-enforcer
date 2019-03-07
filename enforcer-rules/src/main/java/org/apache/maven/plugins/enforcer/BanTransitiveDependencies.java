@@ -27,7 +27,9 @@ import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyGraphBuilder;
@@ -158,7 +160,11 @@ public class BanTransitiveDependencies
         try
         {
             MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-            rootNode = createDependencyGraphBuilder().buildDependencyGraph( project, null );
+            ProjectBuildingRequest sessionRequest =
+                (ProjectBuildingRequest) helper.evaluate( "${session.projectBuildingRequest}" );
+            ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest( sessionRequest );
+            buildingRequest.setProject( project );
+            rootNode = createDependencyGraphBuilder().buildDependencyGraph( buildingRequest, null );
         }
         catch ( Exception e )
         {

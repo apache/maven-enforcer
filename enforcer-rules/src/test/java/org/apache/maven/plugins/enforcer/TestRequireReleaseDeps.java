@@ -29,6 +29,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtilsHelper;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
 
 /**
  * The Class TestNoSnapshots.
@@ -96,10 +97,11 @@ public class TestRequireReleaseDeps
     {
         RequireReleaseDeps rule = new RequireReleaseDeps()
         {
-            protected Set<Artifact> getDependenciesToCheck( MavenProject project )
+            protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest buildingRequest )
             {
                 // the integration with dependencyGraphTree is verified with the integration tests
-                // for unit-testing 
+                // for unit-testing
+                MavenProject project = buildingRequest.getProject();
                 return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
             }
         };        

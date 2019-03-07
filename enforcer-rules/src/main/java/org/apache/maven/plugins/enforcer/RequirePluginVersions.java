@@ -32,13 +32,14 @@ import java.util.Set;
 
 import org.apache.maven.BuildFailureException;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.repository.DefaultRepositoryRequest;
+import org.apache.maven.artifact.repository.RepositoryRequest;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
@@ -63,6 +64,7 @@ import org.apache.maven.plugin.version.PluginVersionResolutionException;
 import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtils;
 import org.apache.maven.plugins.enforcer.utils.PluginWrapper;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.repository.RepositorySystem;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
@@ -160,17 +162,11 @@ public class RequirePluginVersions
     /** The lifecycles. */
     private Collection<Lifecycle> lifecycles;
 
-    /** The factory. */
-    private ArtifactFactory factory;
+    /** The repository system. */
+    private RepositorySystem repositorySystem;
 
-    /** The resolver. */
-    private ArtifactResolver resolver;
-
-    /** The local. */
-    private ArtifactRepository local;
-
-    /** The remote repositories. */
-    private List<ArtifactRepository> remoteRepositories;
+    /** The repository request, pre-configured with the local and remote repositories. */
+    private RepositoryRequest repositoryRequest;
 
     /** The log. */
     private Log log;
@@ -195,18 +191,16 @@ public class RequirePluginVersions
 
             project = (MavenProject) helper.evaluate( "${project}" );
             LifecycleExecutor life;
-            life = (LifecycleExecutor) helper.getComponent( LifecycleExecutor.class );
+            life = helper.getComponent( LifecycleExecutor.class );
 
             Object defaultLifeCycles = ReflectionUtils.getValueIncludingSuperclasses( "defaultLifeCycles", life );
             Map lifecyclesMap = (Map) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", defaultLifeCycles );
             lifecycles = lifecyclesMap.values();
 
             session = (MavenSession) helper.evaluate( "${session}" );
-            pluginManager = (PluginManager) helper.getComponent( PluginManager.class );
-            factory = (ArtifactFactory) helper.getComponent( ArtifactFactory.class );
-            resolver = (ArtifactResolver) helper.getComponent( ArtifactResolver.class );
-            local = (ArtifactRepository) helper.evaluate( "${localRepository}" );
-            remoteRepositories = project.getRemoteArtifactRepositories();
+            pluginManager = helper.getComponent( PluginManager.class );
+            repositorySystem = helper.getComponent( RepositorySystem.class );
+            repositoryRequest = DefaultRepositoryRequest.getRepositoryRequest( session, project );
 
             utils = new EnforcerRuleUtils( helper );
 
@@ -440,7 +434,7 @@ public class RequirePluginVersions
                     existing = new HashSet<Plugin>();
                     existing.add( plugin );
                 }
-                else if ( !existing.contains( plugin ) )
+                else
                 {
                     existing.add( plugin );
                 }
@@ -549,24 +543,15 @@ public class RequirePluginVersions
      */
     protected Plugin resolvePlugin( Plugin plugin, MavenProject project )
     {
+        Plugin pluginRequest = plugin.clone();
+        pluginRequest.setVersion( "LATEST" );
+        Artifact artifact = repositorySystem.createPluginArtifact( pluginRequest );
 
-        List<ArtifactRepository> pluginRepositories = project.getPluginArtifactRepositories();
-        Artifact artifact = factory.createPluginArtifact( plugin.getGroupId(), plugin.getArtifactId(),
-                                                          VersionRange.createFromVersion( "LATEST" ) );
+        ArtifactResolutionRequest resolutionRequest = new ArtifactResolutionRequest( repositoryRequest );
+        resolutionRequest.setArtifact( artifact );
 
-        try
-        {
-            this.resolver.resolve( artifact, pluginRepositories, this.local );
-            plugin.setVersion( artifact.getVersion() );
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            // What does this mean?
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            // What does this mean?
-        }
+        ArtifactResolutionResult result = this.repositorySystem.resolve( resolutionRequest );
+        plugin.setVersion( result.getArtifacts().iterator().next().getVersion() );
 
         return plugin;
     }
@@ -738,16 +723,16 @@ public class RequirePluginVersions
         for ( Map.Entry<String, String> entry : mappings.entrySet() )
         {
             log.debug( "  lifecycleMapping = " + entry.getKey() );
-            String pluginsForLifecycle = (String) entry.getValue();
+            String pluginsForLifecycle = entry.getValue();
             log.debug( "  plugins = " + pluginsForLifecycle );
             if ( StringUtils.isNotEmpty( pluginsForLifecycle ) )
             {
-                String pluginList[] = pluginsForLifecycle.split( "," );
+                String[] pluginList = pluginsForLifecycle.split( "," );
                 for ( String plugin : pluginList )
                 {
                     plugin = StringUtils.strip( plugin );
                     log.debug( "    plugin = " + plugin );
-                    String tokens[] = plugin.split( ":" );
+                    String[] tokens = plugin.split( ":" );
                     log.debug( "    GAV = " + Arrays.asList( tokens ) );
 
                     Plugin p = new Plugin();
@@ -761,7 +746,7 @@ public class RequirePluginVersions
         List<String> mojos = findOptionalMojosForLifecycle( project, lifecycle );
         for ( String value : mojos )
         {
-            String tokens[] = value.split( ":" );
+            String[] tokens = value.split( ":" );
 
             Plugin plugin = new Plugin();
             plugin.setGroupId( tokens[0] );
@@ -799,7 +784,7 @@ public class RequirePluginVersions
                     log.debug( "getPhaseToLifecycleMap(): phase: " + phase );
                     if ( phaseToLifecycleMap.containsKey( phase ) )
                     {
-                        Lifecycle prevLifecycle = (Lifecycle) phaseToLifecycleMap.get( phase );
+                        Lifecycle prevLifecycle = phaseToLifecycleMap.get( phase );
                         throw new LifecycleExecutionException( "Phase '" + phase
                             + "' is defined in more than one lifecycle: '" + lifecycle.getId() + "' and '"
                             + prevLifecycle.getId() + "'" );
@@ -825,7 +810,7 @@ public class RequirePluginVersions
     private Lifecycle getLifecycleForPhase( String phase )
         throws BuildFailureException, LifecycleExecutionException
     {
-        Lifecycle lifecycle = (Lifecycle) getPhaseToLifecycleMap().get( phase );
+        Lifecycle lifecycle = getPhaseToLifecycleMap().get( phase );
 
         if ( lifecycle == null )
         {
@@ -918,7 +903,7 @@ public class RequirePluginVersions
         {
             try
             {
-                m = (LifecycleMapping) helper.getComponent( LifecycleMapping.class, packaging );
+                m = helper.getComponent( LifecycleMapping.class, packaging );
                 optionalMojos = m.getOptionalMojos( lifecycle.getId() );
             }
             catch ( ComponentLookupException e )

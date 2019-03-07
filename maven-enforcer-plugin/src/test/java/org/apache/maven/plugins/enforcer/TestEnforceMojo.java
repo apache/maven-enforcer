@@ -28,20 +28,23 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+import org.mockito.quality.Strictness;
 
 /**
  * Exhaustively check the enforcer mojo.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-@RunWith( MockitoJUnitRunner.class )
 public class TestEnforceMojo
 {
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule().strictness( Strictness.LENIENT );
 
     @InjectMocks
     EnforceMojo mojo;

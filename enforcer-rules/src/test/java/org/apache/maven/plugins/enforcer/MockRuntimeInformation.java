@@ -19,9 +19,14 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.apache.maven.execution.RuntimeInformation;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.apache.maven.rtinfo.RuntimeInformation;
+import org.eclipse.aether.util.version.GenericVersionScheme;
+import org.eclipse.aether.version.InvalidVersionSpecificationException;
+import org.eclipse.aether.version.Version;
+import org.eclipse.aether.version.VersionConstraint;
+import org.eclipse.aether.version.VersionScheme;
 
 /**
  * Just a mock object hard coded to return version 2.0.5
@@ -31,15 +36,44 @@ import org.apache.maven.execution.RuntimeInformation;
 public class MockRuntimeInformation
     implements RuntimeInformation
 {
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.apache.maven.execution.RuntimeInformation#getApplicationVersion()
-     */
-    public ArtifactVersion getApplicationVersion()
-    {
-        return new DefaultArtifactVersion( "2.0.5" );
+    @Override
+    public String getMavenVersion() {
+        return "2.0.5";
     }
 
+    @Override
+    public boolean isMavenVersion(String versionRange) {
+        VersionScheme versionScheme = new GenericVersionScheme();
+
+        Validate.notBlank( versionRange, "versionRange can neither be null, empty nor blank" );
+
+        VersionConstraint constraint;
+        try
+        {
+            constraint = versionScheme.parseVersionConstraint( versionRange );
+        }
+        catch ( InvalidVersionSpecificationException e )
+        {
+            throw new IllegalArgumentException( e.getMessage(), e );
+        }
+
+        Version current;
+        try
+        {
+            String mavenVersion = getMavenVersion();
+            Validate.validState( StringUtils.isNotEmpty( mavenVersion ), "Could not determine current Maven version" );
+
+            current = versionScheme.parseVersion( mavenVersion );
+        }
+        catch ( InvalidVersionSpecificationException e )
+        {
+            throw new IllegalStateException( "Could not parse current Maven version: " + e.getMessage(), e );
+        }
+
+        if ( constraint.getRange() == null )
+        {
+            return constraint.getVersion().compareTo( current ) <= 0;
+        }
+        return constraint.containsVersion( current );
+    }
 }

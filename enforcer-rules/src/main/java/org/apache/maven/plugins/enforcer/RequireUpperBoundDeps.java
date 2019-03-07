@@ -26,10 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
@@ -37,11 +33,13 @@ import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
-import org.apache.maven.shared.dependency.tree.traversal.DependencyNodeVisitor;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
@@ -91,7 +89,7 @@ public class RequireUpperBoundDeps
     // CHECKSTYLE_OFF: LineLength
     /**
      * Uses the {@link EnforcerRuleHelper} to populate the values of the
-     * {@link DependencyTreeBuilder#buildDependencyTree(MavenProject, ArtifactRepository, ArtifactFactory, ArtifactMetadataSource, ArtifactFilter, ArtifactCollector)}
+     * {@link DependencyGraphBuilder#buildDependencyGraph(ProjectBuildingRequest, ArtifactFilter)}
      * factory method. <br/>
      * This method simply exists to hide all the ugly lookup that the {@link EnforcerRuleHelper} has to do.
      * 
@@ -105,18 +103,15 @@ public class RequireUpperBoundDeps
     {
         try
         {
+
+            ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
             MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-            DependencyTreeBuilder dependencyTreeBuilder =
-                (DependencyTreeBuilder) helper.getComponent( DependencyTreeBuilder.class );
-            ArtifactRepository repository = (ArtifactRepository) helper.evaluate( "${localRepository}" );
-            ArtifactFactory factory = (ArtifactFactory) helper.getComponent( ArtifactFactory.class );
-            ArtifactMetadataSource metadataSource =
-                (ArtifactMetadataSource) helper.getComponent( ArtifactMetadataSource.class );
-            ArtifactCollector collector = (ArtifactCollector) helper.getComponent( ArtifactCollector.class );
+            buildingRequest.setProject( project );
+            DependencyGraphBuilder dependencyGraphBuilder =
+                helper.getComponent( DependencyGraphBuilder.class );
             ArtifactFilter filter = null; // we need to evaluate all scopes
             DependencyNode node =
-                dependencyTreeBuilder.buildDependencyTree( project, repository, factory, metadataSource, filter,
-                                                           collector );
+                dependencyGraphBuilder.buildDependencyGraph( buildingRequest, filter );
             return node;
         }
         catch ( ExpressionEvaluationException e )
@@ -127,9 +122,9 @@ public class RequireUpperBoundDeps
         {
             throw new EnforcerRuleException( "Unable to lookup a component " + e.getLocalizedMessage(), e );
         }
-        catch ( DependencyTreeBuilderException e )
+        catch ( DependencyGraphBuilderException e )
         {
-            throw new EnforcerRuleException( "Could not build dependency tree " + e.getLocalizedMessage(), e );
+            throw new EnforcerRuleException( "Could not build dependency graph " + e.getLocalizedMessage(), e );
         }
     }
 
