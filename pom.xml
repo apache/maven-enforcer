@@ -63,9 +63,9 @@
     </site>
   </distributionManagement>
   <properties>
-    <javaVersion>7</javaVersion>
-    <maven.version>3.5.4</maven.version>
+    <maven.version>3.3.9</maven.version>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
+    <sisu-inject.version>0.3.3</sisu-inject.version>
     <javaVersion>7</javaVersion>
   </properties>
 
@@ -163,6 +163,20 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.eclipse.sisu</groupId>
+          <artifactId>sisu-maven-plugin</artifactId>
+          <version>${sisu-inject.version}</version>
+          <executions>
+            <execution>
+              <id>index-module</id>
+              <goals>
+                <goal>main-index</goal>
+                <goal>test-index</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>

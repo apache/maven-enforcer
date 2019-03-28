@@ -24,19 +24,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.enforcer.utils.DependencyGraphLookup;
 import org.apache.maven.plugins.enforcer.utils.DependencyVersionMap;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
-import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
@@ -50,49 +44,11 @@ public class DependencyConvergence
 
     private boolean uniqueVersions;
 
+    private transient DependencyGraphLookup graphLookup;
+
     public void setUniqueVersions( boolean uniqueVersions )
     {
         this.uniqueVersions = uniqueVersions;
-    }
-
-    /**
-     * Uses the {@link EnforcerRuleHelper} to populate the values of the
-     * {@link DependencyGraphBuilder#buildDependencyGraph(ProjectBuildingRequest, ArtifactFilter)}
-     * factory method. <br/>
-     * This method simply exists to hide all the ugly lookup that the {@link EnforcerRuleHelper} has to do.
-     * 
-     * @param helper
-     * @return a Dependency Node which is the root of the project's dependency tree
-     * @throws EnforcerRuleException
-     */
-    private DependencyNode getNode( EnforcerRuleHelper helper )
-        throws EnforcerRuleException
-    {
-        try
-        {
-            MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-            ProjectBuildingRequest sessionRequest =
-                    (ProjectBuildingRequest) helper.evaluate( "${session.projectBuildingRequest}" );
-            ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest( sessionRequest );
-            buildingRequest.setProject( project );
-            DependencyGraphBuilder dependencyGraphBuilder =
-                helper.getComponent( DependencyGraphBuilder.class );
-            ArtifactFilter filter = null; // we need to evaluate all scopes
-            DependencyNode node = dependencyGraphBuilder.buildDependencyGraph( buildingRequest, filter );
-            return node;
-        }
-        catch ( ExpressionEvaluationException e )
-        {
-            throw new EnforcerRuleException( "Unable to lookup an expression " + e.getLocalizedMessage(), e );
-        }
-        catch ( ComponentLookupException e )
-        {
-            throw new EnforcerRuleException( "Unable to lookup a component " + e.getLocalizedMessage(), e );
-        }
-        catch ( DependencyGraphBuilderException e )
-        {
-            throw new EnforcerRuleException( "Could not build dependency tree " + e.getLocalizedMessage(), e );
-        }
     }
 
     @Override
@@ -105,7 +61,15 @@ public class DependencyConvergence
         }
         try
         {
-            DependencyNode node = getNode( helper );
+            graphLookup = helper.getComponent( DependencyGraphLookup.class );
+        }
+        catch ( ComponentLookupException e )
+        {
+            throw new EnforcerRuleException( "Unable to lookup DependencyGraphLookup: ", e );
+        }
+        try
+        {
+            DependencyNode node = graphLookup.getDependencyGraph( helper );
             DependencyVersionMap visitor = new DependencyVersionMap( log );
             visitor.setUniqueVersions( uniqueVersions );
             node.accept( visitor );

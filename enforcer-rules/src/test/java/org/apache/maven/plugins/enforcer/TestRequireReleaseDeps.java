@@ -25,11 +25,12 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtilsHelper;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
  * The Class TestNoSnapshots.
@@ -97,12 +98,19 @@ public class TestRequireReleaseDeps
     {
         RequireReleaseDeps rule = new RequireReleaseDeps()
         {
-            protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest buildingRequest )
+            protected Set<Artifact> getDependenciesToCheck( EnforcerRuleHelper helper ) throws EnforcerRuleException
             {
                 // the integration with dependencyGraphTree is verified with the integration tests
                 // for unit-testing
-                MavenProject project = buildingRequest.getProject();
-                return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
+                try
+                {
+                    MavenProject project = ( MavenProject ) helper.evaluate( "${project}" );
+                    return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
+                }
+                catch ( ExpressionEvaluationException e )
+                {
+                    throw new EnforcerRuleException( "Could not load MavenProject: ", e );
+                }
             }
         };        
         return rule;

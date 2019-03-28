@@ -22,7 +22,10 @@ package org.apache.maven.plugins.enforcer;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
  * This rule checks that lists of plugins are not included.
@@ -33,9 +36,17 @@ public class BannedPlugins
     extends BannedDependencies
 {
     @Override
-    protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest buildingRequest )
+    protected Set<Artifact> getDependenciesToCheck( EnforcerRuleHelper helper ) throws EnforcerRuleException
     {
-        return buildingRequest.getProject().getPluginArtifacts();
+        try
+        {
+            MavenProject project = helper.getComponent( MavenProject.class );
+            return project.getPluginArtifacts();
+        }
+        catch ( ComponentLookupException e )
+        {
+            throw new EnforcerRuleException( "Could not load MavenProject: ", e );
+        }
     }
 
     @Override

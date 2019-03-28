@@ -22,13 +22,9 @@ package org.apache.maven.plugins.enforcer;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
+import org.apache.maven.plugins.enforcer.utils.DependencyGraphLookup;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
-import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
@@ -47,7 +43,7 @@ public abstract class AbstractBanDependencies
     /** Specify if transitive dependencies should be searched (default) or only look at direct dependencies. */
     private boolean searchTransitive = true;
 
-    private transient DependencyGraphBuilder graphBuilder;
+    private transient DependencyGraphLookup graphLookup;
 
     @Override
     public void execute( EnforcerRuleHelper helper )
@@ -67,27 +63,15 @@ public abstract class AbstractBanDependencies
 
         try
         {
-            graphBuilder = helper.getComponent( DependencyGraphBuilder.class );
+            graphLookup = helper.getComponent( DependencyGraphLookup.class );
         }
         catch ( ComponentLookupException e )
         {
-            throw new EnforcerRuleException( "Unable to lookup DependencyGraphBuilder: ", e );
+            throw new EnforcerRuleException( "Unable to lookup DependencyGraphLookup: ", e );
         }
 
-        ProjectBuildingRequest sessionRequest;
-        try
-        {
-            MavenSession session = helper.getComponent( MavenSession.class );
-            sessionRequest = session.getProjectBuildingRequest();
-        }
-        catch ( ComponentLookupException e )
-        {
-            throw new EnforcerRuleException( "Unable to lookup existing ProjectBuildingRequest: ", e );
-        }
-        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest( sessionRequest );
-        buildingRequest.setProject( project );
         // get the correct list of dependencies
-        Set<Artifact> dependencies = getDependenciesToCheck( buildingRequest );
+        Set<Artifact> dependencies = getDependenciesToCheck( helper );
 
         // look for banned dependencies
         Set<Artifact> foundExcludes = checkDependencies( dependencies, helper.getLog() );
@@ -118,29 +102,21 @@ public abstract class AbstractBanDependencies
         return "Found Banned Dependency: " + artifact.getId() + System.lineSeparator();
     }
 
-    protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest buildingRequest )
+    protected Set<Artifact> getDependenciesToCheck( EnforcerRuleHelper helper ) throws EnforcerRuleException
     {
         Set<Artifact> dependencies = null;
-        try
+        DependencyNode node = graphLookup.getDependencyGraph( helper );
+        if ( searchTransitive )
         {
-            DependencyNode node = graphBuilder.buildDependencyGraph( buildingRequest, null );
-            if ( searchTransitive )
-            {
-                dependencies = getAllDescendants( node );
-            }
-            else if ( node.getChildren() != null )
-            {
-                dependencies = new HashSet<Artifact>();
-                for ( DependencyNode depNode : node.getChildren() )
-                {
-                    dependencies.add( depNode.getArtifact() );
-                }
-            }
+            dependencies = getAllDescendants( node );
         }
-        catch ( DependencyGraphBuilderException e )
+        else if ( node.getChildren() != null )
         {
-            // otherwise we need to change the signature of this protected method
-            throw new RuntimeException( e );
+            dependencies = new HashSet<>();
+            for ( DependencyNode depNode : node.getChildren() )
+            {
+                dependencies.add( depNode.getArtifact() );
+            }
         }
         return dependencies;
     }

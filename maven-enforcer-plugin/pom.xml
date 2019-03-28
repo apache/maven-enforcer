@@ -125,6 +125,22 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.eclipse.sisu</groupId>
+        <artifactId>sisu-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>index-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>index</goal>
+            </goals>
+            <configuration>
+              <includeArtifactIds>enforcer-rules</includeArtifactIds>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
     <resources>
       <!-- Include super-pom defined main/resources

@@ -288,7 +288,7 @@ public class TestBannedDependencies
         }
 
         @Test
-        public void includeEverythingAndExcludeEverythign()
+        public void includeEverythingAndExcludeEverything()
             throws EnforcerRuleException
         {
             addIncludeExcludeAndRunRule( "*", "*" );

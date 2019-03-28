@@ -27,14 +27,9 @@ import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
+import org.apache.maven.plugins.enforcer.utils.DependencyGraphLookup;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
-import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyGraphBuilder;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
 
 /**
  * This rule bans all transitive dependencies. There is a configuration option to exclude certain artifacts from being
@@ -66,6 +61,8 @@ public class BanTransitiveDependencies
      * Version is a string representing standard maven version range. Empty patterns will be ignored.
      */
     private List<String> includes;
+
+    private transient DependencyGraphLookup graphLookup;
 
     /**
      * Searches dependency tree recursively for transitive dependencies that are not excluded, while generating nice
@@ -155,21 +152,16 @@ public class BanTransitiveDependencies
 
         final ArtifactMatcher exclusions = new ArtifactMatcher( excludes, includes );
 
-        DependencyNode rootNode = null;
-
         try
         {
-            MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-            ProjectBuildingRequest sessionRequest =
-                (ProjectBuildingRequest) helper.evaluate( "${session.projectBuildingRequest}" );
-            ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest( sessionRequest );
-            buildingRequest.setProject( project );
-            rootNode = createDependencyGraphBuilder().buildDependencyGraph( buildingRequest, null );
+            graphLookup = helper.getComponent( DependencyGraphLookup.class );
         }
-        catch ( Exception e )
+        catch ( ComponentLookupException e )
         {
-            throw new EnforcerRuleException( "Error: Could not construct dependency tree.", e );
+            throw new EnforcerRuleException( "Unable to lookup DependencyGraphLookup: ", e );
         }
+
+        DependencyNode rootNode = graphLookup.getDependencyGraph( helper );
 
         String message = getMessage();
         StringBuilder generatedMessage = null;
@@ -189,21 +181,5 @@ public class BanTransitiveDependencies
         {
             throw new EnforcerRuleException( "Error: Invalid version range.", e );
         }
-
     }
-
-    private DependencyGraphBuilder createDependencyGraphBuilder()
-        throws ComponentLookupException
-    {
-        // CHECKSTYLE_OFF: LineLength
-        DefaultDependencyGraphBuilder builder =
-            (DefaultDependencyGraphBuilder) helper.getContainer().lookup( DependencyGraphBuilder.class.getCanonicalName(),
-                                                                          "default" );
-        // CHECKSTYLE_ON: LineLength
-
-        builder.enableLogging( new ConsoleLogger( ConsoleLogger.LEVEL_DISABLED, "DefaultDependencyGraphBuilder" ) );
-
-        return builder;
-    }
-
 }
