@@ -161,7 +161,7 @@ public class BanTransitiveDependencies
             throw new EnforcerRuleException( "Unable to lookup DependencyGraphLookup: ", e );
         }
 
-        DependencyNode rootNode = graphLookup.getDependencyGraph( helper );
+        DependencyNode rootNode = graphLookup.getTransformedDependencyGraph( helper );
 
         String message = getMessage();
         StringBuilder generatedMessage = null;

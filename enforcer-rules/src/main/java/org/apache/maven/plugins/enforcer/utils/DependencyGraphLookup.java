@@ -19,6 +19,7 @@ package org.apache.maven.plugins.enforcer.utils;
  * under the License.
  */
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -39,7 +40,8 @@ import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositorySystemSession;
 
 /**
  * Collects a dependency graph, and caches it for reuse by any rules in the same project.
@@ -48,46 +50,50 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 @Singleton
 public class DependencyGraphLookup
 {
-    private ProjectBuildingRequest sessionRequest;
+    @Inject
+    private MavenSession session;
+    @Inject
     private DependencyGraphBuilder dependencyGraphBuilder;
-    private LoadingCache<MavenProject, DependencyNode> projectDependencyGraphCache = CacheBuilder.newBuilder()
-            .maximumSize( 128 )
-            .build( new CacheLoader<MavenProject, DependencyNode>()
-            {
-                @Override
-                public DependencyNode load( MavenProject project ) throws Exception
-                {
-                    return getDependencyGraph( project );
-                }
-            } );
 
-    private synchronized void init( EnforcerRuleHelper helper ) throws EnforcerRuleException
-    {
-        if ( dependencyGraphBuilder == null )
-        {
-            try
-            {
-                MavenSession session = helper.getComponent( MavenSession.class );
-                this.sessionRequest = session.getProjectBuildingRequest();
-            }
-            catch ( ComponentLookupException e )
-            {
-                throw new EnforcerRuleException( "Unable to load MavenSession: ", e );
-            }
-            try
-            {
-                this.dependencyGraphBuilder = helper.getComponent( DependencyGraphBuilder.class );
-            }
-            catch ( ComponentLookupException e )
-            {
-                throw new EnforcerRuleException( "Unable to load DependencyGraphBuilder: ", e );
-            }
-        }
-    }
+    /** Cache of dependency trees for projects, with duplicates and conflicting versions still present. */
+    private LoadingCache<MavenProject, DependencyNode> projectDependencyGraphCache =
+            CacheBuilder.newBuilder()
+                    .maximumSize( 128 )
+                    .build( new CacheLoader<MavenProject, DependencyNode>()
+                    {
+                        @Override
+                        public DependencyNode load( MavenProject project ) throws Exception
+                        {
+                            return getDependencyGraph( project, false );
+                        }
+                    } );
+    /** Cache of dependency trees for projects, transformed by the standard conflict resolver. */
+    private LoadingCache<MavenProject, DependencyNode> projectTransformedDependencyGraphCache =
+            CacheBuilder.newBuilder()
+                    .maximumSize( 128 )
+                    .build( new CacheLoader<MavenProject, DependencyNode>()
+                    {
+                        @Override
+                        public DependencyNode load( MavenProject project ) throws Exception
+                        {
+                            return getDependencyGraph( project, true );
+                        }
+                    } );
 
     public synchronized DependencyNode getDependencyGraph( EnforcerRuleHelper helper ) throws EnforcerRuleException
     {
-        init( helper );
+        return getDependencyGraph( helper, projectDependencyGraphCache );
+    }
+
+    public synchronized DependencyNode getTransformedDependencyGraph( EnforcerRuleHelper helper )
+            throws EnforcerRuleException
+    {
+        return getDependencyGraph( helper, projectTransformedDependencyGraphCache );
+    }
+
+    private DependencyNode getDependencyGraph(
+            EnforcerRuleHelper helper, LoadingCache<MavenProject, DependencyNode> cache ) throws EnforcerRuleException
+    {
         MavenProject project;
         try
         {
@@ -99,7 +105,7 @@ public class DependencyGraphLookup
         }
         try
         {
-            return projectDependencyGraphCache.get( project );
+            return cache.get( project );
         }
         catch ( ExecutionException e )
         {
@@ -108,10 +114,20 @@ public class DependencyGraphLookup
         }
     }
 
-    private DependencyNode getDependencyGraph( MavenProject project ) throws EnforcerRuleException
+    private DependencyNode getDependencyGraph( MavenProject project, boolean transformGraph )
+            throws EnforcerRuleException
     {
+        ProjectBuildingRequest sessionRequest = session.getProjectBuildingRequest();
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest( sessionRequest );
         buildingRequest.setProject( project );
+        if ( !transformGraph )
+        {
+            RepositorySystemSession repositorySession = sessionRequest.getRepositorySession();
+            DefaultRepositorySystemSession requestRepositorySystemSession =
+                    new DefaultRepositorySystemSession( repositorySession );
+            requestRepositorySystemSession.setDependencyGraphTransformer( null );
+            buildingRequest.setRepositorySession( requestRepositorySystemSession );
+        }
         try
         {
             return dependencyGraphBuilder.buildDependencyGraph( buildingRequest, null );

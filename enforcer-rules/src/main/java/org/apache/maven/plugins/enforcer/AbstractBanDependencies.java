@@ -105,7 +105,7 @@ public abstract class AbstractBanDependencies
     protected Set<Artifact> getDependenciesToCheck( EnforcerRuleHelper helper ) throws EnforcerRuleException
     {
         Set<Artifact> dependencies = null;
-        DependencyNode node = graphLookup.getDependencyGraph( helper );
+        DependencyNode node = graphLookup.getTransformedDependencyGraph( helper );
         if ( searchTransitive )
         {
             dependencies = getAllDescendants( node );
