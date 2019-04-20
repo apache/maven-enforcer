@@ -51,7 +51,7 @@ public class RequireSnapshotVersion
             StringBuilder sb = new StringBuilder();
             if ( message != null )
             {
-                sb.append( message ).append( '\n' );
+                sb.append( message ).append( System.lineSeparator() );
             }
             sb.append( "This project cannot be a release:" ).append( artifact.getId() );
             throw new EnforcerRuleException( sb.toString() );

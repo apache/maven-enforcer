@@ -96,7 +96,7 @@ public abstract class AbstractBanDependencies
             StringBuilder buf = new StringBuilder();
             if ( message != null )
             {
-                buf.append( message + "\n" );
+                buf.append( message + System.lineSeparator() );
             }
             for ( Artifact artifact : foundExcludes )
             {
@@ -111,7 +111,7 @@ public abstract class AbstractBanDependencies
 
     protected CharSequence getErrorMessage( Artifact artifact )
     {
-        return "Found Banned Dependency: " + artifact.getId() + "\n";
+        return "Found Banned Dependency: " + artifact.getId() + System.lineSeparator();
     }
 
     protected Set<Artifact> getDependenciesToCheck( MavenProject project )

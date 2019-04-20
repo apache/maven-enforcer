@@ -91,6 +91,6 @@ License
 [build-tests]: https://img.shields.io/jenkins/t/https/builds.apache.org/job/maven-box/job/maven-enforcer/job/master.svg?style=flat-square
 [enforcer-home]: https://maven.apache.org/enforcer/maven-enforcer-plugin/
 [enforcer-download]: https://maven.apache.org/enforcer/download.cgi
-[users-list]: https://maven.apache.org/mail-lists.html
+[users-list]: https://maven.apache.org/mailing-lists.html
 [dev-ml-list]: https://www.mail-archive.com/dev@maven.apache.org/
 [code-style]: https://maven.apache.org/developers/conventions/code.html

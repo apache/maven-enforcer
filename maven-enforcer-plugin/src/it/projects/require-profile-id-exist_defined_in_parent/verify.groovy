@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -19,29 +17,6 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.util.Set;
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.MavenProject;
-
-/**
- * This rule checks that lists of plugins are not included.
- *
- * @author <a href="mailto:velo.br@gmail.com">Marvin Froeder</a>
- */
-public class BannedPlugins
-    extends BannedDependencies
-{
-    @Override
-    protected Set<Artifact> getDependenciesToCheck( MavenProject project )
-    {
-        return project.getPluginArtifacts();
-    }
-
-    @Override
-    protected CharSequence getErrorMessage( Artifact artifact )
-    {
-        return "Found Banned Plugin: " + artifact.getId() + System.lineSeparator();
-    }
-
-}
+def buildLog = new File( basedir, 'build.log' )
+assert !( buildLog.text.contains( "The requested profile doesn't exist: a" ) )
+assert !( buildLog.text.contains( "The requested profile doesn't exist: b" ) )

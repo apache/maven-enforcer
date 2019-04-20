@@ -90,7 +90,7 @@ public abstract class AbstractRequireFiles
             StringBuilder buf = new StringBuilder();
             if ( message != null )
             {
-                buf.append( message + "\n" );
+                buf.append( message + System.lineSeparator() );
             }
             buf.append( getErrorMsg() );
 
@@ -98,11 +98,11 @@ public abstract class AbstractRequireFiles
             {
                 if ( file != null )
                 {
-                    buf.append( file.getAbsolutePath() + "\n" );
+                    buf.append( file.getAbsolutePath() + System.lineSeparator() );
                 }
                 else
                 {
-                    buf.append( "(an empty filename was given and allowNulls is false)\n" );
+                    buf.append( "(an empty filename was given and allowNulls is false)" + System.lineSeparator() );
                 }
             }
 

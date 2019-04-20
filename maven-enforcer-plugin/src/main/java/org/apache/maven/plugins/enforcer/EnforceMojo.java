@@ -213,20 +213,34 @@ public class EnforceMojo
                     // false if fail is false.
                     if ( failFast && level == EnforcerLevel.ERROR )
                     {
-                        throw new MojoExecutionException( currentRule + " failed with message:\n" + e.getMessage(), e );
+                        throw new MojoExecutionException( currentRule + " failed with message:"
+                            + System.lineSeparator() + e.getMessage(), e );
                     }
                     else
                     {
-                        if ( level == EnforcerLevel.ERROR )
+                        // log a warning in case the exception message is missing
+                        // so that the user can figure out what is going on
+                        final String exceptionMessage = e.getMessage();
+                        if ( exceptionMessage != null )
                         {
-                            hasErrors = true;
-                            list.add( "Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage() );
-                            log.debug( "Adding failure due to exception", e );
+                            log.debug( "Adding " + level + " message due to exception", e );
                         }
                         else
                         {
-                            list.add( "Rule " + i + ": " + currentRule + " warned with message:\n" + e.getMessage() );
-                            log.debug( "Adding warning due to exception", e );
+                            log.warn( "Rule " + i + ": " + currentRule + " failed without a message", e );
+                        }
+                        // add the 'failed/warned' message including exceptionMessage
+                        // which might be null in rare cases
+                        if ( level == EnforcerLevel.ERROR )
+                        {
+                            hasErrors = true;
+                            list.add( "Rule " + i + ": " + currentRule + " failed with message:"
+                                 + System.lineSeparator() + exceptionMessage );
+                        }
+                        else
+                        {
+                            list.add( "Rule " + i + ": " + currentRule + " warned with message:"
+                                 + System.lineSeparator() + exceptionMessage );
                         }
                     }
                 }
@@ -349,7 +363,7 @@ public class EnforceMojo
 
     protected String createRuleMessage( int i, String currentRule, EnforcerRuleException e )
     {
-        return "Rule " + i + ": " + currentRule + " failed with message:\n" + e.getMessage();
+        return "Rule " + i + ": " + currentRule + " failed with message:" + System.lineSeparator() + e.getMessage();
     }
 
     /**
