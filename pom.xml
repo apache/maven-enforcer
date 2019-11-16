@@ -132,7 +132,7 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>3.5</version> <!-- commons-lang3 >= 3.6 require at least Java 7 -->
+        <version>3.8.1</version> <!-- commons-lang3 >= 3.8.1 require at least Java 8 -->
       </dependency>
       <dependency>
         <groupId>commons-codec</groupId>
