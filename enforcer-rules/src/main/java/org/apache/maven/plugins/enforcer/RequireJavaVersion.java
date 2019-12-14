@@ -22,6 +22,7 @@ package org.apache.maven.plugins.enforcer;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -39,6 +40,12 @@ import org.codehaus.plexus.util.StringUtils;
 public class RequireJavaVersion
     extends AbstractVersionEnforcer
 {
+
+    /**
+     * Pattern which matches Java versions 6, 7, 8 (and earlier).
+     */
+    private static final Pattern PATTERN_MAIN_OLD_JDK = Pattern.compile( "^[1-8]$" );
+
     @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
@@ -67,35 +74,44 @@ public class RequireJavaVersion
      */
     public static String normalizeJDKVersion( String theJdkVersion )
     {
+        String version;
 
-        theJdkVersion = theJdkVersion.replaceAll( "_|-", "." );
-        String tokenArray[] = StringUtils.split( theJdkVersion, "." );
-        List<String> tokens = Arrays.asList( tokenArray );
-        StringBuffer buffer = new StringBuffer( theJdkVersion.length() );
-
-        Iterator<String> iter = tokens.iterator();
-        for ( int i = 0; i < tokens.size() && i < 4; i++ )
+        if ( PATTERN_MAIN_OLD_JDK.matcher( theJdkVersion ).matches() )
         {
-            String section = (String) iter.next();
-            section = section.replaceAll( "[^0-9]", "" );
+            version = "1." + theJdkVersion;
+        }
+        else
+        {
+            theJdkVersion = theJdkVersion.replaceAll( "_|-", "." );
+            String tokenArray[] = StringUtils.split( theJdkVersion, "." );
+            List<String> tokens = Arrays.asList( tokenArray );
+            StringBuffer buffer = new StringBuffer( theJdkVersion.length() );
 
-            if ( StringUtils.isNotEmpty( section ) )
+            Iterator<String> iter = tokens.iterator();
+            for ( int i = 0; i < tokens.size() && i < 4; i++ )
             {
-                buffer.append( Integer.parseInt( section ) );
+                String section = (String) iter.next();
+                section = section.replaceAll( "[^0-9]", "" );
 
-                if ( i != 2 )
+                if ( StringUtils.isNotEmpty( section ) )
                 {
-                    buffer.append( '.' );
-                }
-                else
-                {
-                    buffer.append( '-' );
+                    buffer.append( Integer.parseInt( section ) );
+
+                    if ( i != 2 )
+                    {
+                        buffer.append( '.' );
+                    }
+                    else
+                    {
+                        buffer.append( '-' );
+                    }
                 }
             }
+
+            version = buffer.toString();
+            version = StringUtils.stripEnd( version, "-" );
         }
 
-        String version = buffer.toString();
-        version = StringUtils.stripEnd( version, "-" );
         return StringUtils.stripEnd( version, "." );
     }
 }

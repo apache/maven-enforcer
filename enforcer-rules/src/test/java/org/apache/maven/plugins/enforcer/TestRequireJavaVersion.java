@@ -62,6 +62,11 @@ public class TestRequireJavaVersion
         assertThat( RequireJavaVersion.normalizeJDKVersion( "1.8.0_73" ) ).isEqualTo( "1.8.0-73" );
         assertThat( RequireJavaVersion.normalizeJDKVersion( "9" ) ).isEqualTo( "9" );
 
+        // MENFORCER-288 - also recognize 6 through 8 as 1.6 and 1.8.
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "6" ) ).isEqualTo( "1.6" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "7" ) ).isEqualTo( "1.7" );
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "8" ) ).isEqualTo( "1.8" );
+
     }
 
     /**
