@@ -30,7 +30,7 @@ under the License.
     <repository>
       <id>com.asual.maven.public</id>
       <name>Asual Public Repository</name>
-      <url>http://localhost</url>
+      <url>https://localhost</url>
     </repository>
   </repositories> 
 

@@ -29,7 +29,7 @@ under the License.
   <pluginRepositories>
     <pluginRepository>
       <id>repo</id>
-      <url>http://example.com/repo</url>
+      <url>https://example.com/repo</url>
     </pluginRepository>
   </pluginRepositories>
 
