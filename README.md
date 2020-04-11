@@ -17,6 +17,7 @@
 Maven Enforcer Plugin - The Loving Iron Fist of Maven™
 ======================================================
 
+[![ASF Jira](https://img.shields.io/endpoint?url=https%3A%2F%2Fmaven.apache.org%2Fbadges%2Fasf_jira-MENFORCER.json)][jira]
 [![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/apache/maven-enforcer.svg?label=License)][license]
 [![Maven Central](https://img.shields.io/maven-central/v/org.apache.maven.plugins/maven-enforcer-plugin.svg?label=Maven%20Central)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.apache.maven.plugins%22%20a%3A%22maven-enforcer-plugin%22)
 [![Jenkins Status](https://img.shields.io/jenkins/s/https/builds.apache.org/job/maven-box/job/maven-enforcer/job/master.svg?style=flat-square)][build]
@@ -84,6 +85,7 @@ License
 
 
 [home]: https://maven.apache.org/enforcer/maven-enforcer-plugin
+[jira]: https://issues.apache.org/jira/projects/MENFORCER/
 [license]: https://www.apache.org/licenses/LICENSE-2.0
 [build]: https://builds.apache.org/job/maven-box/job/maven-enforcer/
 [test-results]: https://builds.apache.org/job/maven-box/job/maven-enforcer/job/master/lastCompletedBuild/testReport/
