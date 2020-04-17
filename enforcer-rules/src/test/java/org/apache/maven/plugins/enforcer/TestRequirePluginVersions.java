@@ -51,10 +51,10 @@ public class TestRequirePluginVersions
 
         // setup the plugins. I'm setting up the foo group
         // with a few bogus entries and then a real one.
-        // this is to test that the list is exhaustively
+        // to test that the list is exhaustively
         // searched for versions before giving up.
         // banLatest/Release will fail if it is found
-        // anywhere in the list
+        // anywhere in the list.
         List<Plugin> plugins = new ArrayList<Plugin>();
         plugins.add( EnforcerTestUtils.newPlugin( "group", "a-artifact", "1.0" ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "foo", null ) );
@@ -93,7 +93,7 @@ public class TestRequirePluginVersions
         rule.setBanLatest( true );
         assertFalse( rule.hasValidVersionSpecified( helper, source, pluginWrappers ) );
 
-        // check that LATEST is exhausively checked
+        // check that LATEST is exhaustively checked
         rule.setBanSnapshots( false );
         source.setArtifactId( "f-artifact" );
         assertFalse( rule.hasValidVersionSpecified( helper, source, pluginWrappers ) );
