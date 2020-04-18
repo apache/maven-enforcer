@@ -67,7 +67,7 @@
     <maven.version>3.0</maven.version>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
     <javaVersion>7</javaVersion>
-    <project.build.outputTimestamp>2020-04-07T21:04:00Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2020-04-17T21:04:00Z</project.build.outputTimestamp>
   </properties>
 
   <dependencyManagement>
@@ -123,7 +123,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.11</version>
+        <version>4.13</version>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
