@@ -647,7 +647,7 @@ public class RequirePluginVersions
 
                 if ( isValidVersion( version ) )
                 {
-                    helper.getLog().debug( "checking for notEmpty and notIsWhiespace(): " + version );
+                    helper.getLog().debug( "checking for notEmpty and notIsWhitespace(): " + version );
                     if ( banRelease && version.equals( "RELEASE" ) )
                     {
                         return false;
