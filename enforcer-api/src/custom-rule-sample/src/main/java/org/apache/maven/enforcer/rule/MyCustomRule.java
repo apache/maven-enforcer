@@ -37,7 +37,7 @@ public class MyCustomRule
     implements EnforcerRule
 {
     /**
-     * Simple param. This rule will fail if the value is true.
+     * Simple param. This rule fails if the value is true.
      */
     private boolean shouldIfail = false;
 
@@ -113,7 +113,7 @@ public class MyCustomRule
      * by the helper need to be queried. You may for example, store certain objects in your rule
      * and then query them later.
      */
-    public boolean isResultValid( EnforcerRule arg0 )
+    public boolean isResultValid( EnforcerRule rule )
     {
         return false;
     }

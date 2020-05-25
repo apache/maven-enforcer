@@ -34,48 +34,48 @@ Writing a custom rule
   
 +---+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>custom-rule</groupId>
-    <artifactId>custom-rule-sample</artifactId>
-    <packaging>jar</packaging>
-    <version>1.0</version>
-    <name>My Custom Rule</name>
-    <description>This is my custom rule.</description>
-    <properties>
-        <api.version>${project.version}</api.version>
-        <maven.version>3.0</maven.version>
-    </properties>
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.maven.enforcer</groupId>
-            <artifactId>enforcer-api</artifactId>
-            <version>${api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-core</artifactId>
-            <version>${maven.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-api</artifactId>
-            <version>${maven.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-    <build>
-    </build>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>custom-rule</groupId>
+  <artifactId>custom-rule-sample</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0</version>
+  <name>My Custom Rule</name>
+  <description>This is my custom rule.</description>
+  <properties>
+    <api.version>${project.version}</api.version>
+    <maven.version>3.0</maven.version>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.enforcer</groupId>
+      <artifactId>enforcer-api</artifactId>
+      <version>${api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>${maven.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>${maven.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+  </build>
 </project>
 +---+
 
   [[2]] Create your rule class. The rule must implement the {{{./apidocs/index.html}EnforcerRule}} interface.
    The rule can get access to components and the log via the {{{./apidocs/index.html}EnforcerRuleHelper}} interface.
-   In addition, the rule must provide a setter method for each parameter allowed to be configured in the pom.xml file (like the shown in point 5).
+   In addition, the rule must provide a setter method for each parameter allowed to be configured in the pom.xml file (like the parameter <<<shouldIfail>>> shown in point 5).
    
    If the rule succeeds, it should just simply return. If the rule fails, it should throw an {{{./apidocs/index.html}EnforcerRuleException}} with a descriptive message telling the user why the rule failed.
    
@@ -104,7 +104,7 @@ public class MyCustomRule
     implements EnforcerRule
 {
     /**
-     * Simple param. This rule will fail if the value is true.
+     * Simple param. This rule fails if the value is true.
      */
     private boolean shouldIfail = false;
 
@@ -180,7 +180,7 @@ public class MyCustomRule
      * by the helper need to be queried. You may for example, store certain objects in your rule
      * and then query them later.
      */
-    public boolean isResultValid( EnforcerRule arg0 )
+    public boolean isResultValid( EnforcerRule rule )
     {
         return false;
     }
