@@ -103,7 +103,7 @@ public class EvaluateBeanshell
     protected boolean evaluateCondition( String script, Log log )
         throws EnforcerRuleException
     {
-        Boolean evaluation = Boolean.FALSE;
+        Boolean evaluation;
         try
         {
             evaluation = (Boolean) INTERPRETER.get().eval( script );

@@ -42,7 +42,7 @@ public class DependencyVersionMap
 
     public DependencyVersionMap( Log log )
     {
-        idsToNode = new HashMap<String, List<DependencyNode>>();
+        idsToNode = new HashMap<>();
     }
     
     public void setUniqueVersions( boolean uniqueVersions )
@@ -79,7 +79,7 @@ public class DependencyVersionMap
         List<DependencyNode> nodes = idsToNode.get( key );
         if ( nodes == null )
         {
-            nodes = new ArrayList<DependencyNode>();
+            nodes = new ArrayList<>();
             idsToNode.put( key, nodes );
         }
         nodes.add( node );
@@ -122,7 +122,7 @@ public class DependencyVersionMap
 
     public List<List<DependencyNode>> getConflictedVersionNumbers()
     {
-        List<List<DependencyNode>> output = new ArrayList<List<DependencyNode>>();
+        List<List<DependencyNode>> output = new ArrayList<>();
         for ( List<DependencyNode> nodes : idsToNode.values() )
         {
             if ( containsConflicts( nodes ) )

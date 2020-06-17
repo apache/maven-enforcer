@@ -76,7 +76,7 @@ public class RequireActiveProfile
     public void execute( EnforcerRuleHelper theHelper )
         throws EnforcerRuleException
     {
-        List<String> missingProfiles = new ArrayList<String>();
+        List<String> missingProfiles = new ArrayList<>();
         try
         {
             MavenProject project = (MavenProject) theHelper.evaluate( "${project}" );

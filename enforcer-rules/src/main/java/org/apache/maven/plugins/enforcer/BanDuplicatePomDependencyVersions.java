@@ -20,7 +20,6 @@ package org.apache.maven.plugins.enforcer;
  */
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,7 +35,6 @@ import org.apache.maven.model.Profile;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -66,29 +64,15 @@ public class BanDuplicatePomDependencyVersions
 
         // re-read model, because M3 uses optimized model
         MavenXpp3Reader modelReader = new MavenXpp3Reader();
-        FileInputStream pomInputStream = null;
-        Model model;
-        try
-        {
-            pomInputStream = new FileInputStream( project.getFile() );
 
+        Model model;
+        try ( FileInputStream pomInputStream = new FileInputStream( project.getFile() ) )
+        {
             model = modelReader.read( pomInputStream, false );
         }
-        catch ( FileNotFoundException e )
+        catch ( IOException | XmlPullParserException e )
         {
             throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", e );
-        }
-        catch ( IOException e )
-        {
-            throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", e );
-        }
-        catch ( XmlPullParserException e )
-        {
-            throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", e );
-        }
-        finally
-        {
-            IOUtil.close( pomInputStream );
         }
 
         // @todo reuse ModelValidator when possible
@@ -191,8 +175,8 @@ public class BanDuplicatePomDependencyVersions
     private Map<String, Integer> validateDependencies( List<Dependency> dependencies )
         throws EnforcerRuleException
     {
-        Map<String, Integer> duplicateDeps = new HashMap<String, Integer>();
-        Set<String> deps = new HashSet<String>();
+        Map<String, Integer> duplicateDeps = new HashMap<>();
+        Set<String> deps = new HashSet<>();
         for ( Dependency dependency : dependencies )
         {
             String key = dependency.getManagementKey();

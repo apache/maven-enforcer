@@ -27,7 +27,6 @@ import java.io.InputStream;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Rule to validate a file to match the specified checksum.
@@ -144,10 +143,8 @@ public class RequireFileChecksum
     private String calculateChecksum()
         throws EnforcerRuleException
     {
-        InputStream inputStream = null;
-        try
+        try ( InputStream inputStream = new FileInputStream( this.file ) )
         {
-            inputStream = new FileInputStream( this.file );
             String checksum;
             if ( "md5".equals( this.type ) )
             {
@@ -178,10 +175,6 @@ public class RequireFileChecksum
         catch ( IOException e )
         {
             throw new EnforcerRuleException( "Unable to calculate checksum", e );
-        }
-        finally
-        {
-            IOUtil.close( inputStream );
         }
     }
 }

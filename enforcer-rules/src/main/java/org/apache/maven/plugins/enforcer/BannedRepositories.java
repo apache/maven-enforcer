@@ -100,9 +100,9 @@ public class BannedRepositories
 
             String errMsg = repoErrMsg + pluginRepoErrMsg;
 
-            if ( errMsg != null && !StringUtils.isEmpty( errMsg.toString() ) )
+            if ( errMsg != null && !StringUtils.isEmpty( errMsg ) )
             {
-                throw new EnforcerRuleException( errMsg.toString() );
+                throw new EnforcerRuleException( errMsg );
             }
 
         }
@@ -151,7 +151,7 @@ public class BannedRepositories
     private List<ArtifactRepository> checkRepositories( List<ArtifactRepository> repositories, List<String> includes,
                                                         List<String> excludes )
     {
-        List<ArtifactRepository> bannedRepos = new ArrayList<ArtifactRepository>();
+        List<ArtifactRepository> bannedRepos = new ArrayList<>();
 
         for ( ArtifactRepository repo : repositories )
         {
@@ -205,7 +205,7 @@ public class BannedRepositories
 
     private String getRepositoryUrlString( List<ArtifactRepository> resultBannedRepos )
     {
-        StringBuffer urls = new StringBuffer( "" );
+        StringBuilder urls = new StringBuilder( "" );
         for ( ArtifactRepository repo : resultBannedRepos )
         {
             urls.append( repo.getId() + " - " + repo.getUrl() + System.lineSeparator() );

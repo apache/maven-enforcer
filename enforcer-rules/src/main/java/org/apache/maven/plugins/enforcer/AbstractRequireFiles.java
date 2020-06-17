@@ -69,7 +69,7 @@ public abstract class AbstractRequireFiles
             throw new EnforcerRuleException( "The file list is empty and Null files are disabled." );
         }
 
-        List<File> failures = new ArrayList<File>();
+        List<File> failures = new ArrayList<>();
         for ( File file : files )
         {
             if ( !allowNulls && file == null )
@@ -129,9 +129,8 @@ public abstract class AbstractRequireFiles
         if ( items != null )
         {
             hash = 1;
-            for ( int i = 0; i < items.length; i++ )
+            for ( Object item : items )
             {
-                Object item = items[i];
                 hash = 31 * hash + ( item == null ? 0 : item.hashCode() );
             }
         }

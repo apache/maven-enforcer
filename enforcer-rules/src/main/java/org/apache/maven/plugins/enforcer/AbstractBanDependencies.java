@@ -143,7 +143,7 @@ public abstract class AbstractBanDependencies
             }
             else if ( node.getChildren() != null )
             {
-                dependencies = new HashSet<Artifact>();
+                dependencies = new HashSet<>();
                 for ( DependencyNode depNode : node.getChildren() )
                 {
                     dependencies.add( depNode.getArtifact() );

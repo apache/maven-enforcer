@@ -91,17 +91,12 @@ public class EnforcerRuleUtils
         // helper.
         try
         {
-            resolver = (ArtifactResolver) helper.getComponent( ArtifactResolver.class );
+            resolver = helper.getComponent( ArtifactResolver.class );
             local = (ArtifactRepository) helper.evaluate( "${localRepository}" );
             project = (MavenProject) helper.evaluate( "${project}" );
             remoteRepositories = project.getRemoteArtifactRepositories();
         }
-        catch ( ComponentLookupException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch ( ExpressionEvaluationException e )
+        catch ( ComponentLookupException | ExpressionEvaluationException e )
         {
             // TODO Auto-generated catch block
             e.printStackTrace();

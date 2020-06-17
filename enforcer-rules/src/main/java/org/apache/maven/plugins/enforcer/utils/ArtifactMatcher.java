@@ -156,9 +156,9 @@ public final class ArtifactMatcher
         }
     }
 
-    private Collection<Pattern> patterns = new LinkedList<Pattern>();
+    private Collection<Pattern> patterns = new LinkedList<>();
 
-    private Collection<Pattern> ignorePatterns = new LinkedList<Pattern>();
+    private Collection<Pattern> ignorePatterns = new LinkedList<>();
 
     /**
      * Construct class by providing patterns as strings. Empty strings are ignored.
