@@ -32,7 +32,7 @@
   <packaging>maven-plugin</packaging>
 
   <prerequisites>
-    <maven>2.2.1</maven>
+    <maven>${maven.version}</maven>
   </prerequisites>
 
   <name>Apache Maven Enforcer Plugin</name>
