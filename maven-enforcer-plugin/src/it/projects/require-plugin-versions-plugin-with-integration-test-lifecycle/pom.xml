@@ -44,7 +44,7 @@
                 <requirePluginVersions>
                   <banSnapshots>false</banSnapshots>
                   <unCheckedPluginList>
-                    org.apache.maven.plugins:maven-clean-plugin,org.apache.maven.plugins:maven-install-plugin,org.apache.maven.plugins:maven-deploy-plugin,org.apache.maven.plugins:maven-site-plugin
+                    org.apache.maven.plugins:maven-clean-plugin,org.apache.maven.plugins:maven-install-plugin,org.apache.maven.plugins:maven-deploy-plugin,org.apache.maven.plugins:maven-site-plugin,org.apache.maven.plugins:maven-wrapper-plugin
                   </unCheckedPluginList>
                 </requirePluginVersions>
               </rules>

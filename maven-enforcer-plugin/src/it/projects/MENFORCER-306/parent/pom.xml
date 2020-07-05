@@ -97,6 +97,11 @@ under the License.
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.1.0</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-wrapper-plugin</artifactId>
+          <version>3.0.1</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>

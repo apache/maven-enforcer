@@ -59,7 +59,8 @@ under the License.
                     org.apache.maven.plugins:maven-site-plugin,
                     org.apache.maven.plugins:maven-resources-plugin,
                     org.apache.maven.plugins:maven-compiler-plugin,
-                    org.apache.maven.plugins:maven-surefire-plugin
+                    org.apache.maven.plugins:maven-surefire-plugin,
+                    org.apache.maven.plugins:maven-wrapper-plugin
                   </unCheckedPluginList>
                 </requirePluginVersions>
               </rules>

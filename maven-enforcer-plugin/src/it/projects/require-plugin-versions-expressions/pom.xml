@@ -74,6 +74,11 @@
           <version>3.2</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-wrapper-plugin</artifactId>
+          <version>3.0.1</version>
+        </plugin>
+        <plugin>
           <groupId>${expressionplugin.groupId}</groupId>
           <artifactId>${expressionplugin.artifactId}</artifactId>
           <version>${expressionplugin.version}</version>

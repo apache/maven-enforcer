@@ -42,9 +42,9 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.lifecycle.DefaultLifecycles;
 import org.apache.maven.lifecycle.Lifecycle;
 import org.apache.maven.lifecycle.LifecycleExecutionException;
-import org.apache.maven.lifecycle.LifecycleExecutor;
 import org.apache.maven.lifecycle.mapping.LifecycleMapping;
 import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Model;
@@ -66,7 +66,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.util.ReflectionUtils;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -194,12 +193,9 @@ public class RequirePluginVersions
             // get the various expressions out of the helper.
 
             project = (MavenProject) helper.evaluate( "${project}" );
-            LifecycleExecutor life;
-            life = helper.getComponent( LifecycleExecutor.class );
 
-            Object defaultLifeCycles = ReflectionUtils.getValueIncludingSuperclasses( "defaultLifeCycles", life );
-            Map lifecyclesMap = (Map) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", defaultLifeCycles );
-            lifecycles = lifecyclesMap.values();
+            DefaultLifecycles defaultLifeCycles = helper.getComponent( DefaultLifecycles.class );
+            lifecycles = defaultLifeCycles.getLifeCycles();
 
             session = (MavenSession) helper.evaluate( "${session}" );
             pluginManager = helper.getComponent( PluginManager.class );
@@ -211,7 +207,7 @@ public class RequirePluginVersions
             utils = new EnforcerRuleUtils( helper );
 
             // get all the plugins that are bound to the specified lifecycles
-            Set<Plugin> allPlugins = getBoundPlugins( life, project, phases );
+            Set<Plugin> allPlugins = getBoundPlugins( project, phases );
 
             // insert any additional plugins specified by the user.
             allPlugins = addAdditionalPlugins( allPlugins, additionalPlugins );
@@ -267,7 +263,7 @@ public class RequirePluginVersions
         }
         catch ( Exception e )
         {
-            throw new EnforcerRuleException( e.getLocalizedMessage() );
+            throw new EnforcerRuleException( e.getLocalizedMessage(), e );
         }
     }
 
@@ -551,7 +547,7 @@ public class RequirePluginVersions
      * @throws LifecycleExecutionException the lifecycle execution exception
      * @throws IllegalAccessException the illegal access exception
      */
-    protected Set<Plugin> getBoundPlugins( LifecycleExecutor life, MavenProject project, String thePhases )
+    protected Set<Plugin> getBoundPlugins( MavenProject project, String thePhases )
         throws PluginNotFoundException, LifecycleExecutionException, IllegalAccessException
     {
 

@@ -61,6 +61,8 @@ public class TestRequireJavaVersion
         assertThat( RequireJavaVersion.normalizeJDKVersion( "1.6.0-dp2" ) ).isEqualTo( "1.6.0-2" );
         assertThat( RequireJavaVersion.normalizeJDKVersion( "1.8.0_73" ) ).isEqualTo( "1.8.0-73" );
         assertThat( RequireJavaVersion.normalizeJDKVersion( "9" ) ).isEqualTo( "9" );
+        
+        assertThat( RequireJavaVersion.normalizeJDKVersion( "17" ) ).isEqualTo( "17" );
 
     }
 
