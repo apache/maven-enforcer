@@ -45,7 +45,7 @@ public class RequireProfileIdsExist extends AbstractNonCacheableEnforcerRule
         {
             MavenSession session = (MavenSession) helper.evaluate( "${session}" );
 
-            List<String> profileIds = new ArrayList<String>();
+            List<String> profileIds = new ArrayList<>();
             profileIds.addAll( session.getProjectBuildingRequest().getActiveProfileIds() );
             profileIds.addAll( session.getProjectBuildingRequest().getInactiveProfileIds() );
 

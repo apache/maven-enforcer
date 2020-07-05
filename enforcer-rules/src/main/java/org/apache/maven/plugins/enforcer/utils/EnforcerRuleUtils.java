@@ -40,9 +40,6 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 public class EnforcerRuleUtils
 {
 
-    /** The factory. */
-    ArtifactFactory factory;
-
     /** The resolver. */
     ArtifactResolver resolver;
 
@@ -63,7 +60,7 @@ public class EnforcerRuleUtils
     /**
      * Instantiates a new enforcer rule utils.
      *
-     * @param theFactory the the factory
+     * @param theFactory unused
      * @param theResolver the the resolver
      * @param theLocal the the local
      * @param theRemoteRepositories the the remote repositories
@@ -74,7 +71,6 @@ public class EnforcerRuleUtils
                               List<ArtifactRepository> theRemoteRepositories, MavenProject project, Log theLog )
     {
         super();
-        this.factory = theFactory;
         this.resolver = theResolver;
         this.local = theLocal;
         this.remoteRepositories = theRemoteRepositories;
@@ -95,18 +91,12 @@ public class EnforcerRuleUtils
         // helper.
         try
         {
-            factory = (ArtifactFactory) helper.getComponent( ArtifactFactory.class );
-            resolver = (ArtifactResolver) helper.getComponent( ArtifactResolver.class );
+            resolver = helper.getComponent( ArtifactResolver.class );
             local = (ArtifactRepository) helper.evaluate( "${localRepository}" );
             project = (MavenProject) helper.evaluate( "${project}" );
             remoteRepositories = project.getRemoteArtifactRepositories();
         }
-        catch ( ComponentLookupException e )
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        catch ( ExpressionEvaluationException e )
+        catch ( ComponentLookupException | ExpressionEvaluationException e )
         {
             // TODO Auto-generated catch block
             e.printStackTrace();

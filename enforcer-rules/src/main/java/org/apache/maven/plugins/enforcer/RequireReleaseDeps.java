@@ -140,7 +140,7 @@ public class RequireReleaseDeps
     protected Set<Artifact> checkDependencies( Set<Artifact> dependencies, Log log )
         throws EnforcerRuleException
     {
-        Set<Artifact> foundSnapshots = new HashSet<Artifact>();
+        Set<Artifact> foundSnapshots = new HashSet<>();
 
         Set<Artifact> filteredDependencies = filterArtifacts( dependencies );
         
@@ -179,7 +179,7 @@ public class RequireReleaseDeps
             filter.add( new StrictPatternExcludesArtifactFilter( excludes ) );
         }
         
-        Set<Artifact> result = new HashSet<Artifact>();
+        Set<Artifact> result = new HashSet<>();
         for ( Artifact artifact : dependencies )
         {
             if ( filter.include( artifact ) )

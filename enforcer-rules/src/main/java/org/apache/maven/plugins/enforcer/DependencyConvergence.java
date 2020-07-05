@@ -75,23 +75,17 @@ public class DependencyConvergence
         try
         {
             MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-            DependencyTreeBuilder dependencyTreeBuilder =
-                (DependencyTreeBuilder) helper.getComponent( DependencyTreeBuilder.class );
+            DependencyTreeBuilder dependencyTreeBuilder = helper.getComponent( DependencyTreeBuilder.class );
             ArtifactRepository repository = (ArtifactRepository) helper.evaluate( "${localRepository}" );
-            ArtifactFactory factory = (ArtifactFactory) helper.getComponent( ArtifactFactory.class );
-            ArtifactMetadataSource metadataSource =
-                (ArtifactMetadataSource) helper.getComponent( ArtifactMetadataSource.class );
-            ArtifactCollector collector = (ArtifactCollector) helper.getComponent( ArtifactCollector.class );
+            ArtifactFactory factory = helper.getComponent( ArtifactFactory.class );
+            ArtifactMetadataSource metadataSource = helper.getComponent( ArtifactMetadataSource.class );
+            ArtifactCollector collector = helper.getComponent( ArtifactCollector.class );
             ArtifactFilter filter = null; // we need to evaluate all scopes
             DependencyNode node = dependencyTreeBuilder.buildDependencyTree( project, repository, factory,
                                                                              metadataSource, filter, collector );
             return node;
         }
-        catch ( ExpressionEvaluationException e )
-        {
-            throw new EnforcerRuleException( "Unable to lookup an expression " + e.getLocalizedMessage(), e );
-        }
-        catch ( ComponentLookupException e )
+        catch ( ExpressionEvaluationException | ComponentLookupException e )
         {
             throw new EnforcerRuleException( "Unable to lookup a component " + e.getLocalizedMessage(), e );
         }
@@ -115,7 +109,7 @@ public class DependencyConvergence
             DependencyVersionMap visitor = new DependencyVersionMap( log );
             visitor.setUniqueVersions( uniqueVersions );
             node.accept( visitor );
-            List<CharSequence> errorMsgs = new ArrayList<CharSequence>();
+            List<CharSequence> errorMsgs = new ArrayList<>();
             errorMsgs.addAll( getConvergenceErrorMsgs( visitor.getConflictedVersionNumbers() ) );
             for ( CharSequence errorMsg : errorMsgs )
             {
@@ -140,7 +134,7 @@ public class DependencyConvergence
 
     private StringBuilder buildTreeString( DependencyNode node )
     {
-        List<String> loc = new ArrayList<String>();
+        List<String> loc = new ArrayList<>();
         DependencyNode currentNode = node;
         while ( currentNode != null )
         {
@@ -163,7 +157,7 @@ public class DependencyConvergence
 
     private List<String> getConvergenceErrorMsgs( List<List<DependencyNode>> errors )
     {
-        List<String> errorMsgs = new ArrayList<String>();
+        List<String> errorMsgs = new ArrayList<>();
         for ( List<DependencyNode> nodeList : errors )
         {
             errorMsgs.add( buildConvergenceErrorMsg( nodeList ) );

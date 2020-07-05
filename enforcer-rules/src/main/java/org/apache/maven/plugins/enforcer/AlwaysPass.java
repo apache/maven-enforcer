@@ -38,8 +38,8 @@ public class AlwaysPass
         final Log log = helper.getLog();
         
         String message = getMessage();
-        
-        StringBuffer buf = new StringBuffer();
+
+        StringBuilder buf = new StringBuilder();
         if ( message != null )
         {
             buf.append( message ).append( System.lineSeparator() );

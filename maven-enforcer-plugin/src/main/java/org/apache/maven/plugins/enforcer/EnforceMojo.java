@@ -59,7 +59,7 @@ public class EnforceMojo
     /**
      * This is a static variable used to persist the cached results across plugin invocations.
      */
-    protected static Hashtable<String, EnforcerRule> cache = new Hashtable<String, EnforcerRule>();
+    protected static Hashtable<String, EnforcerRule> cache = new Hashtable<>();
 
     /**
      * MojoExecution needed by the ExpressionEvaluator
@@ -164,7 +164,7 @@ public class EnforceMojo
         }
 
         // list to store exceptions
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
 
         String currentRule = "Unknown";
 

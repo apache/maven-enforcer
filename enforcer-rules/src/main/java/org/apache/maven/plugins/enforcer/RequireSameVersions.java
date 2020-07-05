@@ -43,20 +43,20 @@ public class RequireSameVersions
 {
     private boolean uniqueVersions;
 
-    private Set<String> dependencies = new HashSet<String>();
+    private Set<String> dependencies = new HashSet<>();
 
-    private Set<String> plugins = new HashSet<String>();
+    private Set<String> plugins = new HashSet<>();
 
-    private Set<String> buildPlugins = new HashSet<String>();
+    private Set<String> buildPlugins = new HashSet<>();
 
-    private Set<String> reportPlugins = new HashSet<String>();
+    private Set<String> reportPlugins = new HashSet<>();
 
     @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
         // get the project
-        MavenProject project = null;
+        MavenProject project;
         try
         {
             project = (MavenProject) helper.evaluate( "${project}" );
@@ -67,11 +67,11 @@ public class RequireSameVersions
         }
 
         // consider including profile based artifacts
-        Map<String, List<String>> versionMembers = new LinkedHashMap<String, List<String>>();
+        Map<String, List<String>> versionMembers = new LinkedHashMap<>();
 
-        Set<String> buildPluginSet = new HashSet<String>( buildPlugins );
+        Set<String> buildPluginSet = new HashSet<>( buildPlugins );
         buildPluginSet.addAll( plugins );
-        Set<String> reportPluginSet = new HashSet<String>( reportPlugins );
+        Set<String> reportPluginSet = new HashSet<>( reportPlugins );
         reportPluginSet.addAll( plugins );
 
         // CHECKSTYLE_OFF: LineLength
@@ -99,9 +99,9 @@ public class RequireSameVersions
     private Map<String, List<String>> collectVersionMembers( Set<Artifact> artifacts, Collection<String> patterns,
                                                              String source )
     {
-        Map<String, List<String>> versionMembers = new LinkedHashMap<String, List<String>>();
+        Map<String, List<String>> versionMembers = new LinkedHashMap<>();
 
-        List<Pattern> regExs = new ArrayList<Pattern>();
+        List<Pattern> regExs = new ArrayList<>();
         for ( String pattern : patterns )
         {
             String regex = pattern.replace( ".", "\\." ).replace( "*", ".*" ).replace( ":", "\\:" ).replace( '?', '.' );

@@ -45,7 +45,7 @@ public class PluginWrapper
 
         if ( !plugins.isEmpty() )
         {
-            results = new ArrayList<PluginWrapper>( plugins.size() );
+            results = new ArrayList<>( plugins.size() );
             for ( Object o : plugins )
             {
                 if ( o instanceof Plugin )

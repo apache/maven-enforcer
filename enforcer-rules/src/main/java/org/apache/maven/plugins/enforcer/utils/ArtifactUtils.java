@@ -46,7 +46,7 @@ public final class ArtifactUtils
         Set<Artifact> children = null;
         if ( node.getChildren() != null )
         {
-            children = new HashSet<Artifact>();
+            children = new HashSet<>();
             for ( DependencyNode depNode : node.getChildren() )
             {
                 children.add( depNode.getArtifact() );

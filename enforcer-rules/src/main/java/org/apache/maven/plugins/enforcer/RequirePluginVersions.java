@@ -195,16 +195,16 @@ public class RequirePluginVersions
 
             project = (MavenProject) helper.evaluate( "${project}" );
             LifecycleExecutor life;
-            life = (LifecycleExecutor) helper.getComponent( LifecycleExecutor.class );
+            life = helper.getComponent( LifecycleExecutor.class );
 
             Object defaultLifeCycles = ReflectionUtils.getValueIncludingSuperclasses( "defaultLifeCycles", life );
             Map lifecyclesMap = (Map) ReflectionUtils.getValueIncludingSuperclasses( "lifecycles", defaultLifeCycles );
             lifecycles = lifecyclesMap.values();
 
             session = (MavenSession) helper.evaluate( "${session}" );
-            pluginManager = (PluginManager) helper.getComponent( PluginManager.class );
-            factory = (ArtifactFactory) helper.getComponent( ArtifactFactory.class );
-            resolver = (ArtifactResolver) helper.getComponent( ArtifactResolver.class );
+            pluginManager = helper.getComponent( PluginManager.class );
+            factory = helper.getComponent( ArtifactFactory.class );
+            resolver = helper.getComponent( ArtifactResolver.class );
             local = (ArtifactRepository) helper.evaluate( "${localRepository}" );
             remoteRepositories = project.getRemoteArtifactRepositories();
 
@@ -265,35 +265,7 @@ public class RequirePluginVersions
         {
             throw new EnforcerRuleException( "Unable to lookup a component:" + e.getLocalizedMessage() );
         }
-        catch ( IllegalAccessException e )
-        {
-            throw new EnforcerRuleException( e.getLocalizedMessage() );
-        }
-        catch ( LifecycleExecutionException e )
-        {
-            throw new EnforcerRuleException( e.getLocalizedMessage() );
-        }
-        catch ( PluginNotFoundException e )
-        {
-            throw new EnforcerRuleException( e.getLocalizedMessage() );
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new EnforcerRuleException( e.getLocalizedMessage() );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new EnforcerRuleException( e.getLocalizedMessage() );
-        }
-        catch ( IOException e )
-        {
-            throw new EnforcerRuleException( e.getLocalizedMessage() );
-        }
-        catch ( XmlPullParserException e )
-        {
-            throw new EnforcerRuleException( e.getLocalizedMessage() );
-        }
-        catch ( MojoExecutionException e )
+        catch ( Exception e )
         {
             throw new EnforcerRuleException( e.getLocalizedMessage() );
         }
@@ -437,7 +409,7 @@ public class RequirePluginVersions
 
                 if ( existing == null )
                 {
-                    existing = new HashSet<Plugin>();
+                    existing = new HashSet<>();
                     existing.add( plugin );
                 }
                 else if ( !existing.contains( plugin ) )
@@ -491,7 +463,7 @@ public class RequirePluginVersions
      */
     public Set<Plugin> getProfilePlugins( MavenProject project )
     {
-        Set<Plugin> result = new HashSet<Plugin>();
+        Set<Plugin> result = new HashSet<>();
         List<Profile> profiles = project.getActiveProfiles();
         if ( profiles != null && !profiles.isEmpty() )
         {
@@ -559,11 +531,7 @@ public class RequirePluginVersions
             this.resolver.resolve( artifact, pluginRepositories, this.local );
             plugin.setVersion( artifact.getVersion() );
         }
-        catch ( ArtifactResolutionException e )
-        {
-            // What does this mean?
-        }
-        catch ( ArtifactNotFoundException e )
+        catch ( ArtifactResolutionException | ArtifactNotFoundException e )
         {
             // What does this mean?
         }
@@ -587,7 +555,7 @@ public class RequirePluginVersions
         throws PluginNotFoundException, LifecycleExecutionException, IllegalAccessException
     {
 
-        Set<Plugin> allPlugins = new HashSet<Plugin>();
+        Set<Plugin> allPlugins = new HashSet<>();
 
         // lookup the bindings for all the passed in phases
         String[] lifecyclePhases = thePhases.split( "," );
@@ -647,7 +615,7 @@ public class RequirePluginVersions
 
                 if ( isValidVersion( version ) )
                 {
-                    helper.getLog().debug( "checking for notEmpty and notIsWhiespace(): " + version );
+                    helper.getLog().debug( "checking for notEmpty and notIsWhitespace(): " + version );
                     if ( banRelease && version.equals( "RELEASE" ) )
                     {
                         return false;
@@ -731,7 +699,7 @@ public class RequirePluginVersions
     {
         log.debug( "RequirePluginVersions.getAllPlugins:" );
 
-        Set<Plugin> plugins = new HashSet<Plugin>();
+        Set<Plugin> plugins = new HashSet<>();
         // first, bind those associated with the packaging
         Map<String, String> mappings = findMappingsForLifecycle( project, lifecycle );
 
@@ -789,7 +757,7 @@ public class RequirePluginVersions
     {
         if ( phaseToLifecycleMap == null )
         {
-            phaseToLifecycleMap = new HashMap<String, Lifecycle>();
+            phaseToLifecycleMap = new HashMap<>();
 
             for ( Lifecycle lifecycle : lifecycles )
             {
@@ -825,7 +793,7 @@ public class RequirePluginVersions
     private Lifecycle getLifecycleForPhase( String phase )
         throws BuildFailureException, LifecycleExecutionException
     {
-        Lifecycle lifecycle = (Lifecycle) getPhaseToLifecycleMap().get( phase );
+        Lifecycle lifecycle = getPhaseToLifecycleMap().get( phase );
 
         if ( lifecycle == null )
         {
@@ -918,7 +886,7 @@ public class RequirePluginVersions
         {
             try
             {
-                m = (LifecycleMapping) helper.getComponent( LifecycleMapping.class, packaging );
+                m = helper.getComponent( LifecycleMapping.class, packaging );
                 optionalMojos = m.getOptionalMojos( lifecycle.getId() );
             }
             catch ( ComponentLookupException e )
@@ -1013,27 +981,8 @@ public class RequirePluginVersions
             throw new LifecycleExecutionException( "Internal error in the plugin manager getting plugin '"
                 + plugin.getKey() + "': " + e.getMessage(), e );
         }
-        catch ( PluginVersionResolutionException e )
-        {
-            throw new LifecycleExecutionException( e.getMessage(), e );
-        }
-        catch ( InvalidVersionSpecificationException e )
-        {
-            throw new LifecycleExecutionException( e.getMessage(), e );
-        }
-        catch ( InvalidPluginException e )
-        {
-            throw new LifecycleExecutionException( e.getMessage(), e );
-        }
-        catch ( ArtifactNotFoundException e )
-        {
-            throw new LifecycleExecutionException( e.getMessage(), e );
-        }
-        catch ( ArtifactResolutionException e )
-        {
-            throw new LifecycleExecutionException( e.getMessage(), e );
-        }
-        catch ( PluginVersionNotFoundException e )
+        catch ( PluginVersionResolutionException | InvalidVersionSpecificationException | InvalidPluginException
+            | ArtifactNotFoundException | ArtifactResolutionException | PluginVersionNotFoundException e )
         {
             throw new LifecycleExecutionException( e.getMessage(), e );
         }
@@ -1054,7 +1003,7 @@ public class RequirePluginVersions
     protected List<PluginWrapper> getAllPluginEntries( MavenProject project )
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
     {
-        List<Model> models = new ArrayList<Model>();
+        List<Model> models = new ArrayList<>();
 
         List<MavenProject> sortedProjects = session.getProjectDependencyGraph().getSortedProjects();
 
@@ -1068,7 +1017,7 @@ public class RequirePluginVersions
             models.add( mavenProject.getOriginalModel() );
         }
 
-        List<PluginWrapper> plugins = new ArrayList<PluginWrapper>();
+        List<PluginWrapper> plugins = new ArrayList<>();
         // now find all the plugin entries, either in
         // build.plugins or build.pluginManagement.plugins, profiles.plugins and reporting
         for ( Model model : models )

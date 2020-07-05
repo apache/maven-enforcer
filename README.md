@@ -17,10 +17,11 @@
 Maven Enforcer Plugin - The Loving Iron Fist of Maven™
 ======================================================
 
+[![ASF Jira](https://img.shields.io/endpoint?url=https%3A%2F%2Fmaven.apache.org%2Fbadges%2Fasf_jira-MENFORCER.json)][jira]
 [![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/apache/maven-enforcer.svg?label=License)][license]
-[![Maven Central](https://img.shields.io/maven-central/v/org.apache.maven.plugins/maven-enforcer-plugin.svg?label=Maven%20Central)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.apache.maven.plugins%22%20a%3A%22maven-enforcer-plugin%22)
-[![Jenkins Status](https://img.shields.io/jenkins/s/https/builds.apache.org/job/maven-box/job/maven-enforcer/job/master.svg?style=flat-square)][build]
-[![Jenkins tests](https://img.shields.io/jenkins/t/https/builds.apache.org/job/maven-box/job/maven-enforcer/job/master.svg?style=flat-square)][test-results]
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.maven.plugins/maven-enforcer-plugin.svg?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.maven.plugins/maven-enforcer-plugin)
+[![Jenkins Status](https://img.shields.io/jenkins/s/https/builds.apache.org/job/maven-box/job/maven-enforcer/job/master.svg?)][build]
+[![Jenkins tests](https://img.shields.io/jenkins/t/https/builds.apache.org/job/maven-box/job/maven-enforcer/job/master.svg?)][test-results]
 
 The Enforcer plugin provides goals to control certain environmental constraints
 such as Maven version, JDK version and OS family along with many more built-in
@@ -44,7 +45,7 @@ You can get the Maven Enforcer plugin via the following coordinates from central
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-enforcer-plugin</artifactId>
-  <version>3.0.0-M2</version>
+  <version>3.0.0-M3</version>
 </plugin>
 ```
 
@@ -84,11 +85,12 @@ License
 
 
 [home]: https://maven.apache.org/enforcer/maven-enforcer-plugin
+[jira]: https://issues.apache.org/jira/projects/MENFORCER/
 [license]: https://www.apache.org/licenses/LICENSE-2.0
 [build]: https://builds.apache.org/job/maven-box/job/maven-enforcer/
 [test-results]: https://builds.apache.org/job/maven-box/job/maven-enforcer/job/master/lastCompletedBuild/testReport/
-[build-status]: https://img.shields.io/jenkins/s/https/builds.apache.org/job/maven-box/job/maven-enforcer/job/master.svg?style=flat-square
-[build-tests]: https://img.shields.io/jenkins/t/https/builds.apache.org/job/maven-box/job/maven-enforcer/job/master.svg?style=flat-square
+[build-status]: https://img.shields.io/jenkins/s/https/builds.apache.org/job/maven-box/job/maven-enforcer/job/master.svg?
+[build-tests]: https://img.shields.io/jenkins/t/https/builds.apache.org/job/maven-box/job/maven-enforcer/job/master.svg?
 [enforcer-home]: https://maven.apache.org/enforcer/maven-enforcer-plugin/
 [enforcer-download]: https://maven.apache.org/enforcer/download.cgi
 [users-list]: https://maven.apache.org/mailing-lists.html

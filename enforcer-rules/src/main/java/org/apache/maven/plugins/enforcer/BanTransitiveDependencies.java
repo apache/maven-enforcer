@@ -158,7 +158,8 @@ public class BanTransitiveDependencies
         try
         {
             MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-            rootNode = createDependencyGraphBuilder().buildDependencyGraph( project, null );
+            List<MavenProject> reactorProjects = (List<MavenProject>) helper.evaluate( "${reactorProjects}" );
+            rootNode = createDependencyGraphBuilder().buildDependencyGraph( project, null, reactorProjects );
         }
         catch ( Exception e )
         {

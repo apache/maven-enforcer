@@ -106,13 +106,11 @@ public class RequireUpperBoundDeps
         try
         {
             MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-            DependencyTreeBuilder dependencyTreeBuilder =
-                (DependencyTreeBuilder) helper.getComponent( DependencyTreeBuilder.class );
+            DependencyTreeBuilder dependencyTreeBuilder = helper.getComponent( DependencyTreeBuilder.class );
             ArtifactRepository repository = (ArtifactRepository) helper.evaluate( "${localRepository}" );
-            ArtifactFactory factory = (ArtifactFactory) helper.getComponent( ArtifactFactory.class );
-            ArtifactMetadataSource metadataSource =
-                (ArtifactMetadataSource) helper.getComponent( ArtifactMetadataSource.class );
-            ArtifactCollector collector = (ArtifactCollector) helper.getComponent( ArtifactCollector.class );
+            ArtifactFactory factory = helper.getComponent( ArtifactFactory.class );
+            ArtifactMetadataSource metadataSource = helper.getComponent( ArtifactMetadataSource.class );
+            ArtifactCollector collector = helper.getComponent( ArtifactCollector.class );
             ArtifactFilter filter = null; // we need to evaluate all scopes
             DependencyNode node =
                 dependencyTreeBuilder.buildDependencyTree( project, repository, factory, metadataSource, filter,
@@ -162,7 +160,7 @@ public class RequireUpperBoundDeps
 
     private List<String> buildErrorMessages( List<List<DependencyNode>> conflicts )
     {
-        List<String> errorMessages = new ArrayList<String>( conflicts.size() );
+        List<String> errorMessages = new ArrayList<>( conflicts.size() );
         for ( List<DependencyNode> conflict : conflicts )
         {
             Artifact artifact = conflict.get( 0 ).getArtifact();
@@ -198,7 +196,7 @@ public class RequireUpperBoundDeps
 
     private StringBuilder buildTreeString( DependencyNode node )
     {
-        List<String> loc = new ArrayList<String>();
+        List<String> loc = new ArrayList<>();
         DependencyNode currentNode = node;
         while ( currentNode != null )
         {
@@ -251,7 +249,7 @@ public class RequireUpperBoundDeps
         }
 
         private Map<String, List<DependencyNodeHopCountPair>> keyToPairsMap =
-            new LinkedHashMap<String, List<DependencyNodeHopCountPair>>();
+            new LinkedHashMap<>();
 
         public boolean visit( DependencyNode node )
         {
@@ -260,7 +258,7 @@ public class RequireUpperBoundDeps
             List<DependencyNodeHopCountPair> pairs = keyToPairsMap.get( key );
             if ( pairs == null )
             {
-                pairs = new ArrayList<DependencyNodeHopCountPair>();
+                pairs = new ArrayList<>();
                 keyToPairsMap.put( key, pairs );
             }
             pairs.add( pair );
@@ -275,12 +273,12 @@ public class RequireUpperBoundDeps
 
         public List<List<DependencyNode>> getConflicts()
         {
-            List<List<DependencyNode>> output = new ArrayList<List<DependencyNode>>();
+            List<List<DependencyNode>> output = new ArrayList<>();
             for ( List<DependencyNodeHopCountPair> pairs : keyToPairsMap.values() )
             {
                 if ( containsConflicts( pairs ) )
                 {
-                    List<DependencyNode> outputSubList = new ArrayList<DependencyNode>( pairs.size() );
+                    List<DependencyNode> outputSubList = new ArrayList<>( pairs.size() );
                     for ( DependencyNodeHopCountPair pair : pairs )
                     {
                         outputSubList.add( pair.getNode() );

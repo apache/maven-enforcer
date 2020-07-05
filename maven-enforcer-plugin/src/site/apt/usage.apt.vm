@@ -31,11 +31,11 @@ Usage
 
   See the following links for information about including and configuring plugins in your project:
   
-  *{{{http://maven.apache.org/guides/mini/guide-configuring-plugins.html}Configuring Plugins}}
+  *{{{/guides/mini/guide-configuring-plugins.html}Configuring Plugins}}
   
-  *{{{http://maven.apache.org/guides/plugin/guide-java-plugin-development.html}Plugin Development}}
+  *{{{/guides/plugin/guide-java-plugin-development.html}Plugin Development}}
 
-  *{{{http://maven.apache.org/guides/introduction/introduction-to-plugin-prefix-mapping.html}Plugin Prefix}}
+  *{{{/guides/introduction/introduction-to-plugin-prefix-mapping.html}Plugin Prefix}}
   
   []
 
@@ -45,7 +45,7 @@ Usage
    <<<pom.xml>>>. The enforcers execute the configured rules to check for certain constraints. 
    The available built-in rules are described {{{../enforcer-rules/index.html}here}}. Besides the rules to execute, these goals support three options:
    
-   * {{{./enforce-mojo.html#skip}skip}} - a quick way to skip checks via a profile or using <<<-Denforcer.skip=true>>> from the command line.
+   * {{{./enforce-mojo.html#skip}skip}} - a quick way to skip checks via a profile or using <<<-Denforcer.skip>>> from the command line.
    
    * {{{./enforce-mojo.html#fail}fail}} - if the goal should fail the build when a rule fails. The default is <<<true>>>. If false, the errors will be logged as warnings.
    

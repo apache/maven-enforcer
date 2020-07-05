@@ -38,7 +38,14 @@ public class EvaluateBeanshell
 {
 
     /** Beanshell interpreter. */
-    private static final Interpreter BSH = new Interpreter();
+    private static final ThreadLocal<Interpreter> INTERPRETER = new ThreadLocal<Interpreter>()
+    {
+        @Override
+        protected Interpreter initialValue()
+        {
+            return new Interpreter();
+        }
+    };
 
     /** The condition to be evaluated.
      *  
@@ -96,10 +103,10 @@ public class EvaluateBeanshell
     protected boolean evaluateCondition( String script, Log log )
         throws EnforcerRuleException
     {
-        Boolean evaluation = Boolean.FALSE;
+        Boolean evaluation;
         try
         {
-            evaluation = (Boolean) BSH.eval( script );
+            evaluation = (Boolean) INTERPRETER.get().eval( script );
             log.debug( "Echo evaluating : " + evaluation );
         }
         catch ( EvalError ex )

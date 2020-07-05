@@ -32,7 +32,7 @@
   <packaging>maven-plugin</packaging>
 
   <prerequisites>
-    <maven>2.2.1</maven>
+    <maven>${maven.version}</maven>
   </prerequisites>
 
   <name>Apache Maven Enforcer Plugin</name>
@@ -157,7 +157,9 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
+            <version>3.2.1</version>
             <configuration>
               <debug>true</debug>
               <projectsDirectory>src/it/projects</projectsDirectory>
