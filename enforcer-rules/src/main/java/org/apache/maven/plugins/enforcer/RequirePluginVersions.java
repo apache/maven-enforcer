@@ -539,7 +539,6 @@ public class RequirePluginVersions
      * Gets the plugins that are bound to the defined phases. This does not find plugins bound in the pom to a phase
      * later than the plugin is executing.
      *
-     * @param life the life
      * @param project the project
      * @param thePhases the the phases
      * @return the bound plugins
