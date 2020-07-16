@@ -540,7 +540,7 @@ public class RequirePluginVersions
      * later than the plugin is executing.
      *
      * @param project the project
-     * @param thePhases the the phases
+     * @param thePhases the phases
      * @return the bound plugins
      * @throws PluginNotFoundException the plugin not found exception
      * @throws LifecycleExecutionException the lifecycle execution exception
