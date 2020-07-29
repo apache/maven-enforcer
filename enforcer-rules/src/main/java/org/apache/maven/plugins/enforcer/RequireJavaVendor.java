@@ -27,6 +27,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
  * This rule checks that the Java vendor is allowed.
  *
  * @author Tim Sijstermans
+ * @since 3.0.0
  */
 public class RequireJavaVendor extends AbstractNonCacheableEnforcerRule
 {
