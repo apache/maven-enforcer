@@ -24,7 +24,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
 /**
- * This rule checks that the Java version is allowed.
+ * This rule checks that the Java vendor is allowed.
  *
  * @author Tim Sijstermans
  */

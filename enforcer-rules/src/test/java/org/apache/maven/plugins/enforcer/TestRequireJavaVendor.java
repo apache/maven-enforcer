@@ -25,7 +25,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.junit.Test;
 
 /**
- * The Class TestRequireJavaVersion.
+ * The Class TestRequireJavaVendor.
  *
  * @author Tim Sijstermans
  */
