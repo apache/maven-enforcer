@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -47,7 +46,6 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 public class DependencyConvergence
     implements EnforcerRule
 {
-
     private static Log log;
 
     private boolean uniqueVersions;
@@ -127,18 +125,13 @@ public class DependencyConvergence
         }
     }
 
-    private String getFullArtifactName( Artifact artifact )
-    {
-        return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion();
-    }
-
     private StringBuilder buildTreeString( DependencyNode node )
     {
         List<String> loc = new ArrayList<>();
         DependencyNode currentNode = node;
         while ( currentNode != null )
         {
-            loc.add( getFullArtifactName( currentNode.getArtifact() ) );
+            loc.add( currentNode.getArtifact().toString() );
             currentNode = currentNode.getParent();
         }
         Collections.reverse( loc );
@@ -169,7 +162,7 @@ public class DependencyConvergence
     {
         StringBuilder builder = new StringBuilder();
         builder.append( System.lineSeparator() + "Dependency convergence error for "
-            + getFullArtifactName( nodeList.get( 0 ).getArtifact() )
+            + nodeList.get( 0 ).getArtifact().toString()
             + " paths to dependency are:" + System.lineSeparator() );
         if ( nodeList.size() > 0 )
         {
