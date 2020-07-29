@@ -51,7 +51,8 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  * @author Geoffrey De Smet
  * @since 1.1
  */
-public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
+public class RequireUpperBoundDeps
+    extends AbstractNonCacheableEnforcerRule
 {
     private static Log log;
 
@@ -87,7 +88,6 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
 
     /**
      * Sets dependencies to exclude.
-     *
      * @param excludes a list of {@code groupId:artifactId} names
      */
     public void setExcludes( List<String> excludes )
@@ -106,18 +106,19 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
     }
 
     // CHECKSTYLE_OFF: LineLength
-
     /**
-     * Uses the {@link EnforcerRuleHelper} to populate the values of the {@link DependencyTreeBuilder#buildDependencyTree(MavenProject,
-     * ArtifactRepository, ArtifactFactory, ArtifactMetadataSource, ArtifactFilter, ArtifactCollector)} factory method.
-     * <br/> This method simply exists to hide all the ugly lookup that the {@link EnforcerRuleHelper} has to do.
+     * Uses the {@link EnforcerRuleHelper} to populate the values of the
+     * {@link DependencyTreeBuilder#buildDependencyTree(MavenProject, ArtifactRepository, ArtifactFactory, ArtifactMetadataSource, ArtifactFilter, ArtifactCollector)}
+     * factory method. <br/>
+     * This method simply exists to hide all the ugly lookup that the {@link EnforcerRuleHelper} has to do.
      *
      * @param helper
      * @return a Dependency Node which is the root of the project's dependency tree
      * @throws EnforcerRuleException when the build should fail
      */
     // CHECKSTYLE_ON: LineLength
-    private DependencyNode getNode( EnforcerRuleHelper helper ) throws EnforcerRuleException
+    private DependencyNode getNode( EnforcerRuleHelper helper )
+        throws EnforcerRuleException
     {
         try
         {
@@ -128,8 +129,9 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
             ArtifactMetadataSource metadataSource = helper.getComponent( ArtifactMetadataSource.class );
             ArtifactCollector collector = helper.getComponent( ArtifactCollector.class );
             ArtifactFilter filter = null; // we need to evaluate all scopes
-            DependencyNode node = dependencyTreeBuilder.buildDependencyTree( project, repository, factory,
-                    metadataSource, filter, collector );
+            DependencyNode node =
+                dependencyTreeBuilder.buildDependencyTree( project, repository, factory, metadataSource, filter,
+                                                           collector );
             return node;
         }
         catch ( ExpressionEvaluationException e )
@@ -147,7 +149,8 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
     }
 
     @Override
-    public void execute( EnforcerRuleHelper helper ) throws EnforcerRuleException
+    public void execute( EnforcerRuleHelper helper )
+        throws EnforcerRuleException
     {
         if ( log == null )
         {
@@ -163,8 +166,8 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
             List<String> errorMessages = buildErrorMessages( visitor.getConflicts() );
             if ( errorMessages.size() > 0 )
             {
-                throw new EnforcerRuleException(
-                        "Failed while enforcing RequireUpperBoundDeps. The error(s) are " + errorMessages );
+                throw new EnforcerRuleException( "Failed while enforcing RequireUpperBoundDeps. The error(s) are "
+                    + errorMessages );
             }
         }
         catch ( Exception e )
@@ -253,7 +256,8 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
         return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + version;
     }
 
-    private static class RequireUpperBoundDepsVisitor implements DependencyNodeVisitor
+    private static class RequireUpperBoundDepsVisitor
+        implements DependencyNodeVisitor
     {
 
         private boolean uniqueVersions;
@@ -345,7 +349,8 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule
 
     }
 
-    private static class DependencyNodeHopCountPair implements Comparable<DependencyNodeHopCountPair>
+    private static class DependencyNodeHopCountPair
+        implements Comparable<DependencyNodeHopCountPair>
     {
 
         private DependencyNode node;
