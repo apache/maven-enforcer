@@ -20,3 +20,4 @@
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.text.contains( 'Maven Version:' )
 assert buildLog.text.contains( 'JDK Version:' )
+assert buildLog.text.contains( 'Java Vendor:' )

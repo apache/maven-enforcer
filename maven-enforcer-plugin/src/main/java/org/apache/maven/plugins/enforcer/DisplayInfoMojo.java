@@ -37,36 +37,40 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-@Mojo( name = "display-info", threadSafe = true )
-public class DisplayInfoMojo
-    extends AbstractMojo
-    implements Contextualizable
+@Mojo( name = "display-info",
+       threadSafe = true )
+public class DisplayInfoMojo extends AbstractMojo implements Contextualizable
 {
 
     /**
      * MojoExecution needed by the ExpressionEvaluator
      */
-    @Parameter( defaultValue = "${mojoExecution}", readonly = true, required = true )
+    @Parameter( defaultValue = "${mojoExecution}",
+                readonly = true,
+                required = true )
     protected MojoExecution mojoExecution;
 
     /**
      * The MavenSession
      */
-    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    @Parameter( defaultValue = "${session}",
+                readonly = true,
+                required = true )
     protected MavenSession session;
 
     /**
      * POM
      */
-    @Parameter( defaultValue = "${project}", readonly = true, required = true )
+    @Parameter( defaultValue = "${project}",
+                readonly = true,
+                required = true )
     protected MavenProject project;
 
     // set by the contextualize method. Only way to get the
     // plugin's container in 2.0.x
     protected PlexusContainer container;
 
-    public void contextualize( Context context )
-        throws ContextException
+    public void contextualize( Context context ) throws ContextException
     {
         container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
     }
@@ -74,14 +78,15 @@ public class DisplayInfoMojo
     /**
      * Entry point to the mojo
      */
-    public void execute()
-        throws MojoExecutionException
+    public void execute() throws MojoExecutionException
     {
         String mavenVersion = session.getSystemProperties().getProperty( "maven.version" );
         String javaVersion = System.getProperty( "java.version" );
+        String javaVendor = System.getProperty( "java.vendor" );
         getLog().info( "Maven Version: " + mavenVersion );
-        getLog().info( "JDK Version: " + javaVersion + " normalized as: "
-            + RequireJavaVersion.normalizeJDKVersion( javaVersion ) );
+        getLog().info( "JDK Version: " + javaVersion + " normalized as: " + RequireJavaVersion.normalizeJDKVersion(
+                javaVersion ) );
+        getLog().info( "Java Vendor: " + javaVendor );
         RequireOS os = new RequireOS();
         os.displayOSInfo( getLog(), true );
     }
