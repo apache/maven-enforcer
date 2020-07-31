@@ -54,9 +54,11 @@ public class RequireJavaVendor extends AbstractNonCacheableEnforcerRule
 
     /**
      * Specify the required name. Some examples are:
+     * Name should be an exact match of the System Property java.vendor, which you can also see with mvn --version
+     *
      * <ul>
-     * <li><code>AdoptOpenJDK</code> enforces name AdoptOpenJDK </li>
-     * <li><code>Java.net</code> enforces name Amazon </li>
+     * <li><code>AdoptOpenJDK</code> enforces vendor name AdoptOpenJDK </li>
+     * <li><code>Amazon</code> enforces vendor name Amazon </li>
      * </ul>
      *
      * @param name the required name to set
