@@ -61,6 +61,8 @@ Built-In Rules
 
   * {{{./requireFilesSize.html}requireFilesSize}} - enforces that the list of files exists and is within a certain size range.
 
+  * {{{./requireJavaVendor.html}requireJavaVendor}} - enforces the JDK vendor.
+
   * {{{./requireJavaVersion.html}requireJavaVersion}} - enforces the JDK version.
 
   * {{{./requireMavenVersion.html}requireMavenVersion}} - enforces the Maven version.

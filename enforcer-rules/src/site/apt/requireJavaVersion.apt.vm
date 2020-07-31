@@ -92,4 +92,4 @@ OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
 </project>
 +---+
   
-  If you would like to enforce a certain vendor string for the JDK, you would use the {{{./requireProperty.html}RequireProperty}} rule, and check the java.vendor property with a regular expression.
+  If you would like to enforce a certain vendor string for the JDK, you would use the {{{./requireJavaVendor.html}RequireJavaVendor}} rule
