@@ -47,7 +47,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 
 /**
  * Rule to enforce that the resolved dependency is also the most recent one of all transitive dependencies.
- * 
+ *
  * @author Geoffrey De Smet
  * @since 1.1
  */
@@ -69,9 +69,16 @@ public class RequireUpperBoundDeps
     private List<String> excludes = null;
 
     /**
+     * Dependencies to include.
+     *
+     * @since 3.0.0
+     */
+    private List<String> includes = null;
+
+    /**
      * Set to {@code true} if timestamped snapshots should be used.
-     * 
-     * @param uniqueVersions 
+     *
+     * @param uniqueVersions
      * @since 1.3
      */
     public void setUniqueVersions( boolean uniqueVersions )
@@ -88,13 +95,23 @@ public class RequireUpperBoundDeps
         this.excludes = excludes;
     }
 
+    /**
+     * Sets dependencies to include.
+     *
+     * @param includes a list of {@code groupId:artifactId} names
+     */
+    public void setIncludes( List<String> includes )
+    {
+        this.includes = includes;
+    }
+
     // CHECKSTYLE_OFF: LineLength
     /**
      * Uses the {@link EnforcerRuleHelper} to populate the values of the
      * {@link DependencyTreeBuilder#buildDependencyTree(MavenProject, ArtifactRepository, ArtifactFactory, ArtifactMetadataSource, ArtifactFilter, ArtifactCollector)}
      * factory method. <br/>
      * This method simply exists to hide all the ugly lookup that the {@link EnforcerRuleHelper} has to do.
-     * 
+     *
      * @param helper
      * @return a Dependency Node which is the root of the project's dependency tree
      * @throws EnforcerRuleException when the build should fail
@@ -144,6 +161,7 @@ public class RequireUpperBoundDeps
             DependencyNode node = getNode( helper );
             RequireUpperBoundDepsVisitor visitor = new RequireUpperBoundDepsVisitor();
             visitor.setUniqueVersions( uniqueVersions );
+            visitor.setIncludes( includes );
             node.accept( visitor );
             List<String> errorMessages = buildErrorMessages( visitor.getConflicts() );
             if ( errorMessages.size() > 0 )
@@ -180,8 +198,9 @@ public class RequireUpperBoundDeps
     private String buildErrorMessage( List<DependencyNode> conflict )
     {
         StringBuilder errorMessage = new StringBuilder();
-        errorMessage.append( System.lineSeparator() + "Require upper bound dependencies error for "
-            + getFullArtifactName( conflict.get( 0 ), false ) + " paths to dependency are:" + System.lineSeparator() );
+        errorMessage.append(
+                System.lineSeparator() + "Require upper bound dependencies error for " + getFullArtifactName(
+                        conflict.get( 0 ), false ) + " paths to dependency are:" + System.lineSeparator() );
         if ( conflict.size() > 0 )
         {
             errorMessage.append( buildTreeString( conflict.get( 0 ) ) );
@@ -201,13 +220,13 @@ public class RequireUpperBoundDeps
         while ( currentNode != null )
         {
             StringBuilder line = new StringBuilder( getFullArtifactName( currentNode, false ) );
-            
+
             if ( currentNode.getPremanagedVersion() != null )
             {
                 line.append( " (managed) <-- " );
                 line.append( getFullArtifactName( currentNode, true ) );
             }
-            
+
             loc.add( line.toString() );
             currentNode = currentNode.getParent();
         }
@@ -243,18 +262,30 @@ public class RequireUpperBoundDeps
 
         private boolean uniqueVersions;
 
+        private List<String> includes = null;
+
         public void setUniqueVersions( boolean uniqueVersions )
         {
             this.uniqueVersions = uniqueVersions;
         }
 
-        private Map<String, List<DependencyNodeHopCountPair>> keyToPairsMap =
-            new LinkedHashMap<>();
+        public void setIncludes( List<String> includes )
+        {
+            this.includes = includes;
+        }
+
+        private Map<String, List<DependencyNodeHopCountPair>> keyToPairsMap = new LinkedHashMap<>();
 
         public boolean visit( DependencyNode node )
         {
             DependencyNodeHopCountPair pair = new DependencyNodeHopCountPair( node );
             String key = pair.constructKey();
+
+            if ( includes != null && !includes.isEmpty() && !includes.contains( key ) )
+            {
+                return true;
+            }
+
             List<DependencyNodeHopCountPair> pairs = keyToPairsMap.get( key );
             if ( pairs == null )
             {

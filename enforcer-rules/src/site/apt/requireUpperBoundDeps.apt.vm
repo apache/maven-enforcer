@@ -109,6 +109,11 @@ and
                     <exclude>com.google.guava:guava</exclude>
                   </excludes>
                   -->
+                  <!-- If you include specific cases only these will be checked: (when omitted everything is included)
+                  <includes>
+                    <include>com.google.guava:guava</include>
+                  </includes>
+                  -->
                 </requireUpperBoundDeps>
               </rules>
             </configuration>
@@ -124,5 +129,3 @@ and
   ...
 </project>
 -----------------------------------------------------------------------------------
-
-  
