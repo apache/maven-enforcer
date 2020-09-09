@@ -104,6 +104,8 @@ and
                 <requireUpperBoundDeps>
                   <!-- 'uniqueVersions' (default:false) can be set to true if you want to compare the timestamped SNAPSHOTs  -->
                   <!-- <uniqueVersions>true</uniqueVersions> -->
+                  <!-- 'sameMajorVersions' (default:false) can be set to true if you want that dependencies all use the same major version (semantic versioning)  -->
+                  <!-- <sameMajorVersions>true</sameMajorVersions> -->
                   <!-- If you wish to ignore certain cases:
                   <excludes>
                     <exclude>com.google.guava:guava</exclude>

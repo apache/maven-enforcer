@@ -62,6 +62,11 @@ public class RequireUpperBoundDeps
     private boolean uniqueVersions;
 
     /**
+     * @since 3.0.0
+     */
+    private boolean sameMajorVersions;
+
+    /**
      * Dependencies to ignore.
      *
      * @since TBD
@@ -84,6 +89,17 @@ public class RequireUpperBoundDeps
     public void setUniqueVersions( boolean uniqueVersions )
     {
         this.uniqueVersions = uniqueVersions;
+    }
+
+    /**
+     * Set to {@code true} if dependencies should use same major version (semantic versioning).
+     *
+     * @param sameMajorVersions
+     * @since 3.0.0
+     */
+    public void setSameMajorVersions( boolean sameMajorVersions )
+    {
+        this.sameMajorVersions = sameMajorVersions;
     }
 
     /**
@@ -161,6 +177,7 @@ public class RequireUpperBoundDeps
             DependencyNode node = getNode( helper );
             RequireUpperBoundDepsVisitor visitor = new RequireUpperBoundDepsVisitor();
             visitor.setUniqueVersions( uniqueVersions );
+            visitor.setSameMajorVersions( sameMajorVersions );
             visitor.setIncludes( includes );
             node.accept( visitor );
             List<String> errorMessages = buildErrorMessages( visitor.getConflicts() );
@@ -262,11 +279,18 @@ public class RequireUpperBoundDeps
 
         private boolean uniqueVersions;
 
+        private boolean sameMajorVersions;
+
         private List<String> includes = null;
 
         public void setUniqueVersions( boolean uniqueVersions )
         {
             this.uniqueVersions = uniqueVersions;
+        }
+
+        public void setSameMajorVersions( boolean sameMajorVersions )
+        {
+            this.sameMajorVersions = sameMajorVersions;
         }
 
         public void setIncludes( List<String> includes )
@@ -340,6 +364,10 @@ public class RequireUpperBoundDeps
             {
                 ArtifactVersion version = pair.extractArtifactVersion( uniqueVersions, true );
                 if ( resolvedVersion.compareTo( version ) < 0 )
+                {
+                    return true;
+                }
+                else if ( sameMajorVersions && resolvedVersion.getMajorVersion() != version.getMajorVersion() )
                 {
                     return true;
                 }
