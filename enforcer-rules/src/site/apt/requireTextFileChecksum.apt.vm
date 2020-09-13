@@ -16,18 +16,19 @@
 ~~ under the License.
 
   ------
-  Require Files Checksum
+  Require Text Files Checksum
   ------
-  Edward Samson, Lyubomyr Shaydariv
+  Konrad Windszus
   ------
-  February 2016
+  October 2020
   ------
 
-Require Files Checksum
+Require Text Files Checksum
 
-  This rule checks that the specified file has an given checksum. For text files
-  use {{{./requireTextFileChecksum.html}Require Text Files Checksum}} instead.
-
+  This rule checks that the specified text file has an given checksum. For binary files
+  use {{{./requireFileChecksum.html}Require Files Checksum}} instead.
+  To make sure the checksum is the same on all platforms the text file's line separators are normalized
+  to Unix (<<<\n>>>, default) or optionally Windows (<<<\r\n>>>).
 
    The following parameters are supported by this rule:
 
@@ -40,6 +41,10 @@ Require Files Checksum
    * checksum - Expected file checksum.
 
    * type - Type of hashing algorithm to calculate the checksum. May be one of "md5", "sha1", "sha256", "sha384", or "sha512".
+
+   * normalizeLineSeparatorTo - optionally specifies to which line separators to normalize prior to checksum calculation. Either "WINDOWS" or "UNIX". By default "UNIX".
+
+   * encoding - the character encoding used by the file. One of the {{{https://docs.oracle.com/javase/7/docs/api/java/nio/charset/Charset.html#standard}Default Java Charset}} names. By default set to <<<$\{project.build.sourceEncoding\}>>>
 
    []
 
@@ -63,31 +68,33 @@ Require Files Checksum
             </goals>
             <configuration>
               <rules>
-                <requireFileChecksum>
+                <requireTextFileChecksum>
                   <file>${project.build.outputDirectory}/foo.txt</file>
                   <checksum>d41d8cd98f00b204e9800998ecf8427e</checksum>
                   <type>md5</type>
-                </requireFileChecksum>
-                <requireFileChecksum>
+                </requireTextFileChecksum>
+                <requireTextFileChecksum>
                   <file>${project.build.outputDirectory}/bar.txt</file>
                   <checksum>da39a3ee5e6b4b0d3255bfef95601890afd80709</checksum>
                   <type>sha1</type>
-                </requireFileChecksum>
-                <requireFileChecksum>
+                  <encoding>UTF-8</encoding>
+                </requireTextFileChecksum>
+                <requireTextFileChecksum>
                   <file>${project.build.outputDirectory}/baz.txt</file>
                   <checksum>e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855</checksum>
                   <type>sha256</type>
-                </requireFileChecksum>
-                <requireFileChecksum>
+                  <normalizeLineSeparatorTo>WINDOWS</normalizeLineSeparatorTo>
+                </requireTextFileChecksum>
+                <requireTextFileChecksum>
                   <file>${project.build.outputDirectory}/qux.txt</file>
                   <checksum>38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b</checksum>
                   <type>sha384</type>
-                </requireFileChecksum>
-                <requireFileChecksum>
+                </requireTextFileChecksum>
+                <requireTextFileChecksum>
                   <file>${project.build.outputDirectory}/quux.txt</file>
                   <checksum>cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e</checksum>
                   <type>sha512</type>
-                </requireFileChecksum>
+                </requireTextFileChecksum>
               </rules>
               <fail>true</fail>
             </configuration>

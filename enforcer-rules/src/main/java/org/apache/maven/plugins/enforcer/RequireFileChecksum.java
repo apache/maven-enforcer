@@ -29,16 +29,17 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
 /**
- * Rule to validate a file to match the specified checksum.
+ * Rule to validate a binary file to match the specified checksum.
  *
  * @author Edward Samson
  * @author Lyubomyr Shaydariv
+ * @see RequireTextFileChecksum
  */
 public class RequireFileChecksum
     extends AbstractNonCacheableEnforcerRule
 {
 
-    private File file;
+    protected File file;
 
     private String checksum;
 
@@ -140,41 +141,47 @@ public class RequireFileChecksum
         this.nonexistentFileMessage = nonexistentFileMessage;
     }
 
-    private String calculateChecksum()
+    protected String calculateChecksum()
         throws EnforcerRuleException
     {
         try ( InputStream inputStream = new FileInputStream( this.file ) )
         {
-            String checksum;
-            if ( "md5".equals( this.type ) )
-            {
-                checksum = DigestUtils.md5Hex( inputStream );
-            }
-            else if ( "sha1".equals( this.type ) )
-            {
-                checksum = DigestUtils.shaHex( inputStream );
-            }
-            else if ( "sha256".equals( this.type ) )
-            {
-                checksum = DigestUtils.sha256Hex( inputStream );
-            }
-            else if ( "sha384".equals( this.type ) )
-            {
-                checksum = DigestUtils.sha384Hex( inputStream );
-            }
-            else if ( "sha512".equals( this.type ) )
-            {
-                checksum = DigestUtils.sha512Hex( inputStream );
-            }
-            else
-            {
-                throw new EnforcerRuleException( "Unsupported hash type: " + this.type );
-            }
-            return checksum;
+            return calculateChecksum( inputStream );
         }
         catch ( IOException e )
         {
             throw new EnforcerRuleException( "Unable to calculate checksum", e );
         }
+    }
+
+    protected String calculateChecksum( InputStream inputStream )
+        throws IOException, EnforcerRuleException
+    {
+        String checksum;
+        if ( "md5".equals( this.type ) )
+        {
+            checksum = DigestUtils.md5Hex( inputStream );
+        }
+        else if ( "sha1".equals( this.type ) )
+        {
+            checksum = DigestUtils.shaHex( inputStream );
+        }
+        else if ( "sha256".equals( this.type ) )
+        {
+            checksum = DigestUtils.sha256Hex( inputStream );
+        }
+        else if ( "sha384".equals( this.type ) )
+        {
+            checksum = DigestUtils.sha384Hex( inputStream );
+        }
+        else if ( "sha512".equals( this.type ) )
+        {
+            checksum = DigestUtils.sha512Hex( inputStream );
+        }
+        else
+        {
+            throw new EnforcerRuleException( "Unsupported hash type: " + this.type );
+        }
+        return checksum;
     }
 }
