@@ -30,13 +30,19 @@ Require Files Checksum
 
    The following parameters are supported by this rule:
 
-   * message - an optional message to the user if the rule fails.
+   * message - an optional message to the user if the rule fails. If not set a default message will be used.
+
+   * nonexistentFileMessage - an optional message to the user if the file is missing. If not set a default message will be used.
 
    * file - A file to check.
 
    * checksum - Expected file checksum.
 
    * type - Type of hashing algorithm to calculate the checksum. May be one of "md5", "sha1", "sha256", "sha384", or "sha512".
+
+   * normalizeLineSeparatorTo - optionally enables normalization of line separators to either Windows style ("\r\n") or Unix style ("\n") prior to calculating the checksum. Either "WINDOWS" or "UNIX".
+   
+   * fileCharset - the character set used by the file. Only mandatory if "normalizeLineSeparatorTo" is set. One of the {{{https://docs.oracle.com/javase/7/docs/api/java/nio/charset/Charset.html#standard}Default Java Charsets}}.
 
    []
 

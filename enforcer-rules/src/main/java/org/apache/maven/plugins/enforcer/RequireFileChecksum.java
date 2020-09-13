@@ -23,10 +23,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.plugins.enforcer.utils.NormalizeLineSeparatorReader;
 
 /**
  * Rule to validate a file to match the specified checksum.
@@ -45,6 +50,10 @@ public class RequireFileChecksum
     private String type;
 
     private String nonexistentFileMessage;
+
+    private NormalizeLineSeparatorReader.LineSeparator normalizeLineSeparatorTo;
+
+    private Charset fileCharset;
 
     @Override
     public void execute( EnforcerRuleHelper helper )
@@ -140,41 +149,80 @@ public class RequireFileChecksum
         this.nonexistentFileMessage = nonexistentFileMessage;
     }
 
+    public void setNormalizeLineSeparatorTo( NormalizeLineSeparatorReader.LineSeparator normalizeLineSeparatorTo )
+    {
+        this.normalizeLineSeparatorTo = normalizeLineSeparatorTo;
+    }
+
+    public void setFileCharset( String fileCharset )
+    {
+        this.fileCharset = Charset.forName( fileCharset );
+    }
+
     private String calculateChecksum()
         throws EnforcerRuleException
     {
-        try ( InputStream inputStream = new FileInputStream( this.file ) )
+        if ( normalizeLineSeparatorTo != null )
         {
-            String checksum;
-            if ( "md5".equals( this.type ) )
+            if ( fileCharset == null )
             {
-                checksum = DigestUtils.md5Hex( inputStream );
+                throw new EnforcerRuleException( "A 'fileCharset' parameter must be given when "
+                    + "'normalizeLineSeparatorTo' is used!" );
             }
-            else if ( "sha1".equals( this.type ) )
+            try ( FileInputStream fileInputStream = new FileInputStream( this.file );
+                            Reader reader =
+                                new NormalizeLineSeparatorReader( new InputStreamReader( fileInputStream, fileCharset ),
+                                                                  normalizeLineSeparatorTo );
+                            InputStream inputStream = new ReaderInputStream( reader, fileCharset ) )
             {
-                checksum = DigestUtils.shaHex( inputStream );
+                return calculateChecksum( inputStream );
             }
-            else if ( "sha256".equals( this.type ) )
+            catch ( IOException e )
             {
-                checksum = DigestUtils.sha256Hex( inputStream );
+                throw new EnforcerRuleException( "Unable to calculate checksum (with normalized line separators)", e );
             }
-            else if ( "sha384".equals( this.type ) )
-            {
-                checksum = DigestUtils.sha384Hex( inputStream );
-            }
-            else if ( "sha512".equals( this.type ) )
-            {
-                checksum = DigestUtils.sha512Hex( inputStream );
-            }
-            else
-            {
-                throw new EnforcerRuleException( "Unsupported hash type: " + this.type );
-            }
-            return checksum;
         }
-        catch ( IOException e )
+        else
         {
-            throw new EnforcerRuleException( "Unable to calculate checksum", e );
+            try ( InputStream inputStream = new FileInputStream( this.file ) )
+            {
+                return calculateChecksum( inputStream );
+            }
+            catch ( IOException e )
+            {
+                throw new EnforcerRuleException( "Unable to calculate checksum", e );
+            }
         }
+    }
+
+    private String calculateChecksum( InputStream inputStream )
+        throws IOException, EnforcerRuleException
+    {
+        String checksum;
+        if ( "md5".equals( this.type ) )
+        {
+            checksum = DigestUtils.md5Hex( inputStream );
+        }
+        else if ( "sha1".equals( this.type ) )
+        {
+            checksum = DigestUtils.shaHex( inputStream );
+        }
+        else if ( "sha256".equals( this.type ) )
+        {
+            checksum = DigestUtils.sha256Hex( inputStream );
+        }
+        else if ( "sha384".equals( this.type ) )
+        {
+            checksum = DigestUtils.sha384Hex( inputStream );
+        }
+        else if ( "sha512".equals( this.type ) )
+        {
+            checksum = DigestUtils.sha512Hex( inputStream );
+        }
+        else
+        {
+            throw new EnforcerRuleException( "Unsupported hash type: " + this.type );
+        }
+        return checksum;
     }
 }
