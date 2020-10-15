@@ -23,37 +23,29 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.Charset;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.plugins.enforcer.utils.NormalizeLineSeparatorReader;
 
 /**
- * Rule to validate a file to match the specified checksum.
+ * Rule to validate a binary file to match the specified checksum.
  *
  * @author Edward Samson
  * @author Lyubomyr Shaydariv
+ * @see RequireTextFileChecksum
  */
 public class RequireFileChecksum
     extends AbstractNonCacheableEnforcerRule
 {
 
-    private File file;
+    protected File file;
 
     private String checksum;
 
     private String type;
 
     private String nonexistentFileMessage;
-
-    private NormalizeLineSeparatorReader.LineSeparator normalizeLineSeparatorTo;
-
-    private Charset fileCharset;
 
     @Override
     public void execute( EnforcerRuleHelper helper )
@@ -149,53 +141,20 @@ public class RequireFileChecksum
         this.nonexistentFileMessage = nonexistentFileMessage;
     }
 
-    public void setNormalizeLineSeparatorTo( NormalizeLineSeparatorReader.LineSeparator normalizeLineSeparatorTo )
-    {
-        this.normalizeLineSeparatorTo = normalizeLineSeparatorTo;
-    }
-
-    public void setFileCharset( String fileCharset )
-    {
-        this.fileCharset = Charset.forName( fileCharset );
-    }
-
-    private String calculateChecksum()
+    protected String calculateChecksum()
         throws EnforcerRuleException
     {
-        if ( normalizeLineSeparatorTo != null )
+        try ( InputStream inputStream = new FileInputStream( this.file ) )
         {
-            if ( fileCharset == null )
-            {
-                throw new EnforcerRuleException( "A 'fileCharset' parameter must be given when "
-                    + "'normalizeLineSeparatorTo' is used!" );
-            }
-            try ( FileInputStream fileInputStream = new FileInputStream( this.file );
-                            Reader reader =
-                                new NormalizeLineSeparatorReader( new InputStreamReader( fileInputStream, fileCharset ),
-                                                                  normalizeLineSeparatorTo );
-                            InputStream inputStream = new ReaderInputStream( reader, fileCharset ) )
-            {
-                return calculateChecksum( inputStream );
-            }
-            catch ( IOException e )
-            {
-                throw new EnforcerRuleException( "Unable to calculate checksum (with normalized line separators)", e );
-            }
+            return calculateChecksum( inputStream );
         }
-        else
+        catch ( IOException e )
         {
-            try ( InputStream inputStream = new FileInputStream( this.file ) )
-            {
-                return calculateChecksum( inputStream );
-            }
-            catch ( IOException e )
-            {
-                throw new EnforcerRuleException( "Unable to calculate checksum", e );
-            }
+            throw new EnforcerRuleException( "Unable to calculate checksum", e );
         }
     }
 
-    private String calculateChecksum( InputStream inputStream )
+    protected String calculateChecksum( InputStream inputStream )
         throws IOException, EnforcerRuleException
     {
         String checksum;
