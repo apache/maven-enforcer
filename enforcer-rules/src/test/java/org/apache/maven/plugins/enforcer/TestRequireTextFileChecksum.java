@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -108,7 +109,7 @@ public class TestRequireTextFileChecksum
     }
 
     @Test
-    public void testFileChecksumMd5NormalizedWithMissingFileCharsetPaameter()
+    public void testFileChecksumMd5NormalizedWithMissingFileCharsetParameter()
         throws IOException, EnforcerRuleException
     {
         File f = temporaryFolder.newFile();
@@ -120,7 +121,8 @@ public class TestRequireTextFileChecksum
         rule.setNormalizeLineSeparatorTo( LineSeparator.UNIX );
 
         rule.execute( EnforcerTestUtils.getHelper() );
-        Assert.assertEquals( System.getProperty( "file.encoding" ), rule.encoding.name() );
+        // name is not unique therefore compare generated charset
+        Assert.assertEquals( Charset.forName( System.getProperty( "file.encoding" ) ), rule.encoding );
     }
 
 }
