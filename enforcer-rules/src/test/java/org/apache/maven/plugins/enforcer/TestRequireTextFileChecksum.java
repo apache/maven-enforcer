@@ -26,9 +26,9 @@ import java.nio.charset.StandardCharsets;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugins.enforcer.utils.NormalizeLineSeparatorReader.LineSeparator;
 import org.codehaus.plexus.util.FileUtils;
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 /**
@@ -42,10 +42,6 @@ public class TestRequireTextFileChecksum
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
 
     @Test
     public void testFileChecksumMd5NormalizedFromUnixToWindows()
@@ -118,15 +114,13 @@ public class TestRequireTextFileChecksum
         File f = temporaryFolder.newFile();
         FileUtils.fileWrite( f, "line1\nline2\n" );
 
-        expectedException.expect( EnforcerRuleException.class );
-        expectedException.expectMessage( "No encoding set for '${project.build.sourceEncoding}'" );
-
         rule.setFile( f );
         rule.setChecksum( "4fcc82a88ee38e0aa16c17f512c685c9" );
         rule.setType( "md5" );
         rule.setNormalizeLineSeparatorTo( LineSeparator.UNIX );
 
         rule.execute( EnforcerTestUtils.getHelper() );
+        Assert.assertEquals( System.getProperty( "file.encoding" ), rule.encoding.name() );
     }
 
 }

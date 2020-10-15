@@ -19,12 +19,11 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang3.StringUtils;
@@ -45,16 +44,16 @@ public class RequireTextFileChecksum
 {
     private NormalizeLineSeparatorReader.LineSeparator normalizeLineSeparatorTo = LineSeparator.UNIX;
 
-    private Charset charsetEncoding;
+    Charset encoding;
 
     public void setNormalizeLineSeparatorTo( NormalizeLineSeparatorReader.LineSeparator normalizeLineSeparatorTo )
     {
         this.normalizeLineSeparatorTo = normalizeLineSeparatorTo;
     }
 
-    public void setEncoding( String fileCharset )
+    public void setEncoding( String encoding )
     {
-        this.charsetEncoding = Charset.forName( fileCharset );
+        this.encoding = Charset.forName( encoding );
     }
 
     @Override
@@ -62,7 +61,7 @@ public class RequireTextFileChecksum
         throws EnforcerRuleException
     {
         // set defaults
-        if ( charsetEncoding == null )
+        if ( encoding == null )
         {
             // https://maven.apache.org/plugins/maven-resources-plugin/examples/encoding.html
             try
@@ -70,14 +69,16 @@ public class RequireTextFileChecksum
                 String encoding = (String) helper.evaluate( "${project.build.sourceEncoding}" );
                 if ( StringUtils.isBlank( encoding ) )
                 {
-                    throw new EnforcerRuleException( "No encoding set for '${project.build.sourceEncoding}'" );
+                    encoding = System.getProperty( "file.encoding" );
+                    helper.getLog().warn( "File encoding has not been set, using platform encoding " + encoding
+                        + ". Build is platform dependent!" );
                 }
-                this.charsetEncoding = Charset.forName( encoding );
+                this.encoding = Charset.forName( encoding );
             }
             catch ( ExpressionEvaluationException e )
             {
                 throw new EnforcerRuleException( "Unable to retrieve the project's build source encoding "
-                                + "(${project.build.sourceEncoding}): ", e );
+                    + "(${project.build.sourceEncoding}): ", e );
             }
         }
         super.execute( helper );
@@ -87,11 +88,9 @@ public class RequireTextFileChecksum
     protected String calculateChecksum()
         throws EnforcerRuleException
     {
-        try ( FileInputStream fileInputStream = new FileInputStream( this.file );
-                        Reader reader =
-                            new NormalizeLineSeparatorReader( new InputStreamReader( fileInputStream, charsetEncoding ),
-                                                              normalizeLineSeparatorTo );
-                        InputStream inputStream = new ReaderInputStream( reader, charsetEncoding ) )
+        try ( Reader reader = new NormalizeLineSeparatorReader( Files.newBufferedReader( file.toPath(), encoding ),
+                                                                normalizeLineSeparatorTo );
+                        InputStream inputStream = new ReaderInputStream( reader, encoding ) )
         {
             return super.calculateChecksum( inputStream );
         }
