@@ -19,11 +19,8 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.util.List;
-
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.Restriction;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -125,28 +122,18 @@ public abstract class AbstractVersionEnforcer
      */
     public static boolean containsVersion( VersionRange allowedRange, ArtifactVersion theVersion )
     {
-        boolean matched = false;
         ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
         if ( recommendedVersion == null )
         {
-            List<Restriction> restrictions = allowedRange.getRestrictions();
-            for ( Restriction restriction : restrictions )
-            {
-                if ( restriction.containsVersion( theVersion ) )
-                {
-                    matched = true;
-                    break;
-                }
-            }
+            return allowedRange.containsVersion( theVersion );
         }
         else
         {
             // only singular versions ever have a recommendedVersion
             @SuppressWarnings( "unchecked" )
             int compareTo = recommendedVersion.compareTo( theVersion );
-            matched = ( compareTo <= 0 );
+            return ( compareTo <= 0 );
         }
-        return matched;
     }
 
     @Override
