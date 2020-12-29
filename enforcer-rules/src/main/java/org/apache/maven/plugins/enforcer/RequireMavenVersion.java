@@ -42,6 +42,11 @@ public class RequireMavenVersion
             MavenSession mavenSession = (MavenSession) helper.evaluate( "${session}" );
             String mavenVersion = mavenSession.getSystemProperties().getProperty( "maven.version" );
             helper.getLog().debug( "Detected Maven Version: " + mavenVersion );
+            if ( mavenVersion == null )
+            {
+                throw new EnforcerRuleException(
+                        "Unable to detect Maven Version - missing system property - maven.version" );
+            }
             DefaultArtifactVersion detectedVersion = new DefaultArtifactVersion( mavenVersion );
             enforceVersion( helper.getLog(), "Maven", getVersion(), detectedVersion );
         }
