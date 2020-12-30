@@ -22,7 +22,14 @@ package org.apache.maven.plugins.enforcer;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
-import junit.framework.TestCase;
+import org.apache.maven.execution.MavenSession;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.Properties;
+
+import static org.junit.Assert.fail;
 
 /**
  * The Class TestMavenVersion.
@@ -30,7 +37,6 @@ import junit.framework.TestCase;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestMavenVersion
-    extends TestCase
 {
 
     /**
@@ -38,6 +44,7 @@ public class TestMavenVersion
      *
      * @throws EnforcerRuleException the enforcer rule exception
      */
+    @Test
     public void testRule()
         throws EnforcerRuleException
     {
@@ -70,8 +77,46 @@ public class TestMavenVersion
     }
 
     /**
+     * Test few more cases
+     *
+     * @throws EnforcerRuleException the enforcer rule exception
+     */
+    @Test
+    public void checkRequireVersionMatrix() throws EnforcerRuleException, ExpressionEvaluationException
+    {
+        RequireMavenVersion rule = new RequireMavenVersion();
+
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
+        MavenSession mavenSession = (MavenSession) helper.evaluate( "${session}" );
+        Properties systemProperties = mavenSession.getSystemProperties();
+
+        systemProperties.setProperty( "maven.version", "3.6.1" );
+        rule.setVersion( "3.6.0" );
+        rule.execute( helper );
+
+        systemProperties.setProperty( "maven.version", "3.6.2" );
+        rule.setVersion( "3.6.0" );
+        rule.execute( helper );
+        rule.setVersion( "3.6.1" );
+        rule.execute( helper );
+        rule.setVersion( "3.6.2" );
+        rule.execute( helper );
+        rule.setVersion( "3.6.3" );
+        try
+        {
+            rule.execute( helper );
+            fail( "Expected an exception." );
+        }
+        catch ( EnforcerRuleException e )
+        {
+            // expected to catch this.
+        }
+    }
+
+    /**
      * Test id.
      */
+    @Test
     public void testId()
     {
         RequireMavenVersion rule = new RequireMavenVersion();
