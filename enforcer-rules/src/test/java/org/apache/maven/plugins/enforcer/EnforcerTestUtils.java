@@ -36,7 +36,7 @@ import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
-import org.sonatype.aether.RepositorySystemSession;
+import org.eclipse.aether.RepositorySystemSession;
 
 /**
  * The Class EnforcerTestUtils.
