@@ -36,7 +36,6 @@ import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
-import org.eclipse.aether.RepositorySystemSession;
 
 /**
  * The Class EnforcerTestUtils.
@@ -62,7 +61,7 @@ public final class EnforcerTestUtils
         when( mer.getSystemProperties() ).thenReturn( systemProperties );
 
         MavenExecutionResult meresult = mock( MavenExecutionResult.class );
-        return new MavenSession( mock, (RepositorySystemSession) null, mer, meresult );
+        return new MavenSession( mock, null, mer, meresult );
     }
 
     /**
