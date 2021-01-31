@@ -30,8 +30,11 @@ Require Java Vendor
    The following parameters are supported by this rule:
    
    * message - an optional message to the user if the rule fails.
-   
-   * name - The name of the allowed JDK vendor.
+
+   * excludes - a list of banned JDK vendors.
+
+   * includes - a list of allowed JDK vendors to include. These are exceptions to the excludes.
+     If nothing has been excluded, then the includes have no effect. In other words, includes only subtract from vendors that matched an exclude rule.
  
    Sample Plugin Configuration:
    
@@ -53,7 +56,13 @@ Require Java Vendor
             <configuration>
               <rules>
                 <requireJavaVendor>
-                  <name>AdoptOpenJDK</name>
+                  <excludes>
+                    <exclude>Pivotal</exclude>
+                    <exclude>Oracle JDK</exclude>
+                  </excludes>
+                  <includes>
+                    <include>AdoptOpenJDK</include>
+                  </includes>
                 </requireJavaVendor>
               </rules>    
             </configuration>
