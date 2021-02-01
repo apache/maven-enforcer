@@ -131,22 +131,23 @@ public class RequirePluginVersions
      */
     private List<String> additionalPlugins;
 
-    /**
-     * Plugins to skip for version enforcement. The plugins should be specified in the form:
-     * <code>group:artifactId</code>. NOTE: This is deprecated, use unCheckedPluginList instead.
-     * 
-     * @see {@link #setUnCheckedPlugins(List)}
-     * @see {@link #getUnCheckedPlugins()}
-     */
-    private List<String> unCheckedPlugins;
+    public String getUnCheckedPluginList()
+    {
+        return unCheckedPluginList;
+    }
+
+    public void setUnCheckedPluginList( String unCheckedPluginList )
+    {
+        this.unCheckedPluginList = unCheckedPluginList;
+    }
 
     /**
-     * Same as unCheckedPlugins but as a comma list to better support properties. Sample form:
+     * Plugins to skip for version enforcement as a comma list to better support properties. Sample form:
      * <code>group:artifactId,group2:artifactId2</code>
      * 
      * @since 1.0-beta-1
-     * @see {@link #setUnCheckedPlugins(List)}
-     * @see {@link #getUnCheckedPlugins()}
+     * @see {@link #setUnCheckedPluginList(String)}
+     * @see {@link #getUnCheckedPluginList()}
      */
     private String unCheckedPluginList;
 
@@ -215,7 +216,7 @@ public class RequirePluginVersions
 
             // pull out any we should skip
             allPlugins =
-                removeUncheckedPlugins( combineUncheckedPlugins( unCheckedPlugins, unCheckedPluginList ), allPlugins );
+                removeUncheckedPlugins( Arrays.asList( unCheckedPluginList.split( "," ) ) , allPlugins );
 
             // there's nothing to do here
             if ( allPlugins.isEmpty() )
@@ -354,36 +355,6 @@ public class RequirePluginVersions
             }
         }
         return plugins;
-    }
-
-    /**
-     * Combines the old Collection with the new comma separated list.
-     * 
-     * @param uncheckedPlugins
-     * @param uncheckedPluginsList
-     * @return List of unchecked plugins.
-     */
-    // CHECKSTYLE_OFF: LineLength
-    public Collection<String> combineUncheckedPlugins( Collection<String> uncheckedPlugins,
-                                                       String uncheckedPluginsList )
-    // CHECKSTYLE_ON: LineLength
-    {
-        // if the comma list is empty, then there's nothing to do here.
-        if ( StringUtils.isNotEmpty( uncheckedPluginsList ) )
-        {
-            // make sure there is a collection to add to.
-            if ( uncheckedPlugins == null )
-            {
-                uncheckedPlugins = new HashSet<String>();
-            }
-            else if ( !uncheckedPlugins.isEmpty() && log != null )
-            {
-                log.warn( "The parameter 'unCheckedPlugins' is deprecated. Use 'unCheckedPluginList' instead" );
-            }
-
-            uncheckedPlugins.addAll( Arrays.asList( uncheckedPluginsList.split( "," ) ) );
-        }
-        return uncheckedPlugins;
     }
 
     /**
@@ -1233,16 +1204,6 @@ public class RequirePluginVersions
     public void setBanTimestamps( boolean theBanTimestamps )
     {
         this.banTimestamps = theBanTimestamps;
-    }
-
-    public List<String> getUnCheckedPlugins()
-    {
-        return unCheckedPlugins;
-    }
-
-    public void setUnCheckedPlugins( List<String> unCheckedPlugins )
-    {
-        this.unCheckedPlugins = unCheckedPlugins;
     }
 
     public final void setPhases( String phases )
