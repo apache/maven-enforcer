@@ -34,6 +34,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.enforcer.utils.DependencyVersionMap;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.artifact.filter.ScopeArtifactFilter;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
@@ -49,6 +50,18 @@ public class DependencyConvergence
     private static Log log;
 
     private boolean uniqueVersions;
+
+    public boolean getIgnoreTestScope()
+    {
+        return ignoreTestScope;
+    }
+
+    public void setIgnoreTestScope( boolean ignoreTestScope )
+    {
+        this.ignoreTestScope = ignoreTestScope;
+    }
+
+    private boolean ignoreTestScope;
 
     public void setUniqueVersions( boolean uniqueVersions )
     {
@@ -78,7 +91,17 @@ public class DependencyConvergence
             ArtifactFactory factory = helper.getComponent( ArtifactFactory.class );
             ArtifactMetadataSource metadataSource = helper.getComponent( ArtifactMetadataSource.class );
             ArtifactCollector collector = helper.getComponent( ArtifactCollector.class );
-            ArtifactFilter filter = null; // we need to evaluate all scopes
+
+            ArtifactFilter filter;
+            if ( ignoreTestScope )
+            {
+                filter = new ScopeArtifactFilter().setIncludeTestScope( false );
+            }
+            else
+            {
+                filter = null; // we need to evaluate all scopes
+            }
+
             DependencyNode node = dependencyTreeBuilder.buildDependencyTree( project, repository, factory,
                                                                              metadataSource, filter, collector );
             return node;
@@ -106,6 +129,7 @@ public class DependencyConvergence
             DependencyNode node = getNode( helper );
             DependencyVersionMap visitor = new DependencyVersionMap( log );
             visitor.setUniqueVersions( uniqueVersions );
+            visitor.setIgnoreTestScope( ignoreTestScope );
             node.accept( visitor );
             List<CharSequence> errorMsgs = new ArrayList<>();
             errorMsgs.addAll( getConvergenceErrorMsgs( visitor.getConflictedVersionNumbers() ) );

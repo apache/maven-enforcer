@@ -38,6 +38,18 @@ public class DependencyVersionMap
 {
     private boolean uniqueVersions;
 
+    private boolean ignoreTestScope;
+
+    public boolean getIgnoreTestScope()
+    {
+        return ignoreTestScope;
+    }
+
+    public void setIgnoreTestScope( boolean ignoreTestScope )
+    {
+        this.ignoreTestScope = ignoreTestScope;
+    }
+
     private Map<String, List<DependencyNode>> idsToNode;
 
     public DependencyVersionMap( Log log )
