@@ -215,8 +215,11 @@ public class RequirePluginVersions
             allPlugins.addAll( getProfilePlugins( project ) );
 
             // pull out any we should skip
-            allPlugins =
-                removeUncheckedPlugins( Arrays.asList( unCheckedPluginList.split( "," ) ) , allPlugins );
+            if ( null != unCheckedPluginList)
+            {
+                allPlugins =
+                        removeUncheckedPlugins( Arrays.asList( unCheckedPluginList.split( "," ) ) , allPlugins );
+            }
 
             // there's nothing to do here
             if ( allPlugins.isEmpty() )
