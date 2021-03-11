@@ -164,7 +164,7 @@ public class RequireFileChecksum
         }
         else if ( "sha1".equals( this.type ) )
         {
-            checksum = DigestUtils.shaHex( inputStream );
+            checksum = DigestUtils.sha1Hex( inputStream );
         }
         else if ( "sha256".equals( this.type ) )
         {

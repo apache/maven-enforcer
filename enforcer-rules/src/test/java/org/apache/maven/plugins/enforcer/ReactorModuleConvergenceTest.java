@@ -77,9 +77,6 @@ public class ReactorModuleConvergenceTest
         setupSortedProjects( Collections.<MavenProject>emptyList() );
 
         rule.execute( helper );
-
-        // intentionally only assertTrue cause we don't expect an exception.
-        assertTrue( true );
     }
 
     @Test
@@ -94,9 +91,6 @@ public class ReactorModuleConvergenceTest
         setupSortedProjects( theList );
 
         rule.execute( helper );
-
-        // intentionally only assertTrue cause we don't expect an exception.
-        assertTrue( true );
     }
 
     @Test( expected = EnforcerRuleException.class )
@@ -153,9 +147,6 @@ public class ReactorModuleConvergenceTest
         setupSortedProjects( theList );
 
         rule.execute( helper );
-
-        // intentionally only assertTrue cause we don't expect an exception.
-        assertTrue( true );
     }
 
     @Test( expected = EnforcerRuleException.class )
@@ -170,9 +161,6 @@ public class ReactorModuleConvergenceTest
         setupSortedProjects( theList );
 
         rule.execute( helper );
-
-        // intentionally only assertTrue cause we don't expect an exception.
-        assertTrue( true );
     }
 
     @Test( expected = EnforcerRuleException.class )
@@ -219,9 +207,6 @@ public class ReactorModuleConvergenceTest
         setupSortedProjects( theList );
 
         rule.execute( helper );
-
-        // intentionally no assertTrue() cause we do not expect to get an exception.
-        assertTrue( true );
     }
 
     @Test( expected = EnforcerRuleException.class )

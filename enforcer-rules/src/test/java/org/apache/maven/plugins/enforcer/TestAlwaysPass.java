@@ -31,19 +31,10 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 public class TestAlwaysPass extends TestCase
 {
 
-    public void testExecute()
+    public void testExecute() throws EnforcerRuleException
     {
-        final AlwaysPass rule = new AlwaysPass();
-        try
-        {
-            // execute rule -- should NOT throw EnforcerRuleException
-            rule.execute( EnforcerTestUtils.getHelper() );
-            assertTrue( true );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            fail( "Should NOT throw EnforcerRuleException" );
-        }
+        AlwaysPass rule = new AlwaysPass();
+        rule.execute( EnforcerTestUtils.getHelper() );
     }
 
 }

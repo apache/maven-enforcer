@@ -51,7 +51,7 @@ public class TestRequireFilesDontExist
         }
         catch ( EnforcerRuleException e )
         {
-            assertTrue( true );
+            assertNotNull( e.getMessage() );
         }
         f.delete();
     }
@@ -67,7 +67,7 @@ public class TestRequireFilesDontExist
         }
         catch ( EnforcerRuleException e )
         {
-            assertTrue( true );
+            assertNotNull( e.getMessage() );
         }
     }
 
@@ -98,7 +98,7 @@ public class TestRequireFilesDontExist
         }
         catch ( EnforcerRuleException e )
         {
-            assertTrue( true );
+            assertNotNull( e.getMessage() );
         }
     }
 
@@ -124,7 +124,7 @@ public class TestRequireFilesDontExist
         File f = File.createTempFile( "enforcer", "tmp" );
         f.delete();
 
-        assertTrue( !f.exists() );
+        assertFalse( f.exists() );
 
         rule.setFiles( new File[] { f } );
 

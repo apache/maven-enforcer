@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
@@ -88,7 +87,7 @@ public class ReactorModuleConvergence
             existParentsWhichAreNotPartOfTheReactor( sortedProjects );
         if ( !parentsWhichAreNotPartOfTheReactor.isEmpty() )
         {
-            StringBuilder sb = new StringBuilder().append( SystemUtils.LINE_SEPARATOR );
+            StringBuilder sb = new StringBuilder().append( System.lineSeparator() );
             addMessageIfExist( sb );
             for ( MavenProject mavenProject : parentsWhichAreNotPartOfTheReactor )
             {

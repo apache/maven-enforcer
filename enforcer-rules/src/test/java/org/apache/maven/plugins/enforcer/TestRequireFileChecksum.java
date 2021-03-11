@@ -21,10 +21,8 @@ package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.plugins.enforcer.utils.NormalizeLineSeparatorReader.LineSeparator;
 import org.codehaus.plexus.util.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;

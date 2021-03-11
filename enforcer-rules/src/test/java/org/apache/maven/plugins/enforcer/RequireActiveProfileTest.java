@@ -65,8 +65,6 @@ public class RequireActiveProfileTest
         when( project.getActiveProfiles() ).thenReturn( Collections.<Profile> emptyList() );
 
         rule.execute( helper );
-
-        assertTrue( true );
     }
 
     @Test
@@ -80,7 +78,6 @@ public class RequireActiveProfileTest
         rule.setProfiles( "profile-2" );
 
         rule.execute( helper );
-        assertTrue( true );
     }
 
     @Test( expected = EnforcerRuleException.class )
@@ -119,7 +116,6 @@ public class RequireActiveProfileTest
         rule.setProfiles( "profile-2" );
 
         rule.execute( helper );
-        assertTrue( true );
     }
 
     @Test
@@ -134,7 +130,6 @@ public class RequireActiveProfileTest
         rule.setAll( true );
 
         rule.execute( helper );
-        assertTrue( true );
     }
 
     @Test( expected = EnforcerRuleException.class )

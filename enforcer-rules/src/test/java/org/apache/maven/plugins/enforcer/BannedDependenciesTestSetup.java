@@ -92,7 +92,6 @@ public class BannedDependenciesTestSetup
     {
         BannedDependencies rule = new BannedDependencies()
         {
-            @SuppressWarnings( "unchecked" )
             @Override
             protected Set<Artifact> getDependenciesToCheck( MavenProject project )
             {

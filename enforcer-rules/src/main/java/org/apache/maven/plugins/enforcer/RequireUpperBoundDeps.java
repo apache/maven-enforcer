@@ -332,7 +332,6 @@ public class RequireUpperBoundDeps
             return output;
         }
 
-        @SuppressWarnings( "unchecked" )
         private boolean containsConflicts( List<DependencyNodeHopCountPair> pairs )
         {
             DependencyNodeHopCountPair resolvedPair = pairs.get( 0 );

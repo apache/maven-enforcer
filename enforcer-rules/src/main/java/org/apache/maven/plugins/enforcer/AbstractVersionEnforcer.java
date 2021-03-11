@@ -130,7 +130,6 @@ public abstract class AbstractVersionEnforcer
         else
         {
             // only singular versions ever have a recommendedVersion
-            @SuppressWarnings( "unchecked" )
             int compareTo = recommendedVersion.compareTo( theVersion );
             return ( compareTo <= 0 );
         }
