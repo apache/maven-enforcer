@@ -24,7 +24,6 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
 import org.apache.maven.execution.MavenSession;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Properties;

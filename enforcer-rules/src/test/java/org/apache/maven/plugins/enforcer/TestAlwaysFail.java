@@ -42,7 +42,7 @@ public class TestAlwaysFail extends TestCase
         }
         catch ( EnforcerRuleException e )
         {
-            assertTrue( true );
+            assertNotNull( e.getMessage() );
         }
     }
 

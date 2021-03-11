@@ -64,7 +64,7 @@ public class TestRequireFilesSize
         }
         catch ( EnforcerRuleException e )
         {
-            assertTrue( true );
+            assertNotNull( e.getMessage() );
         }
     }
 
@@ -73,14 +73,7 @@ public class TestRequireFilesSize
     {
         rule.setFiles( new File[] { null } );
         rule.setAllowNulls( true );
-        try
-        {
-            rule.execute( EnforcerTestUtils.getHelper() );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            fail( "Unexpected Exception:" + e.getLocalizedMessage() );
-        }
+        rule.execute( EnforcerTestUtils.getHelper() );
     }
 
     public void testEmptyFileList()
@@ -111,7 +104,7 @@ public class TestRequireFilesSize
     {
         File f = File.createTempFile( "enforcer", "tmp" );
         f.delete();
-        assertTrue( !f.exists() );
+        assertFalse( f.exists() );
         rule.setFiles( new File[] { f } );
 
         try
@@ -121,7 +114,7 @@ public class TestRequireFilesSize
         }
         catch ( EnforcerRuleException e )
         {
-            assertTrue( true );
+            assertNotNull( e.getMessage() );
         }
     }
 
@@ -139,28 +132,18 @@ public class TestRequireFilesSize
         }
         catch ( EnforcerRuleException e )
         {
-            assertTrue( true );
+            assertNotNull( e.getMessage() );
         }
     }
 
     public void testFileTooBig()
-        throws EnforcerRuleException, IOException
+        throws IOException
     {
         File f = File.createTempFile( "enforcer", "tmp" );
         f.deleteOnExit();
-        try
-        {
-            // Create file
-            FileWriter fstream = new FileWriter( f );
-            BufferedWriter out = new BufferedWriter( fstream );
+        try ( BufferedWriter out = new BufferedWriter( new FileWriter( f ) ) )
+        {            
             out.write( "123456789101112131415" );
-            // Close the output stream
-            out.close();
-            fstream.close();
-        }
-        catch ( Exception e )
-        {// Catch exception if any
-            System.err.println( "Error: " + e.getMessage() );
         }
 
         rule.setFiles( new File[] { f } );
@@ -173,7 +156,7 @@ public class TestRequireFilesSize
         }
         catch ( EnforcerRuleException e )
         {
-            assertTrue( true );
+            assertNotNull( e.getMessage() );
         }
     }
 

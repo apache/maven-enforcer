@@ -60,7 +60,7 @@ public class TestRequireFilesExist
         }
         catch ( EnforcerRuleException e )
         {
-            assertTrue( true );
+            assertNotNull( e.getMessage() );
         }
     }
 
@@ -69,14 +69,7 @@ public class TestRequireFilesExist
     {
         rule.setFiles( new File[] { null } );
         rule.setAllowNulls( true );
-        try
-        {
-            rule.execute( EnforcerTestUtils.getHelper() );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            fail( "Unexpected Exception:" + e.getLocalizedMessage() );
-        }
+        rule.execute( EnforcerTestUtils.getHelper() );
     }
 
     public void testEmptyFileList()
@@ -91,7 +84,7 @@ public class TestRequireFilesExist
         }
         catch ( EnforcerRuleException e )
         {
-            assertTrue( true );
+            assertNotNull( e.getMessage() );
         }
     }
 
@@ -101,14 +94,7 @@ public class TestRequireFilesExist
         rule.setFiles( new File[] {} );
         assertEquals( 0, rule.getFiles().length );
         rule.setAllowNulls( true );
-        try
-        {
-            rule.execute( EnforcerTestUtils.getHelper() );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            fail( "Unexpected Exception:" + e.getLocalizedMessage() );
-        }
+        rule.execute( EnforcerTestUtils.getHelper() );
     }
 
     public void testFileDoesNotExist()
@@ -116,7 +102,7 @@ public class TestRequireFilesExist
     {
         File f = File.createTempFile( "enforcer", "tmp" );
         f.delete();
-        assertTrue( !f.exists() );
+        assertFalse( f.exists() );
         rule.setFiles( new File[] { f } );
 
         try
@@ -126,7 +112,7 @@ public class TestRequireFilesExist
         }
         catch ( EnforcerRuleException e )
         {
-            assertTrue( true );
+            assertNotNull( e.getMessage() );
         }
     }
 
