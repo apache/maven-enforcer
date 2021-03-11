@@ -168,9 +168,6 @@ public class RequirePluginVersions
     /** The local. */
     private ArtifactRepository local;
 
-    /** The remote repositories. */
-    private List<ArtifactRepository> remoteRepositories;
-
     /** The log. */
     private Log log;
 
@@ -187,12 +184,11 @@ public class RequirePluginVersions
         this.log = helper.getLog();
         this.helper = helper;
 
-        MavenProject project;
         try
         {
             // get the various expressions out of the helper.
 
-            project = (MavenProject) helper.evaluate( "${project}" );
+            MavenProject project = (MavenProject) helper.evaluate( "${project}" );
 
             DefaultLifecycles defaultLifeCycles = helper.getComponent( DefaultLifecycles.class );
             lifecycles = defaultLifeCycles.getLifeCycles();
@@ -202,7 +198,6 @@ public class RequirePluginVersions
             factory = helper.getComponent( ArtifactFactory.class );
             resolver = helper.getComponent( ArtifactResolver.class );
             local = (ArtifactRepository) helper.evaluate( "${localRepository}" );
-            remoteRepositories = project.getRemoteArtifactRepositories();
 
             utils = new EnforcerRuleUtils( helper );
 
