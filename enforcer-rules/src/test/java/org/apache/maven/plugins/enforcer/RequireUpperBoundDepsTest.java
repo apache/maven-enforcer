@@ -1,6 +1,6 @@
-package org.apache.maven.plugins.enforcer.utils;
+package org.apache.maven.plugins.enforcer;
 
-import static org.junit.Assert.fail;
+import org.junit.Assert;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,42 +21,34 @@ import static org.junit.Assert.fail;
  * under the License.
  */
 
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.junit.Test;
+
+import java.io.IOException;
+
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.plugin.testing.ArtifactStubFactory;
 
-/**
- * The Class TestEnforcerRuleUtils.
- *
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- */
-public class EnforcerRuleUtilsHelper
+public class RequireUpperBoundDepsTest
 {
 
-    /**
-     * Simpler wrapper to execute and deal with the expected result.
-     *
-     * @param rule the rule
-     * @param helper the helper
-     * @param shouldFail the should fail
-     */
-    public static void execute( EnforcerRule rule, EnforcerRuleHelper helper, boolean shouldFail )
+    @Test
+    public void testRule() throws IOException
     {
-        try
-        {
-            rule.execute( helper );
-            if ( shouldFail )
-            {
-                fail( "Exception expected." );
-            }
+        ArtifactStubFactory factory = new ArtifactStubFactory();
+        MockProject project = new MockProject();
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
+        project.setArtifacts( factory.getMixedArtifacts() );
+        project.setDependencyArtifacts( factory.getScopedArtifacts() );
+        RequireUpperBoundDeps rule = new RequireUpperBoundDeps();
+
+        try {
+          rule.execute( helper );
+          Assert.fail("Did not detect upper bounds error");
         }
-        catch ( EnforcerRuleException e )
-        {
-            if ( !shouldFail )
-            {
-                fail( "No Exception expected:" + e.getMessage() );
-            }
-            helper.getLog().debug( e.getMessage() );
+        catch ( EnforcerRuleException ex ) {
+            Assert.assertTrue( ex.getMessage(), ex.getMessage().contains( "groupId:artifactId:version:classifier" ) );
         }
     }
+
 }

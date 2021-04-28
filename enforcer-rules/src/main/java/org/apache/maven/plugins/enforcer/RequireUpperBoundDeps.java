@@ -157,23 +157,16 @@ public class RequireUpperBoundDeps
         {
             log = helper.getLog();
         }
-        try
+        DependencyNode node = getNode( helper );
+        RequireUpperBoundDepsVisitor visitor = new RequireUpperBoundDepsVisitor();
+        visitor.setUniqueVersions( uniqueVersions );
+        visitor.setIncludes( includes );
+        node.accept( visitor );
+        List<String> errorMessages = buildErrorMessages( visitor.getConflicts() );
+        if ( errorMessages.size() > 0 )
         {
-            DependencyNode node = getNode( helper );
-            RequireUpperBoundDepsVisitor visitor = new RequireUpperBoundDepsVisitor();
-            visitor.setUniqueVersions( uniqueVersions );
-            visitor.setIncludes( includes );
-            node.accept( visitor );
-            List<String> errorMessages = buildErrorMessages( visitor.getConflicts() );
-            if ( errorMessages.size() > 0 )
-            {
-                throw new EnforcerRuleException( "Failed while enforcing RequireUpperBoundDeps. The error(s) are "
-                    + errorMessages );
-            }
-        }
-        catch ( Exception e )
-        {
-            throw new EnforcerRuleException( e.getLocalizedMessage(), e );
+            throw new EnforcerRuleException( "Failed while enforcing RequireUpperBoundDeps. The error(s) are "
+                + errorMessages );
         }
     }
 
@@ -256,15 +249,22 @@ public class RequireUpperBoundDeps
         }
         String result = artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + version;
 
-        if ( "compile".equals( artifact.getScope() ) )
+        String classifier = artifact.getClassifier();
+        if ( classifier != null && !classifier.isEmpty() )
         {
-            return MessageUtils.buffer().strong( result ).toString();
+            result += ":" + classifier;
         }
-        if ( artifact.getScope() != null )
+  
+        String scope = artifact.getScope();      
+        if ( "compile".equals( scope ) )
         {
-            return result + " [" + artifact.getScope() + ']';
+            result = MessageUtils.buffer().strong( result ).toString();
         }
-
+        else if ( scope != null )
+        {
+            result += " [" + scope + ']';
+        }
+        
         return result;
     }
 

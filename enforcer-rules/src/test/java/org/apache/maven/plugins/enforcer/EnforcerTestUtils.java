@@ -24,6 +24,14 @@ import static org.mockito.Mockito.when;
 
 import java.util.Properties;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactCollector;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
@@ -34,8 +42,16 @@ import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.dependency.tree.DefaultDependencyTreeBuilder;
+import org.apache.maven.shared.dependency.tree.DependencyNode;
+import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
+import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Matchers;
+import org.mockito.Mockito;
 
 /**
  * The Class EnforcerTestUtils.
@@ -117,7 +133,37 @@ public final class EnforcerTestUtils
             session.setCurrentProject( project );
             eval = new PluginParameterExpressionEvaluator( session, mockExecution );
         }
-        return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(), null );
+        PlexusContainer container = Mockito.mock( PlexusContainer.class );
+        
+        Artifact artifact = new DefaultArtifact( "groupId", "artifactId", "version", "compile", "jar",
+                                                 "classifier", null );
+        Artifact v1 = new DefaultArtifact( "groupId", "artifact", "1.0.0", "compile", "jar", "", null );
+        Artifact v2 = new DefaultArtifact( "groupId", "artifact", "2.0.0", "compile", "jar", "", null );
+        final DependencyNode node = new DependencyNode( artifact );
+        DependencyNode child1 = new DependencyNode( v1 );
+        DependencyNode child2 = new DependencyNode( v2 );
+        node.addChild( child1 );
+        node.addChild( child2 );
+        
+        DependencyTreeBuilder dependencyTreeBuilder = new DefaultDependencyTreeBuilder() {
+            @Override
+            public DependencyNode buildDependencyTree( MavenProject project, ArtifactRepository repository,
+                   ArtifactFactory factory, ArtifactMetadataSource metadataSource,
+                   ArtifactFilter filter, ArtifactCollector collector )
+                throws DependencyTreeBuilderException {
+                 return node;
+            }
+        };
+
+        try
+        {
+            Mockito.when( container.lookup( DependencyTreeBuilder.class ) ).thenReturn( dependencyTreeBuilder  );
+        }
+        catch ( ComponentLookupException e )
+        {
+            // test will fail
+        }
+        return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(), container );
     }
 
     /**
