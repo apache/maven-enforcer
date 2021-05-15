@@ -174,7 +174,7 @@ public class EnforceMojo
             this.rules = createRulesFromCommandLineOptions();
         }
         
-        if ( rulesFilename != null && rulesFilename.length() > 0 && rules == null )
+        if ( rulesFilename != null && rulesFilename.length() > 0 )
         {
             Xpp3Dom configuration = null;
             try
@@ -186,9 +186,20 @@ public class EnforceMojo
                 throw new MojoExecutionException( "Unable to locate rules configuration xml file " + rulesFilename, e );
             }
             MojoDescriptor mojoDescriptor = mojoExecution.getMojoDescriptor();
+            
             configuration = Xpp3DomUtils.mergeXpp3Dom( configuration,
                 toXpp3Dom( mojoDescriptor.getMojoConfiguration() ) );
+            Xpp3Dom[] cs = configuration.getChildren();
+            for ( int i = 0; i < cs.length; i++ )
+            {
+                Xpp3Dom c = cs[i];
+                if ( "rulesFilename".equals( c.getName() ) )
+                {
+                    configuration.removeChild( i ); // remove to avoid re-doing this if block
+                }
+            }
             MojoExecution mojoExecution = new MojoExecution( mojoDescriptor, configuration );
+            
             try
             {
                 pluginManager.executeMojo( session, mojoExecution );
