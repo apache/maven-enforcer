@@ -19,6 +19,8 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -30,9 +32,15 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.PluginConfigurationException;
+import org.apache.maven.plugin.PluginManagerException;
+import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -40,9 +48,13 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.codehaus.plexus.util.xml.Xpp3DomUtils;
 
 /**
  * This goal executes the defined enforcer-rules once per module.
@@ -110,11 +122,23 @@ public class EnforceMojo
     private String[] commandLineRules;
 
     /**
+     * File with rules configurations to execute.
+     */
+    @Parameter ( required = false, property = "rulesFile" )
+    private String rulesFilename;
+
+    /**
      * Use this flag to disable rule result caching. This will cause all rules to execute on each project even if the
      * rule indicates it can safely be cached.
      */
     @Parameter( property = "enforcer.ignoreCache", defaultValue = "false" )
     protected boolean ignoreCache = false;
+
+    /**
+     * The Maven BuildPluginManager component.
+     */
+    @Component
+    private BuildPluginManager pluginManager;
 
     // set by the contextualize method. Only way to get the
     // plugin's container in 2.0.x
@@ -148,6 +172,33 @@ public class EnforceMojo
         if ( commandLineRules != null && commandLineRules.length > 0 )
         {
             this.rules = createRulesFromCommandLineOptions();
+        }
+        
+        if ( rulesFilename != null && rulesFilename.length() > 0 && rules == null )
+        {
+            Xpp3Dom configuration = null;
+            try
+            {
+                configuration = Xpp3DomBuilder.build( new FileReader( rulesFilename ) );
+            }
+            catch ( org.codehaus.plexus.util.xml.pull.XmlPullParserException | IOException e )
+            {
+                throw new MojoExecutionException( "Unable to locate rules configuration xml file " + rulesFilename, e );
+            }
+            MojoDescriptor mojoDescriptor = mojoExecution.getMojoDescriptor();
+            configuration = Xpp3DomUtils.mergeXpp3Dom( configuration,
+                toXpp3Dom( mojoDescriptor.getMojoConfiguration() ) );
+            MojoExecution mojoExecution = new MojoExecution( mojoDescriptor, configuration );
+            try
+            {
+                pluginManager.executeMojo( session, mojoExecution );
+            }
+            catch ( PluginConfigurationException
+                    | PluginManagerException | MojoFailureException e )
+            {
+                // problem trying to run the new configuration
+                throw new MojoExecutionException( "Unable to attempt new execution with new configuration", e );
+            }
         }
         
         if ( isSkip() )
@@ -432,4 +483,24 @@ public class EnforceMojo
         this.session = theSession;
     }
 
+    /**
+     * Converts PlexusConfiguration to a Xpp3Dom.
+     *
+     * @param config the PlexusConfiguration. Must not be {@code null}.
+     * @return the Xpp3Dom representation of the PlexusConfiguration
+     */
+    public static Xpp3Dom toXpp3Dom( PlexusConfiguration config )
+    {
+        Xpp3Dom result = new Xpp3Dom( config.getName() );
+        result.setValue( config.getValue( null ) );
+        for ( String name : config.getAttributeNames() )
+        {
+            result.setAttribute( name, config.getAttribute( name ) );
+        }
+        for ( PlexusConfiguration child : config.getChildren() )
+        {
+            result.addChild( toXpp3Dom( child ) );
+        }
+        return result;
+    }
 }
