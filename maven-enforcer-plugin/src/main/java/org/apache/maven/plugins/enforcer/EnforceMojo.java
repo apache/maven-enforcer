@@ -19,6 +19,7 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -183,7 +184,15 @@ public class EnforceMojo
             }
             catch ( org.codehaus.plexus.util.xml.pull.XmlPullParserException | IOException e )
             {
-                throw new MojoExecutionException( "Unable to locate rules configuration xml file " + rulesFilename, e );
+                String apath = rulesFilename;
+                try
+                {
+                    apath = new File( rulesFilename ).getCanonicalPath();
+                }
+                catch ( IOException e1 )
+                {
+                }
+                throw new MojoExecutionException( "Unable to locate rules configuration xml file " + apath, e );
             }
             MojoDescriptor mojoDescriptor = mojoExecution.getMojoDescriptor();
             
