@@ -205,6 +205,7 @@ public class EnforceMojo
                 if ( "rulesFilename".equals( c.getName() ) )
                 {
                     configuration.removeChild( i ); // remove to avoid re-doing this if block
+                    break; // done exit
                 }
             }
             MojoExecution mojoExecution = new MojoExecution( mojoDescriptor, configuration );
