@@ -40,6 +40,7 @@
     <module>enforcer-api</module>
     <module>enforcer-rules</module>
     <module>maven-enforcer-plugin</module>
+    <module>maven-enforcer-extension</module>
   </modules>
 
   <scm>

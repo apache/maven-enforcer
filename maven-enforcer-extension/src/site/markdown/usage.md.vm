@@ -1,0 +1,54 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+Usage
+=====
+
+To use the maven-enforcer-extension, you must register the extension and configuration.
+
+Maven Extension
+---------------
+
+You have 2 ways to use Maven extensions within your builds:
+
+* add `maven-enforcer-extension-${project.version}.jar` in `${maven.home}/lib/ext` (no extra dependencies required),
+
+* (since Maven 3.3.1) configure your extension in [.mvn/extensions.xml](https://maven.apache.org/ref/current/maven-embedder/core-extensions.html).
+
+There is actually a third way: add the extension to the `pom.xml`, but in that case it makes more sense to use the [maven-enforcer-plugin](../maven-enforcer-plugin/) instead.
+
+Enforcer Extension
+------------------
+
+The `.mvn/enforcer-extension.xml` in the root of your Maven project is where you define your rules.
+It's content is similar to an execution-block of the maven-enforcer-plugin
+
+```xml
+<extension>
+  <executions>
+    <execution>
+      <id/> <!-- default: default-extension -->
+      <phase/> <!-- default: validate -->
+      <configuration> <!-- see Plugin Configuration -->
+        <rules/>
+      </configuration>
+    </execution>
+  </executions>
+</extension>
+```
