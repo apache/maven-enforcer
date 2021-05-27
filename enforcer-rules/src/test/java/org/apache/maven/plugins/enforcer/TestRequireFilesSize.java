@@ -19,6 +19,13 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -27,8 +34,9 @@ import java.io.IOException;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
-
-import junit.framework.TestCase;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Test the "require files exist" rule.
@@ -36,23 +44,24 @@ import junit.framework.TestCase;
  * @author <a href="brianf@apache.org">Brian Fox</a>
  */
 public class TestRequireFilesSize
-    extends TestCase
 {
-    RequireFilesSize rule = new RequireFilesSize();
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
+    private RequireFilesSize rule = new RequireFilesSize();
+
+    @Test
     public void testFileExists()
         throws EnforcerRuleException, IOException
     {
-        File f = File.createTempFile( "enforcer", "tmp" );
-        f.deleteOnExit();
+        File f = temporaryFolder.newFile();
 
         rule.setFiles( new File[] { f } );
 
         rule.execute( EnforcerTestUtils.getHelper() );
-
-        f.delete();
     }
 
+    @Test
     public void testEmptyFile()
         throws EnforcerRuleException, IOException
     {
@@ -68,6 +77,7 @@ public class TestRequireFilesSize
         }
     }
 
+    @Test
     public void testEmptyFileAllowNull()
         throws EnforcerRuleException, IOException
     {
@@ -76,6 +86,7 @@ public class TestRequireFilesSize
         rule.execute( EnforcerTestUtils.getHelper() );
     }
 
+    @Test
     public void testEmptyFileList()
         throws EnforcerRuleException, IOException
     {
@@ -84,8 +95,8 @@ public class TestRequireFilesSize
         assertEquals( 0, rule.getFiles().length );
 
         MockProject project = new MockProject();
-        File f = File.createTempFile( "enforcer", "tmp" );
-        f.deleteOnExit();
+        File f = temporaryFolder.newFile();
+
         ArtifactStubFactory factory = new ArtifactStubFactory();
         Artifact a = factory.getReleaseArtifact();
         a.setFile( f );
@@ -99,10 +110,11 @@ public class TestRequireFilesSize
 
     }
 
+    @Test
     public void testFileDoesNotExist()
         throws EnforcerRuleException, IOException
     {
-        File f = File.createTempFile( "enforcer", "tmp" );
+        File f = temporaryFolder.newFile();
         f.delete();
         assertFalse( f.exists() );
         rule.setFiles( new File[] { f } );
@@ -118,11 +130,11 @@ public class TestRequireFilesSize
         }
     }
 
+    @Test
     public void testFileTooSmall()
         throws EnforcerRuleException, IOException
     {
-        File f = File.createTempFile( "enforcer", "tmp" );
-        f.deleteOnExit();
+        File f = temporaryFolder.newFile();
         rule.setFiles( new File[] { f } );
         rule.setMinsize( 10 );
         try
@@ -136,11 +148,11 @@ public class TestRequireFilesSize
         }
     }
 
+    @Test
     public void testFileTooBig()
         throws IOException
     {
-        File f = File.createTempFile( "enforcer", "tmp" );
-        f.deleteOnExit();
+        File f = temporaryFolder.newFile();
         try ( BufferedWriter out = new BufferedWriter( new FileWriter( f ) ) )
         {            
             out.write( "123456789101112131415" );
@@ -163,6 +175,7 @@ public class TestRequireFilesSize
     /**
      * Test id.
      */
+    @Test
     public void testId()
     {
         rule.getCacheId();

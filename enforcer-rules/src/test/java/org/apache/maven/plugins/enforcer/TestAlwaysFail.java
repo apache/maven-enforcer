@@ -19,18 +19,20 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.junit.Test;
 
 /**
  * Test AlwaysFail rule.
  * @author Ben Lidgey
  * @see AlwaysFail
  */
-public class TestAlwaysFail extends TestCase
+public class TestAlwaysFail
 {
-
+    @Test
     public void testExecute()
     {
         final AlwaysFail rule = new AlwaysFail();

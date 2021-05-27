@@ -19,14 +19,16 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
-import junit.framework.TestCase;
+import java.io.IOException;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtilsHelper;
+import org.junit.Test;
 
 /**
  * The Class TestRequireReleaseVersion.
@@ -34,7 +36,6 @@ import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtilsHelper;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestRequireReleaseVersion
-    extends TestCase
 {
 
     /**
@@ -42,6 +43,7 @@ public class TestRequireReleaseVersion
      *
      * @throws IOException Signals that an I/O exception has occurred.
      */
+    @Test
     public void testMojo()
         throws IOException
     {
@@ -77,6 +79,7 @@ public class TestRequireReleaseVersion
     /**
      * Test cache.
      */
+    @Test
     public void testCache()
     {
         EnforcerRule rule = new RequireReleaseVersion();

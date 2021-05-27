@@ -19,7 +19,9 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
@@ -28,6 +30,7 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.junit.Test;
 
 /**
  * The Class TestAbstractVersionEnforcer.
@@ -35,7 +38,6 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestAbstractVersionEnforcer
-    extends TestCase
 {
 
     /**
@@ -43,6 +45,7 @@ public class TestAbstractVersionEnforcer
      *
      * @throws InvalidVersionSpecificationException the invalid version specification exception
      */
+    @Test
     public void testContainsVersion()
         throws InvalidVersionSpecificationException
     {
@@ -119,6 +122,7 @@ public class TestAbstractVersionEnforcer
     /**
      * Test enforce version.
      */
+    @Test
     public void testEnforceVersion()
     {
         RequireMavenVersion rule = new RequireMavenVersion();

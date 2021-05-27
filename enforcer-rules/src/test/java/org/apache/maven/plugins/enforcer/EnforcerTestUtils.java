@@ -49,8 +49,6 @@ import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 /**

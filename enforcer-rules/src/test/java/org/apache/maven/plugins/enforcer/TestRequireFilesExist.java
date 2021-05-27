@@ -19,12 +19,18 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-
-import junit.framework.TestCase;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * Test the "require files exist" rule.
@@ -32,23 +38,24 @@ import junit.framework.TestCase;
  * @author <a href="brett@apache.org">Brett Porter</a>
  */
 public class TestRequireFilesExist
-    extends TestCase
 {
-    RequireFilesExist rule = new RequireFilesExist();
+    @Rule
+    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    
+    private RequireFilesExist rule = new RequireFilesExist();
 
+    @Test
     public void testFileExists()
         throws EnforcerRuleException, IOException
     {
-        File f = File.createTempFile( "enforcer", "tmp" );
-        f.deleteOnExit();
+        File f = temporaryFolder.newFile();
 
         rule.setFiles( new File[] { f } );
 
         rule.execute( EnforcerTestUtils.getHelper() );
-
-        f.delete();
     }
 
+    @Test
     public void testEmptyFile()
         throws EnforcerRuleException, IOException
     {
@@ -64,6 +71,7 @@ public class TestRequireFilesExist
         }
     }
 
+    @Test
     public void testEmptyFileAllowNull()
         throws EnforcerRuleException, IOException
     {
@@ -72,6 +80,7 @@ public class TestRequireFilesExist
         rule.execute( EnforcerTestUtils.getHelper() );
     }
 
+    @Test
     public void testEmptyFileList()
         throws EnforcerRuleException, IOException
     {
@@ -88,6 +97,7 @@ public class TestRequireFilesExist
         }
     }
 
+    @Test
     public void testEmptyFileListAllowNull()
         throws EnforcerRuleException, IOException
     {
@@ -97,11 +107,13 @@ public class TestRequireFilesExist
         rule.execute( EnforcerTestUtils.getHelper() );
     }
 
+    @Test
     public void testFileDoesNotExist()
         throws EnforcerRuleException, IOException
     {
-        File f = File.createTempFile( "enforcer", "tmp" );
+        File f = temporaryFolder.newFile();
         f.delete();
+
         assertFalse( f.exists() );
         rule.setFiles( new File[] { f } );
 
@@ -119,9 +131,9 @@ public class TestRequireFilesExist
     /**
      * Test id.
      */
+    @Test
     public void testId()
     {
         rule.getCacheId();
     }
-
 }

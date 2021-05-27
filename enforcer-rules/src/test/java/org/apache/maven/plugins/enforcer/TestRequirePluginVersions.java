@@ -19,6 +19,13 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,8 +35,8 @@ import java.util.Set;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugins.enforcer.utils.PluginWrapper;
+import org.junit.Test;
 
 /**
  * The Class TestRequirePluginVersions.
@@ -37,12 +44,12 @@ import org.apache.maven.plugins.enforcer.utils.PluginWrapper;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestRequirePluginVersions
-    extends AbstractMojoTestCase
 {
 
     /**
      * Test has version specified.
      */
+    @Test
     public void testHasVersionSpecified()
     {
         Plugin source = new Plugin();
@@ -123,6 +130,7 @@ public class TestRequirePluginVersions
     /**
      * Test has version specified with properties.
      */
+    @Test
     public void testHasVersionSpecifiedWithProperties()
     {
         Plugin source = new Plugin();
@@ -188,6 +196,7 @@ public class TestRequirePluginVersions
      *
      * @throws MojoExecutionException the mojo execution exception
      */
+    @Test
     public void testGetAdditionalPluginsNull()
         throws MojoExecutionException
     {
@@ -198,6 +207,7 @@ public class TestRequirePluginVersions
     /**
      * Test get additional plugins invalid format.
      */
+    @Test
     public void testGetAdditionalPluginsInvalidFormat()
     {
         RequirePluginVersions rule = new RequirePluginVersions();
@@ -236,6 +246,7 @@ public class TestRequirePluginVersions
      *
      * @throws MojoExecutionException the mojo execution exception
      */
+    @Test
     public void testGetAdditionalPluginsEmptySet()
         throws MojoExecutionException
     {
@@ -264,6 +275,7 @@ public class TestRequirePluginVersions
      *
      * @throws MojoExecutionException the mojo execution exception
      */
+    @Test
     public void testGetAdditionalPlugins()
         throws MojoExecutionException
     {
@@ -293,6 +305,7 @@ public class TestRequirePluginVersions
      *
      * @throws MojoExecutionException the mojo execution exception
      */
+    @Test
     public void testGetUncheckedPlugins()
         throws MojoExecutionException
     {
@@ -322,6 +335,7 @@ public class TestRequirePluginVersions
     /**
      * Test combining values from both lists
      */
+    @Test
     public void testCombinePlugins()
     {
         RequirePluginVersions rule = new RequirePluginVersions();
@@ -346,6 +360,7 @@ public class TestRequirePluginVersions
     /**
      * Test combining with an empty list
      */
+    @Test
     public void testCombinePlugins1()
     {
         RequirePluginVersions rule = new RequirePluginVersions();
@@ -364,6 +379,7 @@ public class TestRequirePluginVersions
     /**
      * Test combining with a null list
      */
+    @Test
     public void testCombinePlugins2()
     {
         RequirePluginVersions rule = new RequirePluginVersions();
@@ -381,6 +397,7 @@ public class TestRequirePluginVersions
     /**
      * Test combining with an empty string
      */
+    @Test
     public void testCombinePlugins3()
     {
         RequirePluginVersions rule = new RequirePluginVersions();
@@ -401,6 +418,7 @@ public class TestRequirePluginVersions
     /**
      * Test combining with a null string
      */
+    @Test
     public void testCombinePlugins4()
     {
         RequirePluginVersions rule = new RequirePluginVersions();
@@ -421,6 +439,7 @@ public class TestRequirePluginVersions
     /**
      * Test combining with an invalid plugin string
      */
+    @Test
     public void testCombinePlugins5()
     {
         RequirePluginVersions rule = new RequirePluginVersions();
@@ -473,6 +492,7 @@ public class TestRequirePluginVersions
     /**
      * Test id.
      */
+    @Test
     public void testId()
     {
         RequirePluginVersions rule = new RequirePluginVersions();

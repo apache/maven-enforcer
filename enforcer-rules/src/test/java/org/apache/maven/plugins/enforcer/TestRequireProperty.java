@@ -19,10 +19,11 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import junit.framework.TestCase;
+import static org.junit.Assert.fail;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.junit.Test;
 
 /**
  * The Class TestRequireProperty.
@@ -30,7 +31,6 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
  * @author Paul Gier
  */
 public class TestRequireProperty
-    extends TestCase
 {
 
     /**
@@ -38,6 +38,7 @@ public class TestRequireProperty
      *
      * @throws EnforcerRuleException the enforcer rule exception
      */
+    @Test
     public void testRule()
         throws EnforcerRuleException
     {
@@ -77,6 +78,7 @@ public class TestRequireProperty
      *
      * @throws EnforcerRuleException the enforcer rule exception
      */
+    @Test
     public void testRuleWithRegex()
         throws EnforcerRuleException
     {
@@ -115,6 +117,7 @@ public class TestRequireProperty
     /**
      * Test id.
      */
+    @Test
     public void testId()
     {
         RequireProperty rule = new RequireProperty();
