@@ -87,6 +87,8 @@ Built-In Rules
 
   * {{{./requireSameVersions.html}requireSameVersions}} - enforces that specific dependencies and/or plugins have the same version.
 
+  * {{{./requireTransitiveProvidedDependenciesInRuntimeClasspath.html}requireTransitiveProvidedDependenciesInRuntimeClasspath}} - ensures that every transitive provided dependency is part of the project's Maven runtime classpath.
+
   * {{{./requireUpperBoundDeps.html}requireUpperBoundDeps}} - ensures that every (transitive) dependency is resolved to its specified version or higher.
 
   []
