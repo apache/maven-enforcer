@@ -67,7 +67,7 @@
   <properties>
     <maven.version>3.1.1</maven.version>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
-    <javaVersion>7</javaVersion>
+    <javaVersion>8</javaVersion>
     <project.build.outputTimestamp>2020-04-17T21:04:00Z</project.build.outputTimestamp>
   </properties>
 
