@@ -43,7 +43,7 @@ Writing a custom rule
   <description>This is my custom rule.</description>
   <properties>
     <api.version>${project.version}</api.version>
-    <maven.version>3.0</maven.version>
+    <maven.version>${mavenPrerequisite}</maven.version>
   </properties>
   <dependencies>
     <dependency>
