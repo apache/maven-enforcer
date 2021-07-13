@@ -29,6 +29,7 @@
   </parent>
   <groupId>org.apache.maven.extensions</groupId>
   <artifactId>maven-enforcer-extension</artifactId>
+  <name>Apache Maven Enforcer Extension</name>
 
   <build>
     <plugins>
