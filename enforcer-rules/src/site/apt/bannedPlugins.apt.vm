@@ -43,7 +43,7 @@ Banned Plugins
         []
 
    * includes - a list of plugin artifacts to include. These are exceptions to the excludes. It is meant to allow wide exclusion rules with wildcards and fine tune using includes. 
-     If nothing has been excluded, then the includes have no effect. In otherwords, includes only subtract from artifacts that matched an exclude rule.
+     If nothing has been excluded, then the includes have no effect. In other words, includes only subtract from artifacts that matched an exclude rule.
       
    * message - an optional message to the user if the rule fails.
    

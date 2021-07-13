@@ -23,48 +23,77 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
+import java.util.List;
+
 /**
  * This rule checks that the Java vendor is allowed.
+ * Rule will fail is it matches any of the excludes or doesn't match any include in case it was set. 
  *
  * @author Tim Sijstermans
  * @since 3.0.0
  */
 public class RequireJavaVendor extends AbstractNonCacheableEnforcerRule
 {
-    private String name;
+    /**
+     * Java vendors to include. If none is defined, all are included.
+     * 
+     */
+    private List<String> includes;
+
+    /**
+     * Java vendors to exclude.
+     */
+    private List<String> excludes;
 
     @Override
     public void execute( EnforcerRuleHelper helper ) throws EnforcerRuleException
     {
-        if ( !SystemUtils.JAVA_VENDOR.equals( name ) )
+        if ( excludes != null && excludes.contains( SystemUtils.JAVA_VENDOR ) )
         {
             String message = getMessage();
-            String error = "Vendor " + SystemUtils.JAVA_VENDOR + " did not match required vendor " + name;
-            StringBuilder sb = new StringBuilder();
-            if ( message != null )
+            if ( message == null ) 
             {
-                sb.append( message ).append( System.lineSeparator() );
+                message = String.format( "%s is an excluded Required Java Vendor", SystemUtils.JAVA_VENDOR );
             }
-
-            sb.append( error );
-
-            throw new EnforcerRuleException( sb.toString() );
+            throw new EnforcerRuleException( message );
+        }
+        else if ( includes != null && !includes.contains( SystemUtils.JAVA_VENDOR ) )
+        {
+            String message = getMessage();
+            if ( message == null ) 
+            {
+                message = String.format( "%s is not an included Required Java Vendor", SystemUtils.JAVA_VENDOR );
+            }
+            throw new EnforcerRuleException( message );
         }
     }
 
     /**
-     * Specify the required name. Some examples are:
-     * Name should be an exact match of the System Property java.vendor, which you can also see with mvn --version
+     * Specify the banned vendors. This should be an exact match of the System Property
+     * java.vendor, which you can also see with mvn --version. <br>
+     * Excludes override the include rules.
      *
+     * Some examples are:
      * <ul>
-     * <li><code>AdoptOpenJDK</code> enforces vendor name AdoptOpenJDK </li>
-     * <li><code>Amazon</code> enforces vendor name Amazon </li>
+     * <li><code>AdoptOpenJDK</code> prohibits vendor name AdoptOpenJDK </li>
+     * <li><code>Amazon</code> prohibits vendor name Amazon </li>
      * </ul>
-     *
-     * @param name the required name to set
      */
-    public final void setName( String name )
+    public void setExcludes( List<String> theExcludes )
     {
-        this.name = name;
+        this.excludes = theExcludes;
+    }
+
+    /**
+     * Specify the allowed vendor names. This should be an exact match of the System Property
+     * java.vendor, which you can also see with mvn --version. <br>
+     * The rule will fail if vendor name matches any exclude, unless it also matches an
+     * include rule.
+     *
+     * @see #setIncludes(List)
+     */
+    public void setIncludes( List<String> theIncludes )
+    {
+        this.includes = theIncludes;
     }
 }
