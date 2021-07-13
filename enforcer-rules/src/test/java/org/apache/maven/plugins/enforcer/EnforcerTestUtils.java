@@ -19,18 +19,16 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.handler.ArtifactHandler;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenExecutionRequest;
@@ -42,10 +40,10 @@ import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.dependency.tree.DefaultDependencyTreeBuilder;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilderException;
+import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyNode;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
@@ -68,6 +66,9 @@ public final class EnforcerTestUtils
         PlexusContainer mock = mock( PlexusContainer.class );
 
         MavenExecutionRequest mer = mock( MavenExecutionRequest.class );
+        ProjectBuildingRequest buildingRequest = mock( ProjectBuildingRequest.class );
+        when( buildingRequest.setRepositorySession( any() )).thenReturn( buildingRequest );
+        when( mer.getProjectBuildingRequest() ).thenReturn( buildingRequest );
 
         Properties systemProperties = new Properties();
         systemProperties.put( "maven.version", "3.0" );
@@ -137,25 +138,26 @@ public final class EnforcerTestUtils
                                                  "classifier", null );
         Artifact v1 = new DefaultArtifact( "groupId", "artifact", "1.0.0", "compile", "jar", "", null );
         Artifact v2 = new DefaultArtifact( "groupId", "artifact", "2.0.0", "compile", "jar", "", null );
-        final DependencyNode node = new DependencyNode( artifact );
-        DependencyNode child1 = new DependencyNode( v1 );
-        DependencyNode child2 = new DependencyNode( v2 );
-        node.addChild( child1 );
-        node.addChild( child2 );
+        final DefaultDependencyNode node = new DefaultDependencyNode( artifact );
+        DefaultDependencyNode child1 = new DefaultDependencyNode( node, v1, null, null, null );
+        child1.setChildren( Collections.emptyList() );
+        DefaultDependencyNode child2 = new DefaultDependencyNode( node, v2, null, null, null  );
+        child2.setChildren( Collections.emptyList() );
+        node.setChildren( Arrays.asList( child1, child2 ) );
         
-        DependencyTreeBuilder dependencyTreeBuilder = new DefaultDependencyTreeBuilder() {
+        DependencyCollectorBuilder dependencyCollectorBuilder = new DependencyCollectorBuilder() {
             @Override
-            public DependencyNode buildDependencyTree( MavenProject project, ArtifactRepository repository,
-                   ArtifactFactory factory, ArtifactMetadataSource metadataSource,
-                   ArtifactFilter filter, ArtifactCollector collector )
-                throws DependencyTreeBuilderException {
-                 return node;
+            public org.apache.maven.shared.dependency.graph.DependencyNode collectDependencyGraph( ProjectBuildingRequest buildingRequest,
+                                                                                                   ArtifactFilter filter )
+                throws DependencyCollectorBuilderException
+            {
+                return node;
             }
         };
 
         try
         {
-            Mockito.when( container.lookup( DependencyTreeBuilder.class ) ).thenReturn( dependencyTreeBuilder  );
+            Mockito.when( container.lookup( DependencyCollectorBuilder.class ) ).thenReturn( dependencyCollectorBuilder  );
         }
         catch ( ComponentLookupException e )
         {

@@ -39,7 +39,7 @@ import org.mockito.junit.MockitoJUnitRunner;
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-@RunWith( MockitoJUnitRunner.class )
+@RunWith( MockitoJUnitRunner.Silent.class )
 public class TestEnforceMojo
 {
 

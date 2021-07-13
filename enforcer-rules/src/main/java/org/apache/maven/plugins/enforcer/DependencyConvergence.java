@@ -23,20 +23,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.enforcer.utils.DependencyVersionMap;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
@@ -73,21 +73,24 @@ public class DependencyConvergence
         try
         {
             MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-            DependencyTreeBuilder dependencyTreeBuilder = helper.getComponent( DependencyTreeBuilder.class );
+            MavenSession session = (MavenSession) helper.evaluate( "${session}" );
+            DependencyCollectorBuilder dependencyCollectorBuilder =
+                helper.getComponent( DependencyCollectorBuilder.class );
             ArtifactRepository repository = (ArtifactRepository) helper.evaluate( "${localRepository}" );
-            ArtifactFactory factory = helper.getComponent( ArtifactFactory.class );
-            ArtifactMetadataSource metadataSource = helper.getComponent( ArtifactMetadataSource.class );
-            ArtifactCollector collector = helper.getComponent( ArtifactCollector.class );
+
+            ProjectBuildingRequest buildingRequest =
+                new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+            buildingRequest.setProject( project );
+            buildingRequest.setLocalRepository( repository );
             ArtifactFilter filter = null; // we need to evaluate all scopes
-            DependencyNode node = dependencyTreeBuilder.buildDependencyTree( project, repository, factory,
-                                                                             metadataSource, filter, collector );
-            return node;
+
+            return dependencyCollectorBuilder.collectDependencyGraph( buildingRequest, filter );
         }
         catch ( ExpressionEvaluationException | ComponentLookupException e )
         {
             throw new EnforcerRuleException( "Unable to lookup a component " + e.getLocalizedMessage(), e );
         }
-        catch ( DependencyTreeBuilderException e )
+        catch ( DependencyCollectorBuilderException e )
         {
             throw new EnforcerRuleException( "Could not build dependency tree " + e.getLocalizedMessage(), e );
         }

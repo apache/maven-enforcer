@@ -29,6 +29,9 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+
 public class RequireUpperBoundDepsTest
 {
 
@@ -47,7 +50,7 @@ public class RequireUpperBoundDepsTest
           Assert.fail("Did not detect upper bounds error");
         }
         catch ( EnforcerRuleException ex ) {
-            Assert.assertTrue( ex.getMessage(), ex.getMessage().contains( "groupId:artifactId:version:classifier" ) );
+            assertThat( ex.getMessage(), containsString( "groupId:artifactId:version:classifier" ) );
         }
     }
 

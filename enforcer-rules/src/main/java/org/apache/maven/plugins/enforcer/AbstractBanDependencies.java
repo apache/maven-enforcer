@@ -22,9 +22,12 @@ package org.apache.maven.plugins.enforcer;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.enforcer.utils.ArtifactUtils;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
@@ -32,7 +35,6 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -49,18 +51,11 @@ public abstract class AbstractBanDependencies
 
     private transient DependencyGraphBuilder graphBuilder;
 
-    /**
-     * Contains the full list of projects in the reactor.
-     */
-    private transient List<MavenProject> reactorProjects;
-
     @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
-
-        // get the project
-        MavenProject project = null;
+        MavenProject project;
         try
         {
             project = (MavenProject) helper.evaluate( "${project}" );
@@ -70,10 +65,10 @@ public abstract class AbstractBanDependencies
             throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
         }
 
-        // get the reactor projects
+        MavenSession session;
         try
         {
-            reactorProjects = (List<MavenProject>) helper.evaluate( "${reactorProjects}" );
+            session = (MavenSession) helper.evaluate( "${session}" );
         }
         catch ( ExpressionEvaluationException eee )
         {
@@ -86,21 +81,15 @@ public abstract class AbstractBanDependencies
         }
         catch ( ComponentLookupException e )
         {
-            // real cause is probably that one of the Maven3 graph builder could not be initiated and fails with a
-            // ClassNotFoundException
-            try
-            {
-                graphBuilder =
-                    (DependencyGraphBuilder) helper.getComponent( DependencyGraphBuilder.class.getName(), "maven2" );
-            }
-            catch ( ComponentLookupException e1 )
-            {
-                throw new EnforcerRuleException( "Unable to lookup DependencyGraphBuilder: ", e );
-            }
+            throw new EnforcerRuleException( "Unable to lookup DependencyGraphBuilder: ", e );
         }
+        
+        ProjectBuildingRequest buildingRequest =
+            new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+        buildingRequest.setProject( project );
 
         // get the correct list of dependencies
-        Set<Artifact> dependencies = getDependenciesToCheck( project );
+        Set<Artifact> dependencies = getDependenciesToCheck( buildingRequest );
 
         // look for banned dependencies
         Set<Artifact> foundExcludes = checkDependencies( dependencies, helper.getLog() );
@@ -131,12 +120,12 @@ public abstract class AbstractBanDependencies
         return "Found Banned Dependency: " + artifact.getId() + System.lineSeparator();
     }
 
-    protected Set<Artifact> getDependenciesToCheck( MavenProject project )
+    protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest buildingRequest )
     {
         Set<Artifact> dependencies = null;
         try
         {
-            DependencyNode node = graphBuilder.buildDependencyGraph( project, null, reactorProjects );
+            DependencyNode node = graphBuilder.buildDependencyGraph( buildingRequest, null );
             if ( searchTransitive )
             {
                 dependencies = ArtifactUtils.getAllDescendants( node );
