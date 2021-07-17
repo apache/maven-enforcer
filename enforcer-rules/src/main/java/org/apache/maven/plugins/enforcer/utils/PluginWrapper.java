@@ -22,6 +22,8 @@ package org.apache.maven.plugins.enforcer.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.maven.model.InputLocation;
+import org.apache.maven.model.InputLocationTracker;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
 
@@ -31,15 +33,15 @@ import org.apache.maven.model.ReportPlugin;
  */
 public class PluginWrapper
 {
-    private String groupId;
+    private final String groupId;
 
-    private String artifactId;
+    private final String artifactId;
 
-    private String version;
+    private final String version;
 
-    private String source;
+    private final InputLocationTracker locationTracker;
 
-    public static List<PluginWrapper> addAll( List<?> plugins, String source )
+    public static List<PluginWrapper> addAll( List<?> plugins )
     {
         List<PluginWrapper> results = null;
 
@@ -50,13 +52,13 @@ public class PluginWrapper
             {
                 if ( o instanceof Plugin )
                 {
-                    results.add( new PluginWrapper( (Plugin) o, source ) );
+                    results.add( new PluginWrapper( (Plugin) o ) );
                 }
                 else
                 {
                     if ( o instanceof ReportPlugin )
                     {
-                        results.add( new PluginWrapper( (ReportPlugin) o, source ) );
+                        results.add( new PluginWrapper( (ReportPlugin) o ) );
                     }
                 }
 
@@ -65,20 +67,20 @@ public class PluginWrapper
         return results;
     }
 
-    public PluginWrapper( Plugin plugin, String source )
+    private PluginWrapper( Plugin plugin )
     {
-        setGroupId( plugin.getGroupId() );
-        setArtifactId( plugin.getArtifactId() );
-        setVersion( plugin.getVersion() );
-        setSource( source );
+        this.groupId = plugin.getGroupId();
+        this.artifactId = plugin.getArtifactId();
+        this.version = plugin.getVersion();
+        this.locationTracker = plugin;
     }
 
-    public PluginWrapper( ReportPlugin plugin, String source )
+    private PluginWrapper( ReportPlugin plugin )
     {
-        setGroupId( plugin.getGroupId() );
-        setArtifactId( plugin.getArtifactId() );
-        setVersion( plugin.getVersion() );
-        setSource( source );
+        this.groupId = plugin.getGroupId();
+        this.artifactId = plugin.getArtifactId();
+        this.version = plugin.getVersion();
+        this.locationTracker = plugin;
     }
 
     public String getGroupId()
@@ -86,19 +88,9 @@ public class PluginWrapper
         return groupId;
     }
 
-    public void setGroupId( String groupId )
-    {
-        this.groupId = groupId;
-    }
-
     public String getArtifactId()
     {
         return artifactId;
-    }
-
-    public void setArtifactId( String artifactId )
-    {
-        this.artifactId = artifactId;
     }
 
     public String getVersion()
@@ -106,18 +98,18 @@ public class PluginWrapper
         return version;
     }
 
-    public void setVersion( String version )
-    {
-        this.version = version;
-    }
-
     public String getSource()
     {
-        return source;
-    }
-
-    public void setSource( String source )
-    {
-        this.source = source;
+        InputLocation inputLocation = locationTracker.getLocation( "version" );
+        
+        if ( inputLocation == null )
+        {
+            // most likely super-pom or default-lifecycle-bindings in Maven 3.6.0 or before (MNG-6593 / MNG-6600)
+            return "unknown";
+        }
+        else
+        {
+            return inputLocation.getSource().getLocation();
+        }
     }
 }

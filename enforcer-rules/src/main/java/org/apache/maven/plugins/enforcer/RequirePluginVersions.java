@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -168,9 +167,6 @@ public class RequirePluginVersions
     /** The local. */
     private ArtifactRepository local;
 
-    /** The remote repositories. */
-    private List<ArtifactRepository> remoteRepositories;
-
     /** The log. */
     private Log log;
 
@@ -202,7 +198,6 @@ public class RequirePluginVersions
             factory = helper.getComponent( ArtifactFactory.class );
             resolver = helper.getComponent( ArtifactResolver.class );
             local = (ArtifactRepository) helper.evaluate( "${localRepository}" );
-            remoteRepositories = project.getRemoteArtifactRepositories();
 
             utils = new EnforcerRuleUtils( helper );
 
@@ -234,7 +229,7 @@ public class RequirePluginVersions
             for ( PluginWrapper pluginWrapper : pluginWrappers )
             {
                 log.debug( "pluginWrappers: " + pluginWrapper.getGroupId() + ":" + pluginWrapper.getArtifactId() + ":"
-                    + pluginWrapper.getVersion() + " source:" + pluginWrapper.getSource() );
+                    + pluginWrapper.getVersion() + " source: " + pluginWrapper.getSource() );
             }
             // now look for the versions that aren't valid and add to a list.
             List<Plugin> failures = new ArrayList<Plugin>();
@@ -721,17 +716,6 @@ public class RequirePluginVersions
             }
         }
 
-        List<String> mojos = findOptionalMojosForLifecycle( project, lifecycle );
-        for ( String value : mojos )
-        {
-            String tokens[] = value.split( ":" );
-
-            Plugin plugin = new Plugin();
-            plugin.setGroupId( tokens[0] );
-            plugin.setArtifactId( tokens[1] );
-            plugins.add( plugin );
-        }
-
         plugins.addAll( project.getBuildPlugins() );
 
         return plugins;
@@ -855,51 +839,6 @@ public class RequirePluginVersions
     }
 
     /**
-     * Find optional mojos for lifecycle.
-     *
-     * @param project the project
-     * @param lifecycle the lifecycle
-     * @return the list
-     * @throws LifecycleExecutionException the lifecycle execution exception
-     * @throws PluginNotFoundException the plugin not found exception
-     */
-    private List<String> findOptionalMojosForLifecycle( MavenProject project, Lifecycle lifecycle )
-        throws LifecycleExecutionException, PluginNotFoundException
-    {
-        String packaging = project.getPackaging();
-        List<String> optionalMojos = null;
-
-        LifecycleMapping m = (LifecycleMapping) findExtension( project, LifecycleMapping.ROLE, packaging,
-                                                               session.getSettings(), session.getLocalRepository() );
-
-        if ( m != null )
-        {
-            optionalMojos = m.getOptionalMojos( lifecycle.getId() );
-        }
-
-        if ( optionalMojos == null )
-        {
-            try
-            {
-                m = helper.getComponent( LifecycleMapping.class, packaging );
-                optionalMojos = m.getOptionalMojos( lifecycle.getId() );
-            }
-            catch ( ComponentLookupException e )
-            {
-                log.debug( "Error looking up lifecycle mapping to retrieve optional mojos. Lifecycle ID: "
-                    + lifecycle.getId() + ". Error: " + e.getMessage(), e );
-            }
-        }
-
-        if ( optionalMojos == null )
-        {
-            optionalMojos = Collections.emptyList();
-        }
-
-        return optionalMojos;
-    }
-
-    /**
      * Find extension.
      *
      * @param project the project
@@ -998,45 +937,18 @@ public class RequirePluginVersions
     protected List<PluginWrapper> getAllPluginEntries( MavenProject project )
         throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException
     {
-        List<Model> models = new ArrayList<>();
-
-        List<MavenProject> sortedProjects = session.getProjectDependencyGraph().getSortedProjects();
-
-        if ( !sortedProjects.isEmpty() && sortedProjects.get( 0 ).getParent() != null )
-        {
-            getOriginalModelFromAllParents( models, sortedProjects );
-        }
-
-        for ( MavenProject mavenProject : sortedProjects )
-        {
-            models.add( mavenProject.getOriginalModel() );
-        }
-
         List<PluginWrapper> plugins = new ArrayList<>();
         // now find all the plugin entries, either in
         // build.plugins or build.pluginManagement.plugins, profiles.plugins and reporting
-        for ( Model model : models )
-        {
-            getPlugins( plugins, model );
-            getReportingPlugins( plugins, model );
-            getPluginManagementPlugins( plugins, model );
 
-            addPluginsInProfiles( plugins, model );
-        }
+        getPlugins( plugins, project.getModel() );
+        getReportingPlugins( plugins, project.getModel() );
+        getPluginManagementPlugins( plugins, project.getModel() );
+        addPluginsInProfiles( plugins, project.getModel() );
 
         return plugins;
     }
 
-    private void getOriginalModelFromAllParents( List<Model> models, List<MavenProject> sortedProjects )
-    {
-        MavenProject parent = sortedProjects.get( 0 ).getParent();
-        do
-        {
-            models.add( parent.getOriginalModel() );
-            parent = parent.getParent();
-        }
-        while ( parent != null );
-    }
 
     private void addPluginsInProfiles( List<PluginWrapper> plugins, Model model )
     {
@@ -1054,8 +966,7 @@ public class RequirePluginVersions
         try
         {
             List<Plugin> modelPlugins = profile.getBuild().getPluginManagement().getPlugins();
-            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ), model.getId() + "profile["
-                + profile.getId() + "].build.pluginManagement.plugins" ) );
+            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ) ) );
         }
         catch ( NullPointerException e )
         {
@@ -1069,8 +980,7 @@ public class RequirePluginVersions
         {
             List<ReportPlugin> modelReportPlugins = profile.getReporting().getPlugins();
             // add the reporting plugins
-            plugins.addAll( PluginWrapper.addAll( utils.resolveReportPlugins( modelReportPlugins ), model.getId()
-                + "profile[" + profile.getId() + "].reporting.plugins" ) );
+            plugins.addAll( PluginWrapper.addAll( utils.resolveReportPlugins( modelReportPlugins ) ) );
         }
         catch ( NullPointerException e )
         {
@@ -1083,8 +993,7 @@ public class RequirePluginVersions
         try
         {
             List<Plugin> modelPlugins = profile.getBuild().getPlugins();
-            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ), model.getId()
-                + ".profiles.profile[" + profile.getId() + "].build.plugins" ) );
+            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ) ) );
         }
         catch ( NullPointerException e )
         {
@@ -1097,8 +1006,7 @@ public class RequirePluginVersions
         try
         {
             List<Plugin> modelPlugins = model.getBuild().getPlugins();
-            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ),
-                                                  model.getId() + ".build.plugins" ) );
+            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ) ) );
         }
         catch ( NullPointerException e )
         {
@@ -1111,8 +1019,7 @@ public class RequirePluginVersions
         try
         {
             List<Plugin> modelPlugins = model.getBuild().getPluginManagement().getPlugins();
-            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ),
-                                                  model.getId() + ".build.pluginManagement.plugins" ) );
+            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ) ) );
         }
         catch ( NullPointerException e )
         {
@@ -1126,8 +1033,7 @@ public class RequirePluginVersions
         {
             List<ReportPlugin> modelReportPlugins = model.getReporting().getPlugins();
             // add the reporting plugins
-            plugins.addAll( PluginWrapper.addAll( utils.resolveReportPlugins( modelReportPlugins ),
-                                                  model.getId() + ".reporting" ) );
+            plugins.addAll( PluginWrapper.addAll( utils.resolveReportPlugins( modelReportPlugins ) ) );
         }
         catch ( NullPointerException e )
         {
