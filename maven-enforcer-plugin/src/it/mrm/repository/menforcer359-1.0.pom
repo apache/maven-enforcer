@@ -23,6 +23,7 @@
   <groupId>org.apache.maven.plugins.enforcer.its</groupId>
   <artifactId>menforcer359</artifactId>
   <version>1.0</version>
+  <packaging>pom</packaging>
   
   <build>
     <pluginManagement>

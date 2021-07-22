@@ -62,6 +62,7 @@ import org.apache.maven.plugin.version.PluginVersionResolutionException;
 import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtils;
 import org.apache.maven.plugins.enforcer.utils.PluginWrapper;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.rtinfo.RuntimeInformation;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
@@ -110,6 +111,11 @@ public class RequirePluginVersions
      * @see {@link #isBanTimestamps()}
      */
     private boolean banTimestamps = true;
+
+    /**
+     * @since 3.0.0
+     */
+    private boolean banMavenDefaults = true;
 
     /**
      * The comma separated list of phases that should be used to find lifecycle plugin bindings. The default value is
@@ -176,6 +182,8 @@ public class RequirePluginVersions
     /** The utils. */
     private EnforcerRuleUtils utils;
 
+    private RuntimeInformation runtimeInformation;
+
     @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
@@ -189,6 +197,8 @@ public class RequirePluginVersions
             // get the various expressions out of the helper.
 
             project = (MavenProject) helper.evaluate( "${project}" );
+
+            runtimeInformation = helper.getComponent( RuntimeInformation.class );
 
             DefaultLifecycles defaultLifeCycles = helper.getComponent( DefaultLifecycles.class );
             lifecycles = defaultLifeCycles.getLifeCycles();
@@ -266,7 +276,8 @@ public class RequirePluginVersions
         throws EnforcerRuleException
     {
         StringBuilder newMsg = new StringBuilder();
-        newMsg.append( "Some plugins are missing valid versions:" );
+        newMsg.append( "Some plugins are missing valid versions or depend on Maven "
+            + runtimeInformation.getMavenVersion() + " defaults:" );
         handleBanMessages( newMsg );
         newMsg.append( "\n" );
         for ( Plugin plugin : failures )
@@ -281,13 +292,27 @@ public class RequirePluginVersions
 
                 Plugin currentPlugin = findCurrentPlugin( plugin, project );
 
-                if ( currentPlugin != null )
+                if ( currentPlugin == null )
                 {
-                    newMsg.append( currentPlugin.getVersion() );
+                    newMsg.append( "unknown" );
                 }
                 else
                 {
-                    newMsg.append( "unknown" );
+                    newMsg.append( currentPlugin.getVersion() );
+
+                    if ( PluginWrapper.isVersionFromDefaultLifecycleBindings( currentPlugin ).orElse( false ) )
+                    {
+                        newMsg.append( " via default lifecycle bindings" );
+                    }
+                    else 
+                    {
+                        String msg = PluginWrapper.isVersionFromSuperpom( currentPlugin )
+                                        .filter( b -> b )
+                                        .map( t -> " via super POM" )
+                                        // for Maven 3.6.0 or before (MNG-6593 / MNG-6600)
+                                        .orElse( " via super POM or default lifecycle bindings" );
+                        newMsg.append( msg );
+                    }
                 }
             }
             catch ( Exception e )
@@ -966,7 +991,7 @@ public class RequirePluginVersions
         try
         {
             List<Plugin> modelPlugins = profile.getBuild().getPluginManagement().getPlugins();
-            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ) ) );
+            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ), banMavenDefaults ) );
         }
         catch ( NullPointerException e )
         {
@@ -980,7 +1005,8 @@ public class RequirePluginVersions
         {
             List<ReportPlugin> modelReportPlugins = profile.getReporting().getPlugins();
             // add the reporting plugins
-            plugins.addAll( PluginWrapper.addAll( utils.resolveReportPlugins( modelReportPlugins ) ) );
+            plugins.addAll( PluginWrapper.addAll( utils.resolveReportPlugins( modelReportPlugins ),
+                                                  banMavenDefaults ) );
         }
         catch ( NullPointerException e )
         {
@@ -993,7 +1019,7 @@ public class RequirePluginVersions
         try
         {
             List<Plugin> modelPlugins = profile.getBuild().getPlugins();
-            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ) ) );
+            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ), banMavenDefaults ) );
         }
         catch ( NullPointerException e )
         {
@@ -1006,7 +1032,7 @@ public class RequirePluginVersions
         try
         {
             List<Plugin> modelPlugins = model.getBuild().getPlugins();
-            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ) ) );
+            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ), banMavenDefaults ) );
         }
         catch ( NullPointerException e )
         {
@@ -1019,7 +1045,7 @@ public class RequirePluginVersions
         try
         {
             List<Plugin> modelPlugins = model.getBuild().getPluginManagement().getPlugins();
-            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ) ) );
+            plugins.addAll( PluginWrapper.addAll( utils.resolvePlugins( modelPlugins ), banMavenDefaults ) );
         }
         catch ( NullPointerException e )
         {
@@ -1033,7 +1059,8 @@ public class RequirePluginVersions
         {
             List<ReportPlugin> modelReportPlugins = model.getReporting().getPlugins();
             // add the reporting plugins
-            plugins.addAll( PluginWrapper.addAll( utils.resolveReportPlugins( modelReportPlugins ) ) );
+            plugins.addAll( PluginWrapper.addAll( utils.resolveReportPlugins( modelReportPlugins ),
+                                                  banMavenDefaults ) );
         }
         catch ( NullPointerException e )
         {

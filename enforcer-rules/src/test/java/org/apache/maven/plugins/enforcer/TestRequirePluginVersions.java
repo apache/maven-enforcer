@@ -80,7 +80,7 @@ public class TestRequirePluginVersions
         plugins.add( EnforcerTestUtils.newPlugin( "group", "g-artifact", "1.0-12345678.123456-1" ) );
 
 
-        List<PluginWrapper> pluginWrappers = PluginWrapper.addAll( plugins );
+        List<PluginWrapper> pluginWrappers = PluginWrapper.addAll( plugins, false );
 
         RequirePluginVersions rule = new RequirePluginVersions();
         rule.setBanLatest( false );
@@ -145,7 +145,7 @@ public class TestRequirePluginVersions
         plugins.add( EnforcerTestUtils.newPlugin( "group", "e-artifact", "${}" ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "f-artifact", "${   }" ) );
 
-        List<PluginWrapper> pluginWrappers = PluginWrapper.addAll( plugins );
+        List<PluginWrapper> pluginWrappers = PluginWrapper.addAll( plugins, false );
 
         RequirePluginVersions rule = new RequirePluginVersions();
         rule.setBanLatest( false );

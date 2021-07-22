@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.InputLocationTracker;
@@ -41,15 +42,22 @@ public class PluginWrapper
 
     private final InputLocationTracker locationTracker;
 
-    public static List<PluginWrapper> addAll( List<?> plugins )
+    public static List<PluginWrapper> addAll( List<? extends InputLocationTracker> plugins, boolean banMavenDefaults )
     {
         List<PluginWrapper> results = null;
 
         if ( !plugins.isEmpty() )
         {
             results = new ArrayList<>( plugins.size() );
-            for ( Object o : plugins )
+            for ( InputLocationTracker o : plugins )
             {
+                // null or true means it is most assumed a Maven default
+                if ( banMavenDefaults && ( isVersionFromDefaultLifecycleBindings( o ).orElse( true )
+                    || isVersionFromSuperpom( o ).orElse( true ) ) )
+                {
+                    continue;
+                }
+
                 if ( o instanceof Plugin )
                 {
                     results.add( new PluginWrapper( (Plugin) o ) );
@@ -61,10 +69,45 @@ public class PluginWrapper
                         results.add( new PluginWrapper( (ReportPlugin) o ) );
                     }
                 }
-
             }
         }
         return results;
+    }
+    
+    /**
+     * 
+     * @param o either Plugin or ReportPlugin
+     * @return   
+     */
+    public static Optional<Boolean> isVersionFromDefaultLifecycleBindings( InputLocationTracker o )
+    {
+        InputLocation versionLocation = o.getLocation( "version" );
+        if ( versionLocation == null )
+        {
+            return Optional.empty();
+        }
+
+        String modelId = versionLocation.getSource().getModelId();
+        return Optional.of( modelId.startsWith( "org.apache.maven:maven-core:" )
+                            && modelId.endsWith( ":default-lifecycle-bindings" ) );
+    }
+
+    /**
+     * 
+     * @param o either Plugin or ReportPlugin
+     * @return null if untraceable, otherwise its matching value  
+     */
+    public static Optional<Boolean> isVersionFromSuperpom( InputLocationTracker o )
+    {
+        InputLocation versionLocation = o.getLocation( "version" );
+        if ( versionLocation == null )
+        {
+            return Optional.empty();
+        }
+        
+        String modelId = versionLocation.getSource().getModelId();
+        return Optional.of( modelId.startsWith( "org.apache.maven:maven-model-builder:" )
+            && modelId.endsWith( ":super-pom" ) );
     }
 
     private PluginWrapper( Plugin plugin )

@@ -34,6 +34,8 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.InputLocation;
+import org.apache.maven.model.InputSource;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
@@ -189,10 +191,14 @@ public final class EnforcerTestUtils
      */
     public static Plugin newPlugin( String groupId, String artifactId, String version )
     {
+        InputSource inputSource = new InputSource();
+        inputSource.setModelId( "unit" );
+        
         Plugin plugin = new Plugin();
         plugin.setArtifactId( artifactId );
         plugin.setGroupId( groupId );
         plugin.setVersion( version );
+        plugin.setLocation( "version", new InputLocation( 0, 0, inputSource ) );
         return plugin;
     }
 }
