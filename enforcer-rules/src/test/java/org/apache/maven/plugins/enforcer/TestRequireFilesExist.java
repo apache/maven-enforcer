@@ -22,10 +22,9 @@ package org.apache.maven.plugins.enforcer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertThrows;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.junit.Rule;
@@ -46,34 +45,43 @@ public class TestRequireFilesExist
 
     @Test
     public void testFileExists()
-        throws EnforcerRuleException, IOException
+        throws Exception
     {
         File f = temporaryFolder.newFile();
 
-        rule.setFiles( new File[] { f } );
+        rule.setFiles( new File[] { f.getCanonicalFile() } );
 
         rule.execute( EnforcerTestUtils.getHelper() );
     }
+    
+    @Test
+    public void testFileOsIndependentExists()
+        throws Exception
+    {
+        rule.setFiles( new File[] { new File( "POM.xml" ) } );
+
+        EnforcerRuleException e =
+            assertThrows( EnforcerRuleException.class, () -> rule.execute( EnforcerTestUtils.getHelper() ) );
+
+        assertNotNull( e.getMessage() );
+    }
+
 
     @Test
     public void testEmptyFile()
-        throws EnforcerRuleException, IOException
+        throws Exception
     {
         rule.setFiles( new File[] { null } );
-        try
-        {
-            rule.execute( EnforcerTestUtils.getHelper() );
-            fail( "Should get exception" );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            assertNotNull( e.getMessage() );
-        }
+
+        EnforcerRuleException e =
+            assertThrows( EnforcerRuleException.class, () -> rule.execute( EnforcerTestUtils.getHelper() ) );
+
+        assertNotNull( e.getMessage() );
     }
 
     @Test
     public void testEmptyFileAllowNull()
-        throws EnforcerRuleException, IOException
+        throws Exception
     {
         rule.setFiles( new File[] { null } );
         rule.setAllowNulls( true );
@@ -82,24 +90,21 @@ public class TestRequireFilesExist
 
     @Test
     public void testEmptyFileList()
-        throws EnforcerRuleException, IOException
+        throws Exception
     {
         rule.setFiles( new File[] {} );
         assertEquals( 0, rule.getFiles().length );
-        try
-        {
-            rule.execute( EnforcerTestUtils.getHelper() );
-            fail( "Should get exception" );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            assertNotNull( e.getMessage() );
-        }
+
+        EnforcerRuleException e =
+            assertThrows( EnforcerRuleException.class, () -> rule.execute( EnforcerTestUtils.getHelper() ) );
+
+        assertNotNull( e.getMessage() );
+
     }
 
     @Test
     public void testEmptyFileListAllowNull()
-        throws EnforcerRuleException, IOException
+        throws Exception
     {
         rule.setFiles( new File[] {} );
         assertEquals( 0, rule.getFiles().length );
@@ -109,7 +114,7 @@ public class TestRequireFilesExist
 
     @Test
     public void testFileDoesNotExist()
-        throws EnforcerRuleException, IOException
+        throws Exception
     {
         File f = temporaryFolder.newFile();
         f.delete();
@@ -117,15 +122,11 @@ public class TestRequireFilesExist
         assertFalse( f.exists() );
         rule.setFiles( new File[] { f } );
 
-        try
-        {
-            rule.execute( EnforcerTestUtils.getHelper() );
-            fail( "Should get exception" );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            assertNotNull( e.getMessage() );
-        }
+        EnforcerRuleException e =
+            assertThrows( EnforcerRuleException.class, () -> rule.execute( EnforcerTestUtils.getHelper() ) );
+
+        assertNotNull( e.getMessage() );
+
     }
 
     /**
