@@ -19,10 +19,8 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.io.IOException;
+import java.util.Collections;
 import java.util.Set;
-
-import junit.framework.TestCase;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
@@ -30,6 +28,7 @@ import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtilsHelper;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.junit.Test;
 
 /**
  * The Class TestNoSnapshots.
@@ -37,7 +36,6 @@ import org.apache.maven.project.ProjectBuildingRequest;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class TestRequireReleaseDeps
-    extends TestCase
 {
 
     /**
@@ -45,10 +43,10 @@ public class TestRequireReleaseDeps
      *
      * @throws IOException Signals that an I/O exception has occurred.
      */
+    @Test
     public void testRule()
-        throws IOException
+        throws Exception
     {
-
         ArtifactStubFactory factory = new ArtifactStubFactory();
         MockProject project = new MockProject();
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
@@ -89,9 +87,26 @@ public class TestRequireReleaseDeps
 
         rule.setFailWhenParentIsSnapshot( false );
         EnforcerRuleUtilsHelper.execute( rule, helper, false );
-
-
     }
+    
+    @Test
+    public void testWildcardIgnore() throws Exception
+    {
+        RequireReleaseDeps rule = newRequireReleaseDeps();
+        rule.setExcludes( Collections.singletonList( "*:*:*:*:test" ) );
+        rule.setOnlyWhenRelease( true );
+        rule.setSearchTransitive( false );
+        
+        ArtifactStubFactory factory = new ArtifactStubFactory();
+        MockProject project = new MockProject();
+        project.setArtifact( factory.getReleaseArtifact() );
+        project.setDependencyArtifacts( Collections.singleton( factory.createArtifact( "g", "a", "1.0-SNAPSHOT", "test" ) ) );
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
+        
+        EnforcerRuleUtilsHelper.execute( rule, helper, false );
+    }
+    
+    
 
     private RequireReleaseDeps newRequireReleaseDeps()
     {
@@ -114,6 +129,7 @@ public class TestRequireReleaseDeps
     /**
      * Test id.
      */
+    @Test
     public void testId()
     {
         RequireReleaseDeps rule = newRequireReleaseDeps();

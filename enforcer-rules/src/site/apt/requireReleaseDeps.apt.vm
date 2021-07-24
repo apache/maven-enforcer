@@ -38,11 +38,13 @@ Require Release Dependencies
    
    * failWhenParentIsSnapshot - if the parent should be checked. Default: true 
    
-   * includes - List of dependency patterns to include when checking for snapshot versions
+   * includes - List of dependency patterns to include when checking for snapshot versions.
    
    * excludes - List of dependency patterns to exclude when checking for snapshot versions
 
    []
+   
+   The include/exclude pattern looks like <<<groupId:artifactId:version:type:scope>>> and supports wildcards(*). 
 
    
   Sample Plugin Configuration:

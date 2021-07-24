@@ -24,13 +24,11 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.filter.AndArtifactFilter;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.enforcer.utils.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.artifact.filter.StrictPatternExcludesArtifactFilter;
-import org.apache.maven.shared.artifact.filter.StrictPatternIncludesArtifactFilter;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
@@ -162,32 +160,35 @@ public class RequireReleaseDeps
      * @param dependencies the list of dependencies to filter
      * @return the resulting set of dependencies
      */
-    public Set<Artifact> filterArtifacts( Set<Artifact> dependencies )
+    protected Set<Artifact> filterArtifacts( Set<Artifact> dependencies ) throws EnforcerRuleException 
     {
         if ( includes == null && excludes == null )
         {
             return dependencies;
         }
         
-        AndArtifactFilter filter = new AndArtifactFilter( );
+        Set<Artifact> included;
         if ( includes != null )
         {
-            filter.add( new StrictPatternIncludesArtifactFilter( includes ) );
+            included = ArtifactUtils.checkDependencies( dependencies, includes ); 
         }
-        if ( excludes != null )
+        else
         {
-            filter.add( new StrictPatternExcludesArtifactFilter( excludes ) );
+            included = new HashSet<>( dependencies );
         }
-        
-        Set<Artifact> result = new HashSet<>();
-        for ( Artifact artifact : dependencies )
+
+        // anything specifically included should be removed
+        // from the ban list.
+        if ( included != null )
         {
-            if ( filter.include( artifact ) )
+            Set<Artifact> excluded = ArtifactUtils.checkDependencies( dependencies, excludes );
+
+            if ( excluded != null )
             {
-                result.add( artifact );
+                included.removeAll( excluded );
             }
         }
-        return result;
+        return included;
     }
 
     public final boolean isOnlyWhenRelease()
