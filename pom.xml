@@ -201,6 +201,11 @@
             <topSiteURL>scm:svn:https://svn.apache.org/repos/asf/maven/website/components/${maven.site.path}</topSiteURL>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jxr-plugin</artifactId>
+          <version>3.1.1</version>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
