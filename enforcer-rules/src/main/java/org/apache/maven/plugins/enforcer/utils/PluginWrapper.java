@@ -75,9 +75,12 @@ public class PluginWrapper
     }
     
     /**
+     * Whether the version is coming from the default lifecycle bindings.
+     * Cannot be determined before Maven 3.6.1
      * 
      * @param o either Plugin or ReportPlugin
-     * @return   
+     * @return null if untraceable, otherwise its matching value
+     * @see <a href="https://issues.apache.org/jira/browse/MNG-6600">MNG-6600</a>
      */
     public static Optional<Boolean> isVersionFromDefaultLifecycleBindings( InputLocationTracker o )
     {
@@ -93,9 +96,12 @@ public class PluginWrapper
     }
 
     /**
+     * Whether the version is coming from the super POM.
+     * Cannot be determined before Maven 3.6.1
      * 
      * @param o either Plugin or ReportPlugin
-     * @return null if untraceable, otherwise its matching value  
+     * @return null if untraceable, otherwise its matching value
+     * @see <a href="https://issues.apache.org/jira/browse/MNG-6593">MNG-6593</a>
      */
     public static Optional<Boolean> isVersionFromSuperpom( InputLocationTracker o )
     {

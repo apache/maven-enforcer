@@ -41,7 +41,7 @@ public class TestRequireReleaseDeps
     /**
      * Test rule.
      *
-     * @throws IOException Signals that an I/O exception has occurred.
+     * @throws Exception if any occurs
      */
     @Test
     public void testRule()
@@ -105,9 +105,17 @@ public class TestRequireReleaseDeps
         
         EnforcerRuleUtilsHelper.execute( rule, helper, false );
     }
-    
-    
 
+    /**
+     * Test id.
+     */
+    @Test
+    public void testId()
+    {
+        RequireReleaseDeps rule = newRequireReleaseDeps();
+        rule.getCacheId();
+    }
+    
     private RequireReleaseDeps newRequireReleaseDeps()
     {
         RequireReleaseDeps rule = new RequireReleaseDeps()
@@ -124,15 +132,5 @@ public class TestRequireReleaseDeps
             }
         };        
         return rule;
-    }
-
-    /**
-     * Test id.
-     */
-    @Test
-    public void testId()
-    {
-        RequireReleaseDeps rule = newRequireReleaseDeps();
-        rule.getCacheId();
     }
 }

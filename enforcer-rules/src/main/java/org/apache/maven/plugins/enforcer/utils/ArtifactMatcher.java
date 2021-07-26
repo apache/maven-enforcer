@@ -162,7 +162,9 @@ public final class ArtifactMatcher
 
     /**
      * Construct class by providing patterns as strings. Empty strings are ignored.
-     * 
+     *
+     * @param patterns includes
+     * @param ignorePatterns excludes
      * @throws NullPointerException if any of the arguments is null
      */
     public ArtifactMatcher( final Collection<String> patterns, final Collection<String> ignorePatterns )
@@ -195,7 +197,10 @@ public final class ArtifactMatcher
     /**
      * Check if artifact matches patterns.
      * 
-     * @throws InvalidVersionSpecificationException
+     * @param artifact the artifact to match
+     * @return {@code true} if artifact matches any {@link #patterns} and none of the {@link #ignorePatterns}, otherwise
+     *         {@code false}
+     * @throws InvalidVersionSpecificationException if any pattern contains an invalid version range
      */
     public boolean match( Artifact artifact )
         throws InvalidVersionSpecificationException

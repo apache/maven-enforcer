@@ -123,13 +123,16 @@ public abstract class AbstractPropertyEnforcerRule
 
     /**
      * How the property that is being evaluated is called
+     * @return kind of property
      */
-    public abstract String getName();
+    protected abstract String getName();
 
     /**
-     * The name of the property currently being evaluated, this is used for default message pourpouses only
+     * The name of the property currently being evaluated, this is used for default message purposes only
+     * 
+     * @return the name of the property
      */
-    public abstract String getPropertyName();
+    protected abstract String getPropertyName();
 
     /**
      * Resolves the property value
@@ -137,7 +140,7 @@ public abstract class AbstractPropertyEnforcerRule
      * @param helper
      * @throws EnforcerRuleException
      */
-    public abstract Object resolveValue( EnforcerRuleHelper helper )
+    protected abstract Object resolveValue( EnforcerRuleHelper helper )
         throws EnforcerRuleException;
 
 }

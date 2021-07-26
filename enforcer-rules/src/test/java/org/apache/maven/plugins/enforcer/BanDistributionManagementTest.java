@@ -62,7 +62,7 @@ public class BanDistributionManagementTest
      * &lt;/distributionManagement&gt;
      * </pre>
      * 
-     * @throws Exception
+     * @throws Exception if any occurs
      */
     @Test( expected = EnforcerRuleException.class )
     public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepository()
@@ -85,6 +85,8 @@ public class BanDistributionManagementTest
      *   &lt;/snapshotRepository&gt;
      * &lt;/distributionManagement&gt;
      * </pre>
+     * 
+     * @throws Exception if any occurs
      */
     @Test( expected = EnforcerRuleException.class )
     public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepositorySnapshotRepository()
@@ -110,6 +112,8 @@ public class BanDistributionManagementTest
      *   &lt;/site&gt;
      * &lt;/distributionManagement&gt;
      * </pre>
+     * 
+     * @throws Exception if any occurs
      */
     @Test( expected = EnforcerRuleException.class )
     public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepositorySnapshotRepositorySite()
@@ -130,6 +134,8 @@ public class BanDistributionManagementTest
      *   &lt;/repository&gt;
      * &lt;/distributionManagement&gt;
      * </pre>
+     * 
+     * @throws Exception if any occurs
      */
     @Test
     public void shouldAllowDistributionManagementHavingRepository()
@@ -153,6 +159,8 @@ public class BanDistributionManagementTest
      *   &lt;/snapshotRepository&gt;
      * &lt;/distributionManagement&gt;
      * </pre>
+     * 
+     * @throws Exception if any occurs
      */
     @Test
     public void shouldAllowDistributionManagementHavingRepositorySnapshotRepository()
@@ -180,6 +188,8 @@ public class BanDistributionManagementTest
      *   &lt;/site&gt;
      * &lt;/distributionManagement&gt;
      * </pre>
+     * 
+     * @throws Exception if any occurs
      */
     @Test
     public void shouldAllowDistributionManagementHavingRepositorySnapshotRepositorySite()

@@ -73,11 +73,7 @@ public class RequireJavaVendor extends AbstractNonCacheableEnforcerRule
      * java.vendor, which you can also see with mvn --version. <br>
      * Excludes override the include rules.
      *
-     * Some examples are:
-     * <ul>
-     * <li><code>AdoptOpenJDK</code> prohibits vendor name AdoptOpenJDK </li>
-     * <li><code>Amazon</code> prohibits vendor name Amazon </li>
-     * </ul>
+     * @param theExcludes the vendor to to exclude from the include list.
      */
     public void setExcludes( List<String> theExcludes )
     {
@@ -90,7 +86,15 @@ public class RequireJavaVendor extends AbstractNonCacheableEnforcerRule
      * The rule will fail if vendor name matches any exclude, unless it also matches an
      * include rule.
      *
-     * @see #setIncludes(List)
+     * Some examples are:
+     * <ul>
+     * <li><code>AdoptOpenJDK</code> prohibits vendor name AdoptOpenJDK </li>
+     * <li><code>Amazon</code> prohibits vendor name Amazon </li>
+     * </ul>
+     * 
+     * @param theIncludes the list of required vendors.
+     * 
+     * @see #setExcludes(List)
      */
     public void setIncludes( List<String> theIncludes )
     {

@@ -132,11 +132,6 @@ public class EnforceMojo
         return rules != null && rules.length > 0;
     }
 
-    /**
-     * Entry point to the mojo
-     * 
-     * @throws MojoExecutionException
-     */
     @Override
     public void execute()
         throws MojoExecutionException

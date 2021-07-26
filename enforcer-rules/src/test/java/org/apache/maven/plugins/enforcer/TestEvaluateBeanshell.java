@@ -53,9 +53,10 @@ public class TestEvaluateBeanshell
 
     /**
      * Test rule.
+     * 
      */
     public void testRulePass()
-        throws EnforcerRuleException, ExpressionEvaluationException
+        throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should not be set
@@ -67,7 +68,7 @@ public class TestEvaluateBeanshell
     }
 
     public void testRuleFail()
-        throws EnforcerRuleException, ExpressionEvaluationException
+        throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should be set by the surefire
@@ -88,7 +89,7 @@ public class TestEvaluateBeanshell
     }
 
     public void testRuleFailNoMessage()
-        throws EnforcerRuleException, ExpressionEvaluationException
+        throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should be set by the surefire
@@ -108,7 +109,7 @@ public class TestEvaluateBeanshell
     }
 
     public void testRuleInvalidExpression()
-        throws EnforcerRuleException, ExpressionEvaluationException
+        throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         rule.setCondition( "${env} == null" );
@@ -129,7 +130,7 @@ public class TestEvaluateBeanshell
     }
 
     public void testRuleInvalidBeanshell()
-        throws EnforcerRuleException, ExpressionEvaluationException
+        throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         rule.setCondition( "this is not valid beanshell" );
@@ -147,7 +148,7 @@ public class TestEvaluateBeanshell
     }
 
 
-    public void testRuleCanExecuteMultipleThreads() throws InterruptedException {
+    public void testRuleCanExecuteMultipleThreads() throws Exception {
         final String condition = "String property1 = \"${property1}\";\n" +
                 "(property1.equals(\"prop0\") && \"${property2}\".equals(\"prop0\"))\n" +
                 "|| (property1.equals(\"prop1\") && \"${property2}\".equals(\"prop1\"))\n" +
