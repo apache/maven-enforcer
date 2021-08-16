@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
@@ -82,7 +83,9 @@ public class DependencyConvergence
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
             buildingRequest.setProject( project );
             buildingRequest.setLocalRepository( repository );
-            ArtifactFilter filter = null; // we need to evaluate all scopes
+            ArtifactFilter filter = ( Artifact a ) -> ( "compile".equalsIgnoreCase( a.getScope () )
+                    || "runtime".equalsIgnoreCase( a.getScope () ) )
+                    && !a.isOptional();
 
             return dependencyCollectorBuilder.collectDependencyGraph( buildingRequest, filter );
         }
