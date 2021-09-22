@@ -34,7 +34,7 @@
       <plugin>
         <groupId>org.eclipse.sisu</groupId>
         <artifactId>sisu-maven-plugin</artifactId>
-        <version>0.3.4</version>
+        <version>0.3.5</version>
         <executions>
           <execution>
             <id>index-project</id>
