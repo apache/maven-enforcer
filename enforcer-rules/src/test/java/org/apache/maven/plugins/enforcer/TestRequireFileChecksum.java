@@ -23,11 +23,13 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.codehaus.plexus.util.FileUtils;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test the "RequireFileChecksum" rule
@@ -39,17 +41,14 @@ public class TestRequireFileChecksum
 
     private RequireFileChecksum rule = new RequireFileChecksum();
 
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+    @TempDir
+    public File temporaryFolder;
 
     @Test
     public void testFileChecksumMd5()
         throws IOException, EnforcerRuleException
     {
-        File f = temporaryFolder.newFile();
+        File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile( f );
@@ -63,7 +62,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumMd5UpperCase()
         throws IOException, EnforcerRuleException
     {
-        File f = temporaryFolder.newFile();
+        File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile( f );
@@ -78,15 +77,15 @@ public class TestRequireFileChecksum
         throws IOException, EnforcerRuleException
     {
         File f = new File( "nonExistent" );
+        Throwable exception = assertThrows(EnforcerRuleException.class, () -> {
 
-        expectedException.expect( EnforcerRuleException.class );
-        expectedException.expectMessage( "File does not exist: " + f.getAbsolutePath() );
+            rule.setFile(f);
+            rule.setChecksum("78e731027d8fd50ed642340b7c9a63b3");
+            rule.setType("md5");
 
-        rule.setFile( f );
-        rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
-        rule.setType( "md5" );
-
-        rule.execute( EnforcerTestUtils.getHelper() );
+            rule.execute(EnforcerTestUtils.getHelper());
+        });
+        assertTrue(exception.getMessage().contains("File does not exist: " + f.getAbsolutePath()));
     }
 
     @Test
@@ -95,24 +94,24 @@ public class TestRequireFileChecksum
     {
         File f = new File( "nonExistent" );
         String configuredMessage = "testMessageFileDoesNotExist";
+        Throwable exception = assertThrows(EnforcerRuleException.class, () -> {
 
-        expectedException.expect( EnforcerRuleException.class );
-        expectedException.expectMessage( configuredMessage );
+            rule.setFile(f);
+            rule.setChecksum("78e731027d8fd50ed642340b7c9a63b3");
+            rule.setType("md5");
+            rule.setNonexistentFileMessage(configuredMessage);
 
-        rule.setFile( f );
-        rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
-        rule.setType( "md5" );
-        rule.setNonexistentFileMessage( configuredMessage );
-
-        rule.execute( EnforcerTestUtils.getHelper() );
+            rule.execute(EnforcerTestUtils.getHelper());
+        });
+        assertTrue(exception.getMessage().contains(configuredMessage));
     }
 
     @Test
     public void testFileChecksumMd5GivenFileIsNotReadableFailure()
         throws IOException, EnforcerRuleException
     {
-        File f = temporaryFolder.newFile();
-        f = new File( f.getAbsolutePath() )
+        File t = File.createTempFile("junit", null, temporaryFolder);
+        File f = new File( t.getAbsolutePath() )
         {
             private static final long serialVersionUID = 6987790643999338089L;
 
@@ -122,118 +121,121 @@ public class TestRequireFileChecksum
                 return false;
             }
         };
+        Throwable exception = assertThrows(EnforcerRuleException.class, () -> {
 
-        expectedException.expect( EnforcerRuleException.class );
-        expectedException.expectMessage( "Cannot read file: " + f.getAbsolutePath() );
+            rule.setFile(f);
+            rule.setChecksum("78e731027d8fd50ed642340b7c9a63b3");
+            rule.setType("md5");
 
-        rule.setFile( f );
-        rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
-        rule.setType( "md5" );
-
-        rule.execute( EnforcerTestUtils.getHelper() );
+            rule.execute(EnforcerTestUtils.getHelper());
+        });
+        assertTrue(exception.getMessage().contains("Cannot read file: " + f.getAbsolutePath()));
     }
 
     @Test
     public void testFileChecksumMd5GivenFileIsADirectoryFailure()
         throws IOException, EnforcerRuleException
     {
-        File f = temporaryFolder.newFolder();
+        File f = temporaryFolder;
+        Throwable exception = assertThrows(EnforcerRuleException.class, () -> {
 
-        expectedException.expect( EnforcerRuleException.class );
-        expectedException.expectMessage( "Cannot calculate the checksum of directory: " + f.getAbsolutePath() );
+            rule.setFile(f);
+            rule.setChecksum("78e731027d8fd50ed642340b7c9a63b3");
+            rule.setType("md5");
 
-        rule.setFile( f );
-        rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
-        rule.setType( "md5" );
-
-        rule.execute( EnforcerTestUtils.getHelper() );
+            rule.execute(EnforcerTestUtils.getHelper());
+        });
+        assertTrue(exception.getMessage().contains("Cannot calculate the checksum of directory: " + f.getAbsolutePath()));
     }
 
     @Test
     public void testFileChecksumMd5NoFileSpecifiedFailure()
         throws IOException, EnforcerRuleException
     {
-        expectedException.expect( EnforcerRuleException.class );
-        expectedException.expectMessage( "Input file unspecified" );
+        Throwable exception = assertThrows(EnforcerRuleException.class, () -> {
 
-        rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
-        rule.setType( "md5" );
+            rule.setChecksum("78e731027d8fd50ed642340b7c9a63b3");
+            rule.setType("md5");
 
-        rule.execute( EnforcerTestUtils.getHelper() );
+            rule.execute(EnforcerTestUtils.getHelper());
+        });
+        assertTrue(exception.getMessage().contains("Input file unspecified"));
     }
 
     @Test
     public void testFileChecksumMd5NoChecksumSpecifiedFailure()
         throws IOException, EnforcerRuleException
     {
-        expectedException.expect( EnforcerRuleException.class );
-        expectedException.expectMessage( "Checksum unspecified" );
+        Throwable exception = assertThrows(EnforcerRuleException.class, () -> {
 
-        File f = temporaryFolder.newFile();
+            File f = File.createTempFile("junit", null, temporaryFolder);
 
-        rule.setFile( f );
-        rule.setType( "md5" );
+            rule.setFile(f);
+            rule.setType("md5");
 
-        rule.execute( EnforcerTestUtils.getHelper() );
+            rule.execute(EnforcerTestUtils.getHelper());
+        });
+        assertTrue(exception.getMessage().contains("Checksum unspecified"));
     }
 
     @Test
     public void testFileChecksumMd5NoTypeSpecifiedFailure()
         throws IOException, EnforcerRuleException
     {
-        expectedException.expect( EnforcerRuleException.class );
-        expectedException.expectMessage( "Hash type unspecified" );
+        Throwable exception = assertThrows(EnforcerRuleException.class, () -> {
 
-        File f = temporaryFolder.newFile();
+            File f = File.createTempFile("junit", null, temporaryFolder);
 
-        rule.setFile( f );
-        rule.setChecksum( "78e731027d8fd50ed642340b7c9a63b3" );
+            rule.setFile(f);
+            rule.setChecksum("78e731027d8fd50ed642340b7c9a63b3");
 
-        rule.execute( EnforcerTestUtils.getHelper() );
+            rule.execute(EnforcerTestUtils.getHelper());
+        });
+        assertTrue(exception.getMessage().contains("Hash type unspecified"));
     }
 
     @Test
     public void testFileChecksumMd5ChecksumMismatchFailure()
         throws IOException, EnforcerRuleException
     {
-        File f = temporaryFolder.newFile();
-        FileUtils.fileWrite( f, "message" );
+        File f = File.createTempFile("junit", null, temporaryFolder);
+        Throwable exception = assertThrows(EnforcerRuleException.class, () -> {
+            FileUtils.fileWrite(f, "message");
 
-        expectedException.expect( EnforcerRuleException.class );
-        expectedException.expectMessage( "md5 hash of " + f.getAbsolutePath()
-            + " was 78e731027d8fd50ed642340b7c9a63b3 but expected ffeeddccbbaa99887766554433221100" );
+            rule.setFile(f);
+            rule.setChecksum("ffeeddccbbaa99887766554433221100");
+            rule.setType("md5");
 
-        rule.setFile( f );
-        rule.setChecksum( "ffeeddccbbaa99887766554433221100" );
-        rule.setType( "md5" );
-
-        rule.execute( EnforcerTestUtils.getHelper() );
+            rule.execute(EnforcerTestUtils.getHelper());
+        });
+        assertTrue(exception.getMessage().contains("md5 hash of " + f.getAbsolutePath()
+                + " was 78e731027d8fd50ed642340b7c9a63b3 but expected ffeeddccbbaa99887766554433221100"));
     }
 
     @Test
     public void testFileChecksumMd5ChecksumMismatchFailureWithMessage()
         throws IOException, EnforcerRuleException
     {
-        File f = temporaryFolder.newFile();
-        FileUtils.fileWrite( f, "message" );
         String configuredMessage = "testMessage";
+        Throwable exception = assertThrows(EnforcerRuleException.class, () -> {
+            File f = File.createTempFile("junit", null, temporaryFolder);
+            FileUtils.fileWrite(f, "message");
 
-        expectedException.expect( EnforcerRuleException.class );
-        expectedException.expectMessage( configuredMessage );
+            rule.setFile(f);
+            rule.setChecksum("ffeeddccbbaa99887766554433221100");
+            rule.setType("md5");
+            rule.setMessage(configuredMessage);
 
-        rule.setFile( f );
-        rule.setChecksum( "ffeeddccbbaa99887766554433221100" );
-        rule.setType( "md5" );
-        rule.setMessage( configuredMessage );
-
-        rule.execute( EnforcerTestUtils.getHelper() );
+            rule.execute(EnforcerTestUtils.getHelper());
+        });
+        assertTrue(exception.getMessage().contains(configuredMessage));
     }
 
     @Test
     public void testFileChecksumSha1()
         throws IOException, EnforcerRuleException
     {
-        File f = temporaryFolder.newFile();
+        File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile( f );
@@ -247,7 +249,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumSha256()
         throws IOException, EnforcerRuleException
     {
-        File f = temporaryFolder.newFile();
+        File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile( f );
@@ -261,7 +263,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumSha384()
         throws IOException, EnforcerRuleException
     {
-        File f = temporaryFolder.newFile();
+        File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile( f );
@@ -275,7 +277,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumSha512()
         throws IOException, EnforcerRuleException
     {
-        File f = temporaryFolder.newFile();
+        File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile( f );
@@ -283,5 +285,14 @@ public class TestRequireFileChecksum
         rule.setType( "sha512" );
 
         rule.execute( EnforcerTestUtils.getHelper() );
+    }
+
+    private static File newFolder(File root, String... subDirs) throws IOException {
+        String subFolder = String.join("/", subDirs);
+        File result = new File(root, subFolder);
+        if (!result.mkdirs()) {
+            throw new IOException("Couldn't create folders " + root);
+        }
+        return result;
     }
 }

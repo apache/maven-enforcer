@@ -22,17 +22,19 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  * under the License.
  */
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * 
+ *
  */
 public class TestDefaultEnforcementRuleHelper
-    extends TestCase
 {
+    @Test
     public void testHelper()
-        throws ComponentLookupException, ExpressionEvaluationException
+            throws ComponentLookupException, ExpressionEvaluationException
     {
         DefaultEnforcementRuleHelper helper = (DefaultEnforcementRuleHelper) EnforcerTestUtils.getHelper();
 

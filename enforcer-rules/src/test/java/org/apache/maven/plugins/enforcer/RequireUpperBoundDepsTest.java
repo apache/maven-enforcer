@@ -1,6 +1,6 @@
 package org.apache.maven.plugins.enforcer;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,7 +21,7 @@ import org.junit.Assert;
  * under the License.
  */
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -47,7 +47,7 @@ public class RequireUpperBoundDepsTest
 
         try {
           rule.execute( helper );
-          Assert.fail("Did not detect upper bounds error");
+          Assertions.fail("Did not detect upper bounds error");
         }
         catch ( EnforcerRuleException ex ) {
             assertThat( ex.getMessage(), containsString( "groupId:artifactId:version:classifier" ) );

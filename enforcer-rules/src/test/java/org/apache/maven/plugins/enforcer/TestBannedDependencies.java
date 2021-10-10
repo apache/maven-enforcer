@@ -22,17 +22,16 @@ package org.apache.maven.plugins.enforcer;
 import java.io.IOException;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * The Class TestBannedDependencies.
- * 
+ *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-@RunWith( Enclosed.class )
 public class TestBannedDependencies
 {
 
@@ -40,7 +39,7 @@ public class TestBannedDependencies
     {
         private BannedDependenciesTestSetup setup;
 
-        @Before
+        @BeforeEach
         public void beforeMethod()
             throws IOException
         {
@@ -82,7 +81,7 @@ public class TestBannedDependencies
 
         private BannedDependenciesTestSetup setup;
 
-        @Before
+        @BeforeEach
         public void beforeMethod()
             throws IOException
         {
@@ -96,46 +95,58 @@ public class TestBannedDependencies
             this.setup.addExcludeAndRunRule( toAdd );
         }
 
-        @Test( expected = EnforcerRuleException.class )
+        @Test
         public void testGroupIdArtifactIdVersion()
             throws Exception
         {
-            addExcludeAndRunRule( "testGroupId:release:1.0" );
+            assertThrows(EnforcerRuleException.class, () -> {
+                addExcludeAndRunRule("testGroupId:release:1.0");
+            });
         }
 
-        @Test( expected = EnforcerRuleException.class )
+        @Test
         public void testGroupIdArtifactId()
             throws Exception
         {
-            addExcludeAndRunRule( "testGroupId:release" );
+            assertThrows(EnforcerRuleException.class, () -> {
+                addExcludeAndRunRule("testGroupId:release");
+            });
         }
 
-        @Test( expected = EnforcerRuleException.class )
+        @Test
         public void testGroupId()
             throws Exception
         {
-            addExcludeAndRunRule( "testGroupId" );
+            assertThrows(EnforcerRuleException.class, () -> {
+                addExcludeAndRunRule("testGroupId");
+            });
         }
 
-        @Test( expected = EnforcerRuleException.class )
+        @Test
         public void testSpaceTrimmingGroupIdArtifactIdVersion()
             throws Exception
         {
-            addExcludeAndRunRule( "  testGroupId  :  release   :   1.0    " );
+            assertThrows(EnforcerRuleException.class, () -> {
+                addExcludeAndRunRule("  testGroupId  :  release   :   1.0    ");
+            });
         }
 
-        @Test( expected = EnforcerRuleException.class )
+        @Test
         public void groupIdArtifactIdVersionType()
             throws Exception
         {
-            addExcludeAndRunRule( "g:a:1.0:war" );
+            assertThrows(EnforcerRuleException.class, () -> {
+                addExcludeAndRunRule("g:a:1.0:war");
+            });
         }
 
-        @Test( expected = EnforcerRuleException.class )
+        @Test
         public void groupIdArtifactIdVersionTypeScope()
             throws Exception
         {
-            addExcludeAndRunRule( "g:a:1.0:war:compile" );
+            assertThrows(EnforcerRuleException.class, () -> {
+                addExcludeAndRunRule("g:a:1.0:war:compile");
+            });
         }
 
         // @Test(expected = EnforcerRuleException.class)
@@ -150,7 +161,7 @@ public class TestBannedDependencies
 
         private BannedDependenciesTestSetup setup;
 
-        @Before
+        @BeforeEach
         public void beforeMethod()
             throws IOException
         {
@@ -171,25 +182,31 @@ public class TestBannedDependencies
             addExcludeAndRunRule( "*:release:1.2" );
         }
 
-        @Test( expected = EnforcerRuleException.class )
+        @Test
         public void testWildCardForGroupIdArtifactId()
             throws Exception
         {
-            addExcludeAndRunRule( "*:release" );
+            assertThrows(EnforcerRuleException.class, () -> {
+                addExcludeAndRunRule("*:release");
+            });
         }
 
-        @Test( expected = EnforcerRuleException.class )
+        @Test
         public void testWildcardForGroupIdWildcardForArtifactIdVersion()
             throws Exception
         {
-            addExcludeAndRunRule( "*:*:1.0" );
+            assertThrows(EnforcerRuleException.class, () -> {
+                addExcludeAndRunRule("*:*:1.0");
+            });
         }
 
-        @Test( expected = EnforcerRuleException.class )
+        @Test
         public void testWildcardForGroupIdArtifactIdWildcardForVersion()
             throws Exception
         {
-            addExcludeAndRunRule( "*:release:*" );
+            assertThrows(EnforcerRuleException.class, () -> {
+                addExcludeAndRunRule("*:release:*");
+            });
         }
 
     }
@@ -199,7 +216,7 @@ public class TestBannedDependencies
 
         private BannedDependenciesTestSetup setup;
 
-        @Before
+        @BeforeEach
         public void beforeMethod()
             throws IOException
         {
@@ -213,25 +230,31 @@ public class TestBannedDependencies
             this.setup.addExcludeAndRunRule( toAdd );
         }
 
-        @Test( expected = EnforcerRuleException.class )
+        @Test
         public void groupIdArtifactIdWithWildcard()
             throws EnforcerRuleException
         {
-            addExcludeAndRunRule( "testGroupId:re*" );
+            assertThrows(EnforcerRuleException.class, () -> {
+                addExcludeAndRunRule("testGroupId:re*");
+            });
         }
 
-        @Test( expected = EnforcerRuleException.class )
+        @Test
         public void groupIdArtifactIdVersionTypeWildcardScope()
             throws EnforcerRuleException
         {
-            addExcludeAndRunRule( "g:a:1.0:war:co*" );
+            assertThrows(EnforcerRuleException.class, () -> {
+                addExcludeAndRunRule("g:a:1.0:war:co*");
+            });
         }
 
-        @Test( expected = EnforcerRuleException.class )
+        @Test
         public void groupIdArtifactIdVersionWildcardTypeScope()
             throws EnforcerRuleException
         {
-            addExcludeAndRunRule( "g:a:1.0:w*:compile" );
+            assertThrows(EnforcerRuleException.class, () -> {
+                addExcludeAndRunRule("g:a:1.0:w*:compile");
+            });
         }
     }
 
@@ -239,7 +262,7 @@ public class TestBannedDependencies
     {
         private BannedDependenciesTestSetup setup;
 
-        @Before
+        @BeforeEach
         public void beforeMethod()
             throws IOException
         {
@@ -253,18 +276,22 @@ public class TestBannedDependencies
             this.setup.addExcludeAndRunRule( toAdd );
         }
 
-        @Test( expected = IllegalArgumentException.class )
+        @Test
         public void onlyThreeColonsWithoutAnythingElse()
             throws EnforcerRuleException
         {
-            addExcludeAndRunRule( ":::" );
+            assertThrows(IllegalArgumentException.class, () -> {
+                addExcludeAndRunRule(":::");
+            });
         }
 
-        @Test( expected = IllegalArgumentException.class )
+        @Test
         public void onlySevenColonsWithoutAnythingElse()
             throws EnforcerRuleException
         {
-            addExcludeAndRunRule( ":::::::" );
+            assertThrows(IllegalArgumentException.class, () -> {
+                addExcludeAndRunRule(":::::::");
+            });
         }
 
     }
@@ -273,7 +300,7 @@ public class TestBannedDependencies
     {
         private BannedDependenciesTestSetup setup;
 
-        @Before
+        @BeforeEach
         public void beforeMethod()
             throws IOException
         {
@@ -301,11 +328,13 @@ public class TestBannedDependencies
             addIncludeExcludeAndRunRule( "*", "*:runtime" );
         }
 
-        @Test( expected = EnforcerRuleException.class )
+        @Test
         public void includeEverythingAndExcludeEveryGroupIdAndScopeRuntimeYYYY()
             throws EnforcerRuleException
         {
-            addIncludeExcludeAndRunRule( "*:test", "*:runtime" );
+            assertThrows(EnforcerRuleException.class, () -> {
+                addIncludeExcludeAndRunRule("*:test", "*:runtime");
+            });
         }
     }
 

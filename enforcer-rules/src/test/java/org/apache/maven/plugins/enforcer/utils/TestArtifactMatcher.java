@@ -19,7 +19,6 @@ package org.apache.maven.plugins.enforcer.utils;
  * under the License.
  */
 
-import junit.framework.TestCase;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
@@ -27,18 +26,24 @@ import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher.Pattern;
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class TestArtifactMatcher extends TestCase
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
+public class TestArtifactMatcher
 {
 	private ArtifactMatcher matcher;
 	
 	Collection<String> patterns = new ArrayList<String>();
 	
 	Collection<String> ignorePatterns = new ArrayList<String>();
-	
-	public void testPatternInvalidInput() throws InvalidVersionSpecificationException
+
+    @Test
+    public void testPatternInvalidInput() throws InvalidVersionSpecificationException
 	{
 		try
 		{
@@ -70,7 +75,8 @@ public class TestArtifactMatcher extends TestCase
 		catch(NullPointerException e){}
 	}
 
-	public void testPattern() throws InvalidVersionSpecificationException
+    @Test
+    public void testPattern() throws InvalidVersionSpecificationException
 	{
 		executePatternMatch("groupId:artifactId:1.0:jar:compile", "groupId", "artifactId", "1.0", "compile", "jar", true);
 		
@@ -100,8 +106,9 @@ public class TestArtifactMatcher extends TestCase
         
         executePatternMatch("org.apache.*:maven-*:*", "org.apache.maven", "maven-core", "3.0", "", "", true);
 	}
-	
-	public void testMatch() throws InvalidVersionSpecificationException
+
+    @Test
+    public void testMatch() throws InvalidVersionSpecificationException
 	{
 		patterns.add("groupId:artifactId:1.0");
 		patterns.add("*:anotherArtifact");

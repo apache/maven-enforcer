@@ -20,7 +20,7 @@ package org.apache.maven.plugins.enforcer;
  */
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test AlwaysPass rule.

@@ -19,17 +19,13 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test the "require files exist" rule.
@@ -38,8 +34,8 @@ import org.junit.rules.TemporaryFolder;
  */
 public class TestRequireFilesExist
 {
-    @Rule
-    public TemporaryFolder temporaryFolder = new TemporaryFolder();
+    @TempDir
+    public File temporaryFolder;
     
     private RequireFilesExist rule = new RequireFilesExist();
 
@@ -47,7 +43,7 @@ public class TestRequireFilesExist
     public void testFileExists()
         throws Exception
     {
-        File f = temporaryFolder.newFile();
+        File f = File.createTempFile("junit", null, temporaryFolder);
 
         rule.setFiles( new File[] { f.getCanonicalFile() } );
 
@@ -116,7 +112,7 @@ public class TestRequireFilesExist
     public void testFileDoesNotExist()
         throws Exception
     {
-        File f = temporaryFolder.newFile();
+        File f = File.createTempFile("junit", null, temporaryFolder);
         f.delete();
 
         assertFalse( f.exists() );

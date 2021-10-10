@@ -1,6 +1,6 @@
 package org.apache.maven.plugins.enforcer.utils;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

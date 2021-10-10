@@ -19,11 +19,12 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import junit.framework.TestCase;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +34,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * The Class TestEvaluateBeanshell.
@@ -41,10 +44,10 @@ import static org.mockito.Mockito.*;
  * @author hugonnem
  */
 public class TestEvaluateBeanshell
-    extends TestCase
 {
     private MockProject project;
 
+    @BeforeEach
     public void setUp()
     {
         project = new MockProject();
@@ -53,10 +56,11 @@ public class TestEvaluateBeanshell
 
     /**
      * Test rule.
-     * 
+     *
      */
+    @Test
     public void testRulePass()
-        throws Exception
+            throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should not be set
@@ -67,8 +71,9 @@ public class TestEvaluateBeanshell
         rule.execute( helper );
     }
 
+    @Test
     public void testRuleFail()
-        throws Exception
+            throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should be set by the surefire
@@ -88,8 +93,9 @@ public class TestEvaluateBeanshell
         }
     }
 
+    @Test
     public void testRuleFailNoMessage()
-        throws Exception
+            throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should be set by the surefire
@@ -108,8 +114,9 @@ public class TestEvaluateBeanshell
         }
     }
 
+    @Test
     public void testRuleInvalidExpression()
-        throws Exception
+            throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         rule.setCondition( "${env} == null" );
@@ -129,8 +136,9 @@ public class TestEvaluateBeanshell
         }
     }
 
+    @Test
     public void testRuleInvalidBeanshell()
-        throws Exception
+            throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         rule.setCondition( "this is not valid beanshell" );
@@ -148,6 +156,7 @@ public class TestEvaluateBeanshell
     }
 
 
+    @Test
     public void testRuleCanExecuteMultipleThreads() throws Exception {
         final String condition = "String property1 = \"${property1}\";\n" +
                 "(property1.equals(\"prop0\") && \"${property2}\".equals(\"prop0\"))\n" +
@@ -244,13 +253,13 @@ public class TestEvaluateBeanshell
                 });
             }
             // wait until all threads are ready
-            assertTrue("Timeout initializing threads! Perform long lasting initializations before passing runnables to assertConcurrent", allExecutorThreadsReady.await(runnables.size() * 10, TimeUnit.MILLISECONDS));
+            assertTrue(allExecutorThreadsReady.await(runnables.size() * 10, TimeUnit.MILLISECONDS), "Timeout initializing threads! Perform long lasting initializations before passing runnables to assertConcurrent");
             // start all test runners
             afterInitBlocker.countDown();
-            assertTrue("Timeout! More than" + maxTimeoutSeconds + "seconds", allDone.await(maxTimeoutSeconds, TimeUnit.SECONDS));
+            assertTrue(allDone.await(maxTimeoutSeconds, TimeUnit.SECONDS), "Timeout! More than" + maxTimeoutSeconds + "seconds");
         } finally {
             threadPool.shutdownNow();
         }
-        assertTrue("Failed with exception(s)" + exceptions, exceptions.isEmpty());
+        assertTrue(exceptions.isEmpty(), "Failed with exception(s)" + exceptions);
     }
 }

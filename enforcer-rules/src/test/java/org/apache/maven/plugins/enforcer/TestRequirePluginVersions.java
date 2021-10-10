@@ -19,11 +19,7 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 import java.util.ArrayList;
@@ -36,7 +32,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.enforcer.utils.PluginWrapper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * The Class TestRequirePluginVersions.

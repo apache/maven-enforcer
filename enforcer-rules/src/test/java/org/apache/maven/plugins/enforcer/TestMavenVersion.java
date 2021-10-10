@@ -24,11 +24,11 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
 import org.apache.maven.execution.MavenSession;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * The Class TestMavenVersion.

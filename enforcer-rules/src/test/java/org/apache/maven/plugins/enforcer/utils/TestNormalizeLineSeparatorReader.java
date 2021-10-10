@@ -19,24 +19,25 @@ package org.apache.maven.plugins.enforcer.utils;
  * under the License.
  */
 
-import junit.framework.TestCase;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
 import org.apache.commons.io.IOUtils;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.apache.maven.plugins.enforcer.utils.NormalizeLineSeparatorReader.LineSeparator;
+import org.junit.jupiter.api.Test;
 
 public class TestNormalizeLineSeparatorReader
-    extends TestCase
 {
     private final static String UNIX_MULTILINE_STRING = "line1\nline2\n\n";
 
     private final static String WINDOWS_MULTILINE_STRING = "line1\r\nline2\r\n\r\n";
 
+    @Test
     public void testUnixToWindows()
-        throws IOException
+            throws IOException
     {
         try ( Reader reader =
             new NormalizeLineSeparatorReader( new StringReader( UNIX_MULTILINE_STRING ), LineSeparator.WINDOWS ) )
@@ -45,8 +46,9 @@ public class TestNormalizeLineSeparatorReader
         }
     }
 
+    @Test
     public void testUnixToUnix()
-        throws IOException
+            throws IOException
     {
         try ( Reader reader =
             new NormalizeLineSeparatorReader( new StringReader( UNIX_MULTILINE_STRING ), LineSeparator.UNIX ) )
@@ -55,8 +57,9 @@ public class TestNormalizeLineSeparatorReader
         }
     }
 
+    @Test
     public void testWindowsToUnix()
-        throws IOException
+            throws IOException
     {
         try ( Reader reader =
             new NormalizeLineSeparatorReader( new StringReader( WINDOWS_MULTILINE_STRING ), LineSeparator.UNIX ) )
@@ -65,8 +68,9 @@ public class TestNormalizeLineSeparatorReader
         }
     }
 
+    @Test
     public void testWindowsToWindows()
-        throws IOException
+            throws IOException
     {
         try ( Reader reader =
             new NormalizeLineSeparatorReader( new StringReader( WINDOWS_MULTILINE_STRING ), LineSeparator.WINDOWS ) )

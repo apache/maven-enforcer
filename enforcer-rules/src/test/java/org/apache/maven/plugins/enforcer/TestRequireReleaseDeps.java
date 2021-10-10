@@ -28,7 +28,7 @@ import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtilsHelper;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * The Class TestNoSnapshots.

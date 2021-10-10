@@ -20,12 +20,13 @@ package org.apache.maven.plugins.enforcer;
  */
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * The Class TestRequireJavaVersion.
@@ -87,23 +88,26 @@ public class TestRequireJavaVersion
         // intentionally no assertThat(...) because we don't expect and exception.
     }
 
-    @Test( expected = EnforcerRuleException.class )
+    @Test
     public void excludingTheCurrentJavaVersionViaRangeThisShouldFailWithException()
         throws EnforcerRuleException
     {
-        String thisVersion = RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION );
+        assertThrows(EnforcerRuleException.class, () -> {
+            String thisVersion = RequireJavaVersion.normalizeJDKVersion(SystemUtils.JAVA_VERSION);
 
-        RequireJavaVersion rule = new RequireJavaVersion();
-        // exclude this version
-        rule.setVersion( "(" + thisVersion );
+            RequireJavaVersion rule = new RequireJavaVersion();
+            // exclude this version
+            rule.setVersion("(" + thisVersion);
 
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
-        rule.execute( helper );
+            EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
+            rule.execute(helper);
+            // intentionally no assertThat(...) because we expect and exception.
+        });
         // intentionally no assertThat(...) because we expect and exception.
     }
 
     @Test
-    @Ignore
+    @Disabled
     // TODO: Think about the intention of this test? What should it prove?
     public void thisShouldNotCrash()
         throws EnforcerRuleException
