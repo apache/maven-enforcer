@@ -81,7 +81,8 @@ public class TestMavenVersion
      * @throws EnforcerRuleException the enforcer rule exception
      */
     @Test
-    public void checkRequireVersionMatrix() throws EnforcerRuleException, ExpressionEvaluationException
+    public void checkRequireVersionMatrix()
+        throws EnforcerRuleException, ExpressionEvaluationException
     {
         RequireMavenVersion rule = new RequireMavenVersion();
 

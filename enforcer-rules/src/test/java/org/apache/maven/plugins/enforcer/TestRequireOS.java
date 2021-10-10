@@ -50,7 +50,7 @@ public class TestRequireOS
         Log log = new SystemStreamLog();
 
         RequireOS rule = new RequireOS( new OperatingSystemProfileActivator() );
-        
+
         rule.displayOSInfo( log, true );
 
         Iterator<String> iter = Os.getValidFamilies().iterator();
@@ -111,15 +111,16 @@ public class TestRequireOS
         rule.setVersion( "!somecrazyversion" );
         assertTrue( rule.isAllowed() );
     }
-    
+
     @Test
-    public void testInvalidFamily() throws Exception
+    public void testInvalidFamily()
+        throws Exception
     {
         RequireOS rule = new RequireOS();
-        
+
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
         helper.getContainer().addComponent( new OperatingSystemProfileActivator(), "os" );
-        
+
         rule.setFamily( "junk" );
         try
         {
@@ -129,7 +130,7 @@ public class TestRequireOS
         catch ( EnforcerRuleException e )
         {
             assertThat( e.getMessage(), startsWith( "Invalid Family type used. Valid family types are: " ) );
-        } 
+        }
     }
 
     @Test

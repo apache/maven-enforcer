@@ -48,7 +48,7 @@ public class TestRequireFilesSize
     public void testFileExists()
         throws EnforcerRuleException, IOException
     {
-        File f = File.createTempFile("junit", null, temporaryFolder);
+        File f = File.createTempFile( "junit", null, temporaryFolder );
 
         rule.setFiles( new File[] { f } );
 
@@ -89,7 +89,7 @@ public class TestRequireFilesSize
         assertEquals( 0, rule.getFiles().length );
 
         MockProject project = new MockProject();
-        File f = File.createTempFile("junit", null, temporaryFolder);
+        File f = File.createTempFile( "junit", null, temporaryFolder );
 
         ArtifactStubFactory factory = new ArtifactStubFactory();
         Artifact a = factory.getReleaseArtifact();
@@ -108,7 +108,7 @@ public class TestRequireFilesSize
     public void testFileDoesNotExist()
         throws EnforcerRuleException, IOException
     {
-        File f = File.createTempFile("junit", null, temporaryFolder);
+        File f = File.createTempFile( "junit", null, temporaryFolder );
         f.delete();
         assertFalse( f.exists() );
         rule.setFiles( new File[] { f } );
@@ -128,7 +128,7 @@ public class TestRequireFilesSize
     public void testFileTooSmall()
         throws EnforcerRuleException, IOException
     {
-        File f = File.createTempFile("junit", null, temporaryFolder);
+        File f = File.createTempFile( "junit", null, temporaryFolder );
         rule.setFiles( new File[] { f } );
         rule.setMinsize( 10 );
         try
@@ -146,9 +146,9 @@ public class TestRequireFilesSize
     public void testFileTooBig()
         throws IOException
     {
-        File f = File.createTempFile("junit", null, temporaryFolder);
+        File f = File.createTempFile( "junit", null, temporaryFolder );
         try ( BufferedWriter out = new BufferedWriter( new FileWriter( f ) ) )
-        {            
+        {
             out.write( "123456789101112131415" );
         }
 

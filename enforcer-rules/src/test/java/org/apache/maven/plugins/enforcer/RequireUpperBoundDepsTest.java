@@ -36,7 +36,8 @@ public class RequireUpperBoundDepsTest
 {
 
     @Test
-    public void testRule() throws IOException
+    public void testRule()
+        throws IOException
     {
         ArtifactStubFactory factory = new ArtifactStubFactory();
         MockProject project = new MockProject();
@@ -45,11 +46,13 @@ public class RequireUpperBoundDepsTest
         project.setDependencyArtifacts( factory.getScopedArtifacts() );
         RequireUpperBoundDeps rule = new RequireUpperBoundDeps();
 
-        try {
-          rule.execute( helper );
-          Assertions.fail("Did not detect upper bounds error");
+        try
+        {
+            rule.execute( helper );
+            Assertions.fail( "Did not detect upper bounds error" );
         }
-        catch ( EnforcerRuleException ex ) {
+        catch ( EnforcerRuleException ex )
+        {
             assertThat( ex.getMessage(), containsString( "groupId:artifactId:version:classifier" ) );
         }
     }

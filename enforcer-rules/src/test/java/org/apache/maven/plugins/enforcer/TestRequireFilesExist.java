@@ -36,20 +36,20 @@ public class TestRequireFilesExist
 {
     @TempDir
     public File temporaryFolder;
-    
+
     private RequireFilesExist rule = new RequireFilesExist();
 
     @Test
     public void testFileExists()
         throws Exception
     {
-        File f = File.createTempFile("junit", null, temporaryFolder);
+        File f = File.createTempFile( "junit", null, temporaryFolder );
 
         rule.setFiles( new File[] { f.getCanonicalFile() } );
 
         rule.execute( EnforcerTestUtils.getHelper() );
     }
-    
+
     @Test
     public void testFileOsIndependentExists()
         throws Exception
@@ -61,7 +61,6 @@ public class TestRequireFilesExist
 
         assertNotNull( e.getMessage() );
     }
-
 
     @Test
     public void testEmptyFile()
@@ -112,7 +111,7 @@ public class TestRequireFilesExist
     public void testFileDoesNotExist()
         throws Exception
     {
-        File f = File.createTempFile("junit", null, temporaryFolder);
+        File f = File.createTempFile( "junit", null, temporaryFolder );
         f.delete();
 
         assertFalse( f.exists() );

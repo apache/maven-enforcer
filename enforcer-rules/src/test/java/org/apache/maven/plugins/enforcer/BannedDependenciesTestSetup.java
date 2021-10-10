@@ -55,6 +55,7 @@ public class BannedDependenciesTestSetup
     }
 
     private List<String> excludes;
+
     private List<String> includes;
 
     private BannedDependencies rule;
@@ -73,12 +74,14 @@ public class BannedDependenciesTestSetup
         rule.execute( helper );
     }
 
-    public void addIncludeExcludeAndRunRule (String incAdd, String excAdd) throws EnforcerRuleException {
+    public void addIncludeExcludeAndRunRule( String incAdd, String excAdd )
+        throws EnforcerRuleException
+    {
         excludes.add( excAdd );
         includes.add( incAdd );
         rule.execute( helper );
     }
-    
+
     public List<String> getExcludes()
     {
         return excludes;
@@ -106,6 +109,4 @@ public class BannedDependenciesTestSetup
         return rule;
     }
 
-
 }
-

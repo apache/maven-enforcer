@@ -98,18 +98,18 @@ public class ReactorModuleConvergenceTest
     public void shouldFailWithWrongVersionInOneChild()
         throws EnforcerRuleException, ExpressionEvaluationException
     {
-        assertThrows(EnforcerRuleException.class, () -> {
+        assertThrows( EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
-            MavenProject mp2 = createProjectChild1(mp1);
-            MavenProject mp3 = createProjectChild2WithWrongVersion(mp1);
+            MavenProject mp2 = createProjectChild1( mp1 );
+            MavenProject mp3 = createProjectChild2WithWrongVersion( mp1 );
 
-            List<MavenProject> theList = Arrays.asList(mp1, mp2, mp3);
-            setupSortedProjects(theList);
+            List<MavenProject> theList = Arrays.asList( mp1, mp2, mp3 );
+            setupSortedProjects( theList );
 
-            rule.execute(helper);
+            rule.execute( helper );
 
             // intentionally no assertTrue() cause we expect getting an exception.
-        });
+        } );
 
         // intentionally no assertTrue() cause we expect getting an exception.
     }
@@ -118,26 +118,26 @@ public class ReactorModuleConvergenceTest
     public void shouldFailWithWrongParent()
         throws EnforcerRuleException, ExpressionEvaluationException
     {
-        assertThrows(EnforcerRuleException.class, () -> {
+        assertThrows( EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
 
-            MavenProject wrongParentVerison = mock(MavenProject.class);
-            when(wrongParentVerison.getGroupId()).thenReturn("org.apache.enforcer");
-            when(wrongParentVerison.getArtifactId()).thenReturn("m1");
-            when(wrongParentVerison.getVersion()).thenReturn("1.1-SNAPSHOT");
-            when(wrongParentVerison.getId()).thenReturn("org.apache.enforcer:m1:jar:1.1-SNAPSHOT");
-            when(wrongParentVerison.getDependencies()).thenReturn(Collections.<Dependency>emptyList());
+            MavenProject wrongParentVerison = mock( MavenProject.class );
+            when( wrongParentVerison.getGroupId() ).thenReturn( "org.apache.enforcer" );
+            when( wrongParentVerison.getArtifactId() ).thenReturn( "m1" );
+            when( wrongParentVerison.getVersion() ).thenReturn( "1.1-SNAPSHOT" );
+            when( wrongParentVerison.getId() ).thenReturn( "org.apache.enforcer:m1:jar:1.1-SNAPSHOT" );
+            when( wrongParentVerison.getDependencies() ).thenReturn( Collections.<Dependency>emptyList() );
 
-            MavenProject mp2 = createProjectChild2(wrongParentVerison);
-            MavenProject mp3 = createProjectChild2(mp1);
+            MavenProject mp2 = createProjectChild2( wrongParentVerison );
+            MavenProject mp3 = createProjectChild2( mp1 );
 
-            List<MavenProject> theList = Arrays.asList(mp1, mp2, mp3);
-            setupSortedProjects(theList);
+            List<MavenProject> theList = Arrays.asList( mp1, mp2, mp3 );
+            setupSortedProjects( theList );
 
-            rule.execute(helper);
+            rule.execute( helper );
 
             // intentionally no assertTrue() cause we expect getting an exception.
-        });
+        } );
 
         // intentionally no assertTrue() cause we expect getting an exception.
     }
@@ -162,42 +162,42 @@ public class ReactorModuleConvergenceTest
     public void shouldFailWithMissingParentsInReactory()
         throws EnforcerRuleException, ExpressionEvaluationException
     {
-        assertThrows(EnforcerRuleException.class, () -> {
+        assertThrows( EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
-            MavenProject mp2 = createProjectChild1(mp1);
-            MavenProject mp3 = createProjectChild2(null);
+            MavenProject mp2 = createProjectChild1( mp1 );
+            MavenProject mp3 = createProjectChild2( null );
 
-            List<MavenProject> theList = Arrays.asList(mp1, mp2, mp3);
-            setupSortedProjects(theList);
+            List<MavenProject> theList = Arrays.asList( mp1, mp2, mp3 );
+            setupSortedProjects( theList );
 
-            rule.execute(helper);
-        });
+            rule.execute( helper );
+        } );
     }
 
     @Test
     public void shouldFailWithAParentWhichIsNotPartOfTheReactory()
         throws EnforcerRuleException, ExpressionEvaluationException
     {
-        assertThrows(EnforcerRuleException.class, () -> {
+        assertThrows( EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
 
-            MavenProject wrongParentVerison = mock(MavenProject.class);
-            when(wrongParentVerison.getGroupId()).thenReturn("org.apache");
-            when(wrongParentVerison.getArtifactId()).thenReturn("m1");
-            when(wrongParentVerison.getVersion()).thenReturn("1.0-SNAPSHOT");
-            when(wrongParentVerison.getId()).thenReturn("org.apache.enforcer:m1:jar:1.0-SNAPSHOT");
-            when(wrongParentVerison.getDependencies()).thenReturn(Collections.<Dependency>emptyList());
+            MavenProject wrongParentVerison = mock( MavenProject.class );
+            when( wrongParentVerison.getGroupId() ).thenReturn( "org.apache" );
+            when( wrongParentVerison.getArtifactId() ).thenReturn( "m1" );
+            when( wrongParentVerison.getVersion() ).thenReturn( "1.0-SNAPSHOT" );
+            when( wrongParentVerison.getId() ).thenReturn( "org.apache.enforcer:m1:jar:1.0-SNAPSHOT" );
+            when( wrongParentVerison.getDependencies() ).thenReturn( Collections.<Dependency>emptyList() );
 
-            MavenProject mp2 = createProjectChild2(wrongParentVerison);
-            MavenProject mp3 = createProjectChild2(mp1);
+            MavenProject mp2 = createProjectChild2( wrongParentVerison );
+            MavenProject mp3 = createProjectChild2( mp1 );
 
-            List<MavenProject> theList = Arrays.asList(mp1, mp2, mp3);
-            setupSortedProjects(theList);
+            List<MavenProject> theList = Arrays.asList( mp1, mp2, mp3 );
+            setupSortedProjects( theList );
 
-            rule.execute(helper);
+            rule.execute( helper );
 
             // intentionally no assertTrue() cause we expect getting an exception.
-        });
+        } );
 
         // intentionally no assertTrue() cause we expect getting an exception.
     }
@@ -228,25 +228,25 @@ public class ReactorModuleConvergenceTest
     public void shouldFailWithWrongDependencyInReactor()
         throws EnforcerRuleException, ExpressionEvaluationException
     {
-        assertThrows(EnforcerRuleException.class, () -> {
+        assertThrows( EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
-            MavenProject mp2 = createProjectChild1(mp1);
+            MavenProject mp2 = createProjectChild1( mp1 );
 
-            Dependency goodDependency = createDependency("org.junit", "junit", "2.0");
+            Dependency goodDependency = createDependency( "org.junit", "junit", "2.0" );
 
-            Dependency wrongDepFromReactor = createDependency("org.apache.enforcer", "m2", "1.1-SNAPSHOT");
-            List<Dependency> depList = Arrays.asList(goodDependency, wrongDepFromReactor);
-            when(mp2.getDependencies()).thenReturn(depList);
+            Dependency wrongDepFromReactor = createDependency( "org.apache.enforcer", "m2", "1.1-SNAPSHOT" );
+            List<Dependency> depList = Arrays.asList( goodDependency, wrongDepFromReactor );
+            when( mp2.getDependencies() ).thenReturn( depList );
 
-            MavenProject mp3 = createProjectChild2(mp1);
+            MavenProject mp3 = createProjectChild2( mp1 );
 
-            List<MavenProject> theList = Arrays.asList(mp1, mp2, mp3);
-            setupSortedProjects(theList);
+            List<MavenProject> theList = Arrays.asList( mp1, mp2, mp3 );
+            setupSortedProjects( theList );
 
-            rule.execute(helper);
+            rule.execute( helper );
 
             // intentionally no assertTrue() cause we expect getting an exception.
-        });
+        } );
 
         // intentionally no assertTrue() cause we expect getting an exception.
     }

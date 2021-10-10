@@ -199,13 +199,13 @@ public class TestRequireNoRepositories
     public void testAllBannedWithRepository()
         throws EnforcerRuleException
     {
-        assertThrows(EnforcerRuleException.class, () -> {
+        assertThrows( EnforcerRuleException.class, () -> {
             MavenProject baseProject = createStandAloneProject();
-            addRepository(baseProject, createRepository("repo", "http://example.com/repo"));
-            setupSortedProjects(Collections.singletonList(baseProject));
+            addRepository( baseProject, createRepository( "repo", "http://example.com/repo" ) );
+            setupSortedProjects( Collections.singletonList( baseProject ) );
 
-            rule.execute(helper);
-        });
+            rule.execute( helper );
+        } );
     }
 
     /**
@@ -215,13 +215,13 @@ public class TestRequireNoRepositories
     public void testAllBannedWithPluginRepository()
         throws EnforcerRuleException
     {
-        assertThrows(EnforcerRuleException.class, () -> {
+        assertThrows( EnforcerRuleException.class, () -> {
             MavenProject baseProject = createStandAloneProject();
-            addPluginRepository(baseProject, createRepository("repo", "http://example.com/repo"));
-            setupSortedProjects(Collections.singletonList(baseProject));
+            addPluginRepository( baseProject, createRepository( "repo", "http://example.com/repo" ) );
+            setupSortedProjects( Collections.singletonList( baseProject ) );
 
-            rule.execute(helper);
-        });
+            rule.execute( helper );
+        } );
     }
 
     /**
@@ -329,13 +329,13 @@ public class TestRequireNoRepositories
     public void testAllBannedWithSnapshotRepository()
         throws EnforcerRuleException
     {
-        assertThrows(EnforcerRuleException.class, () -> {
+        assertThrows( EnforcerRuleException.class, () -> {
             MavenProject baseProject = createStandAloneProject();
-            addRepository(baseProject, createSnapshotRepository("repo", "http://example.com/repo"));
-            setupSortedProjects(Collections.singletonList(baseProject));
+            addRepository( baseProject, createSnapshotRepository( "repo", "http://example.com/repo" ) );
+            setupSortedProjects( Collections.singletonList( baseProject ) );
 
-            rule.execute(helper);
-        });
+            rule.execute( helper );
+        } );
     }
 
     @Test

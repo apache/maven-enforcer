@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Test AlwaysFail rule.
+ * 
  * @author Ben Lidgey
  * @see AlwaysFail
  */

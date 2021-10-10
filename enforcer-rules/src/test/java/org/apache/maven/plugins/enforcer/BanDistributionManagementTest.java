@@ -70,11 +70,11 @@ public class BanDistributionManagementTest
     public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepository()
         throws Exception
     {
-        assertThrows(EnforcerRuleException.class, () -> {
+        assertThrows( EnforcerRuleException.class, () -> {
             BanDistributionManagement rule =
-                    setupProjectWithDistributionManagement(new DeploymentRepository(), null, null);
-            rule.execute(helper);
-        });
+                setupProjectWithDistributionManagement( new DeploymentRepository(), null, null );
+            rule.execute( helper );
+        } );
         // intentionally no assert cause we expect an exception.
     }
 
@@ -96,11 +96,11 @@ public class BanDistributionManagementTest
     public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepositorySnapshotRepository()
         throws Exception
     {
-        assertThrows(EnforcerRuleException.class, () -> {
+        assertThrows( EnforcerRuleException.class, () -> {
             BanDistributionManagement rule =
-                    setupProjectWithDistributionManagement(new DeploymentRepository(), new DeploymentRepository(), null);
-            rule.execute(helper);
-        });
+                setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(), null );
+            rule.execute( helper );
+        } );
         // intentionally no assert cause we expect an exception.
     }
 
@@ -125,13 +125,13 @@ public class BanDistributionManagementTest
     public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepositorySnapshotRepositorySite()
         throws Exception
     {
-        assertThrows(EnforcerRuleException.class, () -> {
+        assertThrows( EnforcerRuleException.class, () -> {
             BanDistributionManagement rule =
-                    setupProjectWithDistributionManagement(new DeploymentRepository(), new DeploymentRepository(),
-                            new Site());
-            rule.execute(helper);
+                setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(),
+                                                        new Site() );
+            rule.execute( helper );
             // intentionally no assert cause we expect an exception.
-        });
+        } );
         // intentionally no assert cause we expect an exception.
     }
 
@@ -229,7 +229,7 @@ public class BanDistributionManagementTest
     private BanDistributionManagement setupProjectWithParentDistributionManagement( DeploymentRepository repository,
                                                                                     DeploymentRepository snapshotRepository,
                                                                                     Site site )
-                                                                                        throws ExpressionEvaluationException
+        throws ExpressionEvaluationException
     {
         project = setupProject( null );
 
@@ -262,7 +262,7 @@ public class BanDistributionManagementTest
     private BanDistributionManagement setupProjectWithDistributionManagement( DeploymentRepository repository,
                                                                               DeploymentRepository snapshotRepository,
                                                                               Site site )
-                                                                                  throws ExpressionEvaluationException
+        throws ExpressionEvaluationException
     {
         DistributionManagement dm = mock( DistributionManagement.class );
         when( dm.getRepository() ).thenReturn( repository );

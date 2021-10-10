@@ -41,7 +41,7 @@ public class MockEnforcerExpressionEvaluator
         super( theContext, new MojoExecution( new MojoDescriptor() ) );
     }
 
-    @Override 
+    @Override
     public Object evaluate( String expr )
         throws ExpressionEvaluationException
     {

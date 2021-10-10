@@ -37,14 +37,14 @@ public class TestRequireFilesDontExist
 {
     @TempDir
     public File temporaryFolder;
-    
+
     private RequireFilesDontExist rule = new RequireFilesDontExist();
 
     @Test
     public void testFileExists()
         throws EnforcerRuleException, IOException
     {
-        File f = File.createTempFile("junit", null, temporaryFolder);
+        File f = File.createTempFile( "junit", null, temporaryFolder );
 
         rule.setFiles( new File[] { f } );
 
@@ -130,7 +130,7 @@ public class TestRequireFilesDontExist
     public void testFileDoesNotExist()
         throws EnforcerRuleException, IOException
     {
-        File f = File.createTempFile("junit", null, temporaryFolder);
+        File f = File.createTempFile( "junit", null, temporaryFolder );
         f.delete();
 
         assertFalse( f.exists() );

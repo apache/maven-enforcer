@@ -62,7 +62,7 @@ public class TestRequireJavaVersion
         assertThat( RequireJavaVersion.normalizeJDKVersion( "1.6.0-dp2" ) ).isEqualTo( "1.6.0-2" );
         assertThat( RequireJavaVersion.normalizeJDKVersion( "1.8.0_73" ) ).isEqualTo( "1.8.0-73" );
         assertThat( RequireJavaVersion.normalizeJDKVersion( "9" ) ).isEqualTo( "9" );
-        
+
         assertThat( RequireJavaVersion.normalizeJDKVersion( "17" ) ).isEqualTo( "17" );
 
     }
@@ -92,17 +92,17 @@ public class TestRequireJavaVersion
     public void excludingTheCurrentJavaVersionViaRangeThisShouldFailWithException()
         throws EnforcerRuleException
     {
-        assertThrows(EnforcerRuleException.class, () -> {
-            String thisVersion = RequireJavaVersion.normalizeJDKVersion(SystemUtils.JAVA_VERSION);
+        assertThrows( EnforcerRuleException.class, () -> {
+            String thisVersion = RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION );
 
             RequireJavaVersion rule = new RequireJavaVersion();
             // exclude this version
-            rule.setVersion("(" + thisVersion);
+            rule.setVersion( "(" + thisVersion );
 
             EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
-            rule.execute(helper);
+            rule.execute( helper );
             // intentionally no assertThat(...) because we expect and exception.
-        });
+        } );
         // intentionally no assertThat(...) because we expect and exception.
     }
 

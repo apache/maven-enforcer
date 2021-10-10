@@ -56,11 +56,10 @@ public class TestEvaluateBeanshell
 
     /**
      * Test rule.
-     *
      */
     @Test
     public void testRulePass()
-            throws Exception
+        throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should not be set
@@ -73,7 +72,7 @@ public class TestEvaluateBeanshell
 
     @Test
     public void testRuleFail()
-            throws Exception
+        throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should be set by the surefire
@@ -95,7 +94,7 @@ public class TestEvaluateBeanshell
 
     @Test
     public void testRuleFailNoMessage()
-            throws Exception
+        throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should be set by the surefire
@@ -116,7 +115,7 @@ public class TestEvaluateBeanshell
 
     @Test
     public void testRuleInvalidExpression()
-            throws Exception
+        throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         rule.setCondition( "${env} == null" );
@@ -138,7 +137,7 @@ public class TestEvaluateBeanshell
 
     @Test
     public void testRuleInvalidBeanshell()
-            throws Exception
+        throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         rule.setCondition( "this is not valid beanshell" );
@@ -155,111 +154,142 @@ public class TestEvaluateBeanshell
         }
     }
 
-
     @Test
-    public void testRuleCanExecuteMultipleThreads() throws Exception {
-        final String condition = "String property1 = \"${property1}\";\n" +
-                "(property1.equals(\"prop0\") && \"${property2}\".equals(\"prop0\"))\n" +
-                "|| (property1.equals(\"prop1\") && \"${property2}\".equals(\"prop1\"))\n" +
-                "|| (property1.equals(\"prop2\") && \"${property2}\".equals(\"prop2\"))\n";
+    public void testRuleCanExecuteMultipleThreads()
+        throws Exception
+    {
+        final String condition = "String property1 = \"${property1}\";\n"
+            + "(property1.equals(\"prop0\") && \"${property2}\".equals(\"prop0\"))\n"
+            + "|| (property1.equals(\"prop1\") && \"${property2}\".equals(\"prop1\"))\n"
+            + "|| (property1.equals(\"prop2\") && \"${property2}\".equals(\"prop2\"))\n";
 
         final List<Runnable> runnables = new ArrayList<>();
 
-        runnables.add(new Runnable() {
+        runnables.add( new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 final int threadNumber = 0;
                 MockProject multiProject = new MockProject();
-                multiProject.setProperty("property1", "prop" + threadNumber);
-                multiProject.setProperty("property2", "prop" + threadNumber);
+                multiProject.setProperty( "property1", "prop" + threadNumber );
+                multiProject.setProperty( "property2", "prop" + threadNumber );
 
                 EvaluateBeanshell rule = new EvaluateBeanshell();
-                rule.setCondition(condition);
-                rule.setMessage("Race condition in thread " + threadNumber);
-                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(multiProject);
-                try {
-                    rule.execute(helper);
+                rule.setCondition( condition );
+                rule.setMessage( "Race condition in thread " + threadNumber );
+                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( multiProject );
+                try
+                {
+                    rule.execute( helper );
 
-                } catch (EnforcerRuleException e) {
-                    throw new RuntimeException(e);
+                }
+                catch ( EnforcerRuleException e )
+                {
+                    throw new RuntimeException( e );
                 }
             }
-        });
-        runnables.add(new Runnable() {
+        } );
+        runnables.add( new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 final int threadNumber = 1;
                 MockProject multiProject = new MockProject();
-                multiProject.setProperty("property1", "prop" + threadNumber);
-                multiProject.setProperty("property2", "prop" + threadNumber);
+                multiProject.setProperty( "property1", "prop" + threadNumber );
+                multiProject.setProperty( "property2", "prop" + threadNumber );
 
                 EvaluateBeanshell rule = new EvaluateBeanshell();
-                rule.setCondition(condition);
-                rule.setMessage("Race condition in thread " + threadNumber);
-                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(multiProject);
-                try {
-                    rule.execute(helper);
+                rule.setCondition( condition );
+                rule.setMessage( "Race condition in thread " + threadNumber );
+                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( multiProject );
+                try
+                {
+                    rule.execute( helper );
 
-                } catch (EnforcerRuleException e) {
-                    throw new RuntimeException(e);
+                }
+                catch ( EnforcerRuleException e )
+                {
+                    throw new RuntimeException( e );
                 }
 
             }
-        });
-        runnables.add(new Runnable() {
+        } );
+        runnables.add( new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 final int threadNumber = 2;
                 MockProject multiProject = new MockProject();
-                multiProject.setProperty("property1", "prop" + threadNumber);
-                multiProject.setProperty("property2", "prop" + threadNumber);
+                multiProject.setProperty( "property1", "prop" + threadNumber );
+                multiProject.setProperty( "property2", "prop" + threadNumber );
 
                 EvaluateBeanshell rule = new EvaluateBeanshell();
-                rule.setCondition(condition);
-                rule.setMessage("Race condition in thread " + threadNumber);
-                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(multiProject);
-                try {
-                    rule.execute(helper);
-                } catch (EnforcerRuleException e) {
-                    throw new RuntimeException(e);
+                rule.setCondition( condition );
+                rule.setMessage( "Race condition in thread " + threadNumber );
+                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( multiProject );
+                try
+                {
+                    rule.execute( helper );
+                }
+                catch ( EnforcerRuleException e )
+                {
+                    throw new RuntimeException( e );
                 }
             }
-        });
+        } );
 
-        assertConcurrent( runnables, 4);
+        assertConcurrent( runnables, 4 );
     }
 
-    private static void assertConcurrent(final List<? extends Runnable> runnables, final int maxTimeoutSeconds) throws InterruptedException {
+    private static void assertConcurrent( final List<? extends Runnable> runnables, final int maxTimeoutSeconds )
+        throws InterruptedException
+    {
         final int numThreads = runnables.size();
-        final List<Throwable> exceptions = Collections.synchronizedList(new ArrayList<Throwable>());
-        final ExecutorService threadPool = Executors.newFixedThreadPool(numThreads);
-        try {
-            final CountDownLatch allExecutorThreadsReady = new CountDownLatch(numThreads);
-            final CountDownLatch afterInitBlocker = new CountDownLatch(1);
-            final CountDownLatch allDone = new CountDownLatch(numThreads);
-            for (final Runnable submittedTestRunnable : runnables) {
-                threadPool.submit(new Runnable() {
-                    public void run() {
+        final List<Throwable> exceptions = Collections.synchronizedList( new ArrayList<Throwable>() );
+        final ExecutorService threadPool = Executors.newFixedThreadPool( numThreads );
+        try
+        {
+            final CountDownLatch allExecutorThreadsReady = new CountDownLatch( numThreads );
+            final CountDownLatch afterInitBlocker = new CountDownLatch( 1 );
+            final CountDownLatch allDone = new CountDownLatch( numThreads );
+            for ( final Runnable submittedTestRunnable : runnables )
+            {
+                threadPool.submit( new Runnable()
+                {
+                    public void run()
+                    {
                         allExecutorThreadsReady.countDown();
-                        try {
+                        try
+                        {
                             afterInitBlocker.await();
                             submittedTestRunnable.run();
-                        } catch (final Throwable e) {
-                            exceptions.add(e);
-                        } finally {
+                        }
+                        catch ( final Throwable e )
+                        {
+                            exceptions.add( e );
+                        }
+                        finally
+                        {
                             allDone.countDown();
                         }
                     }
-                });
+                } );
             }
             // wait until all threads are ready
-            assertTrue(allExecutorThreadsReady.await(runnables.size() * 10, TimeUnit.MILLISECONDS), "Timeout initializing threads! Perform long lasting initializations before passing runnables to assertConcurrent");
+            assertTrue( allExecutorThreadsReady.await( runnables.size() * 10, TimeUnit.MILLISECONDS ),
+                        "Timeout initializing threads! Perform long lasting initializations before passing runnables to assertConcurrent" );
             // start all test runners
             afterInitBlocker.countDown();
-            assertTrue(allDone.await(maxTimeoutSeconds, TimeUnit.SECONDS), "Timeout! More than" + maxTimeoutSeconds + "seconds");
-        } finally {
+            assertTrue( allDone.await( maxTimeoutSeconds, TimeUnit.SECONDS ),
+                        "Timeout! More than" + maxTimeoutSeconds + "seconds" );
+        }
+        finally
+        {
             threadPool.shutdownNow();
         }
-        assertTrue(exceptions.isEmpty(), "Failed with exception(s)" + exceptions);
+        assertTrue( exceptions.isEmpty(), "Failed with exception(s)" + exceptions );
     }
 }

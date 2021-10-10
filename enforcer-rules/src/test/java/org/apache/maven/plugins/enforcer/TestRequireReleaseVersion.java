@@ -66,7 +66,7 @@ public class TestRequireReleaseVersion
         MockProject parent = new MockProject();
         parent.setArtifact( factory.getSnapshotArtifact() );
         project.setParent( parent );
-        helper = EnforcerTestUtils.getHelper(project);
+        helper = EnforcerTestUtils.getHelper( project );
 
         ( (RequireReleaseVersion) rule ).setFailWhenParentIsSnapshot( true );
         EnforcerRuleUtilsHelper.execute( rule, helper, true );

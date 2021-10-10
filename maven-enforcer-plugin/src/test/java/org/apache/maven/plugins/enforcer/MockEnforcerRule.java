@@ -25,20 +25,19 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * 
  */
 public class MockEnforcerRule
     implements EnforcerRule
 {
 
     public boolean failRule = false;
-    
-    public String cacheId="";
-    
+
+    public String cacheId = "";
+
     public boolean isCacheable = false;
-    
+
     public boolean isResultValid = false;
-    
+
     public boolean executed = false;
 
     public MockEnforcerRule( boolean fail )
@@ -50,9 +49,10 @@ public class MockEnforcerRule
     {
         this.failRule = fail;
         this.isCacheable = isCacheable;
-        this.isResultValid= isResultValid;
+        this.isResultValid = isResultValid;
         this.cacheId = cacheId;
     }
+
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
@@ -72,8 +72,7 @@ public class MockEnforcerRule
     }
 
     /**
-     * @param theFailRule
-     *            the failRule to set
+     * @param theFailRule the failRule to set
      */
     public void setFailRule( boolean theFailRule )
     {
@@ -83,7 +82,7 @@ public class MockEnforcerRule
     /**
      * @return the isResultValid
      */
-    public boolean isResultValid ()
+    public boolean isResultValid()
     {
         return this.isResultValid;
     }
@@ -91,7 +90,7 @@ public class MockEnforcerRule
     /**
      * @param theIsResultValid the isResultValid to set
      */
-    public void setResultValid ( boolean theIsResultValid )
+    public void setResultValid( boolean theIsResultValid )
     {
         this.isResultValid = theIsResultValid;
     }
@@ -99,7 +98,7 @@ public class MockEnforcerRule
     /**
      * @param theCacheId the cacheId to set
      */
-    public void setCacheId ( String theCacheId )
+    public void setCacheId( String theCacheId )
     {
         this.cacheId = theCacheId;
     }
@@ -107,31 +106,35 @@ public class MockEnforcerRule
     /**
      * @param theIsCacheable the isCacheable to set
      */
-    public void setCacheable ( boolean theIsCacheable )
+    public void setCacheable( boolean theIsCacheable )
     {
         this.isCacheable = theIsCacheable;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
-    public String getCacheId ()
+    public String getCacheId()
     {
         return cacheId;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
-    public boolean isCacheable ()
+    public boolean isCacheable()
     {
         return isCacheable;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
+    /*
+     * (non-Javadoc)
+     * @see
+     * org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
-    public boolean isResultValid ( EnforcerRule theCachedRule )
+    public boolean isResultValid( EnforcerRule theCachedRule )
     {
         return isResultValid;
     }

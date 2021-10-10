@@ -57,10 +57,10 @@ public class RequirePrerequisiteTest
     public void testNoPrerequisite()
         throws Exception
     {
-        assertThrows(EnforcerRuleException.class, () -> {
+        assertThrows( EnforcerRuleException.class, () -> {
             RequirePrerequisite rule = new RequirePrerequisite();
-            rule.execute(helper);
-        });
+            rule.execute( helper );
+        } );
     }
 
     @Test
@@ -77,43 +77,43 @@ public class RequirePrerequisiteTest
     public void testLowerMavenPrerequisite()
         throws Exception
     {
-        assertThrows(EnforcerRuleException.class, () -> {
-            when(project.getPrerequisites()).thenReturn(new Prerequisites());
+        assertThrows( EnforcerRuleException.class, () -> {
+            when( project.getPrerequisites() ).thenReturn( new Prerequisites() );
 
             RequirePrerequisite rule = new RequirePrerequisite();
-            rule.setMavenVersion("3.0");
-            rule.execute(helper);
-        });
+            rule.setMavenVersion( "3.0" );
+            rule.execute( helper );
+        } );
     }
 
     @Test
     public void testLowerMavenRangePrerequisite()
         throws Exception
     {
-        assertThrows(EnforcerRuleException.class, () -> {
-            when(project.getPrerequisites()).thenReturn(new Prerequisites());
+        assertThrows( EnforcerRuleException.class, () -> {
+            when( project.getPrerequisites() ).thenReturn( new Prerequisites() );
 
             RequirePrerequisite rule = new RequirePrerequisite();
-            rule.setMavenVersion("[3.0,)");
+            rule.setMavenVersion( "[3.0,)" );
 
-            rule.execute(helper);
-        });
+            rule.execute( helper );
+        } );
     }
 
     @Test
     public void testMavenRangesPrerequisite()
         throws Exception
     {
-        assertThrows(EnforcerRuleException.class, () -> {
+        assertThrows( EnforcerRuleException.class, () -> {
             Prerequisites prerequisites = new Prerequisites();
-            prerequisites.setMaven("2.2.0");
-            when(project.getPrerequisites()).thenReturn(prerequisites);
+            prerequisites.setMaven( "2.2.0" );
+            when( project.getPrerequisites() ).thenReturn( prerequisites );
 
             RequirePrerequisite rule = new RequirePrerequisite();
-            rule.setMavenVersion("[2.0.6,2.1.0),(2.1.0,2.2.0),(2.2.0,)");
+            rule.setMavenVersion( "[2.0.6,2.1.0),(2.1.0,2.2.0),(2.2.0,)" );
 
-            rule.execute(helper);
-        });
+            rule.execute( helper );
+        } );
     }
 
     @Test
@@ -149,13 +149,13 @@ public class RequirePrerequisiteTest
     public void testMatchingPackagings()
         throws Exception
     {
-        assertThrows(EnforcerRuleException.class, () -> {
-            when(project.getPackaging()).thenReturn("maven-plugin");
+        assertThrows( EnforcerRuleException.class, () -> {
+            when( project.getPackaging() ).thenReturn( "maven-plugin" );
 
             RequirePrerequisite rule = new RequirePrerequisite();
-            rule.setPackagings(Collections.singletonList("maven-plugin"));
-            rule.execute(helper);
-        });
+            rule.setPackagings( Collections.singletonList( "maven-plugin" ) );
+            rule.execute( helper );
+        } );
     }
 
     @Test

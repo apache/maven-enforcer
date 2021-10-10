@@ -43,8 +43,7 @@ public class TestMockEnforcerExpressionEvaluator
     {
         MavenSession session = EnforcerTestUtils.getMavenSession();
 
-        EnforcerExpressionEvaluator ev =
-            new MockEnforcerExpressionEvaluator( session );
+        EnforcerExpressionEvaluator ev = new MockEnforcerExpressionEvaluator( session );
         assertMatch( ev, "SNAPSHOT" );
         assertMatch( ev, "RELEASE" );
         assertMatch( ev, "SNAPSHOT" );

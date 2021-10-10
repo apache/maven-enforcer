@@ -33,7 +33,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 /**
  * Test the "RequireTextFileChecksum" rule
- *
  */
 public class TestRequireTextFileChecksum
 {
@@ -47,7 +46,7 @@ public class TestRequireTextFileChecksum
     public void testFileChecksumMd5NormalizedFromUnixToWindows()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile("junit", null, temporaryFolder);
+        File f = File.createTempFile( "junit", null, temporaryFolder );
         FileUtils.fileWrite( f, "line1\nline2\n" );
 
         rule.setFile( f );
@@ -63,7 +62,7 @@ public class TestRequireTextFileChecksum
     public void testFileChecksumMd5NormalizedFromWindowsToWindows()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile("junit", null, temporaryFolder);
+        File f = File.createTempFile( "junit", null, temporaryFolder );
         FileUtils.fileWrite( f, "line1\r\nline2\r\n" );
 
         rule.setFile( f );
@@ -79,7 +78,7 @@ public class TestRequireTextFileChecksum
     public void testFileChecksumMd5NormalizedFromWindowsToUnix()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile("junit", null, temporaryFolder);
+        File f = File.createTempFile( "junit", null, temporaryFolder );
         FileUtils.fileWrite( f, "line1\r\nline2\r\n" );
 
         rule.setFile( f );
@@ -95,7 +94,7 @@ public class TestRequireTextFileChecksum
     public void testFileChecksumMd5NormalizedFromUnixToUnix()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile("junit", null, temporaryFolder);
+        File f = File.createTempFile( "junit", null, temporaryFolder );
         FileUtils.fileWrite( f, "line1\nline2\n" );
 
         rule.setFile( f );
@@ -111,7 +110,7 @@ public class TestRequireTextFileChecksum
     public void testFileChecksumMd5NormalizedWithMissingFileCharsetParameter()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile("junit", null, temporaryFolder);
+        File f = File.createTempFile( "junit", null, temporaryFolder );
         FileUtils.fileWrite( f, "line1\nline2\n" );
 
         rule.setFile( f );

@@ -37,7 +37,7 @@ public class TestNormalizeLineSeparatorReader
 
     @Test
     public void testUnixToWindows()
-            throws IOException
+        throws IOException
     {
         try ( Reader reader =
             new NormalizeLineSeparatorReader( new StringReader( UNIX_MULTILINE_STRING ), LineSeparator.WINDOWS ) )
@@ -48,7 +48,7 @@ public class TestNormalizeLineSeparatorReader
 
     @Test
     public void testUnixToUnix()
-            throws IOException
+        throws IOException
     {
         try ( Reader reader =
             new NormalizeLineSeparatorReader( new StringReader( UNIX_MULTILINE_STRING ), LineSeparator.UNIX ) )
@@ -59,7 +59,7 @@ public class TestNormalizeLineSeparatorReader
 
     @Test
     public void testWindowsToUnix()
-            throws IOException
+        throws IOException
     {
         try ( Reader reader =
             new NormalizeLineSeparatorReader( new StringReader( WINDOWS_MULTILINE_STRING ), LineSeparator.UNIX ) )
@@ -70,7 +70,7 @@ public class TestNormalizeLineSeparatorReader
 
     @Test
     public void testWindowsToWindows()
-            throws IOException
+        throws IOException
     {
         try ( Reader reader =
             new NormalizeLineSeparatorReader( new StringReader( WINDOWS_MULTILINE_STRING ), LineSeparator.WINDOWS ) )
