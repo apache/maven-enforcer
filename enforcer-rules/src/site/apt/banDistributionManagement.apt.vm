@@ -16,7 +16,7 @@
 ~~ under the License.    
  
   ------
-  Ban DistributionManagement
+  Ban Distribution Management
   ------
   Karl-Heinz Marbaise
   ------
@@ -37,8 +37,6 @@ Ban Distribution Management
   * allowSnapshotRepository - you can allow snapshotRepository entry (default: false).
 
   * allowSite - You can allow site entry (default: false).
-  
-  * ignoreParent - You can control if the parent will be checked or not (default: true) (deprecated don't use it anymore).
    
   []
 
