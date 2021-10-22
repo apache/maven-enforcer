@@ -51,7 +51,7 @@ Built-In Rules
 
   * {{{./requireActiveProfile.html}requireActiveProfile}} - enforces one or more active profiles.
   
-  * {{{./requireEnvironmentVariable.html}requireEnvironmentVariable}} - enforces the existence of an environment variable
+  * {{{./requireEnvironmentVariable.html}requireEnvironmentVariable}} - enforces the existence of an environment variable.
   
   * {{{./requireFileChecksum.html}requireFileChecksum}} - enforces that the specified file has a certain checksum.
   
@@ -91,4 +91,4 @@ Built-In Rules
 
   []
 
-  You may also create and inject your own custom rules by following the {{{http://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html}maven-enforcer-rule-api}} instructions.
+  You may also create and inject your own custom rules by following the {{{https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html}maven-enforcer-rule-api}} instructions.
