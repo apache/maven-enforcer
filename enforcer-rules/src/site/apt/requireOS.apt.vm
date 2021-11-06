@@ -64,12 +64,12 @@ Require OS Version
    
    * {{{../apidocs/org/apache/maven/plugins/enforcer/RequireOS.html#version}version}} - the version of the OS.
    
-   * {{{../apidocs/org/apache/maven/plugins/enforcer/RequireOS.html#display}display}} -  flag to display the detected OS informatin.
+   * {{{../apidocs/org/apache/maven/plugins/enforcer/RequireOS.html#display}display}} -  flag to display the detected OS information.
    
    []
 
  
- Family is calculated based on testing against the name string retreived from the JDK. The name, arch and version values are retreived from the JDK using the following code:
+ Family is calculated based on testing against the name string retrieved from the JDK. The name, arch and version values are retrieved from the JDK using the following code:
   
 +---+
     public static final String OS_NAME = System.getProperty( "os.name" ).toLowerCase( Locale.US );
