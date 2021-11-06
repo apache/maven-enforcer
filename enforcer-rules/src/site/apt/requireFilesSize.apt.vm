@@ -34,9 +34,9 @@ Require File Size
    
    * files - A list of files to check. If this list is empty, the main project artifact will be checked.
    
-   * maxsize - maximum size in bytes for this file
+   * maxsize - maximum size in bytes for this file.
    
-   * minsize - minimum size in bytes for this file
+   * minsize - minimum size in bytes for this file.
    
    * allowNulls - If null files should be allowed. If allowed, they will be treated as if they do exist. Default is false.
    
