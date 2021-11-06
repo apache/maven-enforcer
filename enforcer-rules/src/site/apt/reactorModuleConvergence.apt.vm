@@ -190,7 +190,7 @@ Reactor contains modules without parents.
  module: com.mycompany.project:myproject:pom:1.2-SNAPSHOT
 +----
 
-  In larger mutli-module builds it happens also that the defined parent is given
+  In larger multi-module builds it happens also that the defined parent is given
   but does not belong to the reactor like this:
   
 +-----
