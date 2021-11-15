@@ -141,15 +141,17 @@ public class RequireReleaseDeps
         Set<Artifact> foundSnapshots = new HashSet<>();
 
         Set<Artifact> filteredDependencies = filterArtifacts( dependencies );
-        
-        for ( Artifact artifact : filteredDependencies )
+
+        if ( filteredDependencies != null )
         {
-            if ( artifact.isSnapshot() )
+            for ( Artifact artifact : filteredDependencies )
             {
-                foundSnapshots.add( artifact );
+                if ( artifact.isSnapshot() )
+                {
+                    foundSnapshots.add( artifact );
+                }
             }
         }
-
         return foundSnapshots;
     }
     
