@@ -24,24 +24,26 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * under the License.
  */
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * The Class TestMockEnforcerExpressionEvaluator.
  */
 public class TestMockEnforcerExpressionEvaluator
-    extends TestCase
 {
 
     /**
      * Test evaluate.
      */
+    @Test
     public void testEvaluate()
     {
         MavenSession session = EnforcerTestUtils.getMavenSession();
 
-        EnforcerExpressionEvaluator ev =
-            new MockEnforcerExpressionEvaluator( session );
+        EnforcerExpressionEvaluator ev = new MockEnforcerExpressionEvaluator( session );
         assertMatch( ev, "SNAPSHOT" );
         assertMatch( ev, "RELEASE" );
         assertMatch( ev, "SNAPSHOT" );

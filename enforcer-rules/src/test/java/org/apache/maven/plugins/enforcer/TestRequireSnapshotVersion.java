@@ -23,8 +23,8 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtilsHelper;
 import org.apache.maven.project.MavenProject;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -42,7 +42,7 @@ public class TestRequireSnapshotVersion
 
     private RequireSnapshotVersion rule;
 
-    @Before
+    @BeforeEach
     public void before()
     {
         project = new MockProject();

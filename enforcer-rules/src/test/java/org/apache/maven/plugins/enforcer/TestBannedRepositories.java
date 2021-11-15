@@ -26,10 +26,11 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.MavenArtifactRepository;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
+
 /**
  * Test the "banned repositories" rule.
  * 
@@ -43,7 +44,7 @@ public class TestBannedRepositories
 
     private MockProject project;
 
-    @Before
+    @BeforeEach
     public void setUp()
         throws Exception
     {

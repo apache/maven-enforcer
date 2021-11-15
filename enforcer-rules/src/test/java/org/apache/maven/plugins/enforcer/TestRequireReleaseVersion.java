@@ -19,8 +19,8 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
 
@@ -28,7 +28,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtilsHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * The Class TestRequireReleaseVersion.
@@ -66,7 +66,7 @@ public class TestRequireReleaseVersion
         MockProject parent = new MockProject();
         parent.setArtifact( factory.getSnapshotArtifact() );
         project.setParent( parent );
-        helper = EnforcerTestUtils.getHelper(project);
+        helper = EnforcerTestUtils.getHelper( project );
 
         ( (RequireReleaseVersion) rule ).setFailWhenParentIsSnapshot( true );
         EnforcerRuleUtilsHelper.execute( rule, helper, true );

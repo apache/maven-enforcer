@@ -20,17 +20,19 @@ package org.apache.maven.plugins.enforcer;
  */
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test AlwaysPass rule.
+ * 
  * @author Ben Lidgey
  * @see AlwaysPass
  */
 public class TestAlwaysPass
 {
     @Test
-    public void testExecute() throws EnforcerRuleException
+    public void testExecute()
+        throws EnforcerRuleException
     {
         AlwaysPass rule = new AlwaysPass();
         rule.execute( EnforcerTestUtils.getHelper() );

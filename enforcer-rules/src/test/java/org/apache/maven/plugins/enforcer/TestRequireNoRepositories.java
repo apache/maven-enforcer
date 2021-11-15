@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.ProjectDependencyGraph;
@@ -37,8 +39,8 @@ import org.apache.maven.model.RepositoryPolicy;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the "require no repositories" rule.
@@ -54,7 +56,7 @@ public class TestRequireNoRepositories
 
     private MavenSession session;
 
-    @Before
+    @BeforeEach
     public void before()
         throws ExpressionEvaluationException
     {
@@ -193,29 +195,33 @@ public class TestRequireNoRepositories
     /**
      * The model contains a single repository which is is not allowed by the default rules.
      */
-    @Test( expected = EnforcerRuleException.class )
+    @Test
     public void testAllBannedWithRepository()
         throws EnforcerRuleException
     {
-        MavenProject baseProject = createStandAloneProject();
-        addRepository( baseProject, createRepository( "repo", "http://example.com/repo" ) );
-        setupSortedProjects( Collections.singletonList( baseProject ) );
+        assertThrows( EnforcerRuleException.class, () -> {
+            MavenProject baseProject = createStandAloneProject();
+            addRepository( baseProject, createRepository( "repo", "http://example.com/repo" ) );
+            setupSortedProjects( Collections.singletonList( baseProject ) );
 
-        rule.execute( helper );
+            rule.execute( helper );
+        } );
     }
 
     /**
      * The model contains a single plugin repository which is is not allowed by the default rules.
      */
-    @Test( expected = EnforcerRuleException.class )
+    @Test
     public void testAllBannedWithPluginRepository()
         throws EnforcerRuleException
     {
-        MavenProject baseProject = createStandAloneProject();
-        addPluginRepository( baseProject, createRepository( "repo", "http://example.com/repo" ) );
-        setupSortedProjects( Collections.singletonList( baseProject ) );
+        assertThrows( EnforcerRuleException.class, () -> {
+            MavenProject baseProject = createStandAloneProject();
+            addPluginRepository( baseProject, createRepository( "repo", "http://example.com/repo" ) );
+            setupSortedProjects( Collections.singletonList( baseProject ) );
 
-        rule.execute( helper );
+            rule.execute( helper );
+        } );
     }
 
     /**
@@ -319,15 +325,17 @@ public class TestRequireNoRepositories
         rule.execute( helper );
     }
 
-    @Test( expected = EnforcerRuleException.class )
+    @Test
     public void testAllBannedWithSnapshotRepository()
         throws EnforcerRuleException
     {
-        MavenProject baseProject = createStandAloneProject();
-        addRepository( baseProject, createSnapshotRepository( "repo", "http://example.com/repo" ) );
-        setupSortedProjects( Collections.singletonList( baseProject ) );
+        assertThrows( EnforcerRuleException.class, () -> {
+            MavenProject baseProject = createStandAloneProject();
+            addRepository( baseProject, createSnapshotRepository( "repo", "http://example.com/repo" ) );
+            setupSortedProjects( Collections.singletonList( baseProject ) );
 
-        rule.execute( helper );
+            rule.execute( helper );
+        } );
     }
 
     @Test

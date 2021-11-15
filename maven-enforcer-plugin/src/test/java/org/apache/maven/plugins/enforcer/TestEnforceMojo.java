@@ -19,27 +19,28 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 /**
  * Exhaustively check the enforcer mojo.
  * 
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-@RunWith( MockitoJUnitRunner.Silent.class )
+@ExtendWith( MockitoExtension.class )
+@MockitoSettings( strictness = Strictness.LENIENT )
 public class TestEnforceMojo
 {
 
@@ -115,8 +116,8 @@ public class TestEnforceMojo
         EnforceMojo.cache.clear();
         mojo.execute();
 
-        assertTrue( "Expected this rule to be executed.", rules[0].executed );
-        assertFalse( "Expected this rule not to be executed.", rules[1].executed );
+        assertTrue( rules[0].executed, "Expected this rule to be executed." );
+        assertFalse( rules[1].executed, "Expected this rule not to be executed." );
 
         // check that skip caching works.
         rules[0] = new MockEnforcerRule( false, "", true, true );
@@ -127,8 +128,8 @@ public class TestEnforceMojo
         mojo.ignoreCache = true;
         mojo.execute();
 
-        assertTrue( "Expected this rule to be executed.", rules[0].executed );
-        assertTrue( "Expected this rule to be executed.", rules[1].executed );
+        assertTrue( rules[0].executed, "Expected this rule to be executed." );
+        assertTrue( rules[1].executed, "Expected this rule to be executed." );
 
         mojo.ignoreCache = false;
 
@@ -141,9 +142,9 @@ public class TestEnforceMojo
         EnforceMojo.cache.clear();
         mojo.execute();
 
-        assertTrue( "Expected this rule to be executed.", rules[0].executed );
-        assertTrue( "Expected this rule to be executed.", rules[1].executed );
-        assertFalse( "Expected this rule not to be executed.", rules[2].executed );
+        assertTrue( rules[0].executed, "Expected this rule to be executed." );
+        assertTrue( rules[1].executed, "Expected this rule to be executed." );
+        assertFalse( rules[2].executed, "Expected this rule not to be executed." );
 
         // check that future overrides are working
         rules[0] = new MockEnforcerRule( false, "1", true, true );
@@ -154,8 +155,8 @@ public class TestEnforceMojo
         EnforceMojo.cache.clear();
         mojo.execute();
 
-        assertTrue( "Expected this rule to be executed.", rules[0].executed );
-        assertTrue( "Expected this rule to be executed.", rules[1].executed );
+        assertTrue( rules[0].executed, "Expected this rule to be executed." );
+        assertTrue( rules[1].executed, "Expected this rule to be executed." );
 
         // check that future isResultValid is used
         rules[0] = new MockEnforcerRule( false, "1", true, true );
@@ -166,8 +167,8 @@ public class TestEnforceMojo
         EnforceMojo.cache.clear();
         mojo.execute();
 
-        assertTrue( "Expected this rule to be executed.", rules[0].executed );
-        assertTrue( "Expected this rule to be executed.", rules[1].executed );
+        assertTrue( rules[0].executed, "Expected this rule to be executed." );
+        assertTrue( rules[1].executed, "Expected this rule to be executed." );
 
     }
 
@@ -187,8 +188,8 @@ public class TestEnforceMojo
         EnforceMojo.cache.clear();
         mojo.execute();
 
-        assertTrue( "Expected this rule to be executed.", rules[0].executed );
-        assertFalse( "Expected this rule not to be executed.", rules[1].executed );
+        assertTrue( rules[0].executed, "Expected this rule to be executed." );
+        assertFalse( rules[1].executed, "Expected this rule not to be executed." );
 
     }
 
@@ -207,8 +208,8 @@ public class TestEnforceMojo
 
         mojo.execute();
 
-        assertFalse( "Expected this rule not to be executed.", rules[0].executed );
-        assertFalse( "Expected this rule not to be executed.", rules[1].executed );
+        assertFalse( rules[0].executed, "Expected this rule not to be executed." );
+        assertFalse( rules[1].executed, "Expected this rule not to be executed." );
 
     }
 
@@ -237,8 +238,8 @@ public class TestEnforceMojo
 
         mojo.execute();
 
-        assertFalse( "Expected this rule not to be executed.", rules[0].executed );
-        assertFalse( "Expected this rule not to be executed.", rules[1].executed );
+        assertFalse( rules[0].executed, "Expected this rule not to be executed." );
+        assertFalse( rules[1].executed, "Expected this rule not to be executed." );
 
     }
 
@@ -261,14 +262,12 @@ public class TestEnforceMojo
 
         mojo.execute();
 
-        Mockito.verify( logSpy ).debug(
-                Mockito.anyString() , Mockito.same( ruleException ) );
+        Mockito.verify( logSpy ).debug( Mockito.anyString(), Mockito.same( ruleException ) );
 
-        Mockito.verify( logSpy, Mockito.never() ).warn(
-                Mockito.anyString(), Mockito.any( Throwable.class ) );
+        Mockito.verify( logSpy, Mockito.never() ).warn( Mockito.anyString(), Mockito.any( Throwable.class ) );
 
-        Mockito.verify( logSpy ).warn(
-                Mockito.matches( ".* failed with message:" + System.lineSeparator() + ruleException.getMessage() ) );
+        Mockito.verify( logSpy ).warn( Mockito.matches( ".* failed with message:" + System.lineSeparator()
+            + ruleException.getMessage() ) );
     }
 
     @Test
@@ -291,20 +290,21 @@ public class TestEnforceMojo
 
         mojo.execute();
 
-        Mockito.verify( logSpy ).warn(
-                Mockito.contains("failed without a message"), Mockito.same( enforcerRuleException ) );
+        Mockito.verify( logSpy ).warn( Mockito.contains( "failed without a message" ),
+                                       Mockito.same( enforcerRuleException ) );
 
-        Mockito.verify( logSpy ).warn(
-                Mockito.matches( ".* failed with message:" + System.lineSeparator() + "null" ) );
+        Mockito.verify( logSpy ).warn( Mockito.matches( ".* failed with message:" + System.lineSeparator() + "null" ) );
     }
 
-    private void setupBasics( boolean fail ) {
+    private void setupBasics( boolean fail )
+    {
         mojo.setFail( fail );
         mojo.setSession( EnforcerTestUtils.getMavenSession() );
         mojo.setProject( new MockProject() );
     }
 
-    private Log setupLogSpy() {
+    private Log setupLogSpy()
+    {
         Log spy = Mockito.spy( mojo.getLog() );
         mojo.setLog( spy );
         return spy;

@@ -22,10 +22,10 @@ package org.apache.maven.plugins.enforcer;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -43,7 +43,7 @@ public class TestRequireJavaVendor
 
     private RequireJavaVendor underTest;
 
-    @Before
+    @BeforeEach
     public void prepareTest()
     {
         underTest = new RequireJavaVendor();

@@ -19,9 +19,7 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
@@ -30,7 +28,7 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * The Class TestAbstractVersionEnforcer.
@@ -51,41 +49,54 @@ public class TestAbstractVersionEnforcer
     {
         ArtifactVersion version = new DefaultArtifactVersion( "2.0.5" );
         // test ranges
-        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.5,)" ), version ) );
-        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,)" ), version ) );
+        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.5,)" ),
+                                                             version ) );
+        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,)" ),
+                                                             version ) );
         assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,2.0.5]" ),
                                                              version ) );
         assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,2.0.6]" ),
                                                              version ) );
         assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,2.0.6)" ),
                                                              version ) );
-        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0,)" ), version ) );
-        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.0,)" ), version ) );
+        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0,)" ),
+                                                             version ) );
+        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.0,)" ),
+                                                             version ) );
         // not matching versions
         assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.4,2.0.5)" ),
                                                               version ) );
-        assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.6,)" ), version ) );
-        assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "(2.0.5,)" ), version ) );
+        assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.0.6,)" ),
+                                                              version ) );
+        assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "(2.0.5,)" ),
+                                                              version ) );
 
         // test singular versions -> 2.0.5 == [2.0.5,) or x >= 2.0.5
         assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "2.0" ), version ) );
         assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "2.0.4" ), version ) );
         assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "2.0.5" ), version ) );
 
-        assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "2.0.6" ), version ) );
+        assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "2.0.6" ),
+                                                              version ) );
 
         version = new DefaultArtifactVersion( "1.5.0-7" );
-        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[1.5.0,)" ), version ) );
-        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[1.5,1.6)" ), version ) );
+        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[1.5.0,)" ),
+                                                             version ) );
+        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[1.5,1.6)" ),
+                                                             version ) );
 
         version = new DefaultArtifactVersion( RequireJavaVersion.normalizeJDKVersion( "1.5.0-07" ) );
-        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[1.5.0,)" ), version ) );
-        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[1.5,1.6)" ), version ) );
+        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[1.5.0,)" ),
+                                                             version ) );
+        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[1.5,1.6)" ),
+                                                             version ) );
 
-        //MENFORCER-50
-        version = new DefaultArtifactVersion ("2.1.0-M1-RC12");
-        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.1.0-M1-RC12,)" ), version ) );
-        assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.1.0-M1,)" ), version ) );
+        // MENFORCER-50
+        version = new DefaultArtifactVersion( "2.1.0-M1-RC12" );
+        assertTrue( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.1.0-M1-RC12,)" ),
+                                                             version ) );
+        assertFalse( AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( "[2.1.0-M1,)" ),
+                                                              version ) );
 
     }
 
@@ -98,7 +109,8 @@ public class TestAbstractVersionEnforcer
      * @param range the range
      * @param version the version
      */
-    private void enforceFalse( AbstractVersionEnforcer rule, Log log, String var, String range, ArtifactVersion version )
+    private void enforceFalse( AbstractVersionEnforcer rule, Log log, String var, String range,
+                               ArtifactVersion version )
     {
         try
         {

@@ -19,11 +19,12 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import junit.framework.TestCase;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,7 +34,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * The Class TestEvaluateBeanshell.
@@ -41,10 +44,10 @@ import static org.mockito.Mockito.*;
  * @author hugonnem
  */
 public class TestEvaluateBeanshell
-    extends TestCase
 {
     private MockProject project;
 
+    @BeforeEach
     public void setUp()
     {
         project = new MockProject();
@@ -53,8 +56,8 @@ public class TestEvaluateBeanshell
 
     /**
      * Test rule.
-     * 
      */
+    @Test
     public void testRulePass()
         throws Exception
     {
@@ -67,6 +70,7 @@ public class TestEvaluateBeanshell
         rule.execute( helper );
     }
 
+    @Test
     public void testRuleFail()
         throws Exception
     {
@@ -88,6 +92,7 @@ public class TestEvaluateBeanshell
         }
     }
 
+    @Test
     public void testRuleFailNoMessage()
         throws Exception
     {
@@ -108,6 +113,7 @@ public class TestEvaluateBeanshell
         }
     }
 
+    @Test
     public void testRuleInvalidExpression()
         throws Exception
     {
@@ -129,6 +135,7 @@ public class TestEvaluateBeanshell
         }
     }
 
+    @Test
     public void testRuleInvalidBeanshell()
         throws Exception
     {
@@ -147,110 +154,142 @@ public class TestEvaluateBeanshell
         }
     }
 
-
-    public void testRuleCanExecuteMultipleThreads() throws Exception {
-        final String condition = "String property1 = \"${property1}\";\n" +
-                "(property1.equals(\"prop0\") && \"${property2}\".equals(\"prop0\"))\n" +
-                "|| (property1.equals(\"prop1\") && \"${property2}\".equals(\"prop1\"))\n" +
-                "|| (property1.equals(\"prop2\") && \"${property2}\".equals(\"prop2\"))\n";
+    @Test
+    public void testRuleCanExecuteMultipleThreads()
+        throws Exception
+    {
+        final String condition = "String property1 = \"${property1}\";\n"
+            + "(property1.equals(\"prop0\") && \"${property2}\".equals(\"prop0\"))\n"
+            + "|| (property1.equals(\"prop1\") && \"${property2}\".equals(\"prop1\"))\n"
+            + "|| (property1.equals(\"prop2\") && \"${property2}\".equals(\"prop2\"))\n";
 
         final List<Runnable> runnables = new ArrayList<>();
 
-        runnables.add(new Runnable() {
+        runnables.add( new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 final int threadNumber = 0;
                 MockProject multiProject = new MockProject();
-                multiProject.setProperty("property1", "prop" + threadNumber);
-                multiProject.setProperty("property2", "prop" + threadNumber);
+                multiProject.setProperty( "property1", "prop" + threadNumber );
+                multiProject.setProperty( "property2", "prop" + threadNumber );
 
                 EvaluateBeanshell rule = new EvaluateBeanshell();
-                rule.setCondition(condition);
-                rule.setMessage("Race condition in thread " + threadNumber);
-                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(multiProject);
-                try {
-                    rule.execute(helper);
+                rule.setCondition( condition );
+                rule.setMessage( "Race condition in thread " + threadNumber );
+                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( multiProject );
+                try
+                {
+                    rule.execute( helper );
 
-                } catch (EnforcerRuleException e) {
-                    throw new RuntimeException(e);
+                }
+                catch ( EnforcerRuleException e )
+                {
+                    throw new RuntimeException( e );
                 }
             }
-        });
-        runnables.add(new Runnable() {
+        } );
+        runnables.add( new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 final int threadNumber = 1;
                 MockProject multiProject = new MockProject();
-                multiProject.setProperty("property1", "prop" + threadNumber);
-                multiProject.setProperty("property2", "prop" + threadNumber);
+                multiProject.setProperty( "property1", "prop" + threadNumber );
+                multiProject.setProperty( "property2", "prop" + threadNumber );
 
                 EvaluateBeanshell rule = new EvaluateBeanshell();
-                rule.setCondition(condition);
-                rule.setMessage("Race condition in thread " + threadNumber);
-                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(multiProject);
-                try {
-                    rule.execute(helper);
+                rule.setCondition( condition );
+                rule.setMessage( "Race condition in thread " + threadNumber );
+                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( multiProject );
+                try
+                {
+                    rule.execute( helper );
 
-                } catch (EnforcerRuleException e) {
-                    throw new RuntimeException(e);
+                }
+                catch ( EnforcerRuleException e )
+                {
+                    throw new RuntimeException( e );
                 }
 
             }
-        });
-        runnables.add(new Runnable() {
+        } );
+        runnables.add( new Runnable()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 final int threadNumber = 2;
                 MockProject multiProject = new MockProject();
-                multiProject.setProperty("property1", "prop" + threadNumber);
-                multiProject.setProperty("property2", "prop" + threadNumber);
+                multiProject.setProperty( "property1", "prop" + threadNumber );
+                multiProject.setProperty( "property2", "prop" + threadNumber );
 
                 EvaluateBeanshell rule = new EvaluateBeanshell();
-                rule.setCondition(condition);
-                rule.setMessage("Race condition in thread " + threadNumber);
-                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(multiProject);
-                try {
-                    rule.execute(helper);
-                } catch (EnforcerRuleException e) {
-                    throw new RuntimeException(e);
+                rule.setCondition( condition );
+                rule.setMessage( "Race condition in thread " + threadNumber );
+                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( multiProject );
+                try
+                {
+                    rule.execute( helper );
+                }
+                catch ( EnforcerRuleException e )
+                {
+                    throw new RuntimeException( e );
                 }
             }
-        });
+        } );
 
-        assertConcurrent( runnables, 4);
+        assertConcurrent( runnables, 4 );
     }
 
-    private static void assertConcurrent(final List<? extends Runnable> runnables, final int maxTimeoutSeconds) throws InterruptedException {
+    private static void assertConcurrent( final List<? extends Runnable> runnables, final int maxTimeoutSeconds )
+        throws InterruptedException
+    {
         final int numThreads = runnables.size();
-        final List<Throwable> exceptions = Collections.synchronizedList(new ArrayList<Throwable>());
-        final ExecutorService threadPool = Executors.newFixedThreadPool(numThreads);
-        try {
-            final CountDownLatch allExecutorThreadsReady = new CountDownLatch(numThreads);
-            final CountDownLatch afterInitBlocker = new CountDownLatch(1);
-            final CountDownLatch allDone = new CountDownLatch(numThreads);
-            for (final Runnable submittedTestRunnable : runnables) {
-                threadPool.submit(new Runnable() {
-                    public void run() {
+        final List<Throwable> exceptions = Collections.synchronizedList( new ArrayList<Throwable>() );
+        final ExecutorService threadPool = Executors.newFixedThreadPool( numThreads );
+        try
+        {
+            final CountDownLatch allExecutorThreadsReady = new CountDownLatch( numThreads );
+            final CountDownLatch afterInitBlocker = new CountDownLatch( 1 );
+            final CountDownLatch allDone = new CountDownLatch( numThreads );
+            for ( final Runnable submittedTestRunnable : runnables )
+            {
+                threadPool.submit( new Runnable()
+                {
+                    public void run()
+                    {
                         allExecutorThreadsReady.countDown();
-                        try {
+                        try
+                        {
                             afterInitBlocker.await();
                             submittedTestRunnable.run();
-                        } catch (final Throwable e) {
-                            exceptions.add(e);
-                        } finally {
+                        }
+                        catch ( final Throwable e )
+                        {
+                            exceptions.add( e );
+                        }
+                        finally
+                        {
                             allDone.countDown();
                         }
                     }
-                });
+                } );
             }
             // wait until all threads are ready
-            assertTrue("Timeout initializing threads! Perform long lasting initializations before passing runnables to assertConcurrent", allExecutorThreadsReady.await(runnables.size() * 10, TimeUnit.MILLISECONDS));
+            assertTrue( allExecutorThreadsReady.await( runnables.size() * 10, TimeUnit.MILLISECONDS ),
+                        "Timeout initializing threads! Perform long lasting initializations before passing runnables to assertConcurrent" );
             // start all test runners
             afterInitBlocker.countDown();
-            assertTrue("Timeout! More than" + maxTimeoutSeconds + "seconds", allDone.await(maxTimeoutSeconds, TimeUnit.SECONDS));
-        } finally {
+            assertTrue( allDone.await( maxTimeoutSeconds, TimeUnit.SECONDS ),
+                        "Timeout! More than" + maxTimeoutSeconds + "seconds" );
+        }
+        finally
+        {
             threadPool.shutdownNow();
         }
-        assertTrue("Failed with exception(s)" + exceptions, exceptions.isEmpty());
+        assertTrue( exceptions.isEmpty(), "Failed with exception(s)" + exceptions );
     }
 }

@@ -28,7 +28,7 @@ import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtilsHelper;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * The Class TestNoSnapshots.
@@ -80,7 +80,7 @@ public class TestRequireReleaseDeps
         project.setParent( parent );
         project.setArtifacts( null );
         project.setDependencyArtifacts( null );
-        helper = EnforcerTestUtils.getHelper(project);
+        helper = EnforcerTestUtils.getHelper( project );
 
         rule.setFailWhenParentIsSnapshot( true );
         EnforcerRuleUtilsHelper.execute( rule, helper, true );
@@ -88,21 +88,23 @@ public class TestRequireReleaseDeps
         rule.setFailWhenParentIsSnapshot( false );
         EnforcerRuleUtilsHelper.execute( rule, helper, false );
     }
-    
+
     @Test
-    public void testWildcardIgnore() throws Exception
+    public void testWildcardIgnore()
+        throws Exception
     {
         RequireReleaseDeps rule = newRequireReleaseDeps();
         rule.setExcludes( Collections.singletonList( "*:*:*:*:test" ) );
         rule.setOnlyWhenRelease( true );
         rule.setSearchTransitive( false );
-        
+
         ArtifactStubFactory factory = new ArtifactStubFactory();
         MockProject project = new MockProject();
         project.setArtifact( factory.getReleaseArtifact() );
-        project.setDependencyArtifacts( Collections.singleton( factory.createArtifact( "g", "a", "1.0-SNAPSHOT", "test" ) ) );
+        project.setDependencyArtifacts( Collections.singleton( factory.createArtifact( "g", "a", "1.0-SNAPSHOT",
+                                                                                       "test" ) ) );
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
-        
+
         EnforcerRuleUtilsHelper.execute( rule, helper, false );
     }
 
@@ -115,22 +117,22 @@ public class TestRequireReleaseDeps
         RequireReleaseDeps rule = newRequireReleaseDeps();
         rule.getCacheId();
     }
-    
+
     private RequireReleaseDeps newRequireReleaseDeps()
     {
         RequireReleaseDeps rule = new RequireReleaseDeps()
         {
-            
+
             @Override
             protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest buildingRequest )
             {
                 MavenProject project = buildingRequest.getProject();
 
                 // the integration with dependencyGraphTree is verified with the integration tests
-                // for unit-testing 
+                // for unit-testing
                 return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
             }
-        };        
+        };
         return rule;
     }
 }

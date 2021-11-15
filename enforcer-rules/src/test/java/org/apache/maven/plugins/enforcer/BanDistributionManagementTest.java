@@ -31,7 +31,9 @@ import org.apache.maven.model.Site;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * This class is intended to test the {@link BanDistributionManagement} rule.
@@ -64,13 +66,15 @@ public class BanDistributionManagementTest
      * 
      * @throws Exception if any occurs
      */
-    @Test( expected = EnforcerRuleException.class )
+    @Test
     public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepository()
         throws Exception
     {
-        BanDistributionManagement rule =
-            setupProjectWithDistributionManagement( new DeploymentRepository(), null, null );
-        rule.execute( helper );
+        assertThrows( EnforcerRuleException.class, () -> {
+            BanDistributionManagement rule =
+                setupProjectWithDistributionManagement( new DeploymentRepository(), null, null );
+            rule.execute( helper );
+        } );
         // intentionally no assert cause we expect an exception.
     }
 
@@ -88,13 +92,15 @@ public class BanDistributionManagementTest
      * 
      * @throws Exception if any occurs
      */
-    @Test( expected = EnforcerRuleException.class )
+    @Test
     public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepositorySnapshotRepository()
         throws Exception
     {
-        BanDistributionManagement rule =
-            setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(), null );
-        rule.execute( helper );
+        assertThrows( EnforcerRuleException.class, () -> {
+            BanDistributionManagement rule =
+                setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(), null );
+            rule.execute( helper );
+        } );
         // intentionally no assert cause we expect an exception.
     }
 
@@ -115,14 +121,17 @@ public class BanDistributionManagementTest
      * 
      * @throws Exception if any occurs
      */
-    @Test( expected = EnforcerRuleException.class )
+    @Test
     public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepositorySnapshotRepositorySite()
         throws Exception
     {
-        BanDistributionManagement rule =
-            setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(),
-                                                    new Site() );
-        rule.execute( helper );
+        assertThrows( EnforcerRuleException.class, () -> {
+            BanDistributionManagement rule =
+                setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(),
+                                                        new Site() );
+            rule.execute( helper );
+            // intentionally no assert cause we expect an exception.
+        } );
         // intentionally no assert cause we expect an exception.
     }
 
@@ -220,7 +229,7 @@ public class BanDistributionManagementTest
     private BanDistributionManagement setupProjectWithParentDistributionManagement( DeploymentRepository repository,
                                                                                     DeploymentRepository snapshotRepository,
                                                                                     Site site )
-                                                                                        throws ExpressionEvaluationException
+        throws ExpressionEvaluationException
     {
         project = setupProject( null );
 
@@ -253,7 +262,7 @@ public class BanDistributionManagementTest
     private BanDistributionManagement setupProjectWithDistributionManagement( DeploymentRepository repository,
                                                                               DeploymentRepository snapshotRepository,
                                                                               Site site )
-                                                                                  throws ExpressionEvaluationException
+        throws ExpressionEvaluationException
     {
         DistributionManagement dm = mock( DistributionManagement.class );
         when( dm.getRepository() ).thenReturn( repository );

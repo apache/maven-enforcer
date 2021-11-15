@@ -69,7 +69,7 @@ public final class EnforcerTestUtils
 
         MavenExecutionRequest mer = mock( MavenExecutionRequest.class );
         ProjectBuildingRequest buildingRequest = mock( ProjectBuildingRequest.class );
-        when( buildingRequest.setRepositorySession( any() )).thenReturn( buildingRequest );
+        when( buildingRequest.setRepositorySession( any() ) ).thenReturn( buildingRequest );
         when( mer.getProjectBuildingRequest() ).thenReturn( buildingRequest );
 
         Properties systemProperties = new Properties();
@@ -135,19 +135,20 @@ public final class EnforcerTestUtils
             eval = new PluginParameterExpressionEvaluator( session, mockExecution );
         }
         PlexusContainer container = Mockito.mock( PlexusContainer.class );
-        
-        Artifact artifact = new DefaultArtifact( "groupId", "artifactId", "version", "compile", "jar",
-                                                 "classifier", null );
+
+        Artifact artifact =
+            new DefaultArtifact( "groupId", "artifactId", "version", "compile", "jar", "classifier", null );
         Artifact v1 = new DefaultArtifact( "groupId", "artifact", "1.0.0", "compile", "jar", "", null );
         Artifact v2 = new DefaultArtifact( "groupId", "artifact", "2.0.0", "compile", "jar", "", null );
         final DefaultDependencyNode node = new DefaultDependencyNode( artifact );
         DefaultDependencyNode child1 = new DefaultDependencyNode( node, v1, null, null, null );
         child1.setChildren( Collections.emptyList() );
-        DefaultDependencyNode child2 = new DefaultDependencyNode( node, v2, null, null, null  );
+        DefaultDependencyNode child2 = new DefaultDependencyNode( node, v2, null, null, null );
         child2.setChildren( Collections.emptyList() );
         node.setChildren( Arrays.asList( child1, child2 ) );
-        
-        DependencyCollectorBuilder dependencyCollectorBuilder = new DependencyCollectorBuilder() {
+
+        DependencyCollectorBuilder dependencyCollectorBuilder = new DependencyCollectorBuilder()
+        {
             @Override
             public org.apache.maven.shared.dependency.graph.DependencyNode collectDependencyGraph( ProjectBuildingRequest buildingRequest,
                                                                                                    ArtifactFilter filter )
@@ -159,7 +160,7 @@ public final class EnforcerTestUtils
 
         try
         {
-            Mockito.when( container.lookup( DependencyCollectorBuilder.class ) ).thenReturn( dependencyCollectorBuilder  );
+            Mockito.when( container.lookup( DependencyCollectorBuilder.class ) ).thenReturn( dependencyCollectorBuilder );
         }
         catch ( ComponentLookupException e )
         {
@@ -193,7 +194,7 @@ public final class EnforcerTestUtils
     {
         InputSource inputSource = new InputSource();
         inputSource.setModelId( "unit" );
-        
+
         Plugin plugin = new Plugin();
         plugin.setArtifactId( artifactId );
         plugin.setGroupId( groupId );
