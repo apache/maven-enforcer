@@ -53,7 +53,7 @@ public class TestRequireReleaseVersion
 
         project.setArtifact( factory.getReleaseArtifact() );
 
-        EnforcerRule rule = new RequireReleaseVersion();
+        RequireReleaseVersion rule = new RequireReleaseVersion();
 
         EnforcerRuleUtilsHelper.execute( rule, helper, false );
 
@@ -68,10 +68,10 @@ public class TestRequireReleaseVersion
         project.setParent( parent );
         helper = EnforcerTestUtils.getHelper( project );
 
-        ( (RequireReleaseVersion) rule ).setFailWhenParentIsSnapshot( true );
+        rule.setFailWhenParentIsSnapshot( true );
         EnforcerRuleUtilsHelper.execute( rule, helper, true );
 
-        ( (RequireReleaseVersion) rule ).setFailWhenParentIsSnapshot( false );
+        rule.setFailWhenParentIsSnapshot( false );
         EnforcerRuleUtilsHelper.execute( rule, helper, false );
 
     }

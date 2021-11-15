@@ -29,7 +29,6 @@ import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
@@ -44,7 +43,6 @@ import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilder;
-import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilderException;
 import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyNode;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
@@ -147,20 +145,10 @@ public final class EnforcerTestUtils
         child2.setChildren( Collections.emptyList() );
         node.setChildren( Arrays.asList( child1, child2 ) );
 
-        DependencyCollectorBuilder dependencyCollectorBuilder = new DependencyCollectorBuilder()
-        {
-            @Override
-            public org.apache.maven.shared.dependency.graph.DependencyNode collectDependencyGraph( ProjectBuildingRequest buildingRequest,
-                                                                                                   ArtifactFilter filter )
-                throws DependencyCollectorBuilderException
-            {
-                return node;
-            }
-        };
-
         try
         {
-            Mockito.when( container.lookup( DependencyCollectorBuilder.class ) ).thenReturn( dependencyCollectorBuilder );
+            when( container.lookup( DependencyCollectorBuilder.class ) )
+                    .thenReturn( ( buildingRequest, filter ) -> node );
         }
         catch ( ComponentLookupException e )
         {

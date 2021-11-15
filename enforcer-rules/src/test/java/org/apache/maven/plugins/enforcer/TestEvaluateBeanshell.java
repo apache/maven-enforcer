@@ -72,7 +72,6 @@ public class TestEvaluateBeanshell
 
     @Test
     public void testRuleFail()
-        throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should be set by the surefire
@@ -94,7 +93,6 @@ public class TestEvaluateBeanshell
 
     @Test
     public void testRuleFailNoMessage()
-        throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         // this property should be set by the surefire
@@ -131,13 +129,12 @@ public class TestEvaluateBeanshell
         }
         catch ( EnforcerRuleException e )
         {
-            assertFalse( e.getLocalizedMessage().equals( rule.getMessage() ) );
+            assertNotEquals( e.getLocalizedMessage(), rule.getMessage() );
         }
     }
 
     @Test
     public void testRuleInvalidBeanshell()
-        throws Exception
     {
         EvaluateBeanshell rule = new EvaluateBeanshell();
         rule.setCondition( "this is not valid beanshell" );
@@ -150,7 +147,7 @@ public class TestEvaluateBeanshell
         }
         catch ( EnforcerRuleException e )
         {
-            assertFalse( e.getLocalizedMessage().equals( rule.getMessage() ) );
+            assertNotEquals( e.getLocalizedMessage(), rule.getMessage() );
         }
     }
 
@@ -165,79 +162,64 @@ public class TestEvaluateBeanshell
 
         final List<Runnable> runnables = new ArrayList<>();
 
-        runnables.add( new Runnable()
-        {
-            @Override
-            public void run()
+        runnables.add( () -> {
+            final int threadNumber = 0;
+            MockProject multiProject = new MockProject();
+            multiProject.setProperty( "property1", "prop" + threadNumber );
+            multiProject.setProperty( "property2", "prop" + threadNumber );
+
+            EvaluateBeanshell rule = new EvaluateBeanshell();
+            rule.setCondition( condition );
+            rule.setMessage( "Race condition in thread " + threadNumber );
+            EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( multiProject );
+            try
             {
-                final int threadNumber = 0;
-                MockProject multiProject = new MockProject();
-                multiProject.setProperty( "property1", "prop" + threadNumber );
-                multiProject.setProperty( "property2", "prop" + threadNumber );
-
-                EvaluateBeanshell rule = new EvaluateBeanshell();
-                rule.setCondition( condition );
-                rule.setMessage( "Race condition in thread " + threadNumber );
-                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( multiProject );
-                try
-                {
-                    rule.execute( helper );
-
-                }
-                catch ( EnforcerRuleException e )
-                {
-                    throw new RuntimeException( e );
-                }
-            }
-        } );
-        runnables.add( new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                final int threadNumber = 1;
-                MockProject multiProject = new MockProject();
-                multiProject.setProperty( "property1", "prop" + threadNumber );
-                multiProject.setProperty( "property2", "prop" + threadNumber );
-
-                EvaluateBeanshell rule = new EvaluateBeanshell();
-                rule.setCondition( condition );
-                rule.setMessage( "Race condition in thread " + threadNumber );
-                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( multiProject );
-                try
-                {
-                    rule.execute( helper );
-
-                }
-                catch ( EnforcerRuleException e )
-                {
-                    throw new RuntimeException( e );
-                }
+                rule.execute( helper );
 
             }
-        } );
-        runnables.add( new Runnable()
-        {
-            @Override
-            public void run()
+            catch ( EnforcerRuleException e )
             {
-                final int threadNumber = 2;
-                MockProject multiProject = new MockProject();
-                multiProject.setProperty( "property1", "prop" + threadNumber );
-                multiProject.setProperty( "property2", "prop" + threadNumber );
+                throw new RuntimeException( e );
+            }
+        } );
+        runnables.add( () -> {
+            final int threadNumber = 1;
+            MockProject multiProject = new MockProject();
+            multiProject.setProperty( "property1", "prop" + threadNumber );
+            multiProject.setProperty( "property2", "prop" + threadNumber );
 
-                EvaluateBeanshell rule = new EvaluateBeanshell();
-                rule.setCondition( condition );
-                rule.setMessage( "Race condition in thread " + threadNumber );
-                EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( multiProject );
-                try
-                {
-                    rule.execute( helper );
-                }
-                catch ( EnforcerRuleException e )
-                {
-                    throw new RuntimeException( e );
-                }
+            EvaluateBeanshell rule = new EvaluateBeanshell();
+            rule.setCondition( condition );
+            rule.setMessage( "Race condition in thread " + threadNumber );
+            EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( multiProject );
+            try
+            {
+                rule.execute( helper );
+
+            }
+            catch ( EnforcerRuleException e )
+            {
+                throw new RuntimeException( e );
+            }
+
+        } );
+        runnables.add( () -> {
+            final int threadNumber = 2;
+            MockProject multiProject = new MockProject();
+            multiProject.setProperty( "property1", "prop" + threadNumber );
+            multiProject.setProperty( "property2", "prop" + threadNumber );
+
+            EvaluateBeanshell rule = new EvaluateBeanshell();
+            rule.setCondition( condition );
+            rule.setMessage( "Race condition in thread " + threadNumber );
+            EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( multiProject );
+            try
+            {
+                rule.execute( helper );
+            }
+            catch ( EnforcerRuleException e )
+            {
+                throw new RuntimeException( e );
             }
         } );
 
@@ -248,7 +230,7 @@ public class TestEvaluateBeanshell
         throws InterruptedException
     {
         final int numThreads = runnables.size();
-        final List<Throwable> exceptions = Collections.synchronizedList( new ArrayList<Throwable>() );
+        final List<Throwable> exceptions = Collections.synchronizedList( new ArrayList<>() );
         final ExecutorService threadPool = Executors.newFixedThreadPool( numThreads );
         try
         {
@@ -257,24 +239,20 @@ public class TestEvaluateBeanshell
             final CountDownLatch allDone = new CountDownLatch( numThreads );
             for ( final Runnable submittedTestRunnable : runnables )
             {
-                threadPool.submit( new Runnable()
-                {
-                    public void run()
+                threadPool.submit( () -> {
+                    allExecutorThreadsReady.countDown();
+                    try
                     {
-                        allExecutorThreadsReady.countDown();
-                        try
-                        {
-                            afterInitBlocker.await();
-                            submittedTestRunnable.run();
-                        }
-                        catch ( final Throwable e )
-                        {
-                            exceptions.add( e );
-                        }
-                        finally
-                        {
-                            allDone.countDown();
-                        }
+                        afterInitBlocker.await();
+                        submittedTestRunnable.run();
+                    }
+                    catch ( final Throwable e )
+                    {
+                        exceptions.add( e );
+                    }
+                    finally
+                    {
+                        allDone.countDown();
                     }
                 } );
             }

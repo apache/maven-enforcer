@@ -36,8 +36,8 @@ public class BannedDependenciesTestSetup
     public BannedDependenciesTestSetup()
         throws IOException
     {
-        this.excludes = new ArrayList<String>();
-        this.includes = new ArrayList<String>();
+        this.excludes = new ArrayList<>();
+        this.includes = new ArrayList<>();
 
         ArtifactStubFactory factory = new ArtifactStubFactory();
 
@@ -56,11 +56,11 @@ public class BannedDependenciesTestSetup
 
     private List<String> excludes;
 
-    private List<String> includes;
+    private final List<String> includes;
 
-    private BannedDependencies rule;
+    private final BannedDependencies rule;
 
-    private EnforcerRuleHelper helper;
+    private final EnforcerRuleHelper helper;
 
     public void setSearchTransitive( boolean searchTransitive )
     {
@@ -94,7 +94,7 @@ public class BannedDependenciesTestSetup
 
     private BannedDependencies newBannedDependenciesRule()
     {
-        BannedDependencies rule = new BannedDependencies()
+        return new BannedDependencies()
         {
             @Override
             protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest buildingRequest )
@@ -106,7 +106,6 @@ public class BannedDependenciesTestSetup
                 return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
             }
         };
-        return rule;
     }
 
 }

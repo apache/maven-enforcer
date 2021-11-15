@@ -55,7 +55,6 @@ public class RequirePrerequisiteTest
 
     @Test
     public void testNoPrerequisite()
-        throws Exception
     {
         assertThrows( EnforcerRuleException.class, () -> {
             RequirePrerequisite rule = new RequirePrerequisite();
@@ -75,7 +74,6 @@ public class RequirePrerequisiteTest
 
     @Test
     public void testLowerMavenPrerequisite()
-        throws Exception
     {
         assertThrows( EnforcerRuleException.class, () -> {
             when( project.getPrerequisites() ).thenReturn( new Prerequisites() );
@@ -88,7 +86,6 @@ public class RequirePrerequisiteTest
 
     @Test
     public void testLowerMavenRangePrerequisite()
-        throws Exception
     {
         assertThrows( EnforcerRuleException.class, () -> {
             when( project.getPrerequisites() ).thenReturn( new Prerequisites() );
@@ -102,7 +99,6 @@ public class RequirePrerequisiteTest
 
     @Test
     public void testMavenRangesPrerequisite()
-        throws Exception
     {
         assertThrows( EnforcerRuleException.class, () -> {
             Prerequisites prerequisites = new Prerequisites();
@@ -147,7 +143,6 @@ public class RequirePrerequisiteTest
 
     @Test
     public void testMatchingPackagings()
-        throws Exception
     {
         assertThrows( EnforcerRuleException.class, () -> {
             when( project.getPackaging() ).thenReturn( "maven-plugin" );

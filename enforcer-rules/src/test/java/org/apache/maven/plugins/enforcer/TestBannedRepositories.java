@@ -46,7 +46,6 @@ public class TestBannedRepositories
 
     @BeforeEach
     public void setUp()
-        throws Exception
     {
         rule = new BannedRepositories();
         rule.setMessage( "my message" );
@@ -86,7 +85,7 @@ public class TestBannedRepositories
         project.setRemoteArtifactRepositories( repos );
         project.setPluginArtifactRepositories( repos );
 
-        List<String> bannedRepositories = new ArrayList<String>();
+        List<String> bannedRepositories = new ArrayList<>();
         String pattern1 = "http://repo1/*";
 
         bannedRepositories.add( pattern1 );
@@ -118,7 +117,7 @@ public class TestBannedRepositories
         project.setRemoteArtifactRepositories( repos );
         project.setPluginArtifactRepositories( repos );
 
-        List<String> bannedRepositories = new ArrayList<String>();
+        List<String> bannedRepositories = new ArrayList<>();
         String pattern1 = "http://repo1/*";
 
         bannedRepositories.add( pattern1 );
@@ -143,7 +142,7 @@ public class TestBannedRepositories
         project.setRemoteArtifactRepositories( repos );
         project.setPluginArtifactRepositories( repos );
 
-        List<String> patterns = new ArrayList<String>();
+        List<String> patterns = new ArrayList<>();
         String pattern1 = "http://repo1/*";
 
         patterns.add( pattern1 );

@@ -37,7 +37,7 @@ public class TestRequireFilesExist
     @TempDir
     public File temporaryFolder;
 
-    private RequireFilesExist rule = new RequireFilesExist();
+    private final RequireFilesExist rule = new RequireFilesExist();
 
     @Test
     public void testFileExists()
@@ -52,7 +52,6 @@ public class TestRequireFilesExist
 
     @Test
     public void testFileOsIndependentExists()
-        throws Exception
     {
         rule.setFiles( new File[] { new File( "POM.xml" ) } );
 
@@ -64,7 +63,6 @@ public class TestRequireFilesExist
 
     @Test
     public void testEmptyFile()
-        throws Exception
     {
         rule.setFiles( new File[] { null } );
 
@@ -85,7 +83,6 @@ public class TestRequireFilesExist
 
     @Test
     public void testEmptyFileList()
-        throws Exception
     {
         rule.setFiles( new File[] {} );
         assertEquals( 0, rule.getFiles().length );

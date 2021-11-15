@@ -148,7 +148,7 @@ public class TestRequireNoRepositories
     private MavenProject addRepository( MavenProject project, Repository r )
     {
         Model originalModel = project.getOriginalModel();
-        List<Repository> repositories = new ArrayList<Repository>();
+        List<Repository> repositories = new ArrayList<>();
         repositories.add( r );
         when( originalModel.getRepositories() ).thenReturn( repositories );
         return project;
@@ -157,7 +157,7 @@ public class TestRequireNoRepositories
     private MavenProject addEmptyRepository( MavenProject project )
     {
         Model originalModel = project.getOriginalModel();
-        List<Repository> repositories = new ArrayList<Repository>();
+        List<Repository> repositories = new ArrayList<>();
         when( originalModel.getRepositories() ).thenReturn( repositories );
         return project;
     }
@@ -165,7 +165,7 @@ public class TestRequireNoRepositories
     private MavenProject addPluginRepository( MavenProject project, Repository r )
     {
         Model originalModel = project.getOriginalModel();
-        List<Repository> repositories = new ArrayList<Repository>();
+        List<Repository> repositories = new ArrayList<>();
         repositories.add( r );
         when( originalModel.getPluginRepositories() ).thenReturn( repositories );
         return project;
@@ -174,7 +174,7 @@ public class TestRequireNoRepositories
     private MavenProject addEmptyPluginRepository( MavenProject project )
     {
         Model originalModel = project.getOriginalModel();
-        List<Repository> repositories = new ArrayList<Repository>();
+        List<Repository> repositories = new ArrayList<>();
         when( originalModel.getPluginRepositories() ).thenReturn( repositories );
         return project;
     }
@@ -197,7 +197,6 @@ public class TestRequireNoRepositories
      */
     @Test
     public void testAllBannedWithRepository()
-        throws EnforcerRuleException
     {
         assertThrows( EnforcerRuleException.class, () -> {
             MavenProject baseProject = createStandAloneProject();
@@ -213,7 +212,6 @@ public class TestRequireNoRepositories
      */
     @Test
     public void testAllBannedWithPluginRepository()
-        throws EnforcerRuleException
     {
         assertThrows( EnforcerRuleException.class, () -> {
             MavenProject baseProject = createStandAloneProject();
@@ -327,7 +325,6 @@ public class TestRequireNoRepositories
 
     @Test
     public void testAllBannedWithSnapshotRepository()
-        throws EnforcerRuleException
     {
         assertThrows( EnforcerRuleException.class, () -> {
             MavenProject baseProject = createStandAloneProject();

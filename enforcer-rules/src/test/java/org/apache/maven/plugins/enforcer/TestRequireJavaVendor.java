@@ -62,7 +62,6 @@ public class TestRequireJavaVendor
 
     @Test
     public void nonMatchingInclude()
-        throws EnforcerRuleException
     {
         // Set the included vendor to something irrelevant
         underTest.setIncludes( Collections.singletonList( NON_MATCHING_VENDOR ) );
@@ -73,7 +72,6 @@ public class TestRequireJavaVendor
 
     @Test
     public void matchingExclude()
-        throws EnforcerRuleException
     {
         // Set the excluded vendor to current vendor name
         underTest.setExcludes( Collections.singletonList( SystemUtils.JAVA_VENDOR ) );
@@ -95,7 +93,6 @@ public class TestRequireJavaVendor
 
     @Test
     public void matchingIncludeAndMatchingExclude()
-        throws EnforcerRuleException
     {
         underTest.setExcludes( Collections.singletonList( SystemUtils.JAVA_VENDOR ) );
         underTest.setIncludes( Collections.singletonList( SystemUtils.JAVA_VENDOR ) );
@@ -106,7 +103,6 @@ public class TestRequireJavaVendor
 
     @Test
     public void matchAnyExclude()
-        throws EnforcerRuleException
     {
         // Set a bunch of excluded vendors
         underTest.setExcludes( Arrays.asList( SystemUtils.JAVA_VENDOR, SystemUtils.JAVA_VENDOR + "modified" ) );

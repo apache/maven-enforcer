@@ -90,7 +90,6 @@ public class TestRequireJavaVersion
 
     @Test
     public void excludingTheCurrentJavaVersionViaRangeThisShouldFailWithException()
-        throws EnforcerRuleException
     {
         assertThrows( EnforcerRuleException.class, () -> {
             String thisVersion = RequireJavaVersion.normalizeJDKVersion( SystemUtils.JAVA_VERSION );

@@ -126,7 +126,7 @@ public class TestAbstractVersionEnforcer
             }
             else
             {
-                fail( "Received wrong exception. Expected EnforcerRuleExeption. Received:" + e.toString() );
+                fail( "Received wrong exception. Expected EnforcerRuleExeption. Received:" + e );
             }
         }
     }

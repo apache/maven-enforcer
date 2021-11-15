@@ -36,11 +36,9 @@ public class TestRequireEnvironmentVariable
     /**
      * Test rule.
      *
-     * @throws EnforcerRuleException the enforcer rule exception
      */
     @Test
     public void testRule()
-        throws EnforcerRuleException
     {
         MockProject project = new MockProject();
         project.setProperty( "testProp", "This is a test." );
@@ -75,11 +73,9 @@ public class TestRequireEnvironmentVariable
     /**
      * Test rule with regex.
      *
-     * @throws EnforcerRuleException the enforcer rule exception
      */
     @Test
     public void testRuleWithRegex()
-        throws EnforcerRuleException
     {
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
 

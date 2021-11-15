@@ -75,14 +75,14 @@ public class ReactorModuleConvergenceTest
     public void shouldNotFailWithNoProject()
         throws EnforcerRuleException
     {
-        setupSortedProjects( Collections.<MavenProject>emptyList() );
+        setupSortedProjects( Collections.emptyList() );
 
         rule.execute( helper );
     }
 
     @Test
     public void shouldNotFailWithAValidProject()
-        throws EnforcerRuleException, ExpressionEvaluationException
+        throws EnforcerRuleException
     {
         MavenProject mp1 = createProjectParent();
         MavenProject mp2 = createProjectChild1( mp1 );
@@ -96,7 +96,6 @@ public class ReactorModuleConvergenceTest
 
     @Test
     public void shouldFailWithWrongVersionInOneChild()
-        throws EnforcerRuleException, ExpressionEvaluationException
     {
         assertThrows( EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
@@ -116,7 +115,6 @@ public class ReactorModuleConvergenceTest
 
     @Test
     public void shouldFailWithWrongParent()
-        throws EnforcerRuleException, ExpressionEvaluationException
     {
         assertThrows( EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
@@ -126,7 +124,7 @@ public class ReactorModuleConvergenceTest
             when( wrongParentVerison.getArtifactId() ).thenReturn( "m1" );
             when( wrongParentVerison.getVersion() ).thenReturn( "1.1-SNAPSHOT" );
             when( wrongParentVerison.getId() ).thenReturn( "org.apache.enforcer:m1:jar:1.1-SNAPSHOT" );
-            when( wrongParentVerison.getDependencies() ).thenReturn( Collections.<Dependency>emptyList() );
+            when( wrongParentVerison.getDependencies() ).thenReturn( Collections.emptyList() );
 
             MavenProject mp2 = createProjectChild2( wrongParentVerison );
             MavenProject mp3 = createProjectChild2( mp1 );
@@ -144,7 +142,7 @@ public class ReactorModuleConvergenceTest
 
     @Test
     public void shouldNotFailWithACompanyParent()
-        throws EnforcerRuleException, ExpressionEvaluationException
+        throws EnforcerRuleException
     {
         MavenProject companyParent = createCompanyParent();
         MavenProject mp1 = createProjectParent( companyParent );
@@ -160,7 +158,6 @@ public class ReactorModuleConvergenceTest
 
     @Test
     public void shouldFailWithMissingParentsInReactory()
-        throws EnforcerRuleException, ExpressionEvaluationException
     {
         assertThrows( EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
@@ -176,7 +173,6 @@ public class ReactorModuleConvergenceTest
 
     @Test
     public void shouldFailWithAParentWhichIsNotPartOfTheReactory()
-        throws EnforcerRuleException, ExpressionEvaluationException
     {
         assertThrows( EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
@@ -186,7 +182,7 @@ public class ReactorModuleConvergenceTest
             when( wrongParentVerison.getArtifactId() ).thenReturn( "m1" );
             when( wrongParentVerison.getVersion() ).thenReturn( "1.0-SNAPSHOT" );
             when( wrongParentVerison.getId() ).thenReturn( "org.apache.enforcer:m1:jar:1.0-SNAPSHOT" );
-            when( wrongParentVerison.getDependencies() ).thenReturn( Collections.<Dependency>emptyList() );
+            when( wrongParentVerison.getDependencies() ).thenReturn( Collections.emptyList() );
 
             MavenProject mp2 = createProjectChild2( wrongParentVerison );
             MavenProject mp3 = createProjectChild2( mp1 );
@@ -204,13 +200,13 @@ public class ReactorModuleConvergenceTest
 
     @Test
     public void shouldNotFailWithDependencyInReactory()
-        throws EnforcerRuleException, ExpressionEvaluationException
+        throws EnforcerRuleException
     {
         MavenProject mp1 = createProjectParent();
         MavenProject mp2 = createProjectChild1( mp1 );
 
         Dependency goodDependency = createDependency( "org.junit", "junit", "2.0" );
-        List<Dependency> depListMP2 = Arrays.asList( goodDependency );
+        List<Dependency> depListMP2 = Arrays. asList( goodDependency );
         when( mp2.getDependencies() ).thenReturn( depListMP2 );
 
         MavenProject mp3 = createProjectChild2( mp1 );
@@ -226,7 +222,6 @@ public class ReactorModuleConvergenceTest
 
     @Test
     public void shouldFailWithWrongDependencyInReactor()
-        throws EnforcerRuleException, ExpressionEvaluationException
     {
         assertThrows( EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
@@ -275,7 +270,7 @@ public class ReactorModuleConvergenceTest
         when( mp2.getArtifactId() ).thenReturn( "m1" );
         when( mp2.getVersion() ).thenReturn( "1.1-SNAPSHOT" );
         when( mp2.getId() ).thenReturn( "org.apache.enforcer:m1:jar:1.1-SNAPSHOT" );
-        when( mp2.getDependencies() ).thenReturn( Collections.<Dependency>emptyList() );
+        when( mp2.getDependencies() ).thenReturn( Collections.emptyList() );
         return mp2;
     }
 
@@ -287,7 +282,7 @@ public class ReactorModuleConvergenceTest
         when( mp3.getArtifactId() ).thenReturn( "m2" );
         when( mp3.getVersion() ).thenReturn( "1.0-SNAPSHOT" );
         when( mp3.getId() ).thenReturn( "org.apache.enforcer:m2:jar:1.0-SNAPSHOT" );
-        when( mp3.getDependencies() ).thenReturn( Collections.<Dependency>emptyList() );
+        when( mp3.getDependencies() ).thenReturn( Collections.emptyList() );
         return mp3;
     }
 
@@ -299,7 +294,7 @@ public class ReactorModuleConvergenceTest
         when( mp2.getArtifactId() ).thenReturn( "m1" );
         when( mp2.getVersion() ).thenReturn( "1.0-SNAPSHOT" );
         when( mp2.getId() ).thenReturn( "org.apache.enforcer:m1:jar:1.0-SNAPSHOT" );
-        when( mp2.getDependencies() ).thenReturn( Collections.<Dependency>emptyList() );
+        when( mp2.getDependencies() ).thenReturn( Collections.emptyList() );
         return mp2;
     }
 
@@ -310,7 +305,7 @@ public class ReactorModuleConvergenceTest
         when( nonReactorParent.getArtifactId() ).thenReturn( "parent" );
         when( nonReactorParent.getVersion() ).thenReturn( "1.1" );
         when( nonReactorParent.getId() ).thenReturn( "org.apache.enforcer.parent:parent:jar:1.1" );
-        when( nonReactorParent.getDependencies() ).thenReturn( Collections.<Dependency>emptyList() );
+        when( nonReactorParent.getDependencies() ).thenReturn( Collections.emptyList() );
         return nonReactorParent;
     }
 
@@ -331,7 +326,7 @@ public class ReactorModuleConvergenceTest
         when( mp1.getArtifactId() ).thenReturn( "parent" );
         when( mp1.getVersion() ).thenReturn( "1.0-SNAPSHOT" );
         when( mp1.getId() ).thenReturn( "org.apache.enforcer:parent:pom:1.0-SNAPSHOT" );
-        when( mp1.getDependencies() ).thenReturn( Collections.<Dependency>emptyList() );
+        when( mp1.getDependencies() ).thenReturn( Collections.emptyList() );
         return mp1;
     }
 

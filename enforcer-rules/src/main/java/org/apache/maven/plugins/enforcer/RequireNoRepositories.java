@@ -114,14 +114,12 @@ public class RequireNoRepositories
     {
         this.allowSnapshotPluginRepositories = allowSnapshotPluginRepositories;
     }
-    
-    private Log logger;
 
     @Override
     public void execute( EnforcerRuleHelper helper )
         throws EnforcerRuleException
     {
-        logger = helper.getLog();
+        Log logger = helper.getLog();
 
         MavenSession session;
         try

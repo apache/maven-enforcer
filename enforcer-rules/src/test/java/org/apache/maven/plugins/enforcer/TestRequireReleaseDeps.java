@@ -120,9 +120,8 @@ public class TestRequireReleaseDeps
 
     private RequireReleaseDeps newRequireReleaseDeps()
     {
-        RequireReleaseDeps rule = new RequireReleaseDeps()
+        return new RequireReleaseDeps()
         {
-
             @Override
             protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest buildingRequest )
             {
@@ -133,6 +132,5 @@ public class TestRequireReleaseDeps
                 return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
             }
         };
-        return rule;
     }
 }

@@ -36,11 +36,9 @@ public class TestRequireProperty
     /**
      * Test rule.
      *
-     * @throws EnforcerRuleException the enforcer rule exception
      */
     @Test
     public void testRule()
-        throws EnforcerRuleException
     {
         MockProject project = new MockProject();
         project.setProperty( "testProp", "This is a test." );
@@ -76,11 +74,9 @@ public class TestRequireProperty
     /**
      * Test rule with regex.
      *
-     * @throws EnforcerRuleException the enforcer rule exception
      */
     @Test
     public void testRuleWithRegex()
-        throws EnforcerRuleException
     {
         MockProject project = new MockProject();
         project.setProperty( "testProp", "This is a test." );

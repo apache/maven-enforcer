@@ -38,11 +38,11 @@ public class TestRequireFilesDontExist
     @TempDir
     public File temporaryFolder;
 
-    private RequireFilesDontExist rule = new RequireFilesDontExist();
+    private final RequireFilesDontExist rule = new RequireFilesDontExist();
 
     @Test
     public void testFileExists()
-        throws EnforcerRuleException, IOException
+        throws IOException
     {
         File f = File.createTempFile( "junit", null, temporaryFolder );
 
@@ -62,7 +62,6 @@ public class TestRequireFilesDontExist
 
     @Test
     public void testEmptyFile()
-        throws EnforcerRuleException, IOException
     {
         rule.setFiles( new File[] { null } );
         try
@@ -78,7 +77,6 @@ public class TestRequireFilesDontExist
 
     @Test
     public void testEmptyFileAllowNull()
-        throws EnforcerRuleException, IOException
     {
         rule.setFiles( new File[] { null } );
         rule.setAllowNulls( true );
@@ -94,7 +92,6 @@ public class TestRequireFilesDontExist
 
     @Test
     public void testEmptyFileList()
-        throws EnforcerRuleException, IOException
     {
         rule.setFiles( new File[] {} );
         assertEquals( 0, rule.getFiles().length );
@@ -111,7 +108,6 @@ public class TestRequireFilesDontExist
 
     @Test
     public void testEmptyFileListAllowNull()
-        throws EnforcerRuleException, IOException
     {
         rule.setFiles( new File[] {} );
         assertEquals( 0, rule.getFiles().length );

@@ -36,11 +36,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestArtifactMatcher
 {
-    private ArtifactMatcher matcher;
 
-    Collection<String> patterns = new ArrayList<String>();
+    Collection<String> patterns = new ArrayList<>();
 
-    Collection<String> ignorePatterns = new ArrayList<String>();
+    Collection<String> ignorePatterns = new ArrayList<>();
 
     @Test
     public void testPatternInvalidInput()
@@ -51,7 +50,7 @@ public class TestArtifactMatcher
             new Pattern( null );
             fail( "NullPointerException expected." );
         }
-        catch ( NullPointerException e )
+        catch ( NullPointerException ignored )
         {
         }
 
@@ -60,7 +59,7 @@ public class TestArtifactMatcher
             new Pattern( "a:b:c:d:e:f:g" );
             fail( "IllegalArgumentException expected." );
         }
-        catch ( IllegalArgumentException e )
+        catch ( IllegalArgumentException ignored )
         {
         }
 
@@ -69,7 +68,7 @@ public class TestArtifactMatcher
             new Pattern( "a::" );
             fail( "IllegalArgumentException expected." );
         }
-        catch ( IllegalArgumentException e )
+        catch ( IllegalArgumentException ignored )
         {
         }
 
@@ -79,7 +78,7 @@ public class TestArtifactMatcher
             p.match( null );
             fail( "NullPointerException expected." );
         }
-        catch ( NullPointerException e )
+        catch ( NullPointerException ignored )
         {
         }
     }
@@ -128,7 +127,7 @@ public class TestArtifactMatcher
         ignorePatterns.add( "badGroup:*:*:test" );
         ignorePatterns.add( "*:anotherArtifact:1.1" );
 
-        matcher = new ArtifactMatcher( patterns, ignorePatterns );
+        ArtifactMatcher matcher = new ArtifactMatcher( patterns, ignorePatterns );
 
         executeMatch( matcher, "groupId", "artifactId", "1.0", "", "", true );
 

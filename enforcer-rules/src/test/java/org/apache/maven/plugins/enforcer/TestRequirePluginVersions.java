@@ -57,7 +57,7 @@ public class TestRequirePluginVersions
         // searched for versions before giving up.
         // banLatest/Release will fail if it is found
         // anywhere in the list.
-        List<Plugin> plugins = new ArrayList<Plugin>();
+        List<Plugin> plugins = new ArrayList<>();
         plugins.add( EnforcerTestUtils.newPlugin( "group", "a-artifact", "1.0" ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "foo", null ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "foo", "" ) );
@@ -130,7 +130,7 @@ public class TestRequirePluginVersions
         source.setGroupId( "group" );
 
         // setup the plugins.
-        List<Plugin> plugins = new ArrayList<Plugin>();
+        List<Plugin> plugins = new ArrayList<>();
         plugins.add( EnforcerTestUtils.newPlugin( "group", "a-artifact", "1.0-${SNAPSHOT}" ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "b-artifact", "${1.0}" ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "c-artifact", "${LATEST}" ) );
@@ -205,12 +205,12 @@ public class TestRequirePluginVersions
     {
         RequirePluginVersions rule = new RequirePluginVersions();
 
-        List<String> additional = new ArrayList<String>();
+        List<String> additional = new ArrayList<>();
 
         // invalid format (not enough sections)
         additional.add( "group" );
 
-        Set<Plugin> plugins = new HashSet<Plugin>();
+        Set<Plugin> plugins = new HashSet<>();
         try
         {
             rule.addAdditionalPlugins( plugins, additional );
@@ -245,12 +245,12 @@ public class TestRequirePluginVersions
     {
         RequirePluginVersions rule = new RequirePluginVersions();
 
-        Set<Plugin> plugins = new HashSet<Plugin>();
+        Set<Plugin> plugins = new HashSet<>();
         plugins.add( EnforcerTestUtils.newPlugin( "group", "a-artifact", "1.0" ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "foo", null ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "foo2", "" ) );
 
-        List<String> additional = new ArrayList<String>();
+        List<String> additional = new ArrayList<>();
         additional.add( "group:a-artifact" );
         additional.add( "group:another-artifact" );
 
@@ -274,12 +274,12 @@ public class TestRequirePluginVersions
     {
         RequirePluginVersions rule = new RequirePluginVersions();
 
-        Set<Plugin> plugins = new HashSet<Plugin>();
+        Set<Plugin> plugins = new HashSet<>();
         plugins.add( EnforcerTestUtils.newPlugin( "group", "a-artifact", "1.0" ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "foo", null ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "foo2", "" ) );
 
-        List<String> additional = new ArrayList<String>();
+        List<String> additional = new ArrayList<>();
         additional.add( "group:a-artifact" );
         additional.add( "group:another-artifact" );
 
@@ -304,12 +304,12 @@ public class TestRequirePluginVersions
     {
         RequirePluginVersions rule = new RequirePluginVersions();
 
-        Set<Plugin> plugins = new HashSet<Plugin>();
+        Set<Plugin> plugins = new HashSet<>();
         plugins.add( EnforcerTestUtils.newPlugin( "group", "a-artifact", "1.0" ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "foo", null ) );
         plugins.add( EnforcerTestUtils.newPlugin( "group", "foo2", "" ) );
 
-        List<String> unchecked = new ArrayList<String>();
+        List<String> unchecked = new ArrayList<>();
         // intentionally inserting spaces to make sure they are handled correctly.
         unchecked.add( "group : a-artifact" );
 
@@ -332,7 +332,7 @@ public class TestRequirePluginVersions
     {
         RequirePluginVersions rule = new RequirePluginVersions();
 
-        Set<String> plugins = new HashSet<String>();
+        Set<String> plugins = new HashSet<>();
         plugins.add( "group:a-artifact" );
         plugins.add( "group:foo" );
         plugins.add( "group:foo2" );
@@ -357,7 +357,7 @@ public class TestRequirePluginVersions
     {
         RequirePluginVersions rule = new RequirePluginVersions();
 
-        Set<String> plugins = new HashSet<String>();
+        Set<String> plugins = new HashSet<>();
         Collection<String> results = rule.combineUncheckedPlugins( plugins, "group2:a,group3:b" );
 
         // make sure only one new plugin has been added
@@ -392,7 +392,7 @@ public class TestRequirePluginVersions
     {
         RequirePluginVersions rule = new RequirePluginVersions();
 
-        Set<String> plugins = new HashSet<String>();
+        Set<String> plugins = new HashSet<>();
         plugins.add( "group:a-artifact" );
         plugins.add( "group:foo" );
         plugins.add( "group:foo2" );
@@ -413,7 +413,7 @@ public class TestRequirePluginVersions
     {
         RequirePluginVersions rule = new RequirePluginVersions();
 
-        Set<String> plugins = new HashSet<String>();
+        Set<String> plugins = new HashSet<>();
         plugins.add( "group:a-artifact" );
         plugins.add( "group:foo" );
         plugins.add( "group:foo2" );
@@ -434,7 +434,7 @@ public class TestRequirePluginVersions
     {
         RequirePluginVersions rule = new RequirePluginVersions();
 
-        Set<String> plugins = new HashSet<String>();
+        Set<String> plugins = new HashSet<>();
         plugins.add( "group:a-artifact" );
         plugins.add( "group:foo" );
         plugins.add( "group:foo2" );

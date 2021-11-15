@@ -193,8 +193,7 @@ public class EnforceMojo
                     if ( ignoreCache || shouldExecute( rule ) )
                     {
                         // execute the rule
-                        // noinspection
-                        // SynchronizationOnLocalVariableOrMethodParameter
+                        // noinspection SynchronizationOnLocalVariableOrMethodParameter
                         synchronized ( rule )
                         {
                             rule.execute( helper );

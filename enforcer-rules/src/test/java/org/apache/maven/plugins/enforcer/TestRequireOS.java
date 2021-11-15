@@ -54,11 +54,11 @@ public class TestRequireOS
         rule.displayOSInfo( log, true );
 
         Iterator<String> iter = Os.getValidFamilies().iterator();
-        String validFamily = null;
+        String validFamily;
         String invalidFamily = null;
         while ( iter.hasNext() )
         {
-            String fam = (String) iter.next();
+            String fam = iter.next();
             if ( !Os.isFamily( fam ) )
             {
                 invalidFamily = fam;
@@ -114,7 +114,6 @@ public class TestRequireOS
 
     @Test
     public void testInvalidFamily()
-        throws Exception
     {
         RequireOS rule = new RequireOS();
 

@@ -1,7 +1,5 @@
 package org.apache.maven.plugins.enforcer;
 
-import org.junit.jupiter.api.Assertions;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -31,6 +29,7 @@ import org.apache.maven.plugin.testing.ArtifactStubFactory;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class RequireUpperBoundDepsTest
 {
@@ -49,7 +48,7 @@ public class RequireUpperBoundDepsTest
         try
         {
             rule.execute( helper );
-            Assertions.fail( "Did not detect upper bounds error" );
+            fail( "Did not detect upper bounds error" );
         }
         catch ( EnforcerRuleException ex )
         {

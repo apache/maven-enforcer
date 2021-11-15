@@ -42,7 +42,7 @@ public class TestRequireFilesSize
     @TempDir
     public File temporaryFolder;
 
-    private RequireFilesSize rule = new RequireFilesSize();
+    private final RequireFilesSize rule = new RequireFilesSize();
 
     @Test
     public void testFileExists()
@@ -57,7 +57,6 @@ public class TestRequireFilesSize
 
     @Test
     public void testEmptyFile()
-        throws EnforcerRuleException, IOException
     {
         rule.setFiles( new File[] { null } );
         try
@@ -73,7 +72,7 @@ public class TestRequireFilesSize
 
     @Test
     public void testEmptyFileAllowNull()
-        throws EnforcerRuleException, IOException
+        throws EnforcerRuleException
     {
         rule.setFiles( new File[] { null } );
         rule.setAllowNulls( true );
@@ -106,7 +105,7 @@ public class TestRequireFilesSize
 
     @Test
     public void testFileDoesNotExist()
-        throws EnforcerRuleException, IOException
+        throws IOException
     {
         File f = File.createTempFile( "junit", null, temporaryFolder );
         f.delete();
@@ -126,7 +125,7 @@ public class TestRequireFilesSize
 
     @Test
     public void testFileTooSmall()
-        throws EnforcerRuleException, IOException
+        throws IOException
     {
         File f = File.createTempFile( "junit", null, temporaryFolder );
         rule.setFiles( new File[] { f } );

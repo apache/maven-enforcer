@@ -63,12 +63,10 @@ public class BanDistributionManagementTest
      *   &lt;/repository&gt;
      * &lt;/distributionManagement&gt;
      * </pre>
-     * 
-     * @throws Exception if any occurs
+     *
      */
     @Test
     public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepository()
-        throws Exception
     {
         assertThrows( EnforcerRuleException.class, () -> {
             BanDistributionManagement rule =
@@ -89,12 +87,10 @@ public class BanDistributionManagementTest
      *   &lt;/snapshotRepository&gt;
      * &lt;/distributionManagement&gt;
      * </pre>
-     * 
-     * @throws Exception if any occurs
+     *
      */
     @Test
     public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepositorySnapshotRepository()
-        throws Exception
     {
         assertThrows( EnforcerRuleException.class, () -> {
             BanDistributionManagement rule =
@@ -118,12 +114,10 @@ public class BanDistributionManagementTest
      *   &lt;/site&gt;
      * &lt;/distributionManagement&gt;
      * </pre>
-     * 
-     * @throws Exception if any occurs
+     *
      */
     @Test
     public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepositorySnapshotRepositorySite()
-        throws Exception
     {
         assertThrows( EnforcerRuleException.class, () -> {
             BanDistributionManagement rule =
@@ -244,19 +238,14 @@ public class BanDistributionManagementTest
         when( parentProject.getOriginalModel() ).thenReturn( model );
         when( project.getParent() ).thenReturn( parentProject );
 
-        BanDistributionManagement rule = setupEnforcerRule();
-
-        return rule;
+        return setupEnforcerRule();
     }
 
     private BanDistributionManagement setupProjectWithoutDistributionManagement()
         throws ExpressionEvaluationException
     {
         project = setupProject( null );
-
-        BanDistributionManagement rule = setupEnforcerRule();
-
-        return rule;
+        return setupEnforcerRule();
     }
 
     private BanDistributionManagement setupProjectWithDistributionManagement( DeploymentRepository repository,
@@ -274,9 +263,7 @@ public class BanDistributionManagementTest
         when( project.getParent() ).thenReturn( mock( MavenProject.class ) );
         when( project.isExecutionRoot() ).thenReturn( true );
 
-        BanDistributionManagement rule = setupEnforcerRule();
-
-        return rule;
+        return setupEnforcerRule();
     }
 
     private MavenProject setupProject( DistributionManagement distributionManagement )

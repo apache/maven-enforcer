@@ -37,7 +37,7 @@ import org.junit.jupiter.api.io.TempDir;
 public class TestRequireTextFileChecksum
 {
 
-    private RequireTextFileChecksum rule = new RequireTextFileChecksum();
+    private final RequireTextFileChecksum rule = new RequireTextFileChecksum();
 
     @TempDir
     public File temporaryFolder;

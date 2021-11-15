@@ -39,7 +39,7 @@ import org.junit.jupiter.api.io.TempDir;
 public class TestRequireFileChecksum
 {
 
-    private RequireFileChecksum rule = new RequireFileChecksum();
+    private final RequireFileChecksum rule = new RequireFileChecksum();
 
     @TempDir
     public File temporaryFolder;
@@ -74,7 +74,6 @@ public class TestRequireFileChecksum
 
     @Test
     public void testFileChecksumMd5GivenFileDoesNotExistFailure()
-        throws IOException, EnforcerRuleException
     {
         File f = new File( "nonExistent" );
         Throwable exception = assertThrows( EnforcerRuleException.class, () -> {
@@ -90,7 +89,6 @@ public class TestRequireFileChecksum
 
     @Test
     public void testFileChecksumMd5GivenFileDoesNotExistFailureWithMessage()
-        throws IOException, EnforcerRuleException
     {
         File f = new File( "nonExistent" );
         String configuredMessage = "testMessageFileDoesNotExist";
@@ -108,7 +106,7 @@ public class TestRequireFileChecksum
 
     @Test
     public void testFileChecksumMd5GivenFileIsNotReadableFailure()
-        throws IOException, EnforcerRuleException
+        throws IOException
     {
         File t = File.createTempFile( "junit", null, temporaryFolder );
         File f = new File( t.getAbsolutePath() )
@@ -134,7 +132,6 @@ public class TestRequireFileChecksum
 
     @Test
     public void testFileChecksumMd5GivenFileIsADirectoryFailure()
-        throws IOException, EnforcerRuleException
     {
         File f = temporaryFolder;
         Throwable exception = assertThrows( EnforcerRuleException.class, () -> {
@@ -151,7 +148,6 @@ public class TestRequireFileChecksum
 
     @Test
     public void testFileChecksumMd5NoFileSpecifiedFailure()
-        throws IOException, EnforcerRuleException
     {
         Throwable exception = assertThrows( EnforcerRuleException.class, () -> {
 
@@ -165,7 +161,6 @@ public class TestRequireFileChecksum
 
     @Test
     public void testFileChecksumMd5NoChecksumSpecifiedFailure()
-        throws IOException, EnforcerRuleException
     {
         Throwable exception = assertThrows( EnforcerRuleException.class, () -> {
 
@@ -181,7 +176,6 @@ public class TestRequireFileChecksum
 
     @Test
     public void testFileChecksumMd5NoTypeSpecifiedFailure()
-        throws IOException, EnforcerRuleException
     {
         Throwable exception = assertThrows( EnforcerRuleException.class, () -> {
 
@@ -197,7 +191,7 @@ public class TestRequireFileChecksum
 
     @Test
     public void testFileChecksumMd5ChecksumMismatchFailure()
-        throws IOException, EnforcerRuleException
+        throws IOException
     {
         File f = File.createTempFile( "junit", null, temporaryFolder );
         Throwable exception = assertThrows( EnforcerRuleException.class, () -> {
@@ -215,7 +209,6 @@ public class TestRequireFileChecksum
 
     @Test
     public void testFileChecksumMd5ChecksumMismatchFailureWithMessage()
-        throws IOException, EnforcerRuleException
     {
         String configuredMessage = "testMessage";
         Throwable exception = assertThrows( EnforcerRuleException.class, () -> {
@@ -288,15 +281,4 @@ public class TestRequireFileChecksum
         rule.execute( EnforcerTestUtils.getHelper() );
     }
 
-    private static File newFolder( File root, String... subDirs )
-        throws IOException
-    {
-        String subFolder = String.join( "/", subDirs );
-        File result = new File( root, subFolder );
-        if ( !result.mkdirs() )
-        {
-            throw new IOException( "Couldn't create folders " + root );
-        }
-        return result;
-    }
 }
