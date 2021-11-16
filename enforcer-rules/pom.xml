@@ -64,7 +64,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-common-artifact-filters</artifactId>
+      <artifactId>maven-shared-utils</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -108,11 +108,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
@@ -126,10 +121,6 @@
           <artifactId>aether-util</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.resolver</groupId>
-      <artifactId>maven-resolver-util</artifactId>
     </dependency>
     <!-- needed for ArtifactCollector and maven-dependency-tree 2.2 -->
     <dependency>

@@ -53,11 +53,6 @@
       <artifactId>maven-core</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.maven.plugin-tools</groupId>
-      <artifactId>maven-plugin-annotations</artifactId>
-      <scope>provided</scope>
-    </dependency>
    <dependency>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-enforcer-plugin</artifactId>

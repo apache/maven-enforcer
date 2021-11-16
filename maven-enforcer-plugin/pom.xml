@@ -41,19 +41,11 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.enforcer</groupId>
@@ -69,19 +61,9 @@
       <type>test-jar</type>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.plugin-testing</groupId>
-      <artifactId>maven-plugin-testing-harness</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
@@ -91,11 +73,6 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
