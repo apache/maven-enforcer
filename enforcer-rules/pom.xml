@@ -47,7 +47,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-common-artifact-filters</artifactId>
+      <artifactId>maven-shared-utils</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -104,10 +104,6 @@
           <artifactId>aether-util</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.resolver</groupId>
-      <artifactId>maven-resolver-util</artifactId>
     </dependency>
     <!-- needed for ArtifactCollector and maven-dependency-tree 2.2 -->
     <dependency>
