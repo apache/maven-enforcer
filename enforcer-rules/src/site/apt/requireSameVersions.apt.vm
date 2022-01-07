@@ -38,7 +38,9 @@
    
    * plugins - an optional list of both build and report plugin patterns
     
-   * uniqueVersions - if SNAPSHOTs should be compared by their timestamped version or not. Default: false 
+   * uniqueVersions - if SNAPSHOTs should be compared by their timestamped version or not. Default: false
+
+   * searchTransitiveDependencies - if transitive dependencies should be searched. Default: false
 
    []
 

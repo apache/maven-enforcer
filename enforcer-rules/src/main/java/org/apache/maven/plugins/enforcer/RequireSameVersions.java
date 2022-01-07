@@ -29,10 +29,19 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugins.enforcer.utils.ArtifactUtils;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
  * @author Robert Scholte
@@ -42,6 +51,8 @@ public class RequireSameVersions
     extends AbstractNonCacheableEnforcerRule
 {
     private boolean uniqueVersions;
+
+    private boolean searchTransitiveDependencies;
 
     private Set<String> dependencies = new HashSet<>();
 
@@ -66,6 +77,12 @@ public class RequireSameVersions
             throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
         }
 
+        DependencyNode node = getNode( helper );
+
+        Set<Artifact> artifacts = searchTransitiveDependencies
+            ? ArtifactUtils.getAllDescendants( node )
+            : project.getArtifacts();
+
         // consider including profile based artifacts
         Map<String, List<String>> versionMembers = new LinkedHashMap<>();
 
@@ -75,7 +92,7 @@ public class RequireSameVersions
         reportPluginSet.addAll( plugins );
 
         // CHECKSTYLE_OFF: LineLength
-        versionMembers.putAll( collectVersionMembers( project.getArtifacts(), dependencies, " (dependency)" ) );
+        versionMembers.putAll( collectVersionMembers( artifacts, dependencies, " (dependency)" ) );
         versionMembers.putAll( collectVersionMembers( project.getPluginArtifacts(), buildPlugins, " (buildPlugin)" ) );
         versionMembers.putAll( collectVersionMembers( project.getReportArtifacts(), reportPlugins, " (reportPlugin)" ) );
         // CHECKSTYLE_ON: LineLength
@@ -119,7 +136,7 @@ public class RequireSameVersions
                     String version = uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
                     if ( !versionMembers.containsKey( version ) )
                     {
-                        versionMembers.put( version, new ArrayList<String>() );
+                        versionMembers.put( version, new ArrayList<>() );
                     }
                     versionMembers.get( version ).add( artifact.getDependencyConflictId() + source );
                 }
@@ -128,4 +145,31 @@ public class RequireSameVersions
         return versionMembers;
     }
 
+    private DependencyNode getNode( EnforcerRuleHelper helper )
+        throws EnforcerRuleException
+    {
+        try
+        {
+            MavenProject project = (MavenProject) helper.evaluate( "${project}" );
+            MavenSession session = (MavenSession) helper.evaluate( "${session}" );
+            DependencyCollectorBuilder dependencyCollectorBuilder =
+                helper.getComponent( DependencyCollectorBuilder.class );
+            ArtifactRepository repository = (ArtifactRepository) helper.evaluate( "${localRepository}" );
+
+            ProjectBuildingRequest buildingRequest =
+                new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
+            buildingRequest.setProject( project );
+            buildingRequest.setLocalRepository( repository );
+
+            return dependencyCollectorBuilder.collectDependencyGraph( buildingRequest, null );
+        }
+        catch ( ExpressionEvaluationException | ComponentLookupException e )
+        {
+            throw new EnforcerRuleException( "Unable to lookup a component " + e.getLocalizedMessage(), e );
+        }
+        catch ( DependencyCollectorBuilderException e )
+        {
+            throw new EnforcerRuleException( "Could not build dependency tree " + e.getLocalizedMessage(), e );
+        }
+    }
 }
