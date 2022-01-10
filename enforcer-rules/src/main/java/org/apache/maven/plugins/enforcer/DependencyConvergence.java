@@ -51,6 +51,10 @@ public class DependencyConvergence
 
     private boolean uniqueVersions;
 
+    private List<String> includes;
+
+    private List<String> excludes;
+
     public void setUniqueVersions( boolean uniqueVersions )
     {
         this.uniqueVersions = uniqueVersions;
@@ -113,8 +117,8 @@ public class DependencyConvergence
             DependencyVersionMap visitor = new DependencyVersionMap( log );
             visitor.setUniqueVersions( uniqueVersions );
             node.accept( visitor );
-            List<CharSequence> errorMsgs = new ArrayList<>();
-            errorMsgs.addAll( getConvergenceErrorMsgs( visitor.getConflictedVersionNumbers() ) );
+            List<List<DependencyNode>> errors = visitor.getConflictedVersionNumbers( includes, excludes );
+            List<CharSequence> errorMsgs = new ArrayList<>( getConvergenceErrorMsgs( errors ) );
             for ( CharSequence errorMsg : errorMsgs )
             {
                 log.warn( errorMsg );
