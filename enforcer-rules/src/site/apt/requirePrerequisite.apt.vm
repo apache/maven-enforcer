@@ -56,7 +56,7 @@
             <configuration>
               <rules>
                 <requirePrerequisite>
-                  <mavenVersion>2.2.1</mavenVersion>
+                  <mavenVersion>4.0.0-alpha-1-SNAPSHOT</mavenVersion>
                 </requirePrerequisite>
                 <!-- same rule, different notation -->
                 <requirePrerequisite>

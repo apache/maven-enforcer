@@ -23,7 +23,7 @@
   <parent>
     <artifactId>maven-parent</artifactId>
     <groupId>org.apache.maven</groupId>
-    <version>34</version>
+    <version>35-SNAPSHOT</version>
     <relativePath />
   </parent>
   <groupId>org.apache.maven.enforcer</groupId>
@@ -115,7 +115,7 @@
       <dependency>
         <groupId>org.apache.maven.shared</groupId>
         <artifactId>maven-common-artifact-filters</artifactId>
-        <version>3.2.0</version>
+        <version>3.2.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
@@ -158,7 +158,7 @@
       <dependency>
         <groupId>org.apache.maven.plugin-testing</groupId>
         <artifactId>maven-plugin-testing-harness</artifactId>
-        <version>3.1.0</version>
+        <version>3.4.0-SNAPSHOT</version>
         <scope>test</scope>
         <exclusions>
           <exclusion>
@@ -170,12 +170,12 @@
       <dependency>
         <groupId>org.apache.maven.shared</groupId>
         <artifactId>maven-dependency-tree</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.1-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.shared</groupId>
         <artifactId>maven-shared-utils</artifactId>
-        <version>3.3.4</version>
+        <version>4.0.0-SNAPSHOT</version>
       </dependency>
       <dependency>
         <groupId>org.assertj</groupId>
@@ -239,7 +239,7 @@
           <dependency>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>extra-enforcer-rules</artifactId>
-            <version>1.5.1</version>
+            <version>1.4</version>
           </dependency>
         </dependencies>
       </plugin>
