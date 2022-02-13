@@ -136,7 +136,10 @@ public class RequireUpperBoundDeps
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
             buildingRequest.setProject( project );
             buildingRequest.setLocalRepository( repository );
-            ArtifactFilter filter = null; // we need to evaluate all scopes
+            ArtifactFilter filter = ( Artifact a ) -> ( "compile".equalsIgnoreCase( a.getScope () )
+                    || "runtime".equalsIgnoreCase( a.getScope () ) )
+                    && !a.isOptional();
+            
             return dependencyCollectorBuilder.collectDependencyGraph( buildingRequest, filter );
         }
         catch ( ExpressionEvaluationException e )
