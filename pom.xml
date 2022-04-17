@@ -180,7 +180,7 @@
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.21.0</version><!-- Java 7 -->
+        <version>3.22.0</version><!-- Java 7 -->
       </dependency>
     </dependencies>
   </dependencyManagement>
