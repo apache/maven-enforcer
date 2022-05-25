@@ -19,9 +19,9 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
@@ -158,8 +158,8 @@ public class EnforceMojo
             // CHECKSTYLE_ON: LineLength
         }
 
-        // list to store exceptions
-        List<String> list = new ArrayList<>();
+        // messages with warn/error flag
+        Map<String, Boolean> messages = new LinkedHashMap<>();
 
         String currentRule = "Unknown";
 
@@ -228,31 +228,36 @@ public class EnforceMojo
                         if ( level == EnforcerLevel.ERROR )
                         {
                             hasErrors = true;
-                            list.add( "Rule " + i + ": " + currentRule + " failed with message:"
-                                 + System.lineSeparator() + exceptionMessage );
+                            messages.put( "Rule " + i + ": " + currentRule + " failed with message:"
+                                 + System.lineSeparator() + exceptionMessage, true );
                         }
                         else
                         {
-                            list.add( "Rule " + i + ": " + currentRule + " warned with message:"
-                                 + System.lineSeparator() + exceptionMessage );
+                            messages.put( "Rule " + i + ": " + currentRule + " warned with message:"
+                                 + System.lineSeparator() + exceptionMessage, false );
                         }
                     }
                 }
             }
         }
 
-        // if we found anything
-        // CHECKSTYLE_OFF: LineLength
-        if ( !list.isEmpty() )
+        // log any messages
+        messages.forEach( ( message, error ) ->
         {
-            for ( String failure : list )
+            if ( fail && error )
             {
-                log.warn( failure );
+                log.error( message );
             }
-            if ( fail && hasErrors )
+            else
             {
-                throw new MojoExecutionException( "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
+                log.warn( message );
             }
+        } );
+
+        // CHECKSTYLE_OFF: LineLength
+        if ( fail && hasErrors )
+        {
+            throw new MojoExecutionException( "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
         }
         // CHECKSTYLE_ON: LineLength
     }
