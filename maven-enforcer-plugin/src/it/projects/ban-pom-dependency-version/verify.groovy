@@ -17,7 +17,7 @@
  * under the License.
  */
 File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( '[WARNING] Rule 0: org.apache.maven.plugins.enforcer.BanDuplicatePomDependencyVersions failed with message:' )
+assert buildLog.text.contains( '[ERROR] Rule 0: org.apache.maven.plugins.enforcer.BanDuplicatePomDependencyVersions failed with message:' )
 assert buildLog.text.contains( 'Found 1 duplicate dependency declaration in this project:' )
 assert buildLog.text.contains( '- dependencies.dependency[org.apache.maven.plugins.enforcer.its:menforcer152:jar] ( 2 times )' )
 

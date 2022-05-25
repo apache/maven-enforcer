@@ -17,5 +17,5 @@
  * under the License.
  */
 File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( '[WARNING] Rule 0: org.apache.maven.plugins.enforcer.RequirePluginVersions failed with message:' )
+assert buildLog.text.contains( '[ERROR] Rule 0: org.apache.maven.plugins.enforcer.RequirePluginVersions failed with message:' )
 assert buildLog.text.contains( "Some plugins are missing valid versions or depend on Maven ${mavenVersion} defaults: (LATEST RELEASE SNAPSHOT are not allowed)" )
