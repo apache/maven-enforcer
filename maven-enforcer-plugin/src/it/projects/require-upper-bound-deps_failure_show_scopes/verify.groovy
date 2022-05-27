@@ -26,6 +26,7 @@ def message =
 '  +-org.apache.maven.plugins.enforcer.its:menforcer128_api:1.4.0 [runtime]'+LS+
 'and'+LS+
 '+-org.apache.maven.plugins.enforcer.its:menforcer313:1.0-SNAPSHOT'+LS+
-'  +-org.apache.maven.plugins.enforcer.its:menforcer128_classic:0.9.9 [provided]'+LS+
-'    +-org.apache.maven.plugins.enforcer.its:menforcer128_api:1.5.0 [provided]'+LS
+'  +-org.apache.maven.plugins.enforcer.its:menforcer128_classic:0.9.9'+LS+
+'    +-org.apache.maven.plugins.enforcer.its:menforcer128_api:1.5.0'+LS
+
 assert buildLog.text.contains( message )
