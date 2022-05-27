@@ -34,15 +34,6 @@
       <plugin>
         <groupId>org.eclipse.sisu</groupId>
         <artifactId>sisu-maven-plugin</artifactId>
-        <version>0.3.5</version>
-        <executions>
-          <execution>
-            <id>index-project</id>
-            <goals>
-              <goal>main-index</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
@@ -78,7 +69,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>3.2.2</version>
             <configuration>
               <showErrors>true</showErrors>
               <projectsDirectory>src/it/projects</projectsDirectory>
@@ -97,7 +87,8 @@
                 <id>integration-test</id>
                 <goals>
                   <goal>install</goal>
-                  <goal>run</goal>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
                 </goals>
               </execution>
             </executions>

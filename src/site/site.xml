@@ -18,15 +18,6 @@ specific language governing permissions and limitations
 under the License.
 -->
 <project>
-  <custom>
-    <fluidoSkin>
-      <sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
-      <googlePlusOne />
-      <googleSearch>
-        <sitesearch>https://maven.apache.org/enforcer/</sitesearch>
-      </googleSearch>
-    </fluidoSkin>
-  </custom>
 
   <body>
     <breadcrumbs>
