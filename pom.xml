@@ -65,7 +65,7 @@
   </distributionManagement>
 
   <properties>
-    <maven.version>3.1.1</maven.version>
+    <maven.version>3.2.5</maven.version>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
     <javaVersion>8</javaVersion>
     <mockito.version>4.5.1</mockito.version>
@@ -180,7 +180,7 @@
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.22.0</version><!-- Java 7 -->
+        <version>3.22.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
