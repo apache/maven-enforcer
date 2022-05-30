@@ -19,8 +19,10 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -43,8 +45,6 @@ public class RequireReleaseDeps
     /**
      * Allows this rule to execute only when this project is a release.
      *
-     * @parameter
-     * 
      * @see {@link #setOnlyWhenRelease(boolean)}
      * @see {@link #isOnlyWhenRelease()}
 
@@ -54,8 +54,6 @@ public class RequireReleaseDeps
     /**
      * Allows this rule to fail when the parent is defined as a snapshot.
      *
-     * @parameter
-     * 
      * @see {@link #setFailWhenParentIsSnapshot(boolean)}
      * @see {@link #isFailWhenParentIsSnapshot()}
      */
@@ -98,6 +96,7 @@ public class RequireReleaseDeps
         {
             callSuper = true;
         }
+
         if ( callSuper )
         {
             super.execute( helper );
@@ -107,7 +106,17 @@ public class RequireReleaseDeps
                 {
                     project = getProject( helper );
                 }
+
                 Artifact parentArtifact = project.getParentArtifact();
+
+                if ( parentArtifact != null )
+                {
+                    Set<Artifact> artifacts = filterArtifacts( Collections.singleton( parentArtifact ) );
+                    parentArtifact = Optional.ofNullable( artifacts )
+                        .flatMap( s -> s.stream().findFirst() )
+                        .orElse( null );
+                }
+
                 if ( parentArtifact != null && parentArtifact.isSnapshot() )
                 {
                     throw new EnforcerRuleException( "Parent Cannot be a snapshot: " + parentArtifact.getId() );
