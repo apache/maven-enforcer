@@ -19,6 +19,7 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
 
@@ -30,12 +31,14 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
- * The Class TestNoSnapshots.
+ * The Class TestRequireReleaseDeps.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class TestRequireReleaseDeps
+class TestRequireReleaseDeps
 {
 
     /**
@@ -44,7 +47,7 @@ public class TestRequireReleaseDeps
      * @throws Exception if any occurs
      */
     @Test
-    public void testRule()
+    void testRule()
         throws Exception
     {
         ArtifactStubFactory factory = new ArtifactStubFactory();
@@ -90,7 +93,7 @@ public class TestRequireReleaseDeps
     }
 
     @Test
-    public void testWildcardIgnore()
+    void testWildcardIgnore()
         throws Exception
     {
         RequireReleaseDeps rule = newRequireReleaseDeps();
@@ -112,11 +115,32 @@ public class TestRequireReleaseDeps
      * Test id.
      */
     @Test
-    public void testId()
+    void testId()
     {
         RequireReleaseDeps rule = newRequireReleaseDeps();
-        rule.getCacheId();
+        assertThat( rule.getCacheId() ).isEqualTo( "0" );
     }
+
+    @Test
+    void parentShouldBeExcluded() throws IOException
+    {
+
+        ArtifactStubFactory factory = new ArtifactStubFactory();
+        MockProject project = new MockProject();
+        project.setArtifact( factory.getSnapshotArtifact() );
+
+        MavenProject parent = new MockProject();
+        parent.setArtifact( factory.getSnapshotArtifact() );
+        project.setParent( parent );
+
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
+
+        RequireReleaseDeps rule = newRequireReleaseDeps();
+        rule.setExcludes( Collections.singletonList( parent.getArtifact().getGroupId() + ":*" ) );
+
+        EnforcerRuleUtilsHelper.execute( rule, helper, false );
+    }
+
 
     private RequireReleaseDeps newRequireReleaseDeps()
     {
