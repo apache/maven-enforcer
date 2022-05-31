@@ -200,6 +200,9 @@
                 <mockRepo>
                   <source>src/it/mrm/repository</source>
                 </mockRepo>
+                <localRepo>
+                  <source>${project.build.directory}/local-repo</source>
+                </localRepo>
                 <proxyRepo />
               </repositories>
             </configuration>
