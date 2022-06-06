@@ -26,3 +26,5 @@
 Thirdparty Rules
 
   * {{{https://sonatype.github.io/ossindex-maven/enforcer-rules/}Sonatype OSS Index - Ban Vulnerable Dependencies}}
+
+  * {{{https://www.mojohaus.org/extra-enforcer-rules/}MojoHaus - Extra Enforcer Rules}}
