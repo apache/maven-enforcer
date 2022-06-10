@@ -45,7 +45,7 @@ You can get the Maven Enforcer plugin via the following coordinates from central
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-enforcer-plugin</artifactId>
-  <version>3.0.0</version>
+  <version>3.1.0</version>
 </plugin>
 ```
 
