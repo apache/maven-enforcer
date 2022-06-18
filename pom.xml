@@ -69,6 +69,7 @@
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
     <javaVersion>8</javaVersion>
     <mockito.version>4.6.1</mockito.version>
+    <surefire.version>3.0.0-M7</surefire.version>
     <project.build.outputTimestamp>2022-06-07T15:09:53Z</project.build.outputTimestamp>
   </properties>
 
@@ -208,11 +209,6 @@
           <configuration>
             <topSiteURL>scm:svn:https://svn.apache.org/repos/asf/maven/website/components/${maven.site.path}</topSiteURL>
           </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M6</version>
         </plugin>
       </plugins>
     </pluginManagement>
