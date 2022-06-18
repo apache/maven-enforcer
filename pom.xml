@@ -158,14 +158,8 @@
       <dependency>
         <groupId>org.apache.maven.plugin-testing</groupId>
         <artifactId>maven-plugin-testing-harness</artifactId>
-        <version>3.1.0</version>
+        <version>3.4.0-SNAPSHOT</version>
         <scope>test</scope>
-        <exclusions>
-          <exclusion>
-            <artifactId>plexus-container-default</artifactId>
-            <groupId>org.codehaus.plexus</groupId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.shared</groupId>
