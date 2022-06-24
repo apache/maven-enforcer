@@ -86,7 +86,7 @@ public class EnforceMojo
     protected boolean skip = false;
 
     /**
-     * Flag to fail the build if a version check fails.
+     * Flag to fail the build if at least one check fails.
      */
     @Parameter( property = "enforcer.fail", defaultValue = "true" )
     private boolean fail = true;
