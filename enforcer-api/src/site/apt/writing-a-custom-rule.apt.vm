@@ -50,16 +50,19 @@ Writing a custom rule
       <groupId>org.apache.maven.enforcer</groupId>
       <artifactId>enforcer-api</artifactId>
       <version>${api.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
       <version>${maven.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
       <version>${maven.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -72,7 +75,10 @@ Writing a custom rule
   </build>
 </project>
 +---+
-
+  Note that the classloader is shared with the embedding <<<maven-enforcer-plugin>>> (a regular {{{https://maven.apache.org/guides/mini/guide-maven-classloading.html#3-plugin-classloaders}plugin classloader}}) 
+  and therefore the artifacts <<<org.apache.maven.enforcer:enforcer-api>>> and <<<org.apache.maven.enforcer:enforcer-rules>>> are always loaded in the same version as the embedding <<<maven-enforcer-plugin>>>.
+  Custom rule artifacts should therefore only depend on them and core Maven artifacts with <<<provided>>> scope (for details refer to {{{https://issues.apache.org/jira/browse/MNG-7097}MNG-7097}}).
+  
   [[2]] Create your rule class. The rule must implement the {{{./apidocs/index.html}EnforcerRule}} interface.
    The rule can get access to components and the log via the {{{./apidocs/index.html}EnforcerRuleHelper}} interface.
    In addition, the rule must provide a setter method for each parameter allowed to be configured in the pom.xml file (like the parameter <<<shouldIfail>>> shown in point 5).
