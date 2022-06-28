@@ -30,6 +30,8 @@ Built-In Rules
   * {{{./alwaysFail.html}alwaysFail}} - Always fail... used to test plugin configuration.
 
   * {{{./alwaysPass.html}alwaysPass}} - Always passes... used to test plugin configuration.
+
+  * {{{./banDependencyManagementScope.html}banDependencyManagementScope}} - bans all scope values except for 'import' from dependencies within the dependency management.
   
   * {{{./banDistributionManagement.html}banDistributionManagement}} - enforces that project doesn't have distributionManagement.
   
