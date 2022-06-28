@@ -23,9 +23,11 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.enforcer.AbstractVersionEnforcer;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  * This class is used for matching Artifacts against a list of patterns.
@@ -73,21 +75,31 @@ public final class ArtifactMatcher
         public boolean match( Artifact artifact )
             throws InvalidVersionSpecificationException
         {
-            if ( artifact == null )
-            {
-                throw new NullPointerException( "artifact" );
-            }
+            Objects.requireNonNull( artifact, "artifact must not be null" );
+            return match( artifact.getGroupId(), artifact.getArtifactId(), artifact.getVersion(), 
+                          artifact.getType(), artifact.getScope(), artifact.getClassifier() );
+        }
 
+        public boolean match( Dependency dependency )
+            throws InvalidVersionSpecificationException
+        {
+            Objects.requireNonNull( dependency, "dependency must not be null" );
+            return match( dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion(), 
+                          dependency.getType(), dependency.getScope(), dependency.getClassifier() );
+        }
+
+        private boolean match( String groupId, String artifactId, String version, 
+                               String type, String scope, String classifier )
+            throws InvalidVersionSpecificationException
+        {
             switch ( parts.length )
             {
                 case 6:
-                    String classifier = artifact.getClassifier();
                     if ( !matches( parts[5], classifier ) )
                     {
                         return false;
                     }
                 case 5:
-                    String scope = artifact.getScope();
                     if ( scope == null || scope.equals( "" ) )
                     {
                         scope = Artifact.SCOPE_COMPILE;
@@ -98,7 +110,6 @@ public final class ArtifactMatcher
                         return false;
                     }
                 case 4:
-                    String type = artifact.getType();
                     if ( type == null || type.equals( "" ) )
                     {
                         type = "jar";
@@ -110,12 +121,11 @@ public final class ArtifactMatcher
                     }
 
                 case 3:
-                    if ( !matches( parts[2], artifact.getVersion() ) )
+                    if ( !matches( parts[2], version ) )
                     {
                         // CHECKSTYLE_OFF: LineLength
                         if ( !AbstractVersionEnforcer.containsVersion( VersionRange.createFromVersionSpec( parts[2] ),
-                                                                       new DefaultArtifactVersion(
-                                                                                                   artifact.getVersion() ) ) )
+                                                                       new DefaultArtifactVersion( version ) ) )
                         // CHECKSTYLE_ON: LineLength
                         {
                             return false;
@@ -123,12 +133,12 @@ public final class ArtifactMatcher
                     }
 
                 case 2:
-                    if ( !matches( parts[1], artifact.getArtifactId() ) )
+                    if ( !matches( parts[1], artifactId ) )
                     {
                         return false;
                     }
                 case 1:
-                    return matches( parts[0], artifact.getGroupId() );
+                    return matches( parts[0], groupId );
                 default:
                     throw new AssertionError();
             }
@@ -169,14 +179,8 @@ public final class ArtifactMatcher
      */
     public ArtifactMatcher( final Collection<String> patterns, final Collection<String> ignorePatterns )
     {
-        if ( patterns == null )
-        {
-            throw new NullPointerException( "patterns" );
-        }
-        if ( ignorePatterns == null )
-        {
-            throw new NullPointerException( "ignorePatterns" );
-        }
+        Objects.requireNonNull( patterns, "patterns must not be null" );
+        Objects.requireNonNull( ignorePatterns, "ignorePatterns must not be null" );
         for ( String pattern : patterns )
         {
             if ( pattern != null && !"".equals( pattern ) )
@@ -212,6 +216,34 @@ public final class ArtifactMatcher
                 for ( Pattern ignorePattern : ignorePatterns )
                 {
                     if ( ignorePattern.match( artifact ) )
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if dependency matches patterns.
+     * 
+     * @param dependency the dependency to match
+     * @return {@code true} if dependency matches any {@link #patterns} and none of the {@link #ignorePatterns},
+     *         otherwise {@code false}
+     * @throws InvalidVersionSpecificationException if any pattern contains an invalid version range
+     */
+    public boolean match( Dependency dependency )
+        throws InvalidVersionSpecificationException
+    {
+        for ( Pattern pattern : patterns )
+        {
+            if ( pattern.match( dependency ) )
+            {
+                for ( Pattern ignorePattern : ignorePatterns )
+                {
+                    if ( ignorePattern.match( dependency ) )
                     {
                         return false;
                     }

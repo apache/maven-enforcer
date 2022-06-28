@@ -75,7 +75,7 @@ public class TestArtifactMatcher
         try
         {
             Pattern p = new Pattern( "*" );
-            p.match( null );
+            p.match( (Artifact)null );
             fail( "NullPointerException expected." );
         }
         catch ( NullPointerException ignored )
