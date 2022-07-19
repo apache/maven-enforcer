@@ -77,8 +77,8 @@ public class RequireSameVersions
 
         // CHECKSTYLE_OFF: LineLength
         versionMembers.putAll( collectVersionMembers( project.getArtifacts(), dependencies, " (dependency)" ) );
-        versionMembers.putAll( collectVersionMembers( project.getPluginArtifacts(), buildPlugins, " (buildPlugin)" ) );
-        versionMembers.putAll( collectVersionMembers( project.getReportArtifacts(), reportPlugins, " (reportPlugin)" ) );
+        versionMembers.putAll( collectVersionMembers( project.getPluginArtifacts(), buildPluginSet, " (buildPlugin)" ) );
+        versionMembers.putAll( collectVersionMembers( project.getReportArtifacts(), reportPluginSet, " (reportPlugin)" ) );
         // CHECKSTYLE_ON: LineLength
 
         if ( versionMembers.size() > 1 )
