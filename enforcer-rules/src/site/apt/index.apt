@@ -87,6 +87,8 @@ Built-In Rules
 
   * {{{./requireSameVersions.html}requireSameVersions}} - enforces that specific dependencies and/or plugins have the same version.
 
+  * {{{./requireTextFileChecksum.html}requireTextFileChecksum}} - enforces that the specified text file has a certain checksum (after normalizing line separators).
+
   * {{{./requireUpperBoundDeps.html}requireUpperBoundDeps}} - ensures that every (transitive) dependency is resolved to its specified version or higher.
 
   []
