@@ -53,6 +53,8 @@ public class TestEnforceMojo
     {
         setupBasics( false );
 
+        Log logSpy = setupLogSpy();
+
         try
         {
             mojo.execute();
@@ -69,6 +71,8 @@ public class TestEnforceMojo
         mojo.setRules( rules );
 
         mojo.execute();
+
+        Mockito.verify( logSpy, Mockito.times(2) ).info( Mockito.contains("Executing rule: " + MockEnforcerRule.class.getName()) );
 
         try
         {
