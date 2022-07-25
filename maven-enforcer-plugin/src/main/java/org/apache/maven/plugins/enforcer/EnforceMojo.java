@@ -187,7 +187,6 @@ public class EnforceMojo
                 // store the current rule for
                 // logging purposes
                 currentRule = rule.getClass().getName();
-                log.debug( "Executing rule: " + currentRule );
                 try
                 {
                     if ( ignoreCache || shouldExecute( rule ) )
@@ -196,6 +195,7 @@ public class EnforceMojo
                         // noinspection SynchronizationOnLocalVariableOrMethodParameter
                         synchronized ( rule )
                         {
+                            log.info( "Executing rule: " + currentRule );
                             rule.execute( helper );
                         }
                     }
