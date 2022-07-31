@@ -98,6 +98,14 @@ public class EnforceMojo
     private boolean failFast = false;
 
     /**
+     * Flag to fail the build if no rules are present
+     *
+     * @since 3.1.1
+     */
+    @Parameter( property = "enforcer.failIfNoRules", defaultValue = "true" )
+    private boolean failIfNoRules = true;
+
+    /**
      * Array of objects that implement the EnforcerRule interface to execute.
      */
     @Parameter( required = false )
@@ -153,9 +161,17 @@ public class EnforceMojo
 
         if ( !havingRules() )
         {
-            // CHECKSTYLE_OFF: LineLength
-            throw new MojoExecutionException( "No rules are configured. Use the skip flag if you want to disable execution." );
-            // CHECKSTYLE_ON: LineLength
+            if ( isFailIfNoRules() )
+            {
+                // CHECKSTYLE_OFF: LineLength
+                throw new MojoExecutionException( "No rules are configured. Use the skip flag if you want to disable execution." );
+                // CHECKSTYLE_ON: LineLength
+            }
+            else
+            {
+                log.warn( "No rules are configured." );
+                return;
+            }
         }
 
         // messages with warn/error flag
@@ -397,6 +413,22 @@ public class EnforceMojo
     public void setSkip( boolean theSkip )
     {
         this.skip = theSkip;
+    }
+
+    /**
+     * @return the failIfNoRules
+     */
+    public boolean isFailIfNoRules()
+    {
+        return this.failIfNoRules;
+    }
+
+    /**
+     * @param thefailIfNoRules the failIfNoRules to set
+     */
+    public void setFailIfNoRules( boolean thefailIfNoRules )
+    {
+        this.failIfNoRules = thefailIfNoRules;
     }
 
     /**
