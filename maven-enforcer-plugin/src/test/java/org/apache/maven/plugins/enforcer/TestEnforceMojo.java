@@ -300,6 +300,20 @@ public class TestEnforceMojo
         Mockito.verify( logSpy ).warn( Mockito.matches( ".* failed with message:" + System.lineSeparator() + "null" ) );
     }
 
+    @Test
+    public void testFailIfNoTests()
+            throws MojoExecutionException {
+        setupBasics( false );
+        mojo.setFailIfNoRules( false );
+
+        Log logSpy = setupLogSpy();
+
+        mojo.execute();
+
+        Mockito.verify( logSpy ).warn( Mockito.eq( "No rules are configured." ) );
+        Mockito.verifyNoMoreInteractions( logSpy );
+    }
+
     private void setupBasics( boolean fail )
     {
         mojo.setFail( fail );
