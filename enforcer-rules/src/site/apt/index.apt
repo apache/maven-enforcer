@@ -49,6 +49,8 @@ Built-In Rules
 
   * {{{./evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
 
+  * {{{./externalRules.html}externalRules}} - evaluate rules from an external resource.
+
   * {{{./reactorModuleConvergence.html}reactorModuleConvergence}} - enforces that a multi module build follows best practice.
 
   * {{{./requireActiveProfile.html}requireActiveProfile}} - enforces one or more active profiles.

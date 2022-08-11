@@ -38,6 +38,7 @@ import org.apache.maven.model.InputSource;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
+import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
@@ -45,6 +46,7 @@ import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilder;
 import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyNode;
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.mockito.Mockito;
@@ -121,6 +123,7 @@ public final class EnforcerTestUtils
     public static EnforcerRuleHelper getHelper( MavenProject project, boolean mockExpression )
     {
         MavenSession session = getMavenSession();
+        MojoExecution mockExecution = mock( MojoExecution.class );
         ExpressionEvaluator eval;
         if ( mockExpression )
         {
@@ -128,7 +131,6 @@ public final class EnforcerTestUtils
         }
         else
         {
-            MojoExecution mockExecution = mock( MojoExecution.class );
             session.setCurrentProject( project );
             eval = new PluginParameterExpressionEvaluator( session, mockExecution );
         }
@@ -149,6 +151,18 @@ public final class EnforcerTestUtils
         {
             when( container.lookup( DependencyCollectorBuilder.class ) )
                     .thenReturn( ( buildingRequest, filter ) -> node );
+        }
+        catch ( ComponentLookupException e )
+        {
+            // test will fail
+        }
+        ClassWorld classWorld = new ClassWorld( "test", EnforcerTestUtils.class.getClassLoader() );
+        MojoDescriptor mojoDescriptor = new MojoDescriptor();
+        mojoDescriptor.setRealm( classWorld.getClassRealm( "test" ) );
+        when( mockExecution.getMojoDescriptor() ).thenReturn( mojoDescriptor );
+        try
+        {
+            when( container.lookup( MojoExecution.class ) ).thenReturn( mockExecution );
         }
         catch ( ComponentLookupException e )
         {
