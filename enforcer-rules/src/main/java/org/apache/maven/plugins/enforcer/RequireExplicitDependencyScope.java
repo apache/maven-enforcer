@@ -22,6 +22,7 @@ package org.apache.maven.plugins.enforcer;
 import java.text.ChoiceFormat;
 import java.util.List;
 
+import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRule2;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
@@ -63,19 +64,28 @@ public class RequireExplicitDependencyScope
                 if ( dependency.getScope() == null )
                 {
                     MessageBuilder msgBuilder = MessageUtils.buffer();
-                    helper.getLog().warn(  msgBuilder
-                          .a( "Dependency " ).strong( dependency.getManagementKey() )
-                          .a( " @ " ).strong( formatLocation( project, dependency.getLocation( "" ) ) )
-                          .a( " does not have an explicit scope defined!" ).toString() );
+                    msgBuilder
+                        .a( "Dependency " ).strong( dependency.getManagementKey() )
+                        .a( " @ " ).strong( formatLocation( project, dependency.getLocation( "" ) ) )
+                        .a( " does not have an explicit scope defined!" ).toString();
+                    if ( getLevel() == EnforcerLevel.ERROR )
+                    {
+                        helper.getLog().error( msgBuilder.toString() );
+                    }
+                    else
+                    {
+                        helper.getLog().warn( msgBuilder.toString() );
+                    }
                     numMissingDependencyScopes++;
                 }
             }
             if ( numMissingDependencyScopes > 0 )
             {
                 ChoiceFormat scopesFormat = new ChoiceFormat( "1#scope|1<scopes" );
+                String logCategory = getLevel() == EnforcerLevel.ERROR ? "errors" : "warnings";
                 throw new EnforcerRuleException( "Found " + numMissingDependencyScopes + " missing dependency "
                     + scopesFormat.format( numMissingDependencyScopes )
-                    + ". Look at the warnings emitted above for the details." );
+                    + ". Look at the " + logCategory + " emitted above for the details." );
             }
         }
         catch ( ExpressionEvaluationException eee )
