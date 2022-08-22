@@ -17,5 +17,5 @@
  * under the License.
  */
 File buildLog = new File(basedir, 'build.log')
-assert buildLog.text.contains('Found 1 missing dependency scope. Look at the warnings emitted above for the details.')
 assert buildLog.text.contains('[ERROR] Dependency org.apache.jackrabbit.vault:vault-cli:jar @ line 65, column 21 does not have an explicit scope defined!')
+assert buildLog.text.contains('Found 1 missing dependency scope. Look at the errors emitted above for the details.')
