@@ -56,7 +56,9 @@ Built-In Rules
   * {{{./requireActiveProfile.html}requireActiveProfile}} - enforces one or more active profiles.
   
   * {{{./requireEnvironmentVariable.html}requireEnvironmentVariable}} - enforces the existence of an environment variable.
-  
+
+  * {{{./requireExplicitDependencyScope.html}requireExplicitDependencyScope}} - enforces that all dependencies have an explicit scope.
+
   * {{{./requireFileChecksum.html}requireFileChecksum}} - enforces that the specified file has a certain checksum.
   
   * {{{./requireFilesDontExist.html}requireFilesDontExist}} - enforces that the list of files does not exist.

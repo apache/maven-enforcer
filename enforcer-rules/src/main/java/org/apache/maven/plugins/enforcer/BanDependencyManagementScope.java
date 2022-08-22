@@ -29,7 +29,6 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
-import org.apache.maven.model.InputLocation;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher;
 import org.apache.maven.project.MavenProject;
@@ -81,7 +80,6 @@ public class BanDependencyManagementScope
                 List<Dependency> violatingDependencies  = getViolatingDependencies( logger, depMgmt );
                 if ( !violatingDependencies.isEmpty() )
                 {
-                    String projectId = getProjectId( project );
                     String message = getMessage();
                     StringBuilder buf = new StringBuilder();
                     if ( message == null )
@@ -91,7 +89,7 @@ public class BanDependencyManagementScope
                     buf.append( message + System.lineSeparator() );
                     for ( Dependency violatingDependency : violatingDependencies )
                     {
-                        buf.append( getErrorMessage( projectId, violatingDependency ) );
+                        buf.append( getErrorMessage( project, violatingDependency ) );
                     }
                     throw new EnforcerRuleException( buf.toString() );
                 }
@@ -136,74 +134,12 @@ public class BanDependencyManagementScope
         return violatingDependencies;
     }
 
-    private static CharSequence getErrorMessage( String projectId, Dependency violatingDependency )
+    private static CharSequence getErrorMessage( MavenProject project, Dependency violatingDependency )
     {
         return "Banned scope '" + violatingDependency.getScope() + "' used on dependency '"
                         + violatingDependency.getManagementKey() + "' @ "
-                        + formatLocation( projectId, violatingDependency.getLocation( "" ) )
+                        + formatLocation( project, violatingDependency.getLocation( "" ) )
                         + System.lineSeparator();
-    }
-
-    // Get the identifier of the POM in the format <groupId>:<artifactId>:<version>.
-    protected static String getProjectId( MavenProject project )
-    {
-        StringBuilder buffer = new StringBuilder( 128 );
-
-        buffer.append( ( project.getGroupId() != null && project.getGroupId().length() > 0 ) ? project.getGroupId()
-                        : "[unknown-group-id]" );
-        buffer.append( ':' );
-        buffer.append( ( project.getArtifactId() != null && project.getArtifactId().length() > 0 )
-                        ? project.getArtifactId()
-                        : "[unknown-artifact-id]" );
-        buffer.append( ':' );
-        buffer.append( ( project.getVersion() != null && project.getVersion().length() > 0 ) ? project.getVersion()
-                        : "[unknown-version]" );
-
-        return buffer.toString();
-    }
-
-    /**
-     * Creates a string with line/column information for problems originating directly from this POM. Inspired by
-     * {@code o.a.m.model.building.ModelProblemUtils.formatLocation(...)}.
-     *
-     * @param projectId the id of the current project's pom.
-     * @param location The location which should be formatted, must not be {@code null}.
-     * @return The formatted problem location or an empty string if unknown, never {@code null}.
-     */
-    protected static String formatLocation( String projectId, InputLocation location )
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        if ( !location.getSource().getModelId().equals( projectId ) )
-        {
-            buffer.append( location.getSource().getModelId() );
-
-            if ( location.getSource().getLocation().length() > 0 )
-            {
-                if ( buffer.length() > 0 )
-                {
-                    buffer.append( ", " );
-                }
-                buffer.append( location.getSource().getLocation() );
-            }
-        }
-        if ( location.getLineNumber() > 0 )
-        {
-            if ( buffer.length() > 0 )
-            {
-                buffer.append( ", " );
-            }
-            buffer.append( "line " ).append( location.getLineNumber() );
-        }
-        if ( location.getColumnNumber() > 0 )
-        {
-            if ( buffer.length() > 0 )
-            {
-                buffer.append( ", " );
-            }
-            buffer.append( "column " ).append( location.getColumnNumber() );
-        }
-        return buffer.toString();
     }
 
     public void setExcludes( List<String> theExcludes )
