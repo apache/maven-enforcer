@@ -136,6 +136,34 @@ public class TestRequireFilesDontExist
         rule.execute( EnforcerTestUtils.getHelper() );
     }
 
+    @Test
+    public void testFileDoesNotExistSatisfyAny()
+            throws IOException
+    {
+        File f = File.createTempFile( "junit", null, temporaryFolder );
+        f.delete();
+
+        assertFalse( f.exists() );
+
+        File g = File.createTempFile( "junit", null, temporaryFolder );
+
+        assertTrue( g.exists() );
+
+        rule.setFiles( new File[] { f, g.getCanonicalFile() } );
+        rule.setSatisfyAny(true);
+
+        try
+        {
+            rule.execute( EnforcerTestUtils.getHelper() );
+        }
+        catch ( EnforcerRuleException e )
+        {
+            fail( "Unexpected Exception:" + e.getLocalizedMessage() );
+        }
+
+        g.delete();
+    }
+
     /**
      * Test id.
      */
