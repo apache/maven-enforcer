@@ -22,6 +22,7 @@ package org.apache.maven.plugins.enforcer;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.junit.jupiter.api.Test;
@@ -119,6 +120,34 @@ public class TestRequireFilesExist
 
         assertNotNull( e.getMessage() );
 
+    }
+
+    @Test
+    public void testFileExistsSatisfyAny()
+            throws IOException
+    {
+        File f = File.createTempFile( "junit", null, temporaryFolder );
+        f.delete();
+
+        assertFalse( f.exists() );
+
+        File g = File.createTempFile( "junit", null, temporaryFolder );
+
+        assertTrue( g.exists() );
+
+        rule.setFiles( new File[] { f, g.getCanonicalFile() } );
+        rule.setSatisfyAny(true);
+
+        try
+        {
+            rule.execute( EnforcerTestUtils.getHelper() );
+        }
+        catch ( EnforcerRuleException e )
+        {
+            fail( "Unexpected Exception:" + e.getLocalizedMessage() );
+        }
+
+        g.delete();
     }
 
     /**

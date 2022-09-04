@@ -42,6 +42,9 @@ public abstract class AbstractRequireFiles
     /** if null file handles should be allowed. If they are allowed, it means treat it as a success. */
     private boolean allowNulls = false;
 
+    /** Allow that a single one of the files can make the rule to pass. */
+    private boolean satisfyAny;
+
     // check the file for the specific condition
     /**
      * Check one file.
@@ -82,32 +85,46 @@ public abstract class AbstractRequireFiles
             }
         }
 
-        // if anything was found, log it with the optional message.
-        if ( !failures.isEmpty() )
+        if ( satisfyAny )
         {
-            String message = getMessage();
-            
-            StringBuilder buf = new StringBuilder();
-            if ( message != null )
+            int passed = files.length - failures.size();
+            if ( passed == 0 )
             {
-                buf.append( message + System.lineSeparator() );
+                fail( failures );
             }
-            buf.append( getErrorMsg() );
-
-            for ( File file : failures )
-            {
-                if ( file != null )
-                {
-                    buf.append( file.getAbsolutePath() + System.lineSeparator() );
-                }
-                else
-                {
-                    buf.append( "(an empty filename was given and allowNulls is false)" + System.lineSeparator() );
-                }
-            }
-
-            throw new EnforcerRuleException( buf.toString() );
         }
+        // if anything was found, log it with the optional message.
+        else if ( !failures.isEmpty() )
+        {
+            fail( failures );
+        }
+    }
+
+    private void fail( List<File> failures )
+            throws EnforcerRuleException
+    {
+        String message = getMessage();
+
+        StringBuilder buf = new StringBuilder();
+        if ( message != null )
+        {
+            buf.append( message + System.lineSeparator() );
+        }
+        buf.append( getErrorMsg() );
+
+        for ( File file : failures )
+        {
+            if ( file != null )
+            {
+                buf.append( file.getAbsolutePath() + System.lineSeparator() );
+            }
+            else
+            {
+                buf.append( "(an empty filename was given and allowNulls is false)" + System.lineSeparator() );
+            }
+        }
+
+        throw new EnforcerRuleException( buf.toString() );
     }
 
     @Override
@@ -167,5 +184,15 @@ public abstract class AbstractRequireFiles
     public void setAllowNulls( boolean allowNulls )
     {
         this.allowNulls = allowNulls;
+    }
+
+    public boolean isSatisfyAny()
+    {
+        return satisfyAny;
+    }
+
+    public void setSatisfyAny( boolean satisfyAny )
+    {
+        this.satisfyAny = satisfyAny;
     }
 }
