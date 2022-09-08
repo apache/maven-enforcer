@@ -68,7 +68,7 @@
     <maven.version>3.2.5</maven.version>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
     <javaVersion>8</javaVersion>
-    <mockito.version>4.7.0</mockito.version>
+    <mockito.version>4.8.0</mockito.version>
     <surefire.version>3.0.0-M7</surefire.version>
     <project.build.outputTimestamp>2022-06-07T15:09:53Z</project.build.outputTimestamp>
   </properties>
