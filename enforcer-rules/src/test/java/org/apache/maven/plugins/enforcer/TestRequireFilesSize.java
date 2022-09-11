@@ -167,7 +167,7 @@ public class TestRequireFilesSize
 
     @Test
     public void testRequireFilesSizeSatisfyAny()
-            throws IOException
+            throws EnforcerRuleException, IOException
     {
         File f = File.createTempFile( "junit", null, temporaryFolder );
         try ( BufferedWriter out = new BufferedWriter( new FileWriter( f ) ) )
@@ -182,14 +182,7 @@ public class TestRequireFilesSize
         rule.setMaxsize( 10 );
         rule.setSatisfyAny(true);
 
-        try
-        {
-            rule.execute( EnforcerTestUtils.getHelper() );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            fail( "Unexpected Exception:" + e.getLocalizedMessage() );
-        }
+        rule.execute( EnforcerTestUtils.getHelper() );
     }
 
     /**
