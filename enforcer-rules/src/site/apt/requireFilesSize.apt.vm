@@ -39,6 +39,8 @@ Require File Size
    * minsize - minimum size in bytes for this file.
    
    * allowNulls - If null files should be allowed. If allowed, they will be treated as if they do exist. Default is false.
+
+   * satisfyAny - Allows that one of files can make the rule pass, instead of all the files. Default is false.
    
    []
 
