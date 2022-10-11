@@ -37,6 +37,8 @@ Built-In Rules
   
   * {{{./banDuplicatePomDependencyVersions.html}banDuplicatePomDependencyVersions}} - enforces that the project doesn't have duplicate declared dependencies.
   
+  * {{{./banDynamicVersions.html}banDynamicVersions}} - bans all dependencies requiring version resolution at build time (i.e. version ranges, placeholders <<<RELEASE>>>/<<<LATEST>>> or SNAPSHOT versions).
+  
   * {{{./bannedDependencies.html}bannedDependencies}} - enforces that excluded dependencies aren't included.
   
   * {{{./bannedPlugins.html}bannedPlugins}} - enforces that specific plugins aren't included in the build.

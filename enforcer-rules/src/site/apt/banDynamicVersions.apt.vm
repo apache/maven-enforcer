@@ -1,0 +1,108 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.    
+ 
+  ------
+  Ban Dynamic Versions
+  ------
+  Konrad Windszus
+  ------
+  October 2022
+  ------
+
+Ban Dynamic Versions
+
+  This rule bans dependencies having versions which require resolution (i.e. dynamic versions which might change with each build). Dynamic versions are either 
+  
+  * version ranges,
+  
+  * the special placeholders <<<LATEST>>>/<<<RELEASE>>> or
+  
+  * versions ending with <<<-SNAPSHOT>>>.
+
+  []
+
+  The following parameters are supported by this rule:
+  
+  * <<allowSnapshots>> - if <<<true>>> dependencies with versions ending with <<<-SNAPSHOT>>> will not be banned.  Default is <<<false>>>.
+  
+  * <<allowRelease>> - if <<<true>>> dependencies with version placeholder <<<RELEASE>>> will not be banned.  Default is <<<false>>>.
+  
+  * <<allowLatest>> - if <<<true>>> dependencies with versions placeholder <<<LATEST>>> will not be banned.  Default is <<<false>>>.
+  
+  * <<allowRanges>> - if <<<true>>> versions ending with <<<-SNAPSHOT>>> will not be banned.  Default is <<<false>>>.
+  
+  * <<checkOptionals>> - if <<<true>>> also optional dependencies will be checked.  Default is <<<false>>>.
+  
+  * <<excludedScopes>> - the list of scopes to exclude;
+  
+  * <<ignores>> - a list of dependencies to ignore. The format is <<<groupId[:artifactId][:version][:type][:scope][:classifier]>>> where <<<artifactId>>>, <<<version>>>, <<<type>>>, <<<scope>>> and <<<classifier>>> are optional. Wildcards may be used to replace an entire or just parts of a section.
+      Examples:
+       
+        * <<<org.apache.maven>>>
+        
+        * <<<org.apache.maven:someArtifact>>>
+        
+        * <<<org.apache.maven:artifact:someVersion>>>
+        
+        * <<<org.apache.maven:*:*:jar:test>>>
+        
+        * <<<*:*:*:jar:compile:tests>>>
+
+        * <<<org.apache.*:maven-*:*>>>
+        
+        []
+   
+  * <<message>> - an optional message to the user if the rule fails.
+  
+  []
+
+   
+  Sample Plugin Configuration:
+  
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>ban-dynamic-versions</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <banDynamicVersions>
+                  <ignores>
+                    <ignore>org.apache.maven</ignore>
+                  </ignore>
+                  <allowSnapshots>true</allowSnapshots>
+                </banDynamicVersions>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
