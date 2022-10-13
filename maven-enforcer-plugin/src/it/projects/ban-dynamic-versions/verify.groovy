@@ -21,6 +21,5 @@ assert buildLog.text.contains( '[WARNING] Dependency org.apache.maven.plugins.en
 assert buildLog.text.contains( '[WARNING] Dependency org.apache.maven.plugins.enforcer.its:menforcer138_io:jar:LATEST (compile) is referenced with a banned dynamic version LATEST' )
 assert buildLog.text.contains( '[WARNING] Dependency org.apache.maven.plugins.enforcer.its:menforcer134_model:jar:1.0-SNAPSHOT (compile) is referenced with a banned dynamic version 1.0-SNAPSHOT' )
 assert buildLog.text.contains( '[WARNING] Dependency org.apache.maven.plugins.enforcer.its:menforcer427-a:jar:1.0 (compile) via org.apache.maven.plugins.enforcer.its:menforcer427:jar:1.0 is referenced with a banned dynamic version [1.0,2)' )
-assert buildLog.text.contains( '[WARNING] Dependency org.apache.maven.plugins.enforcer.its:menforcer192-a:jar:1.0 (compile) is referenced with a banned dynamic version [1.0,1.0]')
 assert buildLog.text.contains( '[ERROR] Rule 0: org.apache.maven.plugins.enforcer.BanDynamicVersions failed with message' )
-assert buildLog.text.contains( 'Found 5 dependencies with dynamic versions. Look at the warnings emitted above for the details.' )
+assert buildLog.text.contains( 'Found 4 dependencies with dynamic versions. Look at the warnings emitted above for the details.' )

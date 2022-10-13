@@ -20,14 +20,15 @@
   ------
   Konrad Windszus
   ------
-  October 2022
+  2022-10-13
   ------
 
 Ban Dynamic Versions
 
-  This rule bans dependencies having versions which require resolution (i.e. dynamic versions which might change with each build). Dynamic versions are either 
+  This rule bans dependencies having versions which require resolving (i.e. dynamic versions which might change with each build and require 
+  lookup of {{{https://maven.apache.org/ref/3-LATEST/maven-repository-metadata/repository-metadata.html}repositoy metadata}}). Dynamic versions are either 
   
-  * version ranges,
+  * {{{https://maven.apache.org/pom.html#Dependency_Version_Requirement_Specification}version ranges}}, i.e. all version strings starting with either <<<[>>> or <<<(>>>,
   
   * the special placeholders <<<LATEST>>>/<<<RELEASE>>> or
   
@@ -45,11 +46,13 @@ Ban Dynamic Versions
   
   * <<allowRanges>> - if <<<true>>> versions ending with <<<-SNAPSHOT>>> will not be banned.  Default is <<<false>>>.
   
-  * <<checkOptionals>> - if <<<true>>> also optional dependencies will be checked.  Default is <<<false>>>.
+  * <<allowRangesWithSameUpperAndLowerBound>> - if <<<true>> ranges having a range with same upper and lower bound (always inclusive) will not be banned (although they require resolving).
+  
+  * <<excludeOptionals>> - if <<<true>>> optional dependencies won't be checked.  Default is <<<false>>>.
   
   * <<excludedScopes>> - the list of scopes to exclude;
   
-  * <<ignores>> - a list of dependencies to ignore. The format is <<<groupId[:artifactId][:version][:type][:scope][:classifier]>>> where <<<artifactId>>>, <<<version>>>, <<<type>>>, <<<scope>>> and <<<classifier>>> are optional. Wildcards may be used to replace an entire or just parts of a section.
+  * <<ignores>> - a list of dependencies to ignore. The format is <<<groupId[:artifactId[:version[:type[:scope:[classifier]]]]]>>> where <<<artifactId>>>, <<<version>>>, <<<type>>>, <<<scope>>> and <<<classifier>>> are optional (but require all previous parts). Wildcards may be used to replace an entire or just parts of a section.
       Examples:
        
         * <<<org.apache.maven>>>

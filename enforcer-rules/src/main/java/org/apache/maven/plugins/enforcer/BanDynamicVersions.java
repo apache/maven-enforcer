@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -99,9 +100,15 @@ public class BanDynamicVersions
     private boolean allowRanges;
 
     /**
-     * {@code true} if also optional dependencies should be checked
+     * {@code true} if ranges having the same upper and lower bound like {@code [1.0]} should be allowed.
+     * Only applicable if {@link #allowRanges} is not set to {@code true}.
      */
-    private boolean checkOptionals;
+    private boolean allowRangesWithSameUpperAndLowerBound;
+
+    /**
+     * {@code true} if optional dependencies should not be checked
+     */
+    private boolean excludeOptionals;
 
     /**
      * the scopes of dependencies which should be excluded from this rule
@@ -110,7 +117,8 @@ public class BanDynamicVersions
 
     /**
      * Specify the ignored dependencies. This can be a list of artifacts in the format
-     * <code>groupId[:artifactId][:version]</code>. Any of the sections can be a wildcard by using '*' (ie group:*:1.0)
+     * <code>groupId[:artifactId[:version[:type[:scope:[classifier]]]]]</code>. 
+     * Any of the sections can be a wildcard by using '*' (ie group:*:1.0).
      * <br>
      * The rule will fail if any dependency matches any exclude, unless it also matches an include rule.
      * 
@@ -143,9 +151,9 @@ public class BanDynamicVersions
         this.allowRanges = allowRanges;
     }
 
-    public void setCheckOptionals( boolean checkOptionals )
+    public void setExcludeOptionals( boolean excludeOptionals )
     {
-        this.checkOptionals = checkOptionals;
+        this.excludeOptionals = excludeOptionals;
     }
 
     public void setExcludedScopes( String[] excludedScopes )
@@ -200,6 +208,12 @@ public class BanDynamicVersions
             }
             else if ( versionConstraint.getRange() != null )
             {
+                if ( allowRangesWithSameUpperAndLowerBound 
+                     && Objects.equals( versionConstraint.getRange().getLowerBound(), 
+                                        versionConstraint.getRange().getUpperBound() ) ) 
+                {
+                        return false;
+                }
                 return !allowRanges;
             }
             else
@@ -276,7 +290,7 @@ public class BanDynamicVersions
         }
         catch ( ExpressionEvaluationException eee )
         {
-            throw new EnforcerRuleException( "Cannot resolve expression: " + eee.getCause(), eee );
+            throw new EnforcerRuleException( "Cannot resolve expression", eee );
         }
         catch ( ComponentLookupException cle )
         {
@@ -286,7 +300,7 @@ public class BanDynamicVersions
 
         Collection<DependencySelector> depSelectors = new ArrayList<>();
         depSelectors.add( new ScopeDependencySelector( excludedScopes ) );
-        if ( !checkOptionals )
+        if ( excludeOptionals )
         {
             depSelectors.add( new OptionalDependencySelector() );
         }
@@ -308,7 +322,7 @@ public class BanDynamicVersions
         }
         catch ( DependencyCollectionException e )
         {
-            throw new EnforcerRuleException( "Could not retrieve dependency metadata for project  : " + e.getMessage(),
+            throw new EnforcerRuleException( "Could not retrieve dependency metadata for project",
                                              e );
         }
     }

@@ -44,6 +44,7 @@
                   <excludedScopes>
                     <excludedScope>test</excludedScope>
                   </excludedScopes>
+                  <allowRangesWithSameUpperAndLowerBound>true</allowRangesWithSameUpperAndLowerBound>
                 </banDynamicVersions>
               </rules>
             </configuration>
@@ -105,7 +106,7 @@
     <dependency>
       <groupId>org.apache.maven.plugins.enforcer.its</groupId>
       <artifactId>menforcer192-a</artifactId>
-      <!--  version range syntax with equal upper and lower bounds, unfortunately still leads to version resolving (although unnecessary), therefore ban as well -->
+      <!--  version range syntax with equal upper and lower bounds -->
       <version>[1.0]</version>
     </dependency>
   </dependencies>
