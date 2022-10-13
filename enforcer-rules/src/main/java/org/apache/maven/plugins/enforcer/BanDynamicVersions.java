@@ -103,7 +103,7 @@ public class BanDynamicVersions
      * {@code true} if ranges having the same upper and lower bound like {@code [1.0]} should be allowed.
      * Only applicable if {@link #allowRanges} is not set to {@code true}.
      */
-    private boolean allowRangesWithSameUpperAndLowerBound;
+    private boolean allowRangesWithIdenticalBounds;
 
     /**
      * {@code true} if optional dependencies should not be checked
@@ -118,9 +118,9 @@ public class BanDynamicVersions
     /**
      * Specify the ignored dependencies. This can be a list of artifacts in the format
      * <code>groupId[:artifactId[:version[:type[:scope:[classifier]]]]]</code>. 
-     * Any of the sections can be a wildcard by using '*' (ie group:*:1.0).
+     * Any of the sections can be a wildcard by using '*' (e.g. {@code group:*:1.0}).
      * <br>
-     * The rule will fail if any dependency matches any exclude, unless it also matches an include rule.
+     * Any of the ignored dependencies may have dynamic versions.
      * 
      * @see {@link #setIgnores(List)}
      */
@@ -208,7 +208,7 @@ public class BanDynamicVersions
             }
             else if ( versionConstraint.getRange() != null )
             {
-                if ( allowRangesWithSameUpperAndLowerBound 
+                if ( allowRangesWithIdenticalBounds 
                      && Objects.equals( versionConstraint.getRange().getLowerBound(), 
                                         versionConstraint.getRange().getUpperBound() ) ) 
                 {

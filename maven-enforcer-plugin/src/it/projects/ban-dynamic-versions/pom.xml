@@ -44,7 +44,7 @@
                   <excludedScopes>
                     <excludedScope>test</excludedScope>
                   </excludedScopes>
-                  <allowRangesWithSameUpperAndLowerBound>true</allowRangesWithSameUpperAndLowerBound>
+                  <allowRangesWithIdenticalBounds>true</allowRangesWithIdenticalBounds>
                 </banDynamicVersions>
               </rules>
             </configuration>

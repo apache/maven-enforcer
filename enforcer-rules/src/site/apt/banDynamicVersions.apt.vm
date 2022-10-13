@@ -46,11 +46,11 @@ Ban Dynamic Versions
   
   * <<allowRanges>> - if <<<true>>> versions ending with <<<-SNAPSHOT>>> will not be banned.  Default is <<<false>>>.
   
-  * <<allowRangesWithSameUpperAndLowerBound>> - if <<<true>>> ranges having a range with same upper and lower bound (always inclusive) will not be banned (although they require resolving).
+  * <<allowRangesWithIdenticalBounds>> - if <<<true>>> ranges having a range with same upper and lower bound (always inclusive) will not be banned (although they require resolving).
   
   * <<excludeOptionals>> - if <<<true>>> optional dependencies won't be checked.  Default is <<<false>>>.
   
-  * <<excludedScopes>> - the list of scopes to exclude;
+  * <<excludedScopes>> - the list of scopes to exclude. By default no scopes are excluded.
   
   * <<ignores>> - a list of dependencies to ignore. The format is <<<groupId[:artifactId[:version[:type[:scope:[classifier]]]]]>>> where <<<artifactId>>>, <<<version>>>, <<<type>>>, <<<scope>>> and <<<classifier>>> are optional (but require all previous parts). Wildcards may be used to replace an entire or just parts of a section.
       Examples:
