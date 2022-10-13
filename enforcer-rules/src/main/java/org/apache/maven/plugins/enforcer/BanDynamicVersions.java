@@ -272,17 +272,10 @@ public class BanDynamicVersions
         List<RemoteRepository> remoteRepositories;
         try
         {
-            project = (MavenProject) helper.evaluate( "${project}" );
-            if ( project == null )
-            {
-                throw new ExpressionEvaluationException( "${project} is null" );
-            }
+            project = (MavenProject) Objects.requireNonNull( helper.evaluate( "${project}" ), "${project} is null" );
             RepositorySystemSession repoSession =
-                (RepositorySystemSession) helper.evaluate( "${repositorySystemSession}" );
-            if ( repoSession == null )
-            {
-                throw new ExpressionEvaluationException( "${repositorySystemSession} is null" );
-            }
+                (RepositorySystemSession) Objects.requireNonNull( helper.evaluate( "${repositorySystemSession}" ),
+                                                                  "${repositorySystemSession} is null" );
             // get a new session to be able to tweak the dependency selector
             newRepoSession = new DefaultRepositorySystemSession( repoSession );
             remoteRepositories = (List<RemoteRepository>) helper.evaluate( "${project.remoteProjectRepositories}" );
