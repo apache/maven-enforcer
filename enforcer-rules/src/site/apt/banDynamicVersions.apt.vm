@@ -46,7 +46,7 @@ Ban Dynamic Versions
   
   * <<allowRanges>> - if <<<true>>> versions ending with <<<-SNAPSHOT>>> will not be banned.  Default is <<<false>>>.
   
-  * <<allowRangesWithSameUpperAndLowerBound>> - if <<<true>> ranges having a range with same upper and lower bound (always inclusive) will not be banned (although they require resolving).
+  * <<allowRangesWithSameUpperAndLowerBound>> - if <<<true>>> ranges having a range with same upper and lower bound (always inclusive) will not be banned (although they require resolving).
   
   * <<excludeOptionals>> - if <<<true>>> optional dependencies won't be checked.  Default is <<<false>>>.
   
