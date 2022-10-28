@@ -83,8 +83,6 @@ Require OS Version
    
    * {{{http://lopica.sourceforge.net/os.html}lopica.sourceforge.net}}
    
-   * {{{http://tolstoy.com/samizdat/sysprops.html}Sysprops}}
-   
    []
      
    The various options are considered to be "and'd" together but any number can be specified. 
