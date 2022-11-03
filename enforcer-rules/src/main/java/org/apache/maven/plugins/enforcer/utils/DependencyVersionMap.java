@@ -131,9 +131,10 @@ public class DependencyVersionMap
         List<List<DependencyNode>> output = new ArrayList<>();
         for ( List<DependencyNode> nodes : idsToNode.values() )
         {
-            if ( includes != null && !includes.isEmpty() )
+            List<DependencyNode> filteredNodes = nodes;
+            if ( formattedIncludes != null && !formattedIncludes.isEmpty() )
             {
-                List<DependencyNode> filteredNodes = new ArrayList<>();
+                filteredNodes = new ArrayList<>();
                 for ( DependencyNode node : nodes )
                 {
                     if ( includeArtifact( node.getArtifact(), formattedIncludes, formattedExcludes ) )
@@ -141,11 +142,10 @@ public class DependencyVersionMap
                         filteredNodes.add( node );
                     }
                 }
-                nodes = filteredNodes;
             }
-            if ( containsConflicts( nodes ) )
+            if ( containsConflicts( filteredNodes ) )
             {
-                output.add( nodes );
+                output.add( filteredNodes );
             }
         }
         return output;
