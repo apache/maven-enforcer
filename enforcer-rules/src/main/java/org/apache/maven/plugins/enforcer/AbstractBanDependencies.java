@@ -77,7 +77,7 @@ public abstract class AbstractBanDependencies
 
         try
         {
-            graphBuilder = (DependencyGraphBuilder) helper.getComponent( DependencyGraphBuilder.class );
+            graphBuilder = helper.getComponent( DependencyGraphBuilder.class );
         }
         catch ( ComponentLookupException e )
         {
@@ -89,7 +89,7 @@ public abstract class AbstractBanDependencies
         buildingRequest.setProject( project );
 
         // get the correct list of dependencies
-        Set<Artifact> dependencies = getDependenciesToCheck( buildingRequest );
+        Set<Artifact> dependencies = getDependenciesToCheck( helper, buildingRequest );
 
         // look for banned dependencies
         Set<Artifact> foundExcludes = checkDependencies( dependencies, helper.getLog() );
@@ -118,6 +118,18 @@ public abstract class AbstractBanDependencies
     protected CharSequence getErrorMessage( Artifact artifact )
     {
         return "Found Banned Dependency: " + artifact.getId() + System.lineSeparator();
+    }
+
+    private Set<Artifact> getDependenciesToCheck( EnforcerRuleHelper helper,
+            ProjectBuildingRequest buildingRequest )
+    {
+        String cacheKey = buildingRequest.getProject().getId() + "_" + searchTransitive;
+
+        // check in the cache
+        Set<Artifact> dependencies =
+                (Set<Artifact>) helper.getCache( cacheKey, () -> getDependenciesToCheck( buildingRequest ) );
+
+        return dependencies;
     }
 
     protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest buildingRequest )

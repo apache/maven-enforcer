@@ -165,6 +165,26 @@ public class TestRequireFilesSize
         }
     }
 
+    @Test
+    public void testRequireFilesSizeSatisfyAny()
+            throws EnforcerRuleException, IOException
+    {
+        File f = File.createTempFile( "junit", null, temporaryFolder );
+        try ( BufferedWriter out = new BufferedWriter( new FileWriter( f ) ) )
+        {
+            out.write( "123456789101112131415" );
+        }
+        assertTrue( f.length() > 10 );
+
+        File g = File.createTempFile( "junit", null, temporaryFolder );
+
+        rule.setFiles( new File[] { f, g } );
+        rule.setMaxsize( 10 );
+        rule.setSatisfyAny(true);
+
+        rule.execute( EnforcerTestUtils.getHelper() );
+    }
+
     /**
      * Test id.
      */

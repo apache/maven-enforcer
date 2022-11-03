@@ -19,9 +19,9 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
@@ -86,7 +86,7 @@ public class EnforceMojo
     protected boolean skip = false;
 
     /**
-     * Flag to fail the build if a version check fails.
+     * Flag to fail the build if at least one check fails.
      */
     @Parameter( property = "enforcer.fail", defaultValue = "true" )
     private boolean fail = true;
@@ -96,6 +96,14 @@ public class EnforceMojo
      */
     @Parameter( property = "enforcer.failFast", defaultValue = "false" )
     private boolean failFast = false;
+
+    /**
+     * Flag to fail the build if no rules are present
+     *
+     * @since 3.1.1
+     */
+    @Parameter( property = "enforcer.failIfNoRules", defaultValue = "true" )
+    private boolean failIfNoRules = true;
 
     /**
      * Array of objects that implement the EnforcerRule interface to execute.
@@ -153,13 +161,21 @@ public class EnforceMojo
 
         if ( !havingRules() )
         {
-            // CHECKSTYLE_OFF: LineLength
-            throw new MojoExecutionException( "No rules are configured. Use the skip flag if you want to disable execution." );
-            // CHECKSTYLE_ON: LineLength
+            if ( isFailIfNoRules() )
+            {
+                // CHECKSTYLE_OFF: LineLength
+                throw new MojoExecutionException( "No rules are configured. Use the skip flag if you want to disable execution." );
+                // CHECKSTYLE_ON: LineLength
+            }
+            else
+            {
+                log.warn( "No rules are configured." );
+                return;
+            }
         }
 
-        // list to store exceptions
-        List<String> list = new ArrayList<>();
+        // messages with warn/error flag
+        Map<String, Boolean> messages = new LinkedHashMap<>();
 
         String currentRule = "Unknown";
 
@@ -187,7 +203,6 @@ public class EnforceMojo
                 // store the current rule for
                 // logging purposes
                 currentRule = rule.getClass().getName();
-                log.debug( "Executing rule: " + currentRule );
                 try
                 {
                     if ( ignoreCache || shouldExecute( rule ) )
@@ -196,6 +211,7 @@ public class EnforceMojo
                         // noinspection SynchronizationOnLocalVariableOrMethodParameter
                         synchronized ( rule )
                         {
+                            log.info( "Executing rule: " + currentRule );
                             rule.execute( helper );
                         }
                     }
@@ -228,31 +244,36 @@ public class EnforceMojo
                         if ( level == EnforcerLevel.ERROR )
                         {
                             hasErrors = true;
-                            list.add( "Rule " + i + ": " + currentRule + " failed with message:"
-                                 + System.lineSeparator() + exceptionMessage );
+                            messages.put( "Rule " + i + ": " + currentRule + " failed with message:"
+                                 + System.lineSeparator() + exceptionMessage, true );
                         }
                         else
                         {
-                            list.add( "Rule " + i + ": " + currentRule + " warned with message:"
-                                 + System.lineSeparator() + exceptionMessage );
+                            messages.put( "Rule " + i + ": " + currentRule + " warned with message:"
+                                 + System.lineSeparator() + exceptionMessage, false );
                         }
                     }
                 }
             }
         }
 
-        // if we found anything
-        // CHECKSTYLE_OFF: LineLength
-        if ( !list.isEmpty() )
+        // log any messages
+        messages.forEach( ( message, error ) ->
         {
-            for ( String failure : list )
+            if ( fail && error )
             {
-                log.warn( failure );
+                log.error( message );
             }
-            if ( fail && hasErrors )
+            else
             {
-                throw new MojoExecutionException( "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
+                log.warn( message );
             }
+        } );
+
+        // CHECKSTYLE_OFF: LineLength
+        if ( fail && hasErrors )
+        {
+            throw new MojoExecutionException( "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
         }
         // CHECKSTYLE_ON: LineLength
     }
@@ -392,6 +413,22 @@ public class EnforceMojo
     public void setSkip( boolean theSkip )
     {
         this.skip = theSkip;
+    }
+
+    /**
+     * @return the failIfNoRules
+     */
+    public boolean isFailIfNoRules()
+    {
+        return this.failIfNoRules;
+    }
+
+    /**
+     * @param thefailIfNoRules the failIfNoRules to set
+     */
+    public void setFailIfNoRules( boolean thefailIfNoRules )
+    {
+        this.failIfNoRules = thefailIfNoRules;
     }
 
     /**

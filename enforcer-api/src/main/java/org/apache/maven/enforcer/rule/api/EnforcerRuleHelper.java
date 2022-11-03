@@ -21,6 +21,7 @@ package org.apache.maven.enforcer.rule.api;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
@@ -131,4 +132,13 @@ public interface EnforcerRuleHelper
      * @return the container
      */
     PlexusContainer getContainer();
+
+    /**
+     * Gets a cached value, or uses the provided producer to compute it.
+     *
+     * @param key a key to identify the value stored
+     * @param producer a supplier for the value if it's not already present
+     * @return a previously-cached or freshly-computed value
+     */
+    Object getCache( String key, Supplier<?> producer );
 }

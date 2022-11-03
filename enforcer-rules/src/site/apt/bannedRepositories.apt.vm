@@ -73,20 +73,20 @@ Banned Specified Repositories
               <rules>
                 <bannedRepositories>
                   <bannedRepositories>
-                    <bannedRepository>http://repo1/*<bannedRepository>
+                    <bannedRepository>http://repo1/*</bannedRepository>
                   </bannedRepositories>
                   <bannedPluginRepositories>
-                    <bannedPluginRepository>http://repo1/*<bannedPluginRepository>
+                    <bannedPluginRepository>http://repo1/*</bannedPluginRepository>
                   </bannedPluginRepositories>
 				  
                   <!-- for some cases, white list is more effective -->
                   <!--
 				  
                   <allowedRepositories>
-                    <allowedRepository>http://repo2/*<allowedRepository>
+                    <allowedRepository>http://repo2/*</allowedRepository>
                   </allowedRepositories>
                   <allowedPluginRepositories>
-                    <allowedPluginRepository>http://repo2/*<allowedPluginRepository>
+                    <allowedPluginRepository>http://repo2/*</allowedPluginRepository>
                   </allowedPluginRepositories>
 				  
                   -->

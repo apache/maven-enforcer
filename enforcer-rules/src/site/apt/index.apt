@@ -30,10 +30,14 @@ Built-In Rules
   * {{{./alwaysFail.html}alwaysFail}} - Always fail... used to test plugin configuration.
 
   * {{{./alwaysPass.html}alwaysPass}} - Always passes... used to test plugin configuration.
+
+  * {{{./banDependencyManagementScope.html}banDependencyManagementScope}} - bans all scope values except for 'import' from dependencies within the dependency management.
   
   * {{{./banDistributionManagement.html}banDistributionManagement}} - enforces that project doesn't have distributionManagement.
   
   * {{{./banDuplicatePomDependencyVersions.html}banDuplicatePomDependencyVersions}} - enforces that the project doesn't have duplicate declared dependencies.
+  
+  * {{{./banDynamicVersions.html}banDynamicVersions}} - bans all dependencies requiring version resolution at build time (i.e. version ranges, placeholders <<<RELEASE>>>/<<<LATEST>>> or SNAPSHOT versions).
   
   * {{{./bannedDependencies.html}bannedDependencies}} - enforces that excluded dependencies aren't included.
   
@@ -47,12 +51,16 @@ Built-In Rules
 
   * {{{./evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
 
+  * {{{./externalRules.html}externalRules}} - evaluate rules from an external resource.
+
   * {{{./reactorModuleConvergence.html}reactorModuleConvergence}} - enforces that a multi module build follows best practice.
 
   * {{{./requireActiveProfile.html}requireActiveProfile}} - enforces one or more active profiles.
   
   * {{{./requireEnvironmentVariable.html}requireEnvironmentVariable}} - enforces the existence of an environment variable.
-  
+
+  * {{{./requireExplicitDependencyScope.html}requireExplicitDependencyScope}} - enforces that all dependencies have an explicit scope.
+
   * {{{./requireFileChecksum.html}requireFileChecksum}} - enforces that the specified file has a certain checksum.
   
   * {{{./requireFilesDontExist.html}requireFilesDontExist}} - enforces that the list of files does not exist.
@@ -86,6 +94,8 @@ Built-In Rules
   * {{{./requireSnapshotVersion.html}requireSnapshotVersion}} - enforces that the artifact is not a release.
 
   * {{{./requireSameVersions.html}requireSameVersions}} - enforces that specific dependencies and/or plugins have the same version.
+
+  * {{{./requireTextFileChecksum.html}requireTextFileChecksum}} - enforces that the specified text file has a certain checksum (after normalizing line separators).
 
   * {{{./requireUpperBoundDeps.html}requireUpperBoundDeps}} - ensures that every (transitive) dependency is resolved to its specified version or higher.
 

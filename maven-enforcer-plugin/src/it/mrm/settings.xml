@@ -45,7 +45,6 @@
           <snapshots>
             <enabled>true</enabled>
             <checksumPolicy>ignore</checksumPolicy>
-            <updatePolicy>always</updatePolicy>
           </snapshots>
         </repository>
       </repositories>
@@ -61,7 +60,6 @@
           <snapshots>
             <enabled>true</enabled>
             <checksumPolicy>ignore</checksumPolicy>
-            <updatePolicy>always</updatePolicy>
           </snapshots>
         </pluginRepository>
       </pluginRepositories>

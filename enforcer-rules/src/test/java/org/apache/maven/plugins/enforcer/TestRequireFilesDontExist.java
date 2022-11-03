@@ -136,6 +136,25 @@ public class TestRequireFilesDontExist
         rule.execute( EnforcerTestUtils.getHelper() );
     }
 
+    @Test
+    public void testFileDoesNotExistSatisfyAny()
+            throws EnforcerRuleException, IOException
+    {
+        File f = File.createTempFile( "junit", null, temporaryFolder );
+        f.delete();
+
+        assertFalse( f.exists() );
+
+        File g = File.createTempFile( "junit", null, temporaryFolder );
+
+        assertTrue( g.exists() );
+
+        rule.setFiles( new File[] { f, g.getCanonicalFile() } );
+        rule.setSatisfyAny(true);
+
+        rule.execute( EnforcerTestUtils.getHelper() );
+    }
+
     /**
      * Test id.
      */

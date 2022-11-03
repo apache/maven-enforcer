@@ -22,15 +22,6 @@ updates:
     interval: daily
   ignore:
     - dependency-name: org.apache.maven:*
-      versions:
-        - "> 3.1.1"
-    # Ignore Maven 3.2.1+
-    - dependency-name: org.apache.maven.plugin-testing:maven-plugin-testing-tools
-      versions:
-        - ">=3.2.0"
-    - dependency-name: org.apache.maven.plugin-testing:maven-plugin-testing-harness
-      versions:
-        - ">=3.2.0"
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:

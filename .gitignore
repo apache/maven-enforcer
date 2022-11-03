@@ -6,4 +6,4 @@ target
 .svn
 *.iml
 .checkstyle
-
+.DS_Store

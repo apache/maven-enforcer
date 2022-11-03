@@ -1,0 +1,62 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.    
+ 
+  ------
+  Require Explicit Dependency Scope
+  ------
+  Konrad Windszus
+  ------
+  2022-08-03
+  ------
+
+Require Explicit Dependency Scope
+
+  This rule enforces that all dependencies have an explicitly declared scope in the non-effective pom (i.e. without taking inheritance or dependency management into account).
+  Useful when the scope is no longer part of the <<<dependencyManagement>>> or in general to force making developers a distinct decision (prevents the default scope <<<compile>>> being used for test dependencies by accident)
+
+  The rule does not support parameters.
+
+  Sample Plugin Configuration:
+  
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>require-explicit-dependency-scope</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireExplicitDependencyScope />
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+

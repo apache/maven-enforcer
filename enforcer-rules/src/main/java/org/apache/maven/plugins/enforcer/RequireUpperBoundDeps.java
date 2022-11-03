@@ -26,10 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
@@ -112,7 +109,7 @@ public class RequireUpperBoundDeps
     // CHECKSTYLE_OFF: LineLength
     /**
      * Uses the {@link EnforcerRuleHelper} to populate the values of the
-     * {@link DependencyTreeBuilder#buildDependencyTree(MavenProject, ArtifactRepository, ArtifactFactory, ArtifactMetadataSource, ArtifactFilter, ArtifactCollector)}
+     * {@link DependencyCollectorBuilder#collectDependencyGraph(ProjectBuildingRequest, ArtifactFilter)} 
      * factory method. <br/>
      * This method simply exists to hide all the ugly lookup that the {@link EnforcerRuleHelper} has to do.
      *
@@ -136,7 +133,10 @@ public class RequireUpperBoundDeps
                 new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
             buildingRequest.setProject( project );
             buildingRequest.setLocalRepository( repository );
-            ArtifactFilter filter = null; // we need to evaluate all scopes
+            ArtifactFilter filter = ( Artifact a ) -> ( "compile".equalsIgnoreCase( a.getScope () )
+                    || "runtime".equalsIgnoreCase( a.getScope () ) )
+                    && !a.isOptional();
+            
             return dependencyCollectorBuilder.collectDependencyGraph( buildingRequest, filter );
         }
         catch ( ExpressionEvaluationException e )

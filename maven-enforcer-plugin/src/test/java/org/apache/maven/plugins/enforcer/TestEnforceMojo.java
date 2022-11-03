@@ -53,6 +53,8 @@ public class TestEnforceMojo
     {
         setupBasics( false );
 
+        Log logSpy = setupLogSpy();
+
         try
         {
             mojo.execute();
@@ -69,6 +71,8 @@ public class TestEnforceMojo
         mojo.setRules( rules );
 
         mojo.execute();
+
+        Mockito.verify( logSpy, Mockito.times(2) ).info( Mockito.contains("Executing rule: " + MockEnforcerRule.class.getName()) );
 
         try
         {
@@ -294,6 +298,20 @@ public class TestEnforceMojo
                                        Mockito.same( enforcerRuleException ) );
 
         Mockito.verify( logSpy ).warn( Mockito.matches( ".* failed with message:" + System.lineSeparator() + "null" ) );
+    }
+
+    @Test
+    public void testFailIfNoTests()
+            throws MojoExecutionException {
+        setupBasics( false );
+        mojo.setFailIfNoRules( false );
+
+        Log logSpy = setupLogSpy();
+
+        mojo.execute();
+
+        Mockito.verify( logSpy ).warn( Mockito.eq( "No rules are configured." ) );
+        Mockito.verifyNoMoreInteractions( logSpy );
     }
 
     private void setupBasics( boolean fail )

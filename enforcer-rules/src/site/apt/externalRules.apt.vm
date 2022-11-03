@@ -1,0 +1,100 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+  ------
+  External Rules
+  ------
+  George Gastaldi
+  ------
+  2022-08-17
+  ------
+
+External Rules
+
+    This rule will evaluate rules from an external resource. It can be a classpath resource present in a <<<maven-enforcer-plugin>>> dependency or a local file.
+
+
+    Sample Plugin Configuration:
+
++---+
+<project>
+    [...]
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${project.version}</version>
+                <dependencies>
+                    <!-- Dependency containing the enforcer/rules.xml file -->
+                    <dependency>
+                        <groupId>org.foo</groupId>
+                        <artifactId>foobar-rules</artifactId>
+                        <version>1.0.0</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <ExternalRules>
+                                    <!-- enforcer/rules.xml is supposed to be a classpath resource present -->
+                                    <!-- in org.foo:foobar-rules dependency of maven-enforcer-plugin defined above -->
+                                    <location>classpath:enforcer/rules.xml</location>
+                                </ExternalRules>
+                                <ExternalRules>
+                                    <!-- You can add multiple <ExternalRules> elements if you need to enforce -->
+                                    <!-- rules from multiple resources. -->
+                                    <!-- src/build/rules.xml is a local file path relative to ${project.basedir} -->
+                                    <location>src/build/rules.xml</location>
+                                </ExternalRules>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    [...]
+</project>
++---+
+
+
+The External Enforcer Rule Descriptor
+
+    Here is a sample rules file. The rules element expects the same content as in the {{{https://maven.apache.org/enforcer/maven-enforcer-plugin/enforce-mojo.html#rules}Enforcer Mojo rules configuration}}:
+
++---+
+<enforcer>
+    <rules>
+        <dependencyConvergence/>
+        <bannedDependencies>
+            <excludes>
+                <exclude>org.jboss.spec.javax.annotation:jboss-annotations-api_1.2_spec</exclude>
+            </excludes>
+            <includes>
+                <include>jakarta.xml.bind:jakarta.xml.bind-api:*:*:test</include>
+            </includes>
+        </bannedDependencies>
+    </rules>
+</enforcer>
++---+
