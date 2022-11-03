@@ -132,7 +132,7 @@ public class DependencyVersionMap
         for ( List<DependencyNode> nodes : idsToNode.values() )
         {
             List<DependencyNode> filteredNodes = nodes;
-            if ( formattedIncludes != null && !formattedIncludes.isEmpty() )
+            if ( formattedIncludes != null || formattedExcludes != null )
             {
                 filteredNodes = new ArrayList<>();
                 for ( DependencyNode node : nodes )
@@ -154,8 +154,8 @@ public class DependencyVersionMap
     private static boolean includeArtifact( Artifact artifact, List<String> includes, List<String> excludes )
         throws EnforcerRuleException
     {
-        boolean included = false;
-        if ( includes != null )
+        boolean included = includes == null || includes.isEmpty();
+        if ( !included )
         {
             for ( String pattern : includes )
             {

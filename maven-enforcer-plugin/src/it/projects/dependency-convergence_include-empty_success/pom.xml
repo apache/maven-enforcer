@@ -55,13 +55,10 @@
                         <id>enforce</id>
                         <configuration>
                             <rules>
-                                <!-- if everything is included, but all conflicts are excluded, return no errors -->
+                                <!-- if there are no includes, assume everything is included and apply excludes -->
                                 <dependencyConvergence>
-                                    <includes>
-                                        <include>*</include>
-                                    </includes>
                                     <excludes>
-                                        <excludes>org.slf4j:slf4j-api:[1.6.1,1.6.2]</excludes>
+                                        <excludes>org.slf4j:*:[1.6.1,1.6.2]</excludes>
                                     </excludes>
                                 </dependencyConvergence>
                             </rules>
