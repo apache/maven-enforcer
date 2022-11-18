@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 
@@ -48,7 +49,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumMd5()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile( f );
@@ -62,7 +63,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumMd5UpperCase()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile( f );
@@ -108,7 +109,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumMd5GivenFileIsNotReadableFailure()
         throws IOException
     {
-        File t = File.createTempFile( "junit", null, temporaryFolder );
+        File t = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         File f = new File( t.getAbsolutePath() )
         {
             private static final long serialVersionUID = 6987790643999338089L;
@@ -193,7 +194,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumMd5ChecksumMismatchFailure()
         throws IOException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         Throwable exception = assertThrows( EnforcerRuleException.class, () -> {
             FileUtils.fileWrite( f, "message" );
 
@@ -229,7 +230,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumSha1()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile( f );
@@ -243,7 +244,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumSha256()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile( f );
@@ -257,7 +258,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumSha384()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile( f );
@@ -271,7 +272,7 @@ public class TestRequireFileChecksum
     public void testFileChecksumSha512()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         FileUtils.fileWrite( f, "message" );
 
         rule.setFile( f );

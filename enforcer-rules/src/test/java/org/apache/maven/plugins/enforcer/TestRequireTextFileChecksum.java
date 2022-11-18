@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugins.enforcer.utils.NormalizeLineSeparatorReader.LineSeparator;
@@ -46,7 +47,7 @@ public class TestRequireTextFileChecksum
     public void testFileChecksumMd5NormalizedFromUnixToWindows()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         FileUtils.fileWrite( f, "line1\nline2\n" );
 
         rule.setFile( f );
@@ -62,7 +63,7 @@ public class TestRequireTextFileChecksum
     public void testFileChecksumMd5NormalizedFromWindowsToWindows()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         FileUtils.fileWrite( f, "line1\r\nline2\r\n" );
 
         rule.setFile( f );
@@ -78,7 +79,7 @@ public class TestRequireTextFileChecksum
     public void testFileChecksumMd5NormalizedFromWindowsToUnix()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         FileUtils.fileWrite( f, "line1\r\nline2\r\n" );
 
         rule.setFile( f );
@@ -94,7 +95,7 @@ public class TestRequireTextFileChecksum
     public void testFileChecksumMd5NormalizedFromUnixToUnix()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         FileUtils.fileWrite( f, "line1\nline2\n" );
 
         rule.setFile( f );
@@ -110,7 +111,7 @@ public class TestRequireTextFileChecksum
     public void testFileChecksumMd5NormalizedWithMissingFileCharsetParameter()
         throws IOException, EnforcerRuleException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         FileUtils.fileWrite( f, "line1\nline2\n" );
 
         rule.setFile( f );

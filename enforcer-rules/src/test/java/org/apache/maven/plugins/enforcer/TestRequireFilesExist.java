@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.junit.jupiter.api.Test;
@@ -44,7 +45,7 @@ public class TestRequireFilesExist
     public void testFileExists()
         throws Exception
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
 
         rule.setFiles( new File[] { f.getCanonicalFile() } );
 
@@ -109,7 +110,7 @@ public class TestRequireFilesExist
     public void testFileDoesNotExist()
         throws Exception
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         f.delete();
 
         assertFalse( f.exists() );
@@ -126,12 +127,12 @@ public class TestRequireFilesExist
     public void testFileExistsSatisfyAny()
             throws EnforcerRuleException, IOException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         f.delete();
 
         assertFalse( f.exists() );
 
-        File g = File.createTempFile( "junit", null, temporaryFolder );
+        File g = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
 
         assertTrue( g.exists() );
 

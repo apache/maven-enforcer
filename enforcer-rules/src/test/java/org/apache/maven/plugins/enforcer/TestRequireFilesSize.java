@@ -25,6 +25,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -48,7 +49,7 @@ public class TestRequireFilesSize
     public void testFileExists()
         throws EnforcerRuleException, IOException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
 
         rule.setFiles( new File[] { f } );
 
@@ -88,7 +89,7 @@ public class TestRequireFilesSize
         assertEquals( 0, rule.getFiles().length );
 
         MockProject project = new MockProject();
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
 
         ArtifactStubFactory factory = new ArtifactStubFactory();
         Artifact a = factory.getReleaseArtifact();
@@ -107,7 +108,7 @@ public class TestRequireFilesSize
     public void testFileDoesNotExist()
         throws IOException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         f.delete();
         assertFalse( f.exists() );
         rule.setFiles( new File[] { f } );
@@ -127,7 +128,7 @@ public class TestRequireFilesSize
     public void testFileTooSmall()
         throws IOException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         rule.setFiles( new File[] { f } );
         rule.setMinsize( 10 );
         try
@@ -145,7 +146,7 @@ public class TestRequireFilesSize
     public void testFileTooBig()
         throws IOException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         try ( BufferedWriter out = new BufferedWriter( new FileWriter( f ) ) )
         {
             out.write( "123456789101112131415" );
@@ -169,14 +170,14 @@ public class TestRequireFilesSize
     public void testRequireFilesSizeSatisfyAny()
             throws EnforcerRuleException, IOException
     {
-        File f = File.createTempFile( "junit", null, temporaryFolder );
+        File f = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
         try ( BufferedWriter out = new BufferedWriter( new FileWriter( f ) ) )
         {
             out.write( "123456789101112131415" );
         }
         assertTrue( f.length() > 10 );
 
-        File g = File.createTempFile( "junit", null, temporaryFolder );
+        File g = Files.createTempFile( temporaryFolder.toPath(), "junit", null ).toFile();
 
         rule.setFiles( new File[] { f, g } );
         rule.setMaxsize( 10 );
