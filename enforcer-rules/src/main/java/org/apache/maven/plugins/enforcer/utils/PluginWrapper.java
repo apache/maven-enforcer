@@ -20,6 +20,7 @@ package org.apache.maven.plugins.enforcer.utils;
  */
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,30 +45,30 @@ public class PluginWrapper
 
     public static List<PluginWrapper> addAll( List<? extends InputLocationTracker> plugins, boolean banMavenDefaults )
     {
-        List<PluginWrapper> results = null;
-
-        if ( !plugins.isEmpty() )
+        if ( plugins.isEmpty() )
         {
-            results = new ArrayList<>( plugins.size() );
-            for ( InputLocationTracker o : plugins )
-            {
-                // null or true means it is most assumed a Maven default
-                if ( banMavenDefaults && ( isVersionFromDefaultLifecycleBindings( o ).orElse( true )
-                    || isVersionFromSuperpom( o ).orElse( true ) ) )
-                {
-                    continue;
-                }
+            return Collections.emptyList();
+        }
 
-                if ( o instanceof Plugin )
+        List<PluginWrapper> results = new ArrayList<>( plugins.size() );
+        for ( InputLocationTracker o : plugins )
+        {
+            // null or true means it is most assumed a Maven default
+            if ( banMavenDefaults && ( isVersionFromDefaultLifecycleBindings( o ).orElse( true )
+                || isVersionFromSuperpom( o ).orElse( true ) ) )
+            {
+                continue;
+            }
+
+            if ( o instanceof Plugin )
+            {
+                results.add( new PluginWrapper( (Plugin) o ) );
+            }
+            else
+            {
+                if ( o instanceof ReportPlugin )
                 {
-                    results.add( new PluginWrapper( (Plugin) o ) );
-                }
-                else
-                {
-                    if ( o instanceof ReportPlugin )
-                    {
-                        results.add( new PluginWrapper( (ReportPlugin) o ) );
-                    }
+                    results.add( new PluginWrapper( (ReportPlugin) o ) );
                 }
             }
         }
