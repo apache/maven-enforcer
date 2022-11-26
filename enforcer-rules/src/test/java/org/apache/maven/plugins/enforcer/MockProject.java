@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.maven.plugins.enforcer;
 
 /*
@@ -27,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -57,9 +74,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 /**
  * very simple stub of maven project, going to take a lot of work to make it useful as a stub though.
  */
-public class MockProject
-    extends MavenProject
-{
+public class MockProject extends MavenProject {
 
     /** The group id. */
     private String groupId;
@@ -203,9 +218,8 @@ public class MockProject
     /**
      * Instantiates a new mock project.
      */
-    public MockProject()
-    {
-        super( (Model) null );
+    public MockProject() {
+        super((Model) null);
     }
 
     // kinda dangerous...
@@ -214,10 +228,9 @@ public class MockProject
      *
      * @param model the model
      */
-    public MockProject( Model model )
-    {
+    public MockProject(Model model) {
         // super(model);
-        super( (Model) null );
+        super((Model) null);
     }
 
     // kinda dangerous...
@@ -226,19 +239,16 @@ public class MockProject
      *
      * @param project the project
      */
-    public MockProject( MavenProject project )
-    {
+    public MockProject(MavenProject project) {
         // super(project);
-        super( (Model) null );
+        super((Model) null);
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getModulePathAdjustment(org.apache.maven.project.MavenProject)
      */
-    public String getModulePathAdjustment( MavenProject mavenProject )
-        throws IOException
-    {
+    public String getModulePathAdjustment(MavenProject mavenProject) throws IOException {
         return "";
     }
 
@@ -246,8 +256,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getArtifact()
      */
-    public Artifact getArtifact()
-    {
+    public Artifact getArtifact() {
         return artifact;
     }
 
@@ -255,8 +264,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setArtifact(org.apache.maven.artifact.Artifact)
      */
-    public void setArtifact( Artifact artifact )
-    {
+    public void setArtifact(Artifact artifact) {
         this.artifact = artifact;
     }
 
@@ -264,8 +272,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getModel()
      */
-    public Model getModel()
-    {
+    public Model getModel() {
         return model;
     }
 
@@ -273,8 +280,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getParent()
      */
-    public MavenProject getParent()
-    {
+    public MavenProject getParent() {
         return parent;
     }
 
@@ -282,8 +288,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setParent(org.apache.maven.project.MavenProject)
      */
-    public void setParent( MavenProject mavenProject )
-    {
+    public void setParent(MavenProject mavenProject) {
         this.parent = mavenProject;
     }
 
@@ -291,8 +296,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setRemoteArtifactRepositories(java.util.List)
      */
-    public void setRemoteArtifactRepositories( List list )
-    {
+    public void setRemoteArtifactRepositories(List list) {
         this.artifactRepositories = list;
     }
 
@@ -300,8 +304,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getRemoteArtifactRepositories()
      */
-    public List getRemoteArtifactRepositories()
-    {
+    public List getRemoteArtifactRepositories() {
         return artifactRepositories;
     }
 
@@ -309,14 +312,10 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#hasParent()
      */
-    public boolean hasParent()
-    {
-        if ( parent != null )
-        {
+    public boolean hasParent() {
+        if (parent != null) {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
@@ -325,8 +324,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getFile()
      */
-    public File getFile()
-    {
+    public File getFile() {
         return file;
     }
 
@@ -334,8 +332,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setFile(java.io.File)
      */
-    public void setFile( File file )
-    {
+    public void setFile(File file) {
         this.file = file;
     }
 
@@ -343,12 +340,10 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getBasedir()
      */
-    public File getBasedir()
-    {
-        if ( baseDir == null )
-        {
-            final String path = System.getProperty( "basedir" );
-            baseDir = null != path ? new File( path ) : new File( "" );
+    public File getBasedir() {
+        if (baseDir == null) {
+            final String path = System.getProperty("basedir");
+            baseDir = null != path ? new File(path) : new File("");
         }
         return baseDir;
     }
@@ -358,8 +353,7 @@ public class MockProject
      *
      * @param base the new base dir
      */
-    public void setBaseDir( File base )
-    {
+    public void setBaseDir(File base) {
         baseDir = base;
     }
 
@@ -367,8 +361,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setDependencies(java.util.List)
      */
-    public void setDependencies( List list )
-    {
+    public void setDependencies(List list) {
         dependencies = list;
     }
 
@@ -376,10 +369,8 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getDependencies()
      */
-    public List getDependencies()
-    {
-        if ( dependencies == null )
-        {
+    public List getDependencies() {
+        if (dependencies == null) {
             dependencies = Collections.EMPTY_LIST;
         }
         return dependencies;
@@ -390,8 +381,7 @@ public class MockProject
      *
      * @param depMgt the new dependency management
      */
-    public void setDependencyManagement( DependencyManagement depMgt )
-    {
+    public void setDependencyManagement(DependencyManagement depMgt) {
         this.dependencyManagement = depMgt;
     }
 
@@ -399,10 +389,8 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getDependencyManagement()
      */
-    public DependencyManagement getDependencyManagement()
-    {
-        if ( dependencyManagement == null )
-        {
+    public DependencyManagement getDependencyManagement() {
+        if (dependencyManagement == null) {
             dependencyManagement = new DependencyManagement();
         }
 
@@ -413,15 +401,11 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#addCompileSourceRoot(java.lang.String)
      */
-    public void addCompileSourceRoot( String string )
-    {
-        if ( compileSourceRoots == null )
-        {
-            compileSourceRoots = Collections.singletonList( string );
-        }
-        else
-        {
-            compileSourceRoots.add( string );
+    public void addCompileSourceRoot(String string) {
+        if (compileSourceRoots == null) {
+            compileSourceRoots = Collections.singletonList(string);
+        } else {
+            compileSourceRoots.add(string);
         }
     }
 
@@ -429,15 +413,11 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#addScriptSourceRoot(java.lang.String)
      */
-    public void addScriptSourceRoot( String string )
-    {
-        if ( scriptSourceRoots == null )
-        {
-            scriptSourceRoots = Collections.singletonList( string );
-        }
-        else
-        {
-            scriptSourceRoots.add( string );
+    public void addScriptSourceRoot(String string) {
+        if (scriptSourceRoots == null) {
+            scriptSourceRoots = Collections.singletonList(string);
+        } else {
+            scriptSourceRoots.add(string);
         }
     }
 
@@ -445,15 +425,11 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#addTestCompileSourceRoot(java.lang.String)
      */
-    public void addTestCompileSourceRoot( String string )
-    {
-        if ( testCompileSourceRoots == null )
-        {
-            testCompileSourceRoots = Collections.singletonList( string );
-        }
-        else
-        {
-            testCompileSourceRoots.add( string );
+    public void addTestCompileSourceRoot(String string) {
+        if (testCompileSourceRoots == null) {
+            testCompileSourceRoots = Collections.singletonList(string);
+        } else {
+            testCompileSourceRoots.add(string);
         }
     }
 
@@ -461,8 +437,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getCompileSourceRoots()
      */
-    public List getCompileSourceRoots()
-    {
+    public List getCompileSourceRoots() {
         return compileSourceRoots;
     }
 
@@ -470,8 +445,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getScriptSourceRoots()
      */
-    public List getScriptSourceRoots()
-    {
+    public List getScriptSourceRoots() {
         return scriptSourceRoots;
     }
 
@@ -479,8 +453,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getTestCompileSourceRoots()
      */
-    public List getTestCompileSourceRoots()
-    {
+    public List getTestCompileSourceRoots() {
         return testCompileSourceRoots;
     }
 
@@ -488,9 +461,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getCompileClasspathElements()
      */
-    public List getCompileClasspathElements()
-        throws DependencyResolutionRequiredException
-    {
+    public List getCompileClasspathElements() throws DependencyResolutionRequiredException {
         return compileSourceRoots;
     }
 
@@ -499,8 +470,7 @@ public class MockProject
      *
      * @param compileArtifacts the new compile artifacts
      */
-    public void setCompileArtifacts( List compileArtifacts )
-    {
+    public void setCompileArtifacts(List compileArtifacts) {
         this.compileArtifacts = compileArtifacts;
     }
 
@@ -508,8 +478,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getCompileArtifacts()
      */
-    public List getCompileArtifacts()
-    {
+    public List getCompileArtifacts() {
         return compileArtifacts;
     }
 
@@ -517,8 +486,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getCompileDependencies()
      */
-    public List getCompileDependencies()
-    {
+    public List getCompileDependencies() {
         return compileDependencies;
     }
 
@@ -526,9 +494,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getTestClasspathElements()
      */
-    public List getTestClasspathElements()
-        throws DependencyResolutionRequiredException
-    {
+    public List getTestClasspathElements() throws DependencyResolutionRequiredException {
         return testClasspathElements;
     }
 
@@ -536,8 +502,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getTestArtifacts()
      */
-    public List getTestArtifacts()
-    {
+    public List getTestArtifacts() {
         return testArtifacts;
     }
 
@@ -545,8 +510,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getTestDependencies()
      */
-    public List getTestDependencies()
-    {
+    public List getTestDependencies() {
         return testDependencies;
     }
 
@@ -554,9 +518,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getRuntimeClasspathElements()
      */
-    public List getRuntimeClasspathElements()
-        throws DependencyResolutionRequiredException
-    {
+    public List getRuntimeClasspathElements() throws DependencyResolutionRequiredException {
         return runtimeClasspathElements;
     }
 
@@ -564,8 +526,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getRuntimeArtifacts()
      */
-    public List getRuntimeArtifacts()
-    {
+    public List getRuntimeArtifacts() {
         return runtimeArtifacts;
     }
 
@@ -573,8 +534,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getRuntimeDependencies()
      */
-    public List getRuntimeDependencies()
-    {
+    public List getRuntimeDependencies() {
         return runtimeDependencies;
     }
 
@@ -582,9 +542,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getSystemClasspathElements()
      */
-    public List getSystemClasspathElements()
-        throws DependencyResolutionRequiredException
-    {
+    public List getSystemClasspathElements() throws DependencyResolutionRequiredException {
         return systemClasspathElements;
     }
 
@@ -592,8 +550,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getSystemArtifacts()
      */
-    public List getSystemArtifacts()
-    {
+    public List getSystemArtifacts() {
         return systemArtifacts;
     }
 
@@ -602,8 +559,7 @@ public class MockProject
      *
      * @param runtimeClasspathElements the new runtime classpath elements
      */
-    public void setRuntimeClasspathElements( List runtimeClasspathElements )
-    {
+    public void setRuntimeClasspathElements(List runtimeClasspathElements) {
         this.runtimeClasspathElements = runtimeClasspathElements;
     }
 
@@ -612,8 +568,7 @@ public class MockProject
      *
      * @param attachedArtifacts the new attached artifacts
      */
-    public void setAttachedArtifacts( List attachedArtifacts )
-    {
+    public void setAttachedArtifacts(List attachedArtifacts) {
         this.attachedArtifacts = attachedArtifacts;
     }
 
@@ -622,8 +577,7 @@ public class MockProject
      *
      * @param compileSourceRoots the new compile source roots
      */
-    public void setCompileSourceRoots( List compileSourceRoots )
-    {
+    public void setCompileSourceRoots(List compileSourceRoots) {
         this.compileSourceRoots = compileSourceRoots;
     }
 
@@ -632,8 +586,7 @@ public class MockProject
      *
      * @param testCompileSourceRoots the new test compile source roots
      */
-    public void setTestCompileSourceRoots( List testCompileSourceRoots )
-    {
+    public void setTestCompileSourceRoots(List testCompileSourceRoots) {
         this.testCompileSourceRoots = testCompileSourceRoots;
     }
 
@@ -642,8 +595,7 @@ public class MockProject
      *
      * @param scriptSourceRoots the new script source roots
      */
-    public void setScriptSourceRoots( List scriptSourceRoots )
-    {
+    public void setScriptSourceRoots(List scriptSourceRoots) {
         this.scriptSourceRoots = scriptSourceRoots;
     }
 
@@ -652,8 +604,7 @@ public class MockProject
      *
      * @param artifactMap the new artifact map
      */
-    public void setArtifactMap( Map artifactMap )
-    {
+    public void setArtifactMap(Map artifactMap) {
         // this.artifactMap = artifactMap;
     }
 
@@ -662,8 +613,7 @@ public class MockProject
      *
      * @param pluginArtifactMap the new plugin artifact map
      */
-    public void setPluginArtifactMap( Map pluginArtifactMap )
-    {
+    public void setPluginArtifactMap(Map pluginArtifactMap) {
         // this.pluginArtifactMap = pluginArtifactMap;
     }
 
@@ -672,8 +622,7 @@ public class MockProject
      *
      * @param reportArtifactMap the new report artifact map
      */
-    public void setReportArtifactMap( Map reportArtifactMap )
-    {
+    public void setReportArtifactMap(Map reportArtifactMap) {
         // this.reportArtifactMap = reportArtifactMap;
     }
 
@@ -682,8 +631,7 @@ public class MockProject
      *
      * @param extensionArtifactMap the new extension artifact map
      */
-    public void setExtensionArtifactMap( Map extensionArtifactMap )
-    {
+    public void setExtensionArtifactMap(Map extensionArtifactMap) {
         // this.extensionArtifactMap = extensionArtifactMap;
     }
 
@@ -692,8 +640,7 @@ public class MockProject
      *
      * @param projectReferences the new project references
      */
-    public void setProjectReferences( Map projectReferences )
-    {
+    public void setProjectReferences(Map projectReferences) {
         // this.projectReferences = projectReferences;
     }
 
@@ -702,8 +649,7 @@ public class MockProject
      *
      * @param buildOverlay the new builds the overlay
      */
-    public void setBuildOverlay( Build buildOverlay )
-    {
+    public void setBuildOverlay(Build buildOverlay) {
         // this.buildOverlay = buildOverlay;
     }
 
@@ -712,8 +658,7 @@ public class MockProject
      *
      * @param compileDependencies the new compile dependencies
      */
-    public void setCompileDependencies( List compileDependencies )
-    {
+    public void setCompileDependencies(List compileDependencies) {
         this.compileDependencies = compileDependencies;
     }
 
@@ -722,8 +667,7 @@ public class MockProject
      *
      * @param systemDependencies the new system dependencies
      */
-    public void setSystemDependencies( List systemDependencies )
-    {
+    public void setSystemDependencies(List systemDependencies) {
         this.systemDependencies = systemDependencies;
     }
 
@@ -732,8 +676,7 @@ public class MockProject
      *
      * @param testClasspathElements the new test classpath elements
      */
-    public void setTestClasspathElements( List testClasspathElements )
-    {
+    public void setTestClasspathElements(List testClasspathElements) {
         this.testClasspathElements = testClasspathElements;
     }
 
@@ -742,8 +685,7 @@ public class MockProject
      *
      * @param testDependencies the new test dependencies
      */
-    public void setTestDependencies( List testDependencies )
-    {
+    public void setTestDependencies(List testDependencies) {
         this.testDependencies = testDependencies;
     }
 
@@ -752,8 +694,7 @@ public class MockProject
      *
      * @param systemClasspathElements the new system classpath elements
      */
-    public void setSystemClasspathElements( List systemClasspathElements )
-    {
+    public void setSystemClasspathElements(List systemClasspathElements) {
         this.systemClasspathElements = systemClasspathElements;
     }
 
@@ -762,8 +703,7 @@ public class MockProject
      *
      * @param systemArtifacts the new system artifacts
      */
-    public void setSystemArtifacts( List systemArtifacts )
-    {
+    public void setSystemArtifacts(List systemArtifacts) {
         this.systemArtifacts = systemArtifacts;
     }
 
@@ -772,8 +712,7 @@ public class MockProject
      *
      * @param testArtifacts the new test artifacts
      */
-    public void setTestArtifacts( List testArtifacts )
-    {
+    public void setTestArtifacts(List testArtifacts) {
         this.testArtifacts = testArtifacts;
     }
 
@@ -782,8 +721,7 @@ public class MockProject
      *
      * @param runtimeArtifacts the new runtime artifacts
      */
-    public void setRuntimeArtifacts( List runtimeArtifacts )
-    {
+    public void setRuntimeArtifacts(List runtimeArtifacts) {
         this.runtimeArtifacts = runtimeArtifacts;
     }
 
@@ -792,8 +730,7 @@ public class MockProject
      *
      * @param runtimeDependencies the new runtime dependencies
      */
-    public void setRuntimeDependencies( List runtimeDependencies )
-    {
+    public void setRuntimeDependencies(List runtimeDependencies) {
         this.runtimeDependencies = runtimeDependencies;
     }
 
@@ -802,8 +739,7 @@ public class MockProject
      *
      * @param model the new model
      */
-    public void setModel( Model model )
-    {
+    public void setModel(Model model) {
         this.model = model;
     }
 
@@ -811,8 +747,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getSystemDependencies()
      */
-    public List getSystemDependencies()
-    {
+    public List getSystemDependencies() {
         return systemDependencies;
     }
 
@@ -820,8 +755,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setModelVersion(java.lang.String)
      */
-    public void setModelVersion( String string )
-    {
+    public void setModelVersion(String string) {
         this.modelVersion = string;
     }
 
@@ -829,8 +763,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getModelVersion()
      */
-    public String getModelVersion()
-    {
+    public String getModelVersion() {
         return modelVersion;
     }
 
@@ -838,8 +771,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getId()
      */
-    public String getId()
-    {
+    public String getId() {
         return "";
     }
 
@@ -847,8 +779,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setGroupId(java.lang.String)
      */
-    public void setGroupId( String string )
-    {
+    public void setGroupId(String string) {
         this.groupId = string;
     }
 
@@ -856,8 +787,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getGroupId()
      */
-    public String getGroupId()
-    {
+    public String getGroupId() {
         return groupId;
     }
 
@@ -865,8 +795,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setArtifactId(java.lang.String)
      */
-    public void setArtifactId( String string )
-    {
+    public void setArtifactId(String string) {
         this.artifactId = string;
     }
 
@@ -874,8 +803,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getArtifactId()
      */
-    public String getArtifactId()
-    {
+    public String getArtifactId() {
         return artifactId;
     }
 
@@ -883,8 +811,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setName(java.lang.String)
      */
-    public void setName( String string )
-    {
+    public void setName(String string) {
         this.name = string;
     }
 
@@ -892,8 +819,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getName()
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
@@ -901,8 +827,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setVersion(java.lang.String)
      */
-    public void setVersion( String string )
-    {
+    public void setVersion(String string) {
         this.version = string;
     }
 
@@ -910,8 +835,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getVersion()
      */
-    public String getVersion()
-    {
+    public String getVersion() {
         return version;
     }
 
@@ -919,8 +843,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getPackaging()
      */
-    public String getPackaging()
-    {
+    public String getPackaging() {
         return packaging;
     }
 
@@ -928,8 +851,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setPackaging(java.lang.String)
      */
-    public void setPackaging( String string )
-    {
+    public void setPackaging(String string) {
         this.packaging = string;
     }
 
@@ -937,8 +859,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setInceptionYear(java.lang.String)
      */
-    public void setInceptionYear( String string )
-    {
+    public void setInceptionYear(String string) {
         this.inceptionYear = string;
     }
 
@@ -946,8 +867,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getInceptionYear()
      */
-    public String getInceptionYear()
-    {
+    public String getInceptionYear() {
         return inceptionYear;
     }
 
@@ -955,8 +875,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setUrl(java.lang.String)
      */
-    public void setUrl( String string )
-    {
+    public void setUrl(String string) {
         this.url = string;
     }
 
@@ -964,8 +883,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getUrl()
      */
-    public String getUrl()
-    {
+    public String getUrl() {
         return url;
     }
 
@@ -973,8 +891,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getPrerequisites()
      */
-    public Prerequisites getPrerequisites()
-    {
+    public Prerequisites getPrerequisites() {
         return null;
     }
 
@@ -982,17 +899,13 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setIssueManagement(org.apache.maven.model.IssueManagement)
      */
-    public void setIssueManagement( IssueManagement issueManagement )
-    {
-
-    }
+    public void setIssueManagement(IssueManagement issueManagement) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getCiManagement()
      */
-    public CiManagement getCiManagement()
-    {
+    public CiManagement getCiManagement() {
         return null;
     }
 
@@ -1000,17 +913,13 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setCiManagement(org.apache.maven.model.CiManagement)
      */
-    public void setCiManagement( CiManagement ciManagement )
-    {
-
-    }
+    public void setCiManagement(CiManagement ciManagement) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getIssueManagement()
      */
-    public IssueManagement getIssueManagement()
-    {
+    public IssueManagement getIssueManagement() {
         return null;
     }
 
@@ -1019,17 +928,13 @@ public class MockProject
      * @see
      * org.apache.maven.project.MavenProject#setDistributionManagement(org.apache.maven.model.DistributionManagement)
      */
-    public void setDistributionManagement( DistributionManagement distributionManagement )
-    {
-
-    }
+    public void setDistributionManagement(DistributionManagement distributionManagement) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getDistributionManagement()
      */
-    public DistributionManagement getDistributionManagement()
-    {
+    public DistributionManagement getDistributionManagement() {
         return null;
     }
 
@@ -1037,8 +942,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setDescription(java.lang.String)
      */
-    public void setDescription( String string )
-    {
+    public void setDescription(String string) {
         this.description = string;
     }
 
@@ -1046,8 +950,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getDescription()
      */
-    public String getDescription()
-    {
+    public String getDescription() {
         return description;
     }
 
@@ -1055,17 +958,13 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setOrganization(org.apache.maven.model.Organization)
      */
-    public void setOrganization( Organization organization )
-    {
-
-    }
+    public void setOrganization(Organization organization) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getOrganization()
      */
-    public Organization getOrganization()
-    {
+    public Organization getOrganization() {
         return null;
     }
 
@@ -1073,17 +972,13 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setScm(org.apache.maven.model.Scm)
      */
-    public void setScm( Scm scm )
-    {
-
-    }
+    public void setScm(Scm scm) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getScm()
      */
-    public Scm getScm()
-    {
+    public Scm getScm() {
         return null;
     }
 
@@ -1091,98 +986,73 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setMailingLists(java.util.List)
      */
-    public void setMailingLists( List list )
-    {
-
-    }
+    public void setMailingLists(List list) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getMailingLists()
      */
-    public List getMailingLists()
-    {
-        return Collections.singletonList( "" );
+    public List getMailingLists() {
+        return Collections.singletonList("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#addMailingList(org.apache.maven.model.MailingList)
      */
-    public void addMailingList( MailingList mailingList )
-    {
-
-    }
+    public void addMailingList(MailingList mailingList) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setDevelopers(java.util.List)
      */
-    public void setDevelopers( List list )
-    {
-
-    }
+    public void setDevelopers(List list) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getDevelopers()
      */
-    public List getDevelopers()
-    {
-        return Collections.singletonList( "" );
+    public List getDevelopers() {
+        return Collections.singletonList("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#addDeveloper(org.apache.maven.model.Developer)
      */
-    public void addDeveloper( Developer developer )
-    {
-
-    }
+    public void addDeveloper(Developer developer) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setContributors(java.util.List)
      */
-    public void setContributors( List list )
-    {
-
-    }
+    public void setContributors(List list) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getContributors()
      */
-    public List getContributors()
-    {
-        return Collections.singletonList( "" );
+    public List getContributors() {
+        return Collections.singletonList("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#addContributor(org.apache.maven.model.Contributor)
      */
-    public void addContributor( Contributor contributor )
-    {
-
-    }
+    public void addContributor(Contributor contributor) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setBuild(org.apache.maven.model.Build)
      */
-    public void setBuild( Build build )
-    {
-
-    }
+    public void setBuild(Build build) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getBuild()
      */
-    public Build getBuild()
-    {
+    public Build getBuild() {
         return null;
     }
 
@@ -1190,53 +1060,41 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getResources()
      */
-    public List getResources()
-    {
-        return Collections.singletonList( "" );
+    public List getResources() {
+        return Collections.singletonList("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getTestResources()
      */
-    public List getTestResources()
-    {
-        return Collections.singletonList( "" );
+    public List getTestResources() {
+        return Collections.singletonList("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#addResource(org.apache.maven.model.Resource)
      */
-    public void addResource( Resource resource )
-    {
-
-    }
+    public void addResource(Resource resource) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#addTestResource(org.apache.maven.model.Resource)
      */
-    public void addTestResource( Resource resource )
-    {
-
-    }
+    public void addTestResource(Resource resource) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setReporting(org.apache.maven.model.Reporting)
      */
-    public void setReporting( Reporting reporting )
-    {
-
-    }
+    public void setReporting(Reporting reporting) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getReporting()
      */
-    public Reporting getReporting()
-    {
+    public Reporting getReporting() {
         return null;
     }
 
@@ -1244,35 +1102,27 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setLicenses(java.util.List)
      */
-    public void setLicenses( List list )
-    {
-
-    }
+    public void setLicenses(List list) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getLicenses()
      */
-    public List getLicenses()
-    {
-        return Collections.singletonList( "" );
+    public List getLicenses() {
+        return Collections.singletonList("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#addLicense(org.apache.maven.model.License)
      */
-    public void addLicense( License license )
-    {
-
-    }
+    public void addLicense(License license) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setArtifacts(java.util.Set)
      */
-    public void setArtifacts( Set set )
-    {
+    public void setArtifacts(Set set) {
         this.artifacts = set;
     }
 
@@ -1280,14 +1130,10 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getArtifacts()
      */
-    public Set getArtifacts()
-    {
-        if ( artifacts == null )
-        {
+    public Set getArtifacts() {
+        if (artifacts == null) {
             return Collections.EMPTY_SET;
-        }
-        else
-        {
+        } else {
             return artifacts;
         }
     }
@@ -1296,158 +1142,129 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getArtifactMap()
      */
-    public Map getArtifactMap()
-    {
-        return Collections.singletonMap( "", "" );
+    public Map getArtifactMap() {
+        return Collections.singletonMap("", "");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setPluginArtifacts(java.util.Set)
      */
-    public void setPluginArtifacts( Set set )
-    {
-
-    }
+    public void setPluginArtifacts(Set set) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getPluginArtifacts()
      */
-    public Set getPluginArtifacts()
-    {
-        return Collections.singleton( "" );
+    public Set getPluginArtifacts() {
+        return Collections.singleton("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getPluginArtifactMap()
      */
-    public Map getPluginArtifactMap()
-    {
-        return Collections.singletonMap( "", "" );
+    public Map getPluginArtifactMap() {
+        return Collections.singletonMap("", "");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setReportArtifacts(java.util.Set)
      */
-    public void setReportArtifacts( Set set )
-    {
-
-    }
+    public void setReportArtifacts(Set set) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getReportArtifacts()
      */
-    public Set getReportArtifacts()
-    {
-        return Collections.singleton( "" );
+    public Set getReportArtifacts() {
+        return Collections.singleton("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getReportArtifactMap()
      */
-    public Map getReportArtifactMap()
-    {
-        return Collections.singletonMap( "", "" );
+    public Map getReportArtifactMap() {
+        return Collections.singletonMap("", "");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setExtensionArtifacts(java.util.Set)
      */
-    public void setExtensionArtifacts( Set set )
-    {
-
-    }
+    public void setExtensionArtifacts(Set set) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getExtensionArtifacts()
      */
-    public Set getExtensionArtifacts()
-    {
-        return Collections.singleton( "" );
+    public Set getExtensionArtifacts() {
+        return Collections.singleton("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getExtensionArtifactMap()
      */
-    public Map getExtensionArtifactMap()
-    {
-        return Collections.singletonMap( "", "" );
+    public Map getExtensionArtifactMap() {
+        return Collections.singletonMap("", "");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setParentArtifact(org.apache.maven.artifact.Artifact)
      */
-    public void setParentArtifact( Artifact artifact )
-    {
-
-    }
+    public void setParentArtifact(Artifact artifact) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getParentArtifact()
      */
-    public Artifact getParentArtifact()
-    {
-        if ( parent != null )
-        {
+    public Artifact getParentArtifact() {
+        if (parent != null) {
             return parent.getArtifact();
-        }
-        else
-            return null;
-
+        } else return null;
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getRepositories()
      */
-    public List getRepositories()
-    {
-        return Collections.singletonList( "" );
+    public List getRepositories() {
+        return Collections.singletonList("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getReportPlugins()
      */
-    public List getReportPlugins()
-    {
-        return Collections.singletonList( "" );
+    public List getReportPlugins() {
+        return Collections.singletonList("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getBuildPlugins()
      */
-    public List getBuildPlugins()
-    {
-        return Collections.singletonList( "" );
+    public List getBuildPlugins() {
+        return Collections.singletonList("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getModules()
      */
-    public List getModules()
-    {
-        return Collections.singletonList( "" );
+    public List getModules() {
+        return Collections.singletonList("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getPluginManagement()
      */
-    public PluginManagement getPluginManagement()
-    {
+    public PluginManagement getPluginManagement() {
         return null;
     }
 
@@ -1455,26 +1272,19 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#addPlugin(org.apache.maven.model.Plugin)
      */
-    public void addPlugin( Plugin plugin )
-    {
-
-    }
+    public void addPlugin(Plugin plugin) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#injectPluginManagementInfo(org.apache.maven.model.Plugin)
      */
-    public void injectPluginManagementInfo( Plugin plugin )
-    {
-
-    }
+    public void injectPluginManagementInfo(Plugin plugin) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getCollectedProjects()
      */
-    public List getCollectedProjects()
-    {
+    public List getCollectedProjects() {
         return collectedProjects;
     }
 
@@ -1482,8 +1292,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setCollectedProjects(java.util.List)
      */
-    public void setCollectedProjects( List list )
-    {
+    public void setCollectedProjects(List list) {
         this.collectedProjects = list;
     }
 
@@ -1491,8 +1300,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setPluginArtifactRepositories(java.util.List)
      */
-    public void setPluginArtifactRepositories( List list )
-    {
+    public void setPluginArtifactRepositories(List list) {
         this.pluginArtifactRepositories = list;
     }
 
@@ -1500,8 +1308,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getPluginArtifactRepositories()
      */
-    public List getPluginArtifactRepositories()
-    {
+    public List getPluginArtifactRepositories() {
         return pluginArtifactRepositories;
     }
 
@@ -1509,8 +1316,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getDistributionManagementArtifactRepository()
      */
-    public ArtifactRepository getDistributionManagementArtifactRepository()
-    {
+    public ArtifactRepository getDistributionManagementArtifactRepository() {
         return null;
     }
 
@@ -1518,17 +1324,15 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getPluginRepositories()
      */
-    public List getPluginRepositories()
-    {
-        return Collections.singletonList( "" );
+    public List getPluginRepositories() {
+        return Collections.singletonList("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setActiveProfiles(java.util.List)
      */
-    public void setActiveProfiles( List list )
-    {
+    public void setActiveProfiles(List list) {
         activeProfiles = list;
     }
 
@@ -1536,8 +1340,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getActiveProfiles()
      */
-    public List getActiveProfiles()
-    {
+    public List getActiveProfiles() {
         return activeProfiles;
     }
 
@@ -1545,15 +1348,11 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#addAttachedArtifact(org.apache.maven.artifact.Artifact)
      */
-    public void addAttachedArtifact( Artifact theArtifact )
-    {
-        if ( attachedArtifacts == null )
-        {
-            this.attachedArtifacts = Collections.singletonList( theArtifact );
-        }
-        else
-        {
-            attachedArtifacts.add( theArtifact );
+    public void addAttachedArtifact(Artifact theArtifact) {
+        if (attachedArtifacts == null) {
+            this.attachedArtifacts = Collections.singletonList(theArtifact);
+        } else {
+            attachedArtifacts.add(theArtifact);
         }
     }
 
@@ -1561,8 +1360,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getAttachedArtifacts()
      */
-    public List getAttachedArtifacts()
-    {
+    public List getAttachedArtifacts() {
         return attachedArtifacts;
     }
 
@@ -1571,8 +1369,7 @@ public class MockProject
      * @see org.apache.maven.project.MavenProject#getGoalConfiguration(java.lang.String, java.lang.String,
      * java.lang.String, java.lang.String)
      */
-    public Xpp3Dom getGoalConfiguration( String string, String string1, String string2, String string3 )
-    {
+    public Xpp3Dom getGoalConfiguration(String string, String string1, String string2, String string3) {
         return null;
     }
 
@@ -1581,8 +1378,7 @@ public class MockProject
      * @see org.apache.maven.project.MavenProject#getReportConfiguration(java.lang.String, java.lang.String,
      * java.lang.String)
      */
-    public Xpp3Dom getReportConfiguration( String string, String string1, String string2 )
-    {
+    public Xpp3Dom getReportConfiguration(String string, String string1, String string2) {
         return null;
     }
 
@@ -1590,8 +1386,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getExecutionProject()
      */
-    public MavenProject getExecutionProject()
-    {
+    public MavenProject getExecutionProject() {
         return null;
     }
 
@@ -1599,37 +1394,25 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setExecutionProject(org.apache.maven.project.MavenProject)
      */
-    public void setExecutionProject( MavenProject mavenProject )
-    {
-
-    }
+    public void setExecutionProject(MavenProject mavenProject) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#writeModel(java.io.Writer)
      */
-    public void writeModel( Writer writer )
-        throws IOException
-    {
-
-    }
+    public void writeModel(Writer writer) throws IOException {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#writeOriginalModel(java.io.Writer)
      */
-    public void writeOriginalModel( Writer writer )
-        throws IOException
-    {
-
-    }
+    public void writeOriginalModel(Writer writer) throws IOException {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getDependencyArtifacts()
      */
-    public Set getDependencyArtifacts()
-    {
+    public Set getDependencyArtifacts() {
         return dependencyArtifacts;
     }
 
@@ -1637,8 +1420,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setDependencyArtifacts(java.util.Set)
      */
-    public void setDependencyArtifacts( Set set )
-    {
+    public void setDependencyArtifacts(Set set) {
         this.dependencyArtifacts = set;
     }
 
@@ -1647,8 +1429,7 @@ public class MockProject
      * @see org.apache.maven.project.MavenProject#setReleaseArtifactRepository(org.apache.maven.artifact.repository.
      * ArtifactRepository)
      */
-    public void setReleaseArtifactRepository( ArtifactRepository artifactRepository )
-    {
+    public void setReleaseArtifactRepository(ArtifactRepository artifactRepository) {
         // this.releaseArtifactRepository = artifactRepository;
     }
 
@@ -1657,8 +1438,7 @@ public class MockProject
      * @see org.apache.maven.project.MavenProject#setSnapshotArtifactRepository(org.apache.maven.artifact.repository.
      * ArtifactRepository)
      */
-    public void setSnapshotArtifactRepository( ArtifactRepository artifactRepository )
-    {
+    public void setSnapshotArtifactRepository(ArtifactRepository artifactRepository) {
         // this.snapshotArtifactRepository = artifactRepository;
     }
 
@@ -1666,8 +1446,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setOriginalModel(org.apache.maven.model.Model)
      */
-    public void setOriginalModel( Model model )
-    {
+    public void setOriginalModel(Model model) {
         this.originalModel = model;
     }
 
@@ -1675,8 +1454,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getOriginalModel()
      */
-    public Model getOriginalModel()
-    {
+    public Model getOriginalModel() {
         return originalModel;
     }
 
@@ -1684,9 +1462,8 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getBuildExtensions()
      */
-    public List getBuildExtensions()
-    {
-        return Collections.singletonList( "" );
+    public List getBuildExtensions() {
+        return Collections.singletonList("");
     }
 
     /*
@@ -1694,9 +1471,8 @@ public class MockProject
      * @see org.apache.maven.project.MavenProject#createArtifacts(org.apache.maven.artifact.factory.ArtifactFactory,
      * java.lang.String, org.apache.maven.artifact.resolver.filter.ArtifactFilter)
      */
-    public Set createArtifacts( ArtifactFactory artifactFactory, String string, ArtifactFilter artifactFilter )
-        throws InvalidDependencyVersionException
-    {
+    public Set createArtifacts(ArtifactFactory artifactFactory, String string, ArtifactFilter artifactFilter)
+            throws InvalidDependencyVersionException {
         return Collections.EMPTY_SET;
     }
 
@@ -1704,26 +1480,19 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#addProjectReference(org.apache.maven.project.MavenProject)
      */
-    public void addProjectReference( MavenProject mavenProject )
-    {
-
-    }
+    public void addProjectReference(MavenProject mavenProject) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#attachArtifact(java.lang.String, java.lang.String, java.io.File)
      */
-    public void attachArtifact( String string, String string1, File theFile )
-    {
-
-    }
+    public void attachArtifact(String string, String string1, File theFile) {}
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getProperties()
      */
-    public Properties getProperties()
-    {
+    public Properties getProperties() {
         return this.properties;
     }
 
@@ -1733,35 +1502,31 @@ public class MockProject
      * @param key the key
      * @param value the value
      */
-    public void setProperty( String key, String value )
-    {
-        properties.setProperty( key, value );
+    public void setProperty(String key, String value) {
+        properties.setProperty(key, value);
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getFilters()
      */
-    public List getFilters()
-    {
-        return Collections.singletonList( "" );
+    public List getFilters() {
+        return Collections.singletonList("");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getProjectReferences()
      */
-    public Map getProjectReferences()
-    {
-        return Collections.singletonMap( "", "" );
+    public Map getProjectReferences() {
+        return Collections.singletonMap("", "");
     }
 
     /*
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#isExecutionRoot()
      */
-    public boolean isExecutionRoot()
-    {
+    public boolean isExecutionRoot() {
         return executionRoot;
     }
 
@@ -1769,8 +1534,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#setExecutionRoot(boolean)
      */
-    public void setExecutionRoot( boolean b )
-    {
+    public void setExecutionRoot(boolean b) {
         this.executionRoot = b;
     }
 
@@ -1778,8 +1542,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#getDefaultGoal()
      */
-    public String getDefaultGoal()
-    {
+    public String getDefaultGoal() {
         return defaultGoal;
     }
 
@@ -1787,8 +1550,7 @@ public class MockProject
      * (non-Javadoc)
      * @see org.apache.maven.project.MavenProject#replaceWithActiveArtifact(org.apache.maven.artifact.Artifact)
      */
-    public Artifact replaceWithActiveArtifact( Artifact theArtifact )
-    {
+    public Artifact replaceWithActiveArtifact(Artifact theArtifact) {
         return null;
     }
 }

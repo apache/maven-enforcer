@@ -1,7 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -11,7 +7,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -20,25 +16,23 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import org.junit.jupiter.api.Test;
+package org.apache.maven.plugins.enforcer;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class TestDefaultEnforcementRuleHelper
-{
+public class TestDefaultEnforcementRuleHelper {
     @Test
-    public void testHelper()
-        throws ExpressionEvaluationException
-    {
+    public void testHelper() throws ExpressionEvaluationException {
         DefaultEnforcementRuleHelper helper = (DefaultEnforcementRuleHelper) EnforcerTestUtils.getHelper();
 
-        assertNotNull( helper.getLog() );
-        assertNotNull( helper.evaluate( "${session}" ) );
-        assertNotNull( helper.evaluate( "${project}" ) );
-
+        assertNotNull(helper.getLog());
+        assertNotNull(helper.evaluate("${session}"));
+        assertNotNull(helper.evaluate("${project}"));
     }
 }

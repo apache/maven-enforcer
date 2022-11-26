@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.maven.plugins.enforcer;
 
 /*
@@ -30,44 +48,36 @@ import org.junit.jupiter.api.Test;
  *
  * @author Paul Gier
  */
-public class TestRequireProperty
-{
+public class TestRequireProperty {
 
     /**
      * Test rule.
      *
      */
     @Test
-    public void testRule()
-    {
+    public void testRule() {
         MockProject project = new MockProject();
-        project.setProperty( "testProp", "This is a test." );
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
+        project.setProperty("testProp", "This is a test.");
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(project);
 
         RequireProperty rule = new RequireProperty();
         // this property should not be set
-        rule.setProperty( "testPropJunk" );
+        rule.setProperty("testPropJunk");
 
-        try
-        {
-            rule.execute( helper );
-            fail( "Expected an exception." );
-        }
-        catch ( EnforcerRuleException e )
-        {
+        try {
+            rule.execute(helper);
+            fail("Expected an exception.");
+        } catch (EnforcerRuleException e) {
             // expected to catch this.
         }
 
         // this property should be set by the surefire
         // plugin
-        rule.setProperty( "testProp" );
-        try
-        {
-            rule.execute( helper );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            fail( "This should not throw an exception" );
+        rule.setProperty("testProp");
+        try {
+            rule.execute(helper);
+        } catch (EnforcerRuleException e) {
+            fail("This should not throw an exception");
         }
     }
 
@@ -76,37 +86,30 @@ public class TestRequireProperty
      *
      */
     @Test
-    public void testRuleWithRegex()
-    {
+    public void testRuleWithRegex() {
         MockProject project = new MockProject();
-        project.setProperty( "testProp", "This is a test." );
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
+        project.setProperty("testProp", "This is a test.");
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(project);
 
         RequireProperty rule = new RequireProperty();
-        rule.setProperty( "testProp" );
+        rule.setProperty("testProp");
         // This expression should not match the property
         // value
-        rule.setRegex( "[^abc]" );
+        rule.setRegex("[^abc]");
 
-        try
-        {
-            rule.execute( helper );
-            fail( "Expected an exception." );
-        }
-        catch ( EnforcerRuleException e )
-        {
+        try {
+            rule.execute(helper);
+            fail("Expected an exception.");
+        } catch (EnforcerRuleException e) {
             // expected to catch this.
         }
 
         // this expr should match the property
-        rule.setRegex( "[This].*[.]" );
-        try
-        {
-            rule.execute( helper );
-        }
-        catch ( EnforcerRuleException e )
-        {
-            fail( "This should not throw an exception" );
+        rule.setRegex("[This].*[.]");
+        try {
+            rule.execute(helper);
+        } catch (EnforcerRuleException e) {
+            fail("This should not throw an exception");
         }
     }
 
@@ -114,8 +117,7 @@ public class TestRequireProperty
      * Test id.
      */
     @Test
-    public void testId()
-    {
+    public void testId() {
         RequireProperty rule = new RequireProperty();
         rule.getCacheId();
     }

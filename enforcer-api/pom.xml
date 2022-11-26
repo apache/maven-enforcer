@@ -31,9 +31,7 @@
   <packaging>jar</packaging>
 
   <name>Apache Maven Enforcer API</name>
-  <description>
-    This component provides the generic interfaces needed to implement custom rules for the maven-enforcer-plugin.
-  </description>
+  <description>This component provides the generic interfaces needed to implement custom rules for the maven-enforcer-plugin.</description>
 
   <dependencies>
     <dependency>
@@ -56,10 +54,10 @@
         <executions>
           <execution>
             <id>custom-rule</id>
-            <phase>pre-site</phase>
             <goals>
               <goal>single</goal>
             </goals>
+            <phase>pre-site</phase>
             <configuration>
               <finalName>custom-rule</finalName>
               <outputDirectory>target/site</outputDirectory>

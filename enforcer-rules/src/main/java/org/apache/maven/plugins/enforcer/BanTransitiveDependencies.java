@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.maven.plugins.enforcer;
 
 /*
@@ -21,7 +39,6 @@ package org.apache.maven.plugins.enforcer;
 
 import java.util.Collections;
 import java.util.List;
-
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -40,13 +57,10 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 /**
  * This rule bans all transitive dependencies. There is a configuration option to exclude certain artifacts from being
  * checked.
- * 
+ *
  * @author Jakub Senko
  */
-public class BanTransitiveDependencies
-    extends AbstractNonCacheableEnforcerRule
-    implements EnforcerRule
-{
+public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule implements EnforcerRule {
 
     private EnforcerRuleHelper helper;
 
@@ -71,12 +85,11 @@ public class BanTransitiveDependencies
     /**
      * Searches dependency tree recursively for transitive dependencies that are not excluded, while generating nice
      * info message along the way.
-     * 
+     *
      * @throws InvalidVersionSpecificationException
      */
-    private static boolean searchTree( DependencyNode node, int level, ArtifactMatcher excludes, StringBuilder message )
-        throws InvalidVersionSpecificationException
-    {
+    private static boolean searchTree(DependencyNode node, int level, ArtifactMatcher excludes, StringBuilder message)
+            throws InvalidVersionSpecificationException {
 
         List<DependencyNode> children = node.getChildren();
 
@@ -93,46 +106,38 @@ public class BanTransitiveDependencies
          */
         StringBuilder messageFromChildren = message == null ? null : new StringBuilder();
 
-        if ( excludes.match( node.getArtifact() ) )
-        {
+        if (excludes.match(node.getArtifact())) {
             // is excluded, we don't care about descendants
             excluded = true;
             hasTransitiveDependencies = false;
-        }
-        else
-        {
-            for ( DependencyNode childNode : children )
-            {
+        } else {
+            for (DependencyNode childNode : children) {
                 /*
                  * if any of the children has transitive d. so does the parent
                  */
                 hasTransitiveDependencies =
-                    ( searchTree( childNode, level + 1, excludes, messageFromChildren ) || hasTransitiveDependencies );
+                        (searchTree(childNode, level + 1, excludes, messageFromChildren) || hasTransitiveDependencies);
             }
         }
 
-        if ( ( excluded || hasTransitiveDependencies ) && message != null ) // then generate message
+        if ((excluded || hasTransitiveDependencies) && message != null) // then generate message
         {
-            for ( int i = 0; i < level; i++ )
-            {
-                message.append( "   " );
+            for (int i = 0; i < level; i++) {
+                message.append("   ");
             }
 
-            message.append( node.getArtifact() );
+            message.append(node.getArtifact());
 
-            if ( excluded )
-            {
-                message.append( " [excluded]" + System.lineSeparator() );
+            if (excluded) {
+                message.append(" [excluded]" + System.lineSeparator());
             }
 
-            if ( hasTransitiveDependencies )
-            {
-                if ( level == 1 )
-                {
-                    message.append( " has transitive dependencies:" );
+            if (hasTransitiveDependencies) {
+                if (level == 1) {
+                    message.append(" has transitive dependencies:");
                 }
 
-                message.append( System.lineSeparator() ).append( messageFromChildren );
+                message.append(System.lineSeparator()).append(messageFromChildren);
             }
         }
 
@@ -140,73 +145,56 @@ public class BanTransitiveDependencies
     }
 
     @Override
-    public void execute( EnforcerRuleHelper helper )
-        throws EnforcerRuleException
-    {
+    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
         this.helper = helper;
 
-        if ( excludes == null )
-        {
+        if (excludes == null) {
             excludes = Collections.emptyList();
         }
-        if ( includes == null )
-        {
+        if (includes == null) {
             includes = Collections.emptyList();
         }
 
-        final ArtifactMatcher exclusions = new ArtifactMatcher( excludes, includes );
+        final ArtifactMatcher exclusions = new ArtifactMatcher(excludes, includes);
 
         DependencyNode rootNode = null;
 
-        try
-        {
-            MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-            MavenSession session = (MavenSession) helper.evaluate( "${session}" );
-            
+        try {
+            MavenProject project = (MavenProject) helper.evaluate("${project}");
+            MavenSession session = (MavenSession) helper.evaluate("${session}");
+
             ProjectBuildingRequest buildingRequest =
-                new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
-            buildingRequest.setProject( project );
-            
-            rootNode = createDependencyGraphBuilder().buildDependencyGraph( buildingRequest, null );
-        }
-        catch ( Exception e )
-        {
-            throw new EnforcerRuleException( "Error: Could not construct dependency tree.", e );
+                    new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
+            buildingRequest.setProject(project);
+
+            rootNode = createDependencyGraphBuilder().buildDependencyGraph(buildingRequest, null);
+        } catch (Exception e) {
+            throw new EnforcerRuleException("Error: Could not construct dependency tree.", e);
         }
 
         String message = getMessage();
         StringBuilder generatedMessage = null;
-        if ( message == null )
-        {
+        if (message == null) {
             generatedMessage = new StringBuilder();
         }
 
-        try
-        {
-            if ( searchTree( rootNode, 0, exclusions, generatedMessage ) )
-            {
-                throw new EnforcerRuleException( message == null ? generatedMessage.toString() : message );
+        try {
+            if (searchTree(rootNode, 0, exclusions, generatedMessage)) {
+                throw new EnforcerRuleException(message == null ? generatedMessage.toString() : message);
             }
+        } catch (InvalidVersionSpecificationException e) {
+            throw new EnforcerRuleException("Error: Invalid version range.", e);
         }
-        catch ( InvalidVersionSpecificationException e )
-        {
-            throw new EnforcerRuleException( "Error: Invalid version range.", e );
-        }
-
     }
 
-    private DependencyGraphBuilder createDependencyGraphBuilder()
-        throws ComponentLookupException
-    {
+    private DependencyGraphBuilder createDependencyGraphBuilder() throws ComponentLookupException {
         // CHECKSTYLE_OFF: LineLength
-        DefaultDependencyGraphBuilder builder =
-            (DefaultDependencyGraphBuilder) helper.getContainer().lookup( DependencyGraphBuilder.class.getCanonicalName(),
-                                                                          "default" );
+        DefaultDependencyGraphBuilder builder = (DefaultDependencyGraphBuilder)
+                helper.getContainer().lookup(DependencyGraphBuilder.class.getCanonicalName(), "default");
         // CHECKSTYLE_ON: LineLength
 
-        builder.enableLogging( new ConsoleLogger( ConsoleLogger.LEVEL_DISABLED, "DefaultDependencyGraphBuilder" ) );
+        builder.enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_DISABLED, "DefaultDependencyGraphBuilder"));
 
         return builder;
     }
-
 }
