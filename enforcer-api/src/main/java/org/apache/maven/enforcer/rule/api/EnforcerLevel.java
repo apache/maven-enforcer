@@ -1,5 +1,3 @@
-package org.apache.maven.enforcer.rule.api;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.enforcer.rule.api;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,20 +16,22 @@ package org.apache.maven.enforcer.rule.api;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.enforcer.rule.api;
 
 /**
  * Levels steering whether a rule should fail a build or just display a warning.
  *
  * @author Mirko Friedenhagen
- * 
  * @since 1.4
  */
-public enum EnforcerLevel 
-{
+public enum EnforcerLevel {
 
-    /** Fail the build. */
+    /**
+     * Fail the build.
+     */
     ERROR,
-    /** Just warn. */
+    /**
+     * Just warn.
+     */
     WARN
-    
 }

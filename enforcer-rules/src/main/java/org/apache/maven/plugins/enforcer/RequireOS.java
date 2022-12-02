@@ -1,3 +1,21 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 package org.apache.maven.plugins.enforcer;
 
 /*
@@ -20,15 +38,14 @@ package org.apache.maven.plugins.enforcer;
  */
 
 import java.util.Iterator;
-
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Activation;
 import org.apache.maven.model.ActivationOS;
 import org.apache.maven.model.Profile;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.model.profile.activation.ProfileActivator;
+import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
@@ -39,9 +56,7 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class RequireOS
-    extends AbstractStandardEnforcerRule
-{
+public class RequireOS extends AbstractStandardEnforcerRule {
     private ProfileActivator activator;
 
     /**
@@ -59,7 +74,7 @@ public class RequireOS
      * <li>z/os</li>
      * <li>os/400</li>
      * </ul>
-     * 
+     *
      * @see {@link #setFamily(String)}
      * @see {@link #getFamily()}
      */
@@ -75,7 +90,7 @@ public class RequireOS
 
     /**
      * The OS version desired.
-     * 
+     *
      * @see {@link #setVersion(String)}
      * @see {@link #getVersion()}
      */
@@ -83,7 +98,7 @@ public class RequireOS
 
     /**
      * The OS architecture desired.
-     * 
+     *
      * @see {@link #setArch(String)}
      * @see {@link #getArch()}
      */
@@ -91,7 +106,7 @@ public class RequireOS
 
     /**
      * Display detected OS information.
-     * 
+     *
      * @see {@link #setDisplay(boolean)}
      * @see {@link #isDisplay()}
      */
@@ -100,75 +115,57 @@ public class RequireOS
     /**
      * Instantiates a new RequireOS.
      */
-    public RequireOS()
-    {
+    public RequireOS() {}
 
-    }
-    
     // For testing
-    RequireOS( ProfileActivator activator ) 
-    {
+    RequireOS(ProfileActivator activator) {
         this.activator = activator;
     }
-    
 
     @Override
-    public void execute( EnforcerRuleHelper helper )
-        throws EnforcerRuleException
-    {
+    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
 
-        displayOSInfo( helper.getLog(), display );
+        displayOSInfo(helper.getLog(), display);
 
-        if ( allParamsEmpty() )
-        {
-            throw new EnforcerRuleException( "All parameters can not be empty. "
-                + "You must pick at least one of (family, name, version, arch) "
-                + "or use -Denforcer.os.display=true to see the current OS information." );
-        }
-        
-        try
-        {
-            activator = helper.getComponent( ProfileActivator.class, "os" );
-        }
-        catch ( ComponentLookupException e )
-        {
-            throw new EnforcerRuleException( e.getMessage() );
+        if (allParamsEmpty()) {
+            throw new EnforcerRuleException("All parameters can not be empty. "
+                    + "You must pick at least one of (family, name, version, arch) "
+                    + "or use -Denforcer.os.display=true to see the current OS information.");
         }
 
-        if ( isValidFamily( this.family ) )
-        {
-            if ( !isAllowed() )
-            {
+        try {
+            activator = helper.getComponent(ProfileActivator.class, "os");
+        } catch (ComponentLookupException e) {
+            throw new EnforcerRuleException(e.getMessage());
+        }
+
+        if (isValidFamily(this.family)) {
+            if (!isAllowed()) {
                 String message = getMessage();
-                if ( StringUtils.isEmpty( message ) )
-                {
-                    //@formatter:off
-                    message =
-                        ( "OS Arch: " 
-                            + Os.OS_ARCH + " Family: " 
-                            + Os.OS_FAMILY + " Name: " 
+                if (StringUtils.isEmpty(message)) {
+                    // @formatter:off
+                    message = ("OS Arch: "
+                            + Os.OS_ARCH + " Family: "
+                            + Os.OS_FAMILY + " Name: "
                             + Os.OS_NAME + " Version: "
-                            + Os.OS_VERSION + " is not allowed by" + ( arch != null ? " Arch=" + arch : "" )
-                            + ( family != null ? " Family=" + family : "" ) 
-                            + ( name != null ? " Name=" + name : "" ) 
-                            + ( version != null ? " Version=" + version : "" ) );
-                    //@formatter:on
+                            + Os.OS_VERSION + " is not allowed by" + (arch != null ? " Arch=" + arch : "")
+                            + (family != null ? " Family=" + family : "")
+                            + (name != null ? " Name=" + name : "")
+                            + (version != null ? " Version=" + version : ""));
+                    // @formatter:on
                 }
-                throw new EnforcerRuleException( message );
+                throw new EnforcerRuleException(message);
             }
-        }
-        else
-        {
+        } else {
             final int minimumBufferSize = 50;
-            StringBuilder buffer = new StringBuilder( minimumBufferSize );
+            StringBuilder buffer = new StringBuilder(minimumBufferSize);
             Iterator<?> iter = Os.getValidFamilies().iterator();
-            while ( iter.hasNext() )
-            {
-                buffer.append( iter.next() );
-                buffer.append( ", " );
+            while (iter.hasNext()) {
+                buffer.append(iter.next());
+                buffer.append(", ");
             }
-            String help = StringUtils.stripEnd( buffer.toString().trim(), "." );
-            throw new EnforcerRuleException( "Invalid Family type used. Valid family types are: " + help );
+            String help = StringUtils.stripEnd(buffer.toString().trim(), ".");
+            throw new EnforcerRuleException("Invalid Family type used. Valid family types are: " + help);
         }
     }
 
@@ -178,19 +175,14 @@ public class RequireOS
      * @param log the log
      * @param info the info
      */
-    public void displayOSInfo( Log log, boolean info )
-    {
-        String string =
-            "OS Info: Arch: " + Os.OS_ARCH + " Family: " + Os.OS_FAMILY + " Name: " + Os.OS_NAME + " Version: "
-                + Os.OS_VERSION;
+    public void displayOSInfo(Log log, boolean info) {
+        String string = "OS Info: Arch: " + Os.OS_ARCH + " Family: " + Os.OS_FAMILY + " Name: " + Os.OS_NAME
+                + " Version: " + Os.OS_VERSION;
 
-        if ( !info )
-        {
-            log.debug( string );
-        }
-        else
-        {
-            log.info( string );
+        if (!info) {
+            log.debug(string);
+        } else {
+            log.info(string);
         }
     }
 
@@ -200,9 +192,8 @@ public class RequireOS
      *
      * @return true if the version is allowed.
      */
-    public boolean isAllowed()
-    {
-        return activator.isActive( createProfile(), null, null );
+    public boolean isAllowed() {
+        return activator.isActive(createProfile(), null, null);
     }
 
     /**
@@ -210,10 +201,12 @@ public class RequireOS
      *
      * @return true if all parameters are empty.
      */
-    public boolean allParamsEmpty()
-    {
+    public boolean allParamsEmpty() {
         // CHECKSTYLE_OFF: LineLength
-        return ( StringUtils.isEmpty( family ) && StringUtils.isEmpty( arch ) && StringUtils.isEmpty( name ) && StringUtils.isEmpty( version ) );
+        return (StringUtils.isEmpty(family)
+                && StringUtils.isEmpty(arch)
+                && StringUtils.isEmpty(name)
+                && StringUtils.isEmpty(version));
         // CHECKSTYLE_ON: LineLength
     }
 
@@ -222,10 +215,9 @@ public class RequireOS
      *
      * @return a properly populated profile to be used for OS validation.
      */
-    private Profile createProfile()
-    {
+    private Profile createProfile() {
         Profile profile = new Profile();
-        profile.setActivation( createActivation() );
+        profile.setActivation(createActivation());
         return profile;
     }
 
@@ -234,11 +226,10 @@ public class RequireOS
      *
      * @return a properly populated Activation object.
      */
-    private Activation createActivation()
-    {
+    private Activation createActivation() {
         Activation activation = new Activation();
-        activation.setActiveByDefault( false );
-        activation.setOs( createOsBean() );
+        activation.setActiveByDefault(false);
+        activation.setOs(createOsBean());
         return activation;
     }
 
@@ -247,14 +238,13 @@ public class RequireOS
      *
      * @return a properly populated ActivationOS object.
      */
-    private ActivationOS createOsBean()
-    {
+    private ActivationOS createOsBean() {
         ActivationOS os = new ActivationOS();
 
-        os.setArch( arch );
-        os.setFamily( family );
-        os.setName( name );
-        os.setVersion( version );
+        os.setArch(arch);
+        os.setFamily(family);
+        os.setName(name);
+        os.setVersion(version);
 
         return os;
     }
@@ -278,13 +268,12 @@ public class RequireOS
      * @param theFamily the family to check.
      * @return true if one of the valid families.
      */
-    public boolean isValidFamily( String theFamily )
-    {
+    public boolean isValidFamily(String theFamily) {
 
         // in case they are checking !family
-        theFamily = StringUtils.stripStart( theFamily, "!" );
+        theFamily = StringUtils.stripStart(theFamily, "!");
 
-        return ( StringUtils.isEmpty( theFamily ) || Os.getValidFamilies().contains( theFamily ) );
+        return (StringUtils.isEmpty(theFamily) || Os.getValidFamilies().contains(theFamily));
     }
 
     /**
@@ -292,8 +281,7 @@ public class RequireOS
      *
      * @return the arch
      */
-    public String getArch()
-    {
+    public String getArch() {
         return this.arch;
     }
 
@@ -302,8 +290,7 @@ public class RequireOS
      *
      * @param theArch the arch to set
      */
-    public void setArch( String theArch )
-    {
+    public void setArch(String theArch) {
         this.arch = theArch;
     }
 
@@ -312,8 +299,7 @@ public class RequireOS
      *
      * @return the family
      */
-    public String getFamily()
-    {
+    public String getFamily() {
         return this.family;
     }
 
@@ -322,8 +308,7 @@ public class RequireOS
      *
      * @param theFamily the family to set
      */
-    public void setFamily( String theFamily )
-    {
+    public void setFamily(String theFamily) {
         this.family = theFamily;
     }
 
@@ -332,8 +317,7 @@ public class RequireOS
      *
      * @return the name
      */
-    public String getName()
-    {
+    public String getName() {
         return this.name;
     }
 
@@ -342,8 +326,7 @@ public class RequireOS
      *
      * @param theName the name to set
      */
-    public void setName( String theName )
-    {
+    public void setName(String theName) {
         this.name = theName;
     }
 
@@ -352,8 +335,7 @@ public class RequireOS
      *
      * @return the version
      */
-    public String getVersion()
-    {
+    public String getVersion() {
         return this.version;
     }
 
@@ -362,58 +344,48 @@ public class RequireOS
      *
      * @param theVersion the version to set
      */
-    public void setVersion( String theVersion )
-    {
+    public void setVersion(String theVersion) {
         this.version = theVersion;
     }
 
     /**
      * @param display The value for the display.
      */
-    public final void setDisplay( boolean display )
-    {
+    public final void setDisplay(boolean display) {
         this.display = display;
     }
 
-    public final boolean isDisplay()
-    {
+    public final boolean isDisplay() {
         return display;
     }
 
     @Override
-    public String getCacheId()
-    {
+    public String getCacheId() {
         // return the hashcodes of all the parameters
         StringBuilder b = new StringBuilder();
-        if ( StringUtils.isNotEmpty( version ) )
-        {
-            b.append( version.hashCode() );
+        if (StringUtils.isNotEmpty(version)) {
+            b.append(version.hashCode());
         }
-        if ( StringUtils.isNotEmpty( name ) )
-        {
-            b.append( name.hashCode() );
+        if (StringUtils.isNotEmpty(name)) {
+            b.append(name.hashCode());
         }
-        if ( StringUtils.isNotEmpty( arch ) )
-        {
-            b.append( arch.hashCode() );
+        if (StringUtils.isNotEmpty(arch)) {
+            b.append(arch.hashCode());
         }
-        if ( StringUtils.isNotEmpty( family ) )
-        {
-            b.append( family.hashCode() );
+        if (StringUtils.isNotEmpty(family)) {
+            b.append(family.hashCode());
         }
         return b.toString();
     }
 
     @Override
-    public boolean isCacheable()
-    {
+    public boolean isCacheable() {
         // the os is not going to change between projects in the same build.
         return true;
     }
 
     @Override
-    public boolean isResultValid( EnforcerRule theCachedRule )
-    {
+    public boolean isResultValid(EnforcerRule theCachedRule) {
         // i will always return the hash of the parameters as my id. If my parameters are the same, this
         // rule must always have the same result.
         return true;

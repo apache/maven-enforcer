@@ -1,10 +1,3 @@
-package org.apache.maven.plugins.enforcer.utils;
-
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugins.enforcer.EnforcerExpressionEvaluator;
-import org.apache.maven.plugins.enforcer.EnforcerTestUtils;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -14,7 +7,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -23,32 +16,35 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import org.junit.jupiter.api.Test;
+package org.apache.maven.plugins.enforcer.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugins.enforcer.EnforcerExpressionEvaluator;
+import org.apache.maven.plugins.enforcer.EnforcerTestUtils;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.junit.jupiter.api.Test;
+
 /**
  * The Class TestMockEnforcerExpressionEvaluator.
  */
-public class TestMockEnforcerExpressionEvaluator
-{
+public class TestMockEnforcerExpressionEvaluator {
 
     /**
      * Test evaluate.
      */
     @Test
-    public void testEvaluate()
-    {
+    public void testEvaluate() {
         MavenSession session = EnforcerTestUtils.getMavenSession();
 
-        EnforcerExpressionEvaluator ev = new MockEnforcerExpressionEvaluator( session );
-        assertMatch( ev, "SNAPSHOT" );
-        assertMatch( ev, "RELEASE" );
-        assertMatch( ev, "SNAPSHOT" );
-        assertMatch( ev, "LATEST" );
-        assertMatch( ev, "1.0" );
+        EnforcerExpressionEvaluator ev = new MockEnforcerExpressionEvaluator(session);
+        assertMatch(ev, "SNAPSHOT");
+        assertMatch(ev, "RELEASE");
+        assertMatch(ev, "SNAPSHOT");
+        assertMatch(ev, "LATEST");
+        assertMatch(ev, "1.0");
     }
 
     /**
@@ -57,16 +53,12 @@ public class TestMockEnforcerExpressionEvaluator
      * @param ev the ev
      * @param exp the exp
      */
-    public void assertMatch( EnforcerExpressionEvaluator ev, String exp )
-    {
+    public void assertMatch(EnforcerExpressionEvaluator ev, String exp) {
         // the mock enforcer should return the name of the expression as the value.
-        try
-        {
-            assertEquals( exp, ev.evaluate( "${" + exp + "}" ) );
-        }
-        catch ( ExpressionEvaluationException e )
-        {
-            fail( e.getLocalizedMessage() );
+        try {
+            assertEquals(exp, ev.evaluate("${" + exp + "}"));
+        } catch (ExpressionEvaluationException e) {
+            fail(e.getLocalizedMessage());
         }
     }
 }
