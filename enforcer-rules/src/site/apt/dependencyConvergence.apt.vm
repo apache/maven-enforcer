@@ -117,7 +117,7 @@ and
 </project>
 +-----------------------------------------------------------------------------------
 
-* Timestamped version
+* Timestamped Version
 	
 	By default the non-unique versions are matched, which means the <<<X.Y-SNAPSHOT>>> instead of the timestamped versions.
 	If you want to use the unique versions of the dependencies, you can set its property to <<<true>>>.
@@ -128,3 +128,32 @@ and
       </dependencyConvergence>
 +---------------------------------------------
 
+* Filtering Dependency Errors
+
+  By default, all dependency convergence errors are reported, and any single error will fail the build. If you want
+  to tune which dependency errors are reported and fail the build, you can add the following optional parameters:
+
+    * includes - A list of artifacts for which dependency convergence should be enforced. Not specifying any includes
+      is interpreted the same as including all artifacts.
+
+    * excludes - A list of artifacts for which dependency convergence should not be enforced. These are exceptions
+      to the includes.
+
+    []
+
+  The format for artifacts is groupId[:artifactId][:version][:type][:scope][:classifier] where artifactId, version,
+  type, scope and classifier are optional. Wildcards may be used to replace an entire section or just parts of a
+  section. This rule uses the {{{./versionRanges.html}Enforcer version range syntax}} to define allowed versions.
+
++---------------------------------------------
+      <dependencyConvergence>
+        <includes>
+          <include>org.slf4j</include>
+          <include>org.apache.commons</include>
+        </includes>
+        <excludes>
+          <exclude>org.slf4j:slf4j-jdk14</exclude>
+          <exclude>org.apache.commons:*:[3.4]</exclude>
+        </excludes>
+      </dependencyConvergence>
++---------------------------------------------

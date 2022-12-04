@@ -66,6 +66,10 @@ public class DependencyConvergence implements EnforcerRule {
 
     private boolean uniqueVersions;
 
+    private List<String> includes;
+
+    private List<String> excludes;
+
     public void setUniqueVersions(boolean uniqueVersions) {
         this.uniqueVersions = uniqueVersions;
     }
@@ -117,7 +121,7 @@ public class DependencyConvergence implements EnforcerRule {
             visitor.setUniqueVersions(uniqueVersions);
             node.accept(visitor);
             List<CharSequence> errorMsgs = new ArrayList<>();
-            errorMsgs.addAll(getConvergenceErrorMsgs(visitor.getConflictedVersionNumbers()));
+            errorMsgs.addAll(getConvergenceErrorMsgs(visitor.getConflictedVersionNumbers(includes, excludes)));
             for (CharSequence errorMsg : errorMsgs) {
                 log.warn(errorMsg);
             }

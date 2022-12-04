@@ -112,7 +112,7 @@ public final class ArtifactUtils {
      * @return <code>true</code> if the artifact matches one of the patterns
      * @throws EnforcerRuleException the enforcer rule exception
      */
-    private static boolean compareDependency(String pattern, Artifact artifact) throws EnforcerRuleException {
+    static boolean compareDependency(String pattern, Artifact artifact) throws EnforcerRuleException {
 
         ArtifactMatcher.Pattern am = new Pattern(pattern);
         boolean result;

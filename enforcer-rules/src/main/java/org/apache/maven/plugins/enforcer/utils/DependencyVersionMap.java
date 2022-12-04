@@ -41,7 +41,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
@@ -118,13 +120,65 @@ public class DependencyVersionMap implements DependencyNodeVisitor {
         return false;
     }
 
-    public List<List<DependencyNode>> getConflictedVersionNumbers() {
+    public List<List<DependencyNode>> getConflictedVersionNumbers(List<String> includes, List<String> excludes)
+            throws EnforcerRuleException {
+        List<String> formattedIncludes = formatPatterns(includes);
+        List<String> formattedExcludes = formatPatterns(excludes);
         List<List<DependencyNode>> output = new ArrayList<>();
         for (List<DependencyNode> nodes : idsToNode.values()) {
-            if (containsConflicts(nodes)) {
-                output.add(nodes);
+            List<DependencyNode> filteredNodes = nodes;
+            if (formattedIncludes != null || formattedExcludes != null) {
+                filteredNodes = new ArrayList<>();
+                for (DependencyNode node : nodes) {
+                    if (includeArtifact(node.getArtifact(), formattedIncludes, formattedExcludes)) {
+                        filteredNodes.add(node);
+                    }
+                }
+            }
+            if (containsConflicts(filteredNodes)) {
+                output.add(filteredNodes);
             }
         }
         return output;
+    }
+
+    private static boolean includeArtifact(Artifact artifact, List<String> includes, List<String> excludes)
+            throws EnforcerRuleException {
+        boolean included = includes == null || includes.isEmpty();
+        if (!included) {
+            for (String pattern : includes) {
+                if (ArtifactUtils.compareDependency(pattern, artifact)) {
+                    included = true;
+                    break;
+                }
+            }
+        }
+        if (!included) {
+            return false;
+        }
+        boolean excluded = false;
+        if (excludes != null) {
+            for (String pattern : excludes) {
+                if (ArtifactUtils.compareDependency(pattern, artifact)) {
+                    excluded = true;
+                    break;
+                }
+            }
+        }
+        return !excluded;
+    }
+
+    private static List<String> formatPatterns(List<String> patterns) {
+        if (patterns == null) {
+            return null;
+        }
+        List<String> formattedPatterns = new ArrayList<>();
+        for (String pattern : patterns) {
+            String[] subStrings = pattern.split(":");
+            subStrings = StringUtils.stripAll(subStrings);
+            String formattedPattern = StringUtils.join(subStrings, ":");
+            formattedPatterns.add(formattedPattern);
+        }
+        return formattedPatterns;
     }
 }
