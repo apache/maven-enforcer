@@ -33,6 +33,7 @@ import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
  * @author Brian Fox
  *
  */
+@Deprecated
 public class DependencyVersionMap
     implements DependencyNodeVisitor
 {

@@ -1,5 +1,4 @@
 package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,23 +18,22 @@ package org.apache.maven.plugins.enforcer;
  * under the License.
  */
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.enforcer.utils.ArtifactUtils;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
+import org.apache.maven.plugins.enforcer.utils.ResolverHelper;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
-import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-
-import java.util.HashSet;
-import java.util.Set;
+import org.eclipse.aether.collection.DependencyCollectionException;
+import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.repository.RemoteRepository;
 
 /**
  * Abstract Rule for banning dependencies.
@@ -49,7 +47,7 @@ public abstract class AbstractBanDependencies
     /** Specify if transitive dependencies should be searched (default) or only look at direct dependencies. */
     private boolean searchTransitive = true;
 
-    private transient DependencyGraphBuilder graphBuilder;
+    private transient ResolverHelper resolverHelper;
 
     @Override
     public void execute( EnforcerRuleHelper helper )
@@ -58,41 +56,20 @@ public abstract class AbstractBanDependencies
         MavenProject project;
         try
         {
-            project = (MavenProject) helper.evaluate( "${project}" );
+            project = (MavenProject) Objects.requireNonNull( helper.evaluate( "${project}" ), "${project} is null" );
         }
         catch ( ExpressionEvaluationException eee )
         {
             throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
         }
 
-        MavenSession session;
-        try
-        {
-            session = (MavenSession) helper.evaluate( "${session}" );
-        }
-        catch ( ExpressionEvaluationException eee )
-        {
-            throw new EnforcerRuleException( "Unable to retrieve the reactor MavenProject: ", eee );
-        }
-
-        try
-        {
-            graphBuilder = helper.getComponent( DependencyGraphBuilder.class );
-        }
-        catch ( ComponentLookupException e )
-        {
-            throw new EnforcerRuleException( "Unable to lookup DependencyGraphBuilder: ", e );
-        }
-        
-        ProjectBuildingRequest buildingRequest =
-            new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
-        buildingRequest.setProject( project );
+        resolverHelper = new ResolverHelper ( helper );
 
         // get the correct list of dependencies
-        Set<Artifact> dependencies = getDependenciesToCheck( helper, buildingRequest );
+        Map<Artifact, DependencyNode> dependencies = getDependenciesToCheck( helper, project );
 
         // look for banned dependencies
-        Set<Artifact> foundExcludes = checkDependencies( dependencies, helper.getLog() );
+        Set<Artifact> foundExcludes = checkDependencies( dependencies.keySet(), helper.getLog() );
 
         // if any are found, fail the check but list all of them
         if ( foundExcludes != null && !foundExcludes.isEmpty() )
@@ -107,12 +84,37 @@ public abstract class AbstractBanDependencies
             for ( Artifact artifact : foundExcludes )
             {
                 buf.append( getErrorMessage( artifact ) );
+                if ( dependencies.get(artifact) != null )
+                {
+                    // emit location information
+                }
+                
             }
+            // TODO: better location message
+            
             message = buf.toString() + "Use 'mvn dependency:tree' to locate the source of the banned dependencies.";
 
             throw new EnforcerRuleException( message );
         }
+    }
 
+    /**
+     * The project's remote repositories to use for the resolution of either plugins or dependencies.
+     * Standard implementation returns the remote repositories for dependencies.
+     * 
+     * @throws EnforcerRuleException 
+     */
+    protected List<RemoteRepository> getRemoteRepositories( EnforcerRuleHelper helper ) throws EnforcerRuleException
+    {
+        try
+        {
+            return (List<RemoteRepository>) Objects.requireNonNull( helper.evaluate( "${project.remoteProjectRepositories}" ),
+                    "${project.remoteProjectRepositories} is null");
+        }
+        catch ( ExpressionEvaluationException eee )
+        {
+            throw new EnforcerRuleException( "Unable to retrieve project's remote repositories", eee );
+        }
     }
 
     protected CharSequence getErrorMessage( Artifact artifact )
@@ -120,43 +122,36 @@ public abstract class AbstractBanDependencies
         return "Found Banned Dependency: " + artifact.getId() + System.lineSeparator();
     }
 
-    private Set<Artifact> getDependenciesToCheck( EnforcerRuleHelper helper,
-            ProjectBuildingRequest buildingRequest )
+    private Map<Artifact, DependencyNode> getDependenciesToCheck( EnforcerRuleHelper helper,
+            MavenProject project )
     {
-        String cacheKey = buildingRequest.getProject().getId() + "_" + searchTransitive;
+        String cacheKey = project.getId() + "_" + searchTransitive;
 
         // check in the cache
-        Set<Artifact> dependencies =
-                (Set<Artifact>) helper.getCache( cacheKey, () -> getDependenciesToCheck( buildingRequest ) );
+        Map<Artifact, DependencyNode> dependencies =
+                (Map<Artifact, DependencyNode>) helper.getCache( cacheKey, () -> {
+                    // TODO: first check deprecated method
+                    try {
+                        return resolverHelper.getDependencies( project, searchTransitive );
+                    } catch (DependencyCollectionException e) {
+                        throw new RuntimeException( e );
+                    }
+                    
+                } );
 
         return dependencies;
     }
 
-    protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest buildingRequest )
+    /**
+     * Rather use
+     * @param project
+     * @return
+     * @deprecated Use {@link #getDependencyMapToCheck(MavenProject)} instead
+     */
+    @Deprecated
+    protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest request )
     {
-        Set<Artifact> dependencies = null;
-        try
-        {
-            DependencyNode node = graphBuilder.buildDependencyGraph( buildingRequest, null );
-            if ( searchTransitive )
-            {
-                dependencies = ArtifactUtils.getAllDescendants( node );
-            }
-            else if ( node.getChildren() != null )
-            {
-                dependencies = new HashSet<>();
-                for ( DependencyNode depNode : node.getChildren() )
-                {
-                    dependencies.add( depNode.getArtifact() );
-                }
-            }
-        }
-        catch ( DependencyGraphBuilderException e )
-        {
-            // otherwise we need to change the signature of this protected method
-            throw new RuntimeException( e );
-        }
-        return dependencies;
+        return null;
     }
 
     /**

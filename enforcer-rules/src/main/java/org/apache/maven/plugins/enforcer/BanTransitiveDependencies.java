@@ -28,14 +28,13 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher;
+import org.apache.maven.plugins.enforcer.utils.ResolverHelper;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
-import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyGraphBuilder;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.eclipse.aether.graph.DependencyNode;
 
 /**
  * This rule bans all transitive dependencies. There is a configuration option to exclude certain artifacts from being
@@ -161,13 +160,9 @@ public class BanTransitiveDependencies
         try
         {
             MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-            MavenSession session = (MavenSession) helper.evaluate( "${session}" );
-            
-            ProjectBuildingRequest buildingRequest =
-                new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
-            buildingRequest.setProject( project );
-            
-            rootNode = createDependencyGraphBuilder().buildDependencyGraph( buildingRequest, null );
+
+            ResolverHelper resolverHelper = new ResolverHelper( helper );
+            rootNode = resolverHelper.collectDependencies( project );
         }
         catch ( Exception e )
         {
@@ -193,20 +188,6 @@ public class BanTransitiveDependencies
             throw new EnforcerRuleException( "Error: Invalid version range.", e );
         }
 
-    }
-
-    private DependencyGraphBuilder createDependencyGraphBuilder()
-        throws ComponentLookupException
-    {
-        // CHECKSTYLE_OFF: LineLength
-        DefaultDependencyGraphBuilder builder =
-            (DefaultDependencyGraphBuilder) helper.getContainer().lookup( DependencyGraphBuilder.class.getCanonicalName(),
-                                                                          "default" );
-        // CHECKSTYLE_ON: LineLength
-
-        builder.enableLogging( new ConsoleLogger( ConsoleLogger.LEVEL_DISABLED, "DefaultDependencyGraphBuilder" ) );
-
-        return builder;
     }
 
 }

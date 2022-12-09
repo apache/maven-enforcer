@@ -1,5 +1,7 @@
 package org.apache.maven.plugins.enforcer.utils;
 
+import java.util.Collection;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -22,13 +24,18 @@ package org.apache.maven.plugins.enforcer.utils;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.handler.manager.ArtifactHandlerManager;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher.Pattern;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.eclipse.aether.artifact.ArtifactTypeRegistry;
+import org.eclipse.aether.graph.DependencyNode;
 
 /**
  * 
@@ -126,4 +133,9 @@ public final class ArtifactUtils
         return result;
     }
 
+    public static List<org.eclipse.aether.graph.Dependency> toDependencies( List<Dependency> dependencies,
+            ArtifactTypeRegistry types )
+    {
+        return dependencies.stream().map( d-> RepositoryUtils.toDependency( d, types )).collect( Collectors.toList() );
+    }
 }

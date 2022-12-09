@@ -33,9 +33,9 @@ public class BannedPlugins
     extends BannedDependencies
 {
     @Override
-    protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest buildingRequest )
+    protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest request )
     {
-        return buildingRequest.getProject().getPluginArtifacts();
+        return request.getProject().getPluginArtifacts();
     }
 
     @Override

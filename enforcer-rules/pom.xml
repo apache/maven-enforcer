@@ -113,22 +113,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-dependency-tree</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.eclipse.aether</groupId>
-          <artifactId>aether-util</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <!-- needed for ArtifactCollector and maven-dependency-tree 2.2 -->
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-compat</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <scope>test</scope>
