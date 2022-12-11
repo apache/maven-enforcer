@@ -19,4 +19,4 @@
 File buildLog = new File( basedir, 'build.log' )
 
 assert buildLog.text.contains( 'Rule 0: org.apache.maven.plugins.enforcer.RequireReleaseDeps failed with message:' )
-assert buildLog.text.contains( 'Found Banned Dependency: org.apache.maven.its.enforcer:module1:jar:1.0-SNAPSHOT' )
+assert buildLog.text =~ /org.apache.maven.its.enforcer:module1:jar:1.0-SNAPSHOT.*is not a release dependency/

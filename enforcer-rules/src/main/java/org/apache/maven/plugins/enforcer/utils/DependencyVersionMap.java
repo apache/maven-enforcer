@@ -23,38 +23,43 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
-import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.graph.DependencyVisitor;
 
 /**
  * @author Brian Fox
- *
  */
-public class DependencyVersionMap implements DependencyNodeVisitor {
+public class DependencyVersionMap implements DependencyVisitor, ParentNodeProvider {
+    private ParentsVisitor parentsVisitor;
     private boolean uniqueVersions;
-
-    private Map<String, List<DependencyNode>> idsToNode;
+    private final Map<String, List<DependencyNode>> idsToNode = new HashMap<>();
 
     public DependencyVersionMap(Log log) {
-        idsToNode = new HashMap<>();
+        this.parentsVisitor = new ParentsVisitor();
     }
 
-    public void setUniqueVersions(boolean uniqueVersions) {
+    public DependencyVersionMap setUniqueVersions(boolean uniqueVersions) {
         this.uniqueVersions = uniqueVersions;
+        return this;
     }
 
     @Override
-    public boolean visit(DependencyNode node) {
+    public boolean visitEnter(DependencyNode node) {
         addDependency(node);
-        return !containsConflicts(node);
+        return parentsVisitor.visitEnter(node) && !containsConflicts(node);
     }
 
     @Override
-    public boolean endVisit(DependencyNode node) {
-        return true;
+    public boolean visitLeave(DependencyNode node) {
+        return parentsVisitor.visitLeave(node);
+    }
+
+    @Override
+    public DependencyNode getParent(DependencyNode node) {
+        return parentsVisitor.getParent(node);
     }
 
     private String constructKey(DependencyNode node) {
@@ -67,12 +72,7 @@ public class DependencyVersionMap implements DependencyNodeVisitor {
 
     public void addDependency(DependencyNode node) {
         String key = constructKey(node);
-        List<DependencyNode> nodes = idsToNode.get(key);
-        if (nodes == null) {
-            nodes = new ArrayList<>();
-            idsToNode.put(key, nodes);
-        }
-        nodes.add(node);
+        idsToNode.computeIfAbsent(key, k -> new ArrayList<>()).add(node);
     }
 
     private String getVersion(Artifact artifact) {
@@ -111,7 +111,7 @@ public class DependencyVersionMap implements DependencyNodeVisitor {
             if (formattedIncludes != null || formattedExcludes != null) {
                 filteredNodes = new ArrayList<>();
                 for (DependencyNode node : nodes) {
-                    if (includeArtifact(node.getArtifact(), formattedIncludes, formattedExcludes)) {
+                    if (includeArtifact(node, formattedIncludes, formattedExcludes)) {
                         filteredNodes.add(node);
                     }
                 }
@@ -123,12 +123,12 @@ public class DependencyVersionMap implements DependencyNodeVisitor {
         return output;
     }
 
-    private static boolean includeArtifact(Artifact artifact, List<String> includes, List<String> excludes)
+    private static boolean includeArtifact(DependencyNode node, List<String> includes, List<String> excludes)
             throws EnforcerRuleException {
         boolean included = includes == null || includes.isEmpty();
         if (!included) {
             for (String pattern : includes) {
-                if (ArtifactUtils.compareDependency(pattern, artifact)) {
+                if (ArtifactUtils.compareDependency(pattern, ArtifactUtils.toArtifact(node))) {
                     included = true;
                     break;
                 }
@@ -140,7 +140,7 @@ public class DependencyVersionMap implements DependencyNodeVisitor {
         boolean excluded = false;
         if (excludes != null) {
             for (String pattern : excludes) {
-                if (ArtifactUtils.compareDependency(pattern, artifact)) {
+                if (ArtifactUtils.compareDependency(pattern, ArtifactUtils.toArtifact(node))) {
                     excluded = true;
                     break;
                 }

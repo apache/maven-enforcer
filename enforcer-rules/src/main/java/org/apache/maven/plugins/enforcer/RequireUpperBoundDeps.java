@@ -20,29 +20,23 @@ package org.apache.maven.plugins.enforcer;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilder;
-import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilderException;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
-import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
+import org.apache.maven.plugins.enforcer.utils.ArtifactUtils;
+import org.apache.maven.plugins.enforcer.utils.ParentNodeProvider;
+import org.apache.maven.plugins.enforcer.utils.ParentsVisitor;
 import org.apache.maven.shared.utils.logging.MessageUtils;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.graph.DependencyVisitor;
+import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
 
 /**
  * Rule to enforce that the resolved dependency is also the most recent one of all transitive dependencies.
@@ -72,6 +66,8 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
      */
     private List<String> includes = null;
 
+    private RequireUpperBoundDepsVisitor upperBoundDepsVisitor;
+
     /**
      * Set to {@code true} if timestamped snapshots should be used.
      *
@@ -99,55 +95,17 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
         this.includes = includes;
     }
 
-    // CHECKSTYLE_OFF: LineLength
-    /**
-     * Uses the {@link EnforcerRuleHelper} to populate the values of the
-     * {@link DependencyCollectorBuilder#collectDependencyGraph(ProjectBuildingRequest, ArtifactFilter)}
-     * factory method. <br/>
-     * This method simply exists to hide all the ugly lookup that the {@link EnforcerRuleHelper} has to do.
-     *
-     * @param helper
-     * @return a Dependency Node which is the root of the project's dependency tree
-     * @throws EnforcerRuleException when the build should fail
-     */
-    // CHECKSTYLE_ON: LineLength
-    private DependencyNode getNode(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        try {
-            MavenProject project = (MavenProject) helper.evaluate("${project}");
-            MavenSession session = (MavenSession) helper.evaluate("${session}");
-            DependencyCollectorBuilder dependencyCollectorBuilder =
-                    helper.getComponent(DependencyCollectorBuilder.class);
-            ArtifactRepository repository = (ArtifactRepository) helper.evaluate("${localRepository}");
-
-            ProjectBuildingRequest buildingRequest =
-                    new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
-            buildingRequest.setProject(project);
-            buildingRequest.setLocalRepository(repository);
-            ArtifactFilter filter = (Artifact a) ->
-                    ("compile".equalsIgnoreCase(a.getScope()) || "runtime".equalsIgnoreCase(a.getScope()))
-                            && !a.isOptional();
-
-            return dependencyCollectorBuilder.collectDependencyGraph(buildingRequest, filter);
-        } catch (ExpressionEvaluationException e) {
-            throw new EnforcerRuleException("Unable to lookup an expression " + e.getLocalizedMessage(), e);
-        } catch (ComponentLookupException e) {
-            throw new EnforcerRuleException("Unable to lookup a component " + e.getLocalizedMessage(), e);
-        } catch (DependencyCollectorBuilderException e) {
-            throw new EnforcerRuleException("Could not build dependency tree " + e.getLocalizedMessage(), e);
-        }
-    }
-
     @Override
     public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
         if (log == null) {
             log = helper.getLog();
         }
-        DependencyNode node = getNode(helper);
-        RequireUpperBoundDepsVisitor visitor = new RequireUpperBoundDepsVisitor();
-        visitor.setUniqueVersions(uniqueVersions);
-        visitor.setIncludes(includes);
-        node.accept(visitor);
-        List<String> errorMessages = buildErrorMessages(visitor.getConflicts());
+        DependencyNode node = ArtifactUtils.resolveTransitiveDependencies(helper);
+        upperBoundDepsVisitor = new RequireUpperBoundDepsVisitor()
+                .setUniqueVersions(uniqueVersions)
+                .setIncludes(includes);
+        node.accept(upperBoundDepsVisitor);
+        List<String> errorMessages = buildErrorMessages(upperBoundDepsVisitor.getConflicts());
         if (errorMessages.size() > 0) {
             throw new EnforcerRuleException(
                     "Failed while enforcing RequireUpperBoundDeps. The error(s) are " + errorMessages);
@@ -157,7 +115,7 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
     private List<String> buildErrorMessages(List<List<DependencyNode>> conflicts) {
         List<String> errorMessages = new ArrayList<>(conflicts.size());
         for (List<DependencyNode> conflict : conflicts) {
-            Artifact artifact = conflict.get(0).getArtifact();
+            org.eclipse.aether.artifact.Artifact artifact = conflict.get(0).getArtifact();
             String groupArt = artifact.getGroupId() + ":" + artifact.getArtifactId();
             if (excludes != null && excludes.contains(groupArt)) {
                 log.info("Ignoring requireUpperBoundDeps in " + groupArt);
@@ -170,13 +128,17 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
 
     private String buildErrorMessage(List<DependencyNode> conflict) {
         StringBuilder errorMessage = new StringBuilder();
-        errorMessage.append(System.lineSeparator() + "Require upper bound dependencies error for "
-                + getFullArtifactName(conflict.get(0), false) + " paths to dependency are:" + System.lineSeparator());
+        errorMessage
+                .append(System.lineSeparator())
+                .append("Require upper bound dependencies error for ")
+                .append(getFullArtifactName(conflict.get(0), false))
+                .append(" paths to dependency are:")
+                .append(System.lineSeparator());
         if (conflict.size() > 0) {
             errorMessage.append(buildTreeString(conflict.get(0)));
         }
         for (DependencyNode node : conflict.subList(1, conflict.size())) {
-            errorMessage.append("and" + System.lineSeparator());
+            errorMessage.append("and").append(System.lineSeparator());
             errorMessage.append(buildTreeString(node));
         }
         return errorMessage.toString();
@@ -188,13 +150,13 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
         while (currentNode != null) {
             StringBuilder line = new StringBuilder(getFullArtifactName(currentNode, false));
 
-            if (currentNode.getPremanagedVersion() != null) {
+            if (DependencyManagerUtils.getPremanagedVersion(currentNode) != null) {
                 line.append(" (managed) <-- ");
                 line.append(getFullArtifactName(currentNode, true));
             }
 
             loc.add(line.toString());
-            currentNode = currentNode.getParent();
+            currentNode = upperBoundDepsVisitor.getParent(currentNode);
         }
         Collections.reverse(loc);
         StringBuilder builder = new StringBuilder();
@@ -209,9 +171,9 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
     }
 
     private String getFullArtifactName(DependencyNode node, boolean usePremanaged) {
-        Artifact artifact = node.getArtifact();
+        Artifact artifact = ArtifactUtils.toArtifact(node);
 
-        String version = node.getPremanagedVersion();
+        String version = DependencyManagerUtils.getPremanagedVersion(node);
         if (!usePremanaged || version == null) {
             version = uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
         }
@@ -232,42 +194,42 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
         return result;
     }
 
-    private static class RequireUpperBoundDepsVisitor implements DependencyNodeVisitor {
+    private static class RequireUpperBoundDepsVisitor implements DependencyVisitor, ParentNodeProvider {
 
+        private final ParentsVisitor parentsVisitor = new ParentsVisitor();
         private boolean uniqueVersions;
-
         private List<String> includes = null;
 
-        public void setUniqueVersions(boolean uniqueVersions) {
+        public RequireUpperBoundDepsVisitor setUniqueVersions(boolean uniqueVersions) {
             this.uniqueVersions = uniqueVersions;
+            return this;
         }
 
-        public void setIncludes(List<String> includes) {
+        public RequireUpperBoundDepsVisitor setIncludes(List<String> includes) {
             this.includes = includes;
+            return this;
         }
 
-        private Map<String, List<DependencyNodeHopCountPair>> keyToPairsMap = new LinkedHashMap<>();
+        private final Map<String, List<DependencyNodeHopCountPair>> keyToPairsMap = new HashMap<>();
 
-        public boolean visit(DependencyNode node) {
-            DependencyNodeHopCountPair pair = new DependencyNodeHopCountPair(node);
+        @Override
+        public boolean visitEnter(DependencyNode node) {
+            parentsVisitor.visitEnter(node);
+            DependencyNodeHopCountPair pair = new DependencyNodeHopCountPair(node, this);
             String key = pair.constructKey();
 
             if (includes != null && !includes.isEmpty() && !includes.contains(key)) {
                 return true;
             }
 
-            List<DependencyNodeHopCountPair> pairs = keyToPairsMap.get(key);
-            if (pairs == null) {
-                pairs = new ArrayList<>();
-                keyToPairsMap.put(key, pairs);
-            }
-            pairs.add(pair);
-            Collections.sort(pairs);
+            keyToPairsMap.computeIfAbsent(key, k1 -> new ArrayList<>()).add(pair);
+            keyToPairsMap.get(key).sort(DependencyNodeHopCountPair::compareTo);
             return true;
         }
 
-        public boolean endVisit(DependencyNode node) {
-            return true;
+        @Override
+        public boolean visitLeave(DependencyNode node) {
+            return parentsVisitor.visitLeave(node);
         }
 
         public List<List<DependencyNode>> getConflicts() {
@@ -286,14 +248,6 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
 
         private boolean containsConflicts(List<DependencyNodeHopCountPair> pairs) {
             DependencyNodeHopCountPair resolvedPair = pairs.get(0);
-
-            // search for artifact with lowest hopCount
-            for (DependencyNodeHopCountPair hopPair : pairs.subList(1, pairs.size())) {
-                if (hopPair.getHopCount() < resolvedPair.getHopCount()) {
-                    resolvedPair = hopPair;
-                }
-            }
-
             ArtifactVersion resolvedVersion = resolvedPair.extractArtifactVersion(uniqueVersions, false);
 
             for (DependencyNodeHopCountPair pair : pairs) {
@@ -304,30 +258,35 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
             }
             return false;
         }
+
+        @Override
+        public DependencyNode getParent(DependencyNode node) {
+            return parentsVisitor.getParent(node);
+        }
     }
 
     private static class DependencyNodeHopCountPair implements Comparable<DependencyNodeHopCountPair> {
-
-        private DependencyNode node;
-
+        private final DependencyNode node;
         private int hopCount;
+        private final ParentNodeProvider parentNodeProvider;
 
-        private DependencyNodeHopCountPair(DependencyNode node) {
+        private DependencyNodeHopCountPair(DependencyNode node, ParentNodeProvider parentNodeProvider) {
+            this.parentNodeProvider = parentNodeProvider;
             this.node = node;
             countHops();
         }
 
         private void countHops() {
             hopCount = 0;
-            DependencyNode parent = node.getParent();
+            DependencyNode parent = parentNodeProvider.getParent(node);
             while (parent != null) {
                 hopCount++;
-                parent = parent.getParent();
+                parent = parentNodeProvider.getParent(parent);
             }
         }
 
         private String constructKey() {
-            Artifact artifact = node.getArtifact();
+            Artifact artifact = ArtifactUtils.toArtifact(node);
             return artifact.getGroupId() + ":" + artifact.getArtifactId();
         }
 
@@ -336,11 +295,11 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
         }
 
         private ArtifactVersion extractArtifactVersion(boolean uniqueVersions, boolean usePremanagedVersion) {
-            if (usePremanagedVersion && node.getPremanagedVersion() != null) {
-                return new DefaultArtifactVersion(node.getPremanagedVersion());
+            if (usePremanagedVersion && DependencyManagerUtils.getPremanagedVersion(node) != null) {
+                return new DefaultArtifactVersion(DependencyManagerUtils.getPremanagedVersion(node));
             }
 
-            Artifact artifact = node.getArtifact();
+            Artifact artifact = ArtifactUtils.toArtifact(node);
             String version = uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
             if (version != null) {
                 return new DefaultArtifactVersion(version);
@@ -357,7 +316,7 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
         }
 
         public int compareTo(DependencyNodeHopCountPair other) {
-            return Integer.valueOf(hopCount).compareTo(Integer.valueOf(other.getHopCount()));
+            return Integer.compare(hopCount, other.getHopCount());
         }
     }
 }

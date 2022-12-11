@@ -22,13 +22,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.plugins.enforcer.utils.EnforcerRuleUtilsHelper;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -37,6 +36,12 @@ import org.junit.jupiter.api.Test;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 class TestRequireReleaseDeps {
+    private MavenProject project;
+
+    @BeforeEach
+    public void setUp() {
+        project = new MockProject();
+    }
 
     /**
      * Test rule.
@@ -46,7 +51,6 @@ class TestRequireReleaseDeps {
     @Test
     void testRule() throws Exception {
         ArtifactStubFactory factory = new ArtifactStubFactory();
-        MockProject project = new MockProject();
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(project);
         project.setArtifacts(factory.getMixedArtifacts());
         project.setDependencyArtifacts(factory.getScopedArtifacts());
@@ -95,7 +99,6 @@ class TestRequireReleaseDeps {
         rule.setSearchTransitive(false);
 
         ArtifactStubFactory factory = new ArtifactStubFactory();
-        MockProject project = new MockProject();
         project.setArtifact(factory.getReleaseArtifact());
         project.setDependencyArtifacts(Collections.singleton(factory.createArtifact("g", "a", "1.0-SNAPSHOT", "test")));
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(project);
@@ -114,9 +117,7 @@ class TestRequireReleaseDeps {
 
     @Test
     void parentShouldBeExcluded() throws IOException {
-
         ArtifactStubFactory factory = new ArtifactStubFactory();
-        MockProject project = new MockProject();
         project.setArtifact(factory.getSnapshotArtifact());
 
         MavenProject parent = new MockProject();
@@ -134,12 +135,9 @@ class TestRequireReleaseDeps {
     private RequireReleaseDeps newRequireReleaseDeps() {
         return new RequireReleaseDeps() {
             @Override
-            protected Set<Artifact> getDependenciesToCheck(ProjectBuildingRequest buildingRequest) {
-                MavenProject project = buildingRequest.getProject();
-
-                // the integration with dependencyGraphTree is verified with the integration tests
-                // for unit-testing
-                return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
+            protected boolean validate(Artifact artifactl) {
+                return (isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts())
+                        .stream().map(super::validate).reduce(true, Boolean::logicalAnd);
             }
         };
     }

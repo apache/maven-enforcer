@@ -19,16 +19,10 @@
 package org.apache.maven.plugins.enforcer.utils;
 
 import java.util.List;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 /**
  * The Class EnforcerRuleUtils.
@@ -36,48 +30,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class EnforcerRuleUtils {
-
-    /** The resolver. */
-    ArtifactResolver resolver;
-
-    /** The local. */
-    ArtifactRepository local;
-
-    /** The remote repositories. */
-    List<ArtifactRepository> remoteRepositories;
-
-    /** The log. */
-    Log log;
-
-    /** The project. */
-    MavenProject project;
-
     private EnforcerRuleHelper helper;
-
-    /**
-     * Instantiates a new enforcer rule utils.
-     *
-     * @param theFactory unused
-     * @param theResolver the the resolver
-     * @param theLocal the the local
-     * @param theRemoteRepositories the the remote repositories
-     * @param project the project
-     * @param theLog the the log
-     */
-    public EnforcerRuleUtils(
-            ArtifactFactory theFactory,
-            ArtifactResolver theResolver,
-            ArtifactRepository theLocal,
-            List<ArtifactRepository> theRemoteRepositories,
-            MavenProject project,
-            Log theLog) {
-        super();
-        this.resolver = theResolver;
-        this.local = theLocal;
-        this.remoteRepositories = theRemoteRepositories;
-        this.log = theLog;
-        this.project = project;
-    }
 
     /**
      * Instantiates a new enforcer rule utils.
@@ -85,19 +38,7 @@ public class EnforcerRuleUtils {
      * @param helper the helper
      */
     public EnforcerRuleUtils(EnforcerRuleHelper helper) {
-
         this.helper = helper;
-        // get the various expressions out of the
-        // helper.
-        try {
-            resolver = helper.getComponent(ArtifactResolver.class);
-            local = (ArtifactRepository) helper.evaluate("${localRepository}");
-            project = (MavenProject) helper.evaluate("${project}");
-            remoteRepositories = project.getRemoteArtifactRepositories();
-        } catch (ComponentLookupException | ExpressionEvaluationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
     }
 
     private void resolve(Plugin plugin) {

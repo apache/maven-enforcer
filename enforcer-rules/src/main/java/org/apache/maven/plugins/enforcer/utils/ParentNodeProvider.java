@@ -16,6 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-def buildLog = new File( basedir, 'build.log' ).text
-assert buildLog.contains( '[ERROR] Rule 0: org.apache.maven.plugins.enforcer.BannedPlugins failed with message:' )
-assert buildLog =~ /org.codehaus.mojo:build-helper-maven-plugin:maven-plugin:.* <--- banned plugin/
+package org.apache.maven.plugins.enforcer.utils;
+
+import org.eclipse.aether.graph.DependencyNode;
+
+/**
+ * Provides the information about {@link org.eclipse.aether.graph.DependencyNode} parent nodes
+ */
+public interface ParentNodeProvider {
+
+    /**
+     * Returns the parent node of the given node
+     * @param node node to get the information for
+     * @return parent node or {@code null} is no information is known
+     */
+    DependencyNode getParent(DependencyNode node);
+}

@@ -18,15 +18,19 @@
  */
 package org.apache.maven.plugins.enforcer.utils;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.function.Function;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugins.enforcer.AbstractVersionEnforcer;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This class is used for matching Artifacts against a list of patterns.
@@ -64,26 +68,34 @@ public final class ArtifactMatcher {
             }
         }
 
-        public boolean match(Artifact artifact) throws InvalidVersionSpecificationException {
+        public boolean match(Artifact artifact) {
             Objects.requireNonNull(artifact, "artifact must not be null");
-            return match(
-                    artifact.getGroupId(),
-                    artifact.getArtifactId(),
-                    artifact.getVersion(),
-                    artifact.getType(),
-                    artifact.getScope(),
-                    artifact.getClassifier());
+            try {
+                return match(
+                        artifact.getGroupId(),
+                        artifact.getArtifactId(),
+                        artifact.getVersion(),
+                        artifact.getType(),
+                        artifact.getScope(),
+                        artifact.getClassifier());
+            } catch (InvalidVersionSpecificationException e) {
+                throw new IllegalArgumentException(e);
+            }
         }
 
-        public boolean match(Dependency dependency) throws InvalidVersionSpecificationException {
+        public boolean match(Dependency dependency) {
             Objects.requireNonNull(dependency, "dependency must not be null");
-            return match(
-                    dependency.getGroupId(),
-                    dependency.getArtifactId(),
-                    dependency.getVersion(),
-                    dependency.getType(),
-                    dependency.getScope(),
-                    dependency.getClassifier());
+            try {
+                return match(
+                        dependency.getGroupId(),
+                        dependency.getArtifactId(),
+                        dependency.getVersion(),
+                        dependency.getType(),
+                        dependency.getScope(),
+                        dependency.getClassifier());
+            } catch (InvalidVersionSpecificationException e) {
+                throw new IllegalArgumentException(e);
+            }
         }
 
         private boolean match(
@@ -113,11 +125,8 @@ public final class ArtifactMatcher {
 
                 case 3:
                     if (!matches(parts[2], version)) {
-                        // CHECKSTYLE_OFF: LineLength
                         if (!AbstractVersionEnforcer.containsVersion(
-                                VersionRange.createFromVersionSpec(parts[2]), new DefaultArtifactVersion(version)))
-                        // CHECKSTYLE_ON: LineLength
-                        {
+                                VersionRange.createFromVersionSpec(parts[2]), new DefaultArtifactVersion(version))) {
                             return false;
                         }
                     }
@@ -158,74 +167,54 @@ public final class ArtifactMatcher {
         }
     }
 
-    private Collection<Pattern> patterns = new LinkedList<>();
+    private final Collection<Pattern> excludePatterns = new HashSet<>();
 
-    private Collection<Pattern> ignorePatterns = new LinkedList<>();
+    private final Collection<Pattern> includePatterns = new HashSet<>();
 
     /**
      * Construct class by providing patterns as strings. Empty strings are ignored.
      *
-     * @param patterns includes
-     * @param ignorePatterns excludes
+     * @param excludeStrings includes
+     * @param includeStrings excludes
      * @throws NullPointerException if any of the arguments is null
      */
-    public ArtifactMatcher(final Collection<String> patterns, final Collection<String> ignorePatterns) {
-        Objects.requireNonNull(patterns, "patterns must not be null");
-        Objects.requireNonNull(ignorePatterns, "ignorePatterns must not be null");
-        for (String pattern : patterns) {
-            if (pattern != null && !"".equals(pattern)) {
-                this.patterns.add(new Pattern(pattern));
-            }
-        }
+    public ArtifactMatcher(final Collection<String> excludeStrings, final Collection<String> includeStrings) {
+        ofNullable(excludeStrings).ifPresent(excludes -> excludes.stream()
+                .filter(StringUtils::isNotEmpty)
+                .map(Pattern::new)
+                .forEach(excludePatterns::add));
+        ofNullable(includeStrings).ifPresent(includes -> includes.stream()
+                .filter(StringUtils::isNotEmpty)
+                .map(Pattern::new)
+                .forEach(includePatterns::add));
+    }
 
-        for (String ignorePattern : ignorePatterns) {
-            if (ignorePattern != null && !"".equals(ignorePattern)) {
-                this.ignorePatterns.add(new Pattern(ignorePattern));
-            }
-        }
+    private boolean match(Function<Pattern, Boolean> matcher) throws InvalidVersionSpecificationException {
+        return excludePatterns.stream().anyMatch(matcher::apply)
+                && includePatterns.stream().noneMatch(matcher::apply);
     }
 
     /**
      * Check if artifact matches patterns.
      *
      * @param artifact the artifact to match
-     * @return {@code true} if artifact matches any {@link #patterns} and none of the {@link #ignorePatterns}, otherwise
+     * @return {@code true} if artifact matches any {@link #excludePatterns} and none of the {@link #includePatterns}, otherwise
      *         {@code false}
      * @throws InvalidVersionSpecificationException if any pattern contains an invalid version range
      */
     public boolean match(Artifact artifact) throws InvalidVersionSpecificationException {
-        for (Pattern pattern : patterns) {
-            if (pattern.match(artifact)) {
-                for (Pattern ignorePattern : ignorePatterns) {
-                    if (ignorePattern.match(artifact)) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }
-        return false;
+        return match(p -> p.match(artifact));
     }
 
     /**
      * Check if dependency matches patterns.
      *
      * @param dependency the dependency to match
-     * @return {@code true} if dependency matches any {@link #patterns} and none of the {@link #ignorePatterns},
+     * @return {@code true} if dependency matches any {@link #excludePatterns} and none of the {@link #includePatterns},
      *         otherwise {@code false}
      * @throws InvalidVersionSpecificationException if any pattern contains an invalid version range
      */
     public boolean match(Dependency dependency) throws InvalidVersionSpecificationException {
-        for (Pattern pattern : patterns) {
-            if (pattern.match(dependency)) {
-                for (Pattern ignorePattern : ignorePatterns) {
-                    if (ignorePattern.match(dependency)) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }
-        return false;
+        return match(p -> p.match(dependency));
     }
 }

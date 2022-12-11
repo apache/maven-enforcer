@@ -18,15 +18,14 @@
  */
 package org.apache.maven.plugins.enforcer;
 
+import static java.util.Arrays.asList;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Properties;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.RepositoryUtils;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
@@ -41,13 +40,18 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilder;
-import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyNode;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.mockito.Mockito;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.artifact.ArtifactType;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.collection.CollectResult;
+import org.eclipse.aether.collection.DependencyCollectionException;
+import org.eclipse.aether.graph.DefaultDependencyNode;
+import org.eclipse.aether.graph.DependencyNode;
 
 /**
  * The Class EnforcerTestUtils.
@@ -73,8 +77,9 @@ public final class EnforcerTestUtils {
         when(mer.getUserProperties()).thenReturn(new Properties());
         when(mer.getSystemProperties()).thenReturn(systemProperties);
 
-        MavenExecutionResult meresult = mock(MavenExecutionResult.class);
-        return new MavenSession(mock, null, mer, meresult);
+        MavenExecutionResult meResult = mock(MavenExecutionResult.class);
+
+        return new MavenSession(mock, new DefaultRepositorySystemSession(), mer, meResult);
     }
 
     /**
@@ -106,6 +111,22 @@ public final class EnforcerTestUtils {
         return getHelper(project, false);
     }
 
+    private static RepositorySystem mockRepositorySystem() throws DependencyCollectionException {
+        ArtifactType jarType = RepositoryUtils.newArtifactType("jar", new DefaultArtifactHandler("jar"));
+        final DependencyNode node = new DefaultDependencyNode(
+                new DefaultArtifact("groupId", "artifactId", "classifier", "jar", "version", jarType));
+        node.setChildren(asList(
+                new DefaultDependencyNode(
+                        new DefaultArtifact("groupId", "artifact", "classifier", "jar", "1.0.0", jarType)),
+                new DefaultDependencyNode(
+                        new DefaultArtifact("groupId", "artifact", "classifier", "jar", "2.0.0", jarType))));
+
+        RepositorySystem mockRepositorySystem = mock(RepositorySystem.class);
+        when(mockRepositorySystem.collectDependencies(any(), any(CollectRequest.class)))
+                .then(i -> new CollectResult(i.getArgument(1)).setRoot(node));
+        return mockRepositorySystem;
+    }
+
     /**
      * Gets the helper.
      *
@@ -114,43 +135,29 @@ public final class EnforcerTestUtils {
      * @return the helper
      */
     public static EnforcerRuleHelper getHelper(MavenProject project, boolean mockExpression) {
-        MavenSession session = getMavenSession();
-        MojoExecution mockExecution = mock(MojoExecution.class);
-        ExpressionEvaluator eval;
-        if (mockExpression) {
-            eval = new MockEnforcerExpressionEvaluator(session);
-        } else {
-            session.setCurrentProject(project);
-            eval = new PluginParameterExpressionEvaluator(session, mockExecution);
-        }
-        PlexusContainer container = Mockito.mock(PlexusContainer.class);
-
-        Artifact artifact =
-                new DefaultArtifact("groupId", "artifactId", "version", "compile", "jar", "classifier", null);
-        Artifact v1 = new DefaultArtifact("groupId", "artifact", "1.0.0", "compile", "jar", "", null);
-        Artifact v2 = new DefaultArtifact("groupId", "artifact", "2.0.0", "compile", "jar", "", null);
-        final DefaultDependencyNode node = new DefaultDependencyNode(artifact);
-        DefaultDependencyNode child1 = new DefaultDependencyNode(node, v1, null, null, null);
-        child1.setChildren(Collections.emptyList());
-        DefaultDependencyNode child2 = new DefaultDependencyNode(node, v2, null, null, null);
-        child2.setChildren(Collections.emptyList());
-        node.setChildren(Arrays.asList(child1, child2));
-
         try {
-            when(container.lookup(DependencyCollectorBuilder.class)).thenReturn((buildingRequest, filter) -> node);
-        } catch (ComponentLookupException e) {
-            // test will fail
-        }
-        ClassWorld classWorld = new ClassWorld("test", EnforcerTestUtils.class.getClassLoader());
-        MojoDescriptor mojoDescriptor = new MojoDescriptor();
-        mojoDescriptor.setRealm(classWorld.getClassRealm("test"));
-        when(mockExecution.getMojoDescriptor()).thenReturn(mojoDescriptor);
-        try {
+            MavenSession session = getMavenSession();
+            MojoExecution mockExecution = mock(MojoExecution.class);
+            ExpressionEvaluator eval;
+            if (mockExpression) {
+                eval = new MockEnforcerExpressionEvaluator(session);
+            } else {
+                session.setCurrentProject(project);
+                eval = new PluginParameterExpressionEvaluator(session, mockExecution);
+            }
+
+            PlexusContainer container = mock(PlexusContainer.class);
+            when(container.lookup(RepositorySystem.class)).then(i -> mockRepositorySystem());
+
+            ClassWorld classWorld = new ClassWorld("test", EnforcerTestUtils.class.getClassLoader());
+            MojoDescriptor mojoDescriptor = new MojoDescriptor();
+            mojoDescriptor.setRealm(classWorld.getClassRealm("test"));
+            when(mockExecution.getMojoDescriptor()).thenReturn(mojoDescriptor);
             when(container.lookup(MojoExecution.class)).thenReturn(mockExecution);
-        } catch (ComponentLookupException e) {
-            // test will fail
+            return new DefaultEnforcementRuleHelper(session, eval, new SystemStreamLog(), container);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return new DefaultEnforcementRuleHelper(session, eval, new SystemStreamLog(), container);
     }
 
     /**

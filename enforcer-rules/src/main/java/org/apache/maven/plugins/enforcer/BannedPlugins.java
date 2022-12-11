@@ -18,23 +18,52 @@
  */
 package org.apache.maven.plugins.enforcer;
 
-import java.util.Set;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugins.enforcer.utils.ArtifactUtils;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
  * This rule checks that lists of plugins are not included.
  *
  * @author <a href="mailto:velo.br@gmail.com">Marvin Froeder</a>
  */
-public class BannedPlugins extends BannedDependencies {
+public class BannedPlugins extends BannedDependenciesBase {
+
     @Override
-    protected Set<Artifact> getDependenciesToCheck(ProjectBuildingRequest buildingRequest) {
-        return buildingRequest.getProject().getPluginArtifacts();
+    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
+        MavenSession session;
+        try {
+            session = (MavenSession) helper.evaluate("${session}");
+        } catch (ExpressionEvaluationException e) {
+            throw new EnforcerRuleException("Cannot resolve MavenSession", e);
+        }
+
+        String result = session.getCurrentProject().getPluginArtifacts().stream()
+                .filter(a -> !validate(a))
+                .collect(
+                        StringBuilder::new,
+                        (messageBuilder, node) -> messageBuilder
+                                .append(node.getId())
+                                .append(" <--- ")
+                                .append(getErrorMessage()),
+                        (m1, m2) -> m1.append(m2.toString()))
+                .toString();
+        if (!result.isEmpty()) {
+            throw new EnforcerRuleException(result);
+        }
     }
 
     @Override
-    protected CharSequence getErrorMessage(Artifact artifact) {
-        return "Found Banned Plugin: " + artifact.getId() + System.lineSeparator();
+    protected String getErrorMessage() {
+        return "banned plugin";
+    }
+
+    @Override
+    protected boolean validate(Artifact artifact) {
+        return !ArtifactUtils.matchDependencyArtifact(artifact, excludes)
+                || ArtifactUtils.matchDependencyArtifact(artifact, includes);
     }
 }
