@@ -18,15 +18,13 @@
  */
 package org.apache.maven.plugins.enforcer;
 
-import java.util.Collections;
+import static java.util.Optional.ofNullable;
+
 import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.enforcer.utils.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
@@ -36,7 +34,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class RequireReleaseDeps extends AbstractBanDependencies {
+public class RequireReleaseDeps extends BannedDependenciesBase {
 
     /**
      * Allows this rule to execute only when this project is a release.
@@ -54,24 +52,6 @@ public class RequireReleaseDeps extends AbstractBanDependencies {
      * @see {@link #isFailWhenParentIsSnapshot()}
      */
     private boolean failWhenParentIsSnapshot = true;
-
-    /**
-     * Dependencies to ignore when checking for release versions.  For example, inter-module dependencies
-     * can be excluded from the check and therefore allowed to contain snapshot versions.
-     *
-     * @see {@link #setExcludes(List)}
-     * @see {@link #getExcludes()}
-     */
-    private List<String> excludes = null;
-
-    /**
-     * Dependencies to include when checking for release versions.  If any of the included dependencies
-     * have snapshot versions, the rule will fail.
-     *
-     * @see {@link #setIncludes(List)}
-     * @see {@link #getIncludes()}
-     */
-    private List<String> includes = null;
 
     // Override parent to allow optional ignore of this rule.
     @Override
@@ -98,8 +78,10 @@ public class RequireReleaseDeps extends AbstractBanDependencies {
                 Artifact parentArtifact = project.getParentArtifact();
 
                 if (parentArtifact != null) {
-                    Set<Artifact> artifacts = filterArtifacts(Collections.singleton(parentArtifact));
-                    parentArtifact = Optional.ofNullable(artifacts)
+                    Set<Artifact> singletonArtifact = new HashSet<>();
+                    singletonArtifact.add(parentArtifact);
+                    Set<Artifact> artifacts = filterArtifacts(singletonArtifact);
+                    parentArtifact = ofNullable(artifacts)
                             .flatMap(s -> s.stream().findFirst())
                             .orElse(null);
                 }
@@ -109,6 +91,11 @@ public class RequireReleaseDeps extends AbstractBanDependencies {
                 }
             }
         }
+    }
+
+    @Override
+    protected String getErrorMessage() {
+        return "is not a release dependency";
     }
 
     /**
@@ -125,19 +112,10 @@ public class RequireReleaseDeps extends AbstractBanDependencies {
     }
 
     @Override
-    protected Set<Artifact> checkDependencies(Set<Artifact> dependencies, Log log) throws EnforcerRuleException {
-        Set<Artifact> foundSnapshots = new HashSet<>();
-
-        Set<Artifact> filteredDependencies = filterArtifacts(dependencies);
-
-        if (filteredDependencies != null) {
-            for (Artifact artifact : filteredDependencies) {
-                if (artifact.isSnapshot()) {
-                    foundSnapshots.add(artifact);
-                }
-            }
-        }
-        return foundSnapshots;
+    protected boolean validate(Artifact artifact) {
+        return ArtifactUtils.matchDependencyArtifact(artifact, excludes)
+                        && !ArtifactUtils.matchDependencyArtifact(artifact, includes)
+                || !artifact.isSnapshot();
     }
 
     /*
@@ -148,27 +126,16 @@ public class RequireReleaseDeps extends AbstractBanDependencies {
      * @return the resulting set of dependencies
      */
     protected Set<Artifact> filterArtifacts(Set<Artifact> dependencies) throws EnforcerRuleException {
-        if (includes == null && excludes == null) {
-            return dependencies;
-        }
-
-        Set<Artifact> included;
         if (includes != null) {
-            included = ArtifactUtils.checkDependencies(dependencies, includes);
-        } else {
-            included = new HashSet<>(dependencies);
+            dependencies = ArtifactUtils.filterDependencyArtifacts(dependencies, includes);
         }
 
-        // anything specifically included should be removed
-        // from the ban list.
-        if (included != null) {
-            Set<Artifact> excluded = ArtifactUtils.checkDependencies(dependencies, excludes);
-
-            if (excluded != null) {
-                included.removeAll(excluded);
-            }
+        if (dependencies != null && excludes != null) {
+            ofNullable(ArtifactUtils.filterDependencyArtifacts(dependencies, excludes))
+                    .ifPresent(dependencies::removeAll);
         }
-        return included;
+
+        return dependencies;
     }
 
     public final boolean isOnlyWhenRelease() {
@@ -185,21 +152,5 @@ public class RequireReleaseDeps extends AbstractBanDependencies {
 
     public final void setFailWhenParentIsSnapshot(boolean failWhenParentIsSnapshot) {
         this.failWhenParentIsSnapshot = failWhenParentIsSnapshot;
-    }
-
-    public final void setExcludes(List<String> excludes) {
-        this.excludes = excludes;
-    }
-
-    public final List<String> getExcludes() {
-        return excludes;
-    }
-
-    public void setIncludes(List<String> includes) {
-        this.includes = includes;
-    }
-
-    public List<String> getIncludes() {
-        return includes;
     }
 }

@@ -18,22 +18,24 @@
  */
 package org.apache.maven.plugins.enforcer;
 
-import java.util.Collections;
+import static java.util.Optional.ofNullable;
+
+import com.google.common.base.Strings;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugins.enforcer.utils.ArtifactMatcher;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
-import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyGraphBuilder;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.logging.console.ConsoleLogger;
+import org.apache.maven.plugins.enforcer.utils.ArtifactUtils;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.eclipse.aether.artifact.ArtifactTypeRegistry;
+import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.graph.DependencyNode;
 
 /**
  * This rule bans all transitive dependencies. There is a configuration option to exclude certain artifacts from being
@@ -42,8 +44,6 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
  * @author Jakub Senko
  */
 public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule implements EnforcerRule {
-
-    private EnforcerRuleHelper helper;
 
     /**
      * Specify the dependencies that will be ignored. This can be a list of artifacts in the format
@@ -69,7 +69,12 @@ public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule 
      *
      * @throws InvalidVersionSpecificationException
      */
-    private static boolean searchTree(DependencyNode node, int level, ArtifactMatcher excludes, StringBuilder message)
+    private static boolean searchTree(
+            DependencyNode node,
+            int level,
+            ArtifactMatcher excludes,
+            Set<Dependency> directDependencies,
+            StringBuilder message)
             throws InvalidVersionSpecificationException {
 
         List<DependencyNode> children = node.getChildren();
@@ -87,34 +92,32 @@ public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule 
          */
         StringBuilder messageFromChildren = message == null ? null : new StringBuilder();
 
-        if (excludes.match(node.getArtifact())) {
+        if (excludes.match(ArtifactUtils.toArtifact(node))) {
             // is excluded, we don't care about descendants
             excluded = true;
+            hasTransitiveDependencies = false;
+        } else if (directDependencies.contains(node.getDependency())) {
             hasTransitiveDependencies = false;
         } else {
             for (DependencyNode childNode : children) {
                 /*
                  * if any of the children has transitive d. so does the parent
                  */
-                hasTransitiveDependencies =
-                        (searchTree(childNode, level + 1, excludes, messageFromChildren) || hasTransitiveDependencies);
+                hasTransitiveDependencies = hasTransitiveDependencies
+                        || searchTree(childNode, level + 1, excludes, directDependencies, messageFromChildren);
             }
         }
 
         if ((excluded || hasTransitiveDependencies) && message != null) // then generate message
         {
-            for (int i = 0; i < level; i++) {
-                message.append("   ");
-            }
-
-            message.append(node.getArtifact());
+            message.append(Strings.repeat("   ", level)).append(node.getArtifact());
 
             if (excluded) {
-                message.append(" [excluded]" + System.lineSeparator());
+                message.append(" [excluded]").append(System.lineSeparator());
             }
 
             if (hasTransitiveDependencies) {
-                if (level == 1) {
+                if (level > 0) {
                     message.append(" has transitive dependencies:");
                 }
 
@@ -127,55 +130,27 @@ public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule 
 
     @Override
     public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        this.helper = helper;
-
-        if (excludes == null) {
-            excludes = Collections.emptyList();
-        }
-        if (includes == null) {
-            includes = Collections.emptyList();
-        }
-
-        final ArtifactMatcher exclusions = new ArtifactMatcher(excludes, includes);
-
-        DependencyNode rootNode = null;
-
+        MavenSession session;
         try {
-            MavenProject project = (MavenProject) helper.evaluate("${project}");
-            MavenSession session = (MavenSession) helper.evaluate("${session}");
-
-            ProjectBuildingRequest buildingRequest =
-                    new DefaultProjectBuildingRequest(session.getProjectBuildingRequest());
-            buildingRequest.setProject(project);
-
-            rootNode = createDependencyGraphBuilder().buildDependencyGraph(buildingRequest, null);
-        } catch (Exception e) {
-            throw new EnforcerRuleException("Error: Could not construct dependency tree.", e);
+            session = (MavenSession) helper.evaluate("${session}");
+        } catch (ExpressionEvaluationException e) {
+            throw new RuntimeException(e);
         }
+        ArtifactTypeRegistry artifactTypeRegistry =
+                session.getRepositorySession().getArtifactTypeRegistry();
+        ArtifactMatcher exclusions = new ArtifactMatcher(excludes, includes);
+        Set<Dependency> directDependencies = session.getCurrentProject().getDependencies().stream()
+                .map(d -> RepositoryUtils.toDependency(d, artifactTypeRegistry))
+                .collect(Collectors.toSet());
 
-        String message = getMessage();
-        StringBuilder generatedMessage = null;
-        if (message == null) {
-            generatedMessage = new StringBuilder();
-        }
-
+        DependencyNode rootNode = ArtifactUtils.resolveTransitiveDependencies(helper);
+        StringBuilder generatedMessage = new StringBuilder();
         try {
-            if (searchTree(rootNode, 0, exclusions, generatedMessage)) {
-                throw new EnforcerRuleException(message == null ? generatedMessage.toString() : message);
+            if (searchTree(rootNode, 0, exclusions, directDependencies, generatedMessage)) {
+                throw new EnforcerRuleException(ofNullable(getMessage()).orElse(generatedMessage.toString()));
             }
         } catch (InvalidVersionSpecificationException e) {
             throw new EnforcerRuleException("Error: Invalid version range.", e);
         }
-    }
-
-    private DependencyGraphBuilder createDependencyGraphBuilder() throws ComponentLookupException {
-        // CHECKSTYLE_OFF: LineLength
-        DefaultDependencyGraphBuilder builder = (DefaultDependencyGraphBuilder)
-                helper.getContainer().lookup(DependencyGraphBuilder.class.getCanonicalName(), "default");
-        // CHECKSTYLE_ON: LineLength
-
-        builder.enableLogging(new ConsoleLogger(ConsoleLogger.LEVEL_DISABLED, "DefaultDependencyGraphBuilder"));
-
-        return builder;
     }
 }

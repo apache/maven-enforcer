@@ -21,22 +21,22 @@ package org.apache.maven.plugins.enforcer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
 
 public class BannedDependenciesTestSetup {
+    private final MavenProject project;
+
     public BannedDependenciesTestSetup() throws IOException {
         this.excludes = new ArrayList<>();
         this.includes = new ArrayList<>();
 
         ArtifactStubFactory factory = new ArtifactStubFactory();
 
-        MockProject project = new MockProject();
+        project = new MockProject();
         project.setArtifacts(factory.getMixedArtifacts());
         project.setDependencyArtifacts(factory.getScopedArtifacts());
 
@@ -83,12 +83,9 @@ public class BannedDependenciesTestSetup {
     private BannedDependencies newBannedDependenciesRule() {
         return new BannedDependencies() {
             @Override
-            protected Set<Artifact> getDependenciesToCheck(ProjectBuildingRequest buildingRequest) {
-                MavenProject project = buildingRequest.getProject();
-
-                // the integration with dependencyGraphTree is verified with the integration tests
-                // for unit-testing
-                return isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts();
+            protected boolean validate(Artifact artifact) {
+                return (isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts())
+                        .stream().map(super::validate).reduce(true, Boolean::logicalAnd);
             }
         };
     }

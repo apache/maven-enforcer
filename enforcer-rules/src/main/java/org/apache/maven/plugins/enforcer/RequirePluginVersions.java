@@ -28,12 +28,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.maven.BuildFailureException;
+import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -66,6 +65,9 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
 
 /**
  * This rule will enforce that all plugins specified in the poms have a version declared.
@@ -163,8 +165,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
     /** The factory. */
     private ArtifactFactory factory;
 
-    /** The resolver. */
-    private ArtifactResolver resolver;
+    private RepositorySystem repositorySystem;
 
     /** The local. */
     private ArtifactRepository local;
@@ -199,7 +200,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
             session = (MavenSession) helper.evaluate("${session}");
             pluginManager = helper.getComponent(PluginManager.class);
             factory = helper.getComponent(ArtifactFactory.class);
-            resolver = helper.getComponent(ArtifactResolver.class);
+            repositorySystem = helper.getComponent(RepositorySystem.class);
             local = (ArtifactRepository) helper.evaluate("${localRepository}");
 
             utils = new EnforcerRuleUtils(helper);
@@ -441,7 +442,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
      * @param project project to search
      * @return matching plugin, <code>null</code> if not found.
      */
-    protected Plugin findCurrentPlugin(Plugin plugin, MavenProject project) {
+    protected Plugin findCurrentPlugin(Plugin plugin, MavenProject project) throws EnforcerRuleException {
         Plugin found = null;
         try {
             Model model = project.getModel();
@@ -452,33 +453,25 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
         }
 
         if (found == null) {
-            found = resolvePlugin(plugin, project);
+            Artifact artifact = factory.createPluginArtifact(
+                    plugin.getGroupId(), plugin.getArtifactId(), VersionRange.createFromVersion("LATEST"));
+
+            try {
+                repositorySystem.resolveArtifact(
+                        session.getRepositorySession(),
+                        new ArtifactRequest(
+                                RepositoryUtils.toArtifact(artifact),
+                                session.getCurrentProject().getRemotePluginRepositories(),
+                                "resolvePlugin"));
+            } catch (ArtifactResolutionException e) {
+                throw new EnforcerRuleException("Unable to resolve the plugin " + artifact.getArtifactId(), e);
+            }
+            plugin.setVersion(artifact.getVersion());
+
+            found = plugin;
         }
 
         return found;
-    }
-
-    /**
-     * Resolve plugin.
-     *
-     * @param plugin the plugin
-     * @param project the project
-     * @return the plugin
-     */
-    protected Plugin resolvePlugin(Plugin plugin, MavenProject project) {
-
-        List<ArtifactRepository> pluginRepositories = project.getPluginArtifactRepositories();
-        Artifact artifact = factory.createPluginArtifact(
-                plugin.getGroupId(), plugin.getArtifactId(), VersionRange.createFromVersion("LATEST"));
-
-        try {
-            this.resolver.resolve(artifact, pluginRepositories, this.local);
-            plugin.setVersion(artifact.getVersion());
-        } catch (ArtifactResolutionException | ArtifactNotFoundException e) {
-            // What does this mean?
-        }
-
-        return plugin;
     }
 
     /**
@@ -805,9 +798,9 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
         } catch (PluginVersionResolutionException
                 | InvalidVersionSpecificationException
                 | InvalidPluginException
-                | ArtifactNotFoundException
-                | ArtifactResolutionException
-                | PluginVersionNotFoundException e) {
+                | PluginVersionNotFoundException
+                | org.apache.maven.artifact.resolver.ArtifactResolutionException
+                | ArtifactNotFoundException e) {
             throw new LifecycleExecutionException(e.getMessage(), e);
         }
         return pluginDescriptor;
