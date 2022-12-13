@@ -21,24 +21,28 @@ package org.apache.maven.plugins.enforcer;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.stream.Stream;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * The Class TestRequireJavaVersion.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class TestRequireJavaVersion {
+class TestRequireJavaVersion {
 
     /**
      * Test fix jdk version.
      */
     @Test
-    public void testFixJDKVersion() {
+    void testFixJDKVersion() {
         // test that we only take the first 3 versions for
         // comparison
         assertThat(RequireJavaVersion.normalizeJDKVersion("1.5.0_11")).isEqualTo("1.5.0-11");
@@ -69,7 +73,7 @@ public class TestRequireJavaVersion {
      * @throws EnforcerRuleException the enforcer rule exception
      */
     @Test
-    public void settingsTheJavaVersionAsNormalizedVersionShouldNotFail() throws EnforcerRuleException {
+    void settingsTheJavaVersionAsNormalizedVersionShouldNotFail() throws EnforcerRuleException {
         String normalizedJDKVersion = RequireJavaVersion.normalizeJDKVersion(SystemUtils.JAVA_VERSION);
 
         RequireJavaVersion rule = new RequireJavaVersion();
@@ -83,7 +87,7 @@ public class TestRequireJavaVersion {
     }
 
     @Test
-    public void excludingTheCurrentJavaVersionViaRangeThisShouldFailWithException() {
+    void excludingTheCurrentJavaVersionViaRangeThisShouldFailWithException() {
         assertThrows(EnforcerRuleException.class, () -> {
             String thisVersion = RequireJavaVersion.normalizeJDKVersion(SystemUtils.JAVA_VERSION);
 
@@ -101,7 +105,7 @@ public class TestRequireJavaVersion {
     @Test
     @Disabled
     // TODO: Think about the intention of this test? What should it prove?
-    public void thisShouldNotCrash() throws EnforcerRuleException {
+    void thisShouldNotCrash() throws EnforcerRuleException {
         RequireJavaVersion rule = new RequireJavaVersion();
         rule.setVersion(SystemUtils.JAVA_VERSION);
 
@@ -114,8 +118,30 @@ public class TestRequireJavaVersion {
      * Test id.
      */
     @Test
-    public void testId() {
+    void testId() {
         RequireJavaVersion rule = new RequireJavaVersion();
         assertThat(rule.getCacheId()).isEqualTo("0");
+    }
+
+    static Stream<Arguments> fixJava8ShortVersion() {
+        return Stream.of(
+                Arguments.of("1.8", "1.8"),
+                Arguments.of("8", "1.8"),
+                Arguments.of("8,)", "1.8,)"),
+                Arguments.of("[8,)", "[1.8,)"),
+                Arguments.of("(1.7,8]", "(1.7,1.8]"),
+                Arguments.of("[1.8,)", "[1.8,)"),
+                Arguments.of("(1.8,8]", "(1.8,1.8]"),
+                Arguments.of("(8,)", "(1.8,)"),
+                Arguments.of("[8]", "[1.8]"),
+                Arguments.of("(9,11],[8]", "(9,11],[1.8]"));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void fixJava8ShortVersion(String input, String expected) {
+        RequireJavaVersion requireJavaVersion = new RequireJavaVersion();
+        requireJavaVersion.setVersion(input);
+        assertThat(requireJavaVersion.getVersion()).isEqualTo(expected);
     }
 }

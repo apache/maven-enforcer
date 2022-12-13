@@ -21,6 +21,8 @@ package org.apache.maven.plugins.enforcer;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
@@ -35,6 +37,28 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public class RequireJavaVersion extends AbstractVersionEnforcer {
+
+    private static final Pattern JDK8_VERSION_PATTERN = Pattern.compile("([\\[(,]?)(1\\.8|8)([]),]?)");
+
+    @Override
+    public void setVersion(String theVersion) {
+
+        if ("8".equals(theVersion)) {
+            super.setVersion("1.8");
+            return;
+        }
+
+        Matcher matcher = JDK8_VERSION_PATTERN.matcher(theVersion);
+
+        StringBuffer result = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(result, "$11.8$3");
+        }
+        matcher.appendTail(result);
+
+        super.setVersion(result.toString());
+    }
+
     @Override
     public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
         String javaVersion = SystemUtils.JAVA_VERSION;
