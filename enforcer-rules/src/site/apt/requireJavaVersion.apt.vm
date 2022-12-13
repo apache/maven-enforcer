@@ -32,6 +32,8 @@ Require Java Version
    * message - an optional message to the user if the rule fails.
    
    * {{{../apidocs/org/apache/maven/plugins/enforcer/AbstractVersionEnforcer.html#version}version}} - {{{./versionRanges.html}range}} of allowed JDKs.
+
+   For JDK 1.8 you can also use simple <<<8>>> as <version> - it will be internally changed to <<<1.8>>>
    
    []
 

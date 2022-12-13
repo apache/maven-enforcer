@@ -159,7 +159,7 @@ public abstract class AbstractVersionEnforcer extends AbstractStandardEnforcerRu
      *
      * @param theVersion the required version to set
      */
-    public final void setVersion(String theVersion) {
+    public void setVersion(String theVersion) {
         this.version = theVersion;
     }
 }
