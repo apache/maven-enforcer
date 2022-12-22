@@ -99,7 +99,7 @@ public class EnforceMojo extends AbstractMojo implements Contextualizable {
     /**
      * Flag to fail the build if no rules are present
      *
-     * @since 3.1.1
+     * @since 3.2.0
      */
     @Parameter(property = "enforcer.failIfNoRules", defaultValue = "true")
     private boolean failIfNoRules = true;
