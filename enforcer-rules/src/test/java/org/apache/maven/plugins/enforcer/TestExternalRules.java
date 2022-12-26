@@ -18,11 +18,11 @@
  */
 package org.apache.maven.plugins.enforcer;
 
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class TestExternalRules {
     @Test

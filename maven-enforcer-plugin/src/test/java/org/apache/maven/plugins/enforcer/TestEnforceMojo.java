@@ -18,8 +18,6 @@
  */
 package org.apache.maven.plugins.enforcer;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
@@ -32,6 +30,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Exhaustively check the enforcer mojo.

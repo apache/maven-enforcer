@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer.utils;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
 

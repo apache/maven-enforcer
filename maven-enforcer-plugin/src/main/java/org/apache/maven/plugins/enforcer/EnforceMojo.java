@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRule2;

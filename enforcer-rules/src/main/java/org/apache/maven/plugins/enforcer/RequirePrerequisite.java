@@ -19,6 +19,7 @@
 package org.apache.maven.plugins.enforcer;
 
 import java.util.List;
+
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;

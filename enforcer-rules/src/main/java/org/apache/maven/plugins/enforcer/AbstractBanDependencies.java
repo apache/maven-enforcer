@@ -19,6 +19,7 @@
 package org.apache.maven.plugins.enforcer;
 
 import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;

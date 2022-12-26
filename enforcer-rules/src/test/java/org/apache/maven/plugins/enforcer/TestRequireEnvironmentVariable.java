@@ -18,11 +18,11 @@
  */
 package org.apache.maven.plugins.enforcer;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit test for {@link RequireEnvironmentVariable}}

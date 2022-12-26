@@ -18,11 +18,11 @@
  */
 package org.apache.maven.plugins.enforcer.utils;
 
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * The Class TestEnforcerRuleUtils.

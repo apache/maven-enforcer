@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer.utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
 import org.apache.maven.model.InputLocation;
 import org.apache.maven.model.InputLocationTracker;
 import org.apache.maven.model.Plugin;

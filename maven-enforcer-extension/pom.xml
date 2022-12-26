@@ -103,7 +103,7 @@
                 <localRepo>
                   <source>${project.build.directory}/local-repo</source>
                 </localRepo>
-                <proxyRepo/>
+                <proxyRepo />
               </repositories>
             </configuration>
             <executions>

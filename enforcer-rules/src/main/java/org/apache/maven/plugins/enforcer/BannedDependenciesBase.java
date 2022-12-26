@@ -18,8 +18,9 @@
  */
 package org.apache.maven.plugins.enforcer;
 
-import com.google.common.base.Strings;
 import java.util.List;
+
+import com.google.common.base.Strings;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;

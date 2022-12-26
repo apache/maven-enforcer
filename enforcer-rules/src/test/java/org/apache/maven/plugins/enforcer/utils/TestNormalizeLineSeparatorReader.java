@@ -18,14 +18,15 @@
  */
 package org.apache.maven.plugins.enforcer.utils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugins.enforcer.utils.NormalizeLineSeparatorReader.LineSeparator;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestNormalizeLineSeparatorReader {
     private static final String UNIX_MULTILINE_STRING = "line1\nline2\n\n";

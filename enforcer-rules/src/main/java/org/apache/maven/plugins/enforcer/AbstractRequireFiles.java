@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;

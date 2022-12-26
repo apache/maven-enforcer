@@ -18,12 +18,11 @@
  */
 package org.apache.maven.plugins.enforcer;
 
-import static java.util.Optional.ofNullable;
-
-import com.google.common.base.Strings;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.google.common.base.Strings;
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
@@ -36,6 +35,8 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.eclipse.aether.artifact.ArtifactTypeRegistry;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * This rule bans all transitive dependencies. There is a configuration option to exclude certain artifacts from being

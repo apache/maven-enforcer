@@ -19,6 +19,7 @@
 package org.apache.maven.plugins.enforcer.utils;
 
 import java.util.List;
+
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;

@@ -19,6 +19,7 @@
 package org.apache.maven.plugins.enforcer;
 
 import java.util.Iterator;
+
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
