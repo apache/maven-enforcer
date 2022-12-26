@@ -119,12 +119,6 @@
         <version>${maven.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-compat</artifactId>
-        <version>${maven.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
         <groupId>org.apache.maven.shared</groupId>
         <artifactId>maven-common-artifact-filters</artifactId>
         <version>3.3.2</version>
@@ -179,11 +173,6 @@
             <artifactId>plexus-container-default</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.shared</groupId>
-        <artifactId>maven-dependency-tree</artifactId>
-        <version>3.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.shared</groupId>
