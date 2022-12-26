@@ -18,14 +18,14 @@
  */
 package org.apache.maven.plugins.enforcer.utils;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugins.enforcer.EnforcerExpressionEvaluator;
 import org.apache.maven.plugins.enforcer.EnforcerTestUtils;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * The Class TestMockEnforcerExpressionEvaluator.

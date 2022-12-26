@@ -20,6 +20,7 @@ package org.apache.maven.plugins.enforcer;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;

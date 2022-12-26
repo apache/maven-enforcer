@@ -20,6 +20,7 @@ package org.apache.maven.plugins.enforcer;
 
 import java.text.ChoiceFormat;
 import java.util.List;
+
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRule2;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;

@@ -18,12 +18,11 @@
  */
 package org.apache.maven.plugins.enforcer.utils;
 
-import static java.util.Optional.ofNullable;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
@@ -46,6 +45,8 @@ import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver;
+
+import static java.util.Optional.ofNullable;
 
 /**
  *

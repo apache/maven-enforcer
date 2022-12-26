@@ -18,6 +18,8 @@
  */
 package org.apache.maven.extensions.enforcer;
 
+import javax.inject.Named;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -29,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import javax.inject.Named;
+
 import org.apache.maven.AbstractMavenLifecycleParticipant;
 import org.apache.maven.MavenExecutionException;
 import org.apache.maven.execution.MavenSession;

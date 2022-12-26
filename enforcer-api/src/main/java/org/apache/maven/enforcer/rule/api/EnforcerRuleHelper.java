@@ -18,10 +18,12 @@
  */
 package org.apache.maven.enforcer.rule.api;
 
+import javax.annotation.Nonnull;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.annotation.Nonnull;
+
 import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
