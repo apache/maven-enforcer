@@ -20,14 +20,13 @@ package org.apache.maven.plugins.enforcer.utils;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
-import org.apache.maven.plugins.enforcer.EnforcerExpressionEvaluator;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
  * The Class MockEnforcerExpressionEvaluator.
  */
-public class MockEnforcerExpressionEvaluator extends EnforcerExpressionEvaluator {
+public class MockEnforcerExpressionEvaluator extends PluginParameterExpressionEvaluator {
     /**
      * Instantiates a new mock enforcer expression evaluator.
      *
@@ -38,7 +37,7 @@ public class MockEnforcerExpressionEvaluator extends EnforcerExpressionEvaluator
     }
 
     @Override
-    public Object evaluate(String expr) throws ExpressionEvaluationException {
+    public Object evaluate(String expr) {
         if (expr != null) {
             // just remove the ${ } and return the name as the value
             return expr.replaceAll("\\$\\{|}", "");

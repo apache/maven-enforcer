@@ -156,7 +156,7 @@ public class BanDuplicatePomDependencyVersions extends AbstractNonCacheableEnfor
         }
     }
 
-    private Map<String, Integer> validateDependencies(List<Dependency> dependencies) throws EnforcerRuleException {
+    private Map<String, Integer> validateDependencies(List<Dependency> dependencies) {
         Map<String, Integer> duplicateDeps = new HashMap<>();
         Set<String> deps = new HashSet<>();
         for (Dependency dependency : dependencies) {

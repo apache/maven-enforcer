@@ -18,7 +18,6 @@
  */
 package org.apache.maven.plugins.enforcer;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
 
@@ -29,7 +28,7 @@ import org.apache.maven.plugin.logging.Log;
 public class AlwaysPass extends AbstractNonCacheableEnforcerRule {
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
+    public void execute(EnforcerRuleHelper helper) {
         final Log log = helper.getLog();
 
         String message = getMessage();

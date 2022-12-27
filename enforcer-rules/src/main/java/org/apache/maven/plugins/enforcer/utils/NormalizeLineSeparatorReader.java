@@ -76,7 +76,7 @@ public class NormalizeLineSeparatorReader extends FilterReader {
             }
             return MatchResult.NO_MATCH;
         }
-    };
+    }
 
     final LineSeparator lineSeparator;
 

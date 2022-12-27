@@ -19,9 +19,9 @@
 package org.apache.maven.plugins.enforcer;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -124,7 +124,7 @@ public class RequireFileChecksum extends AbstractNonCacheableEnforcerRule {
     }
 
     protected String calculateChecksum() throws EnforcerRuleException {
-        try (InputStream inputStream = new FileInputStream(this.file)) {
+        try (InputStream inputStream = Files.newInputStream(this.file.toPath())) {
             return calculateChecksum(inputStream);
         } catch (IOException e) {
             throw new EnforcerRuleException("Unable to calculate checksum", e);

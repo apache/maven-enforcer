@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.plugin.logging.Log;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.graph.DependencyNode;
@@ -102,8 +101,7 @@ public class DependencyVersionMap implements DependencyVisitor, ParentNodeProvid
         return false;
     }
 
-    public List<List<DependencyNode>> getConflictedVersionNumbers(List<String> includes, List<String> excludes)
-            throws EnforcerRuleException {
+    public List<List<DependencyNode>> getConflictedVersionNumbers(List<String> includes, List<String> excludes) {
         List<String> formattedIncludes = formatPatterns(includes);
         List<String> formattedExcludes = formatPatterns(excludes);
         List<List<DependencyNode>> output = new ArrayList<>();
@@ -124,8 +122,7 @@ public class DependencyVersionMap implements DependencyVisitor, ParentNodeProvid
         return output;
     }
 
-    private static boolean includeArtifact(DependencyNode node, List<String> includes, List<String> excludes)
-            throws EnforcerRuleException {
+    private static boolean includeArtifact(DependencyNode node, List<String> includes, List<String> excludes) {
         boolean included = includes == null || includes.isEmpty();
         if (!included) {
             for (String pattern : includes) {
