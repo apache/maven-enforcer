@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.google.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -107,7 +107,7 @@ public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule 
 
         if ((excluded || hasTransitiveDependencies) && message != null) // then generate message
         {
-            message.append(Strings.repeat("   ", level)).append(node.getArtifact());
+            message.append(StringUtils.repeat("   ", level)).append(node.getArtifact());
 
             if (excluded) {
                 message.append(" [excluded]").append(System.lineSeparator());

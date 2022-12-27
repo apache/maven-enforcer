@@ -20,7 +20,7 @@ package org.apache.maven.plugins.enforcer;
 
 import java.util.List;
 
-import com.google.common.base.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
@@ -105,7 +105,7 @@ abstract class BannedDependenciesBase extends AbstractNonCacheableEnforcerRule {
                         .map(childNode -> validate(childNode, level + 1, childMessageBuilder))
                         .reduce(true, Boolean::logicalAnd)) {
             messageBuilder
-                    .append(Strings.repeat("   ", level))
+                    .append(StringUtils.repeat("   ", level))
                     .append(ArtifactUtils.toArtifact(node).getId());
             if (rootFailed) {
                 messageBuilder.append(" <--- ").append(getErrorMessage());
