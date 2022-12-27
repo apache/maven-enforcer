@@ -20,16 +20,8 @@ package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecution;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.PlexusConstants;
-import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
  * This goal displays the current platform information.
@@ -37,13 +29,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 @Mojo(name = "display-info", threadSafe = true)
-public class DisplayInfoMojo extends AbstractMojo implements Contextualizable {
-
-    /**
-     * MojoExecution needed by the ExpressionEvaluator
-     */
-    @Parameter(defaultValue = "${mojoExecution}", readonly = true, required = true)
-    protected MojoExecution mojoExecution;
+public class DisplayInfoMojo extends AbstractMojo {
 
     /**
      * The MavenSession
@@ -52,23 +38,9 @@ public class DisplayInfoMojo extends AbstractMojo implements Contextualizable {
     protected MavenSession session;
 
     /**
-     * POM
-     */
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    protected MavenProject project;
-
-    // set by the contextualize method. Only way to get the
-    // plugin's container in 2.0.x
-    protected PlexusContainer container;
-
-    public void contextualize(Context context) throws ContextException {
-        container = (PlexusContainer) context.get(PlexusConstants.PLEXUS_KEY);
-    }
-
-    /**
      * Entry point to the mojo
      */
-    public void execute() throws MojoExecutionException {
+    public void execute() {
         String mavenVersion = session.getSystemProperties().getProperty("maven.version");
         String javaVersion = System.getProperty("java.version");
         String javaVendor = System.getProperty("java.vendor");

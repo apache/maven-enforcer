@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import org.apache.maven.RepositoryUtils;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
@@ -67,16 +66,13 @@ public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule 
     /**
      * Searches dependency tree recursively for transitive dependencies that are not excluded, while generating nice
      * info message along the way.
-     *
-     * @throws InvalidVersionSpecificationException
      */
     private static boolean searchTree(
             DependencyNode node,
             int level,
             ArtifactMatcher excludes,
             Set<Dependency> directDependencies,
-            StringBuilder message)
-            throws InvalidVersionSpecificationException {
+            StringBuilder message) {
 
         List<DependencyNode> children = node.getChildren();
 
@@ -146,12 +142,8 @@ public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule 
 
         DependencyNode rootNode = ArtifactUtils.resolveTransitiveDependencies(helper);
         StringBuilder generatedMessage = new StringBuilder();
-        try {
-            if (searchTree(rootNode, 0, exclusions, directDependencies, generatedMessage)) {
-                throw new EnforcerRuleException(ofNullable(getMessage()).orElse(generatedMessage.toString()));
-            }
-        } catch (InvalidVersionSpecificationException e) {
-            throw new EnforcerRuleException("Error: Invalid version range.", e);
+        if (searchTree(rootNode, 0, exclusions, directDependencies, generatedMessage)) {
+            throw new EnforcerRuleException(ofNullable(getMessage()).orElse(generatedMessage.toString()));
         }
     }
 }

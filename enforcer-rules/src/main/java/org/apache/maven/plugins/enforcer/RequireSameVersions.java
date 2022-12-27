@@ -104,7 +104,7 @@ public class RequireSameVersions extends AbstractNonCacheableEnforcerRule {
                 if (regEx.matcher(artifact.getDependencyConflictId()).matches()) {
                     String version = uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
                     if (!versionMembers.containsKey(version)) {
-                        versionMembers.put(version, new ArrayList<String>());
+                        versionMembers.put(version, new ArrayList<>());
                     }
                     versionMembers.get(version).add(artifact.getDependencyConflictId() + source);
                 }

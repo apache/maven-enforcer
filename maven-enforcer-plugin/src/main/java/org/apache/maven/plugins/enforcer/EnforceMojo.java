@@ -31,17 +31,15 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 
 /**
  * This goal executes the defined enforcer-rules once per module.
@@ -55,7 +53,7 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
         requiresDependencyCollection = ResolutionScope.TEST,
         threadSafe = true)
 // CHECKSTYLE_ON: LineLength
-public class EnforceMojo extends AbstractMojo implements Contextualizable {
+public class EnforceMojo extends AbstractMojo {
     /**
      * This is a static variable used to persist the cached results across plugin invocations.
      */
@@ -124,14 +122,8 @@ public class EnforceMojo extends AbstractMojo implements Contextualizable {
     @Parameter(property = "enforcer.ignoreCache", defaultValue = "false")
     protected boolean ignoreCache = false;
 
-    // set by the contextualize method. Only way to get the
-    // plugin's container in 2.0.x
+    @Component
     protected PlexusContainer container;
-
-    @Override
-    public void contextualize(Context context) throws ContextException {
-        container = (PlexusContainer) context.get(PlexusConstants.PLEXUS_KEY);
-    }
 
     private boolean havingRules() {
         return rules != null && rules.length > 0;
@@ -141,7 +133,7 @@ public class EnforceMojo extends AbstractMojo implements Contextualizable {
     public void execute() throws MojoExecutionException {
         Log log = this.getLog();
 
-        EnforcerExpressionEvaluator evaluator = new EnforcerExpressionEvaluator(session, mojoExecution);
+        PluginParameterExpressionEvaluator evaluator = new PluginParameterExpressionEvaluator(session, mojoExecution);
         if (commandLineRules != null && commandLineRules.length > 0) {
             this.rules = createRulesFromCommandLineOptions();
         }

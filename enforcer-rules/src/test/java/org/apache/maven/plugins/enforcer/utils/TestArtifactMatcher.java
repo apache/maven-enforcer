@@ -40,7 +40,7 @@ public class TestArtifactMatcher {
     Collection<String> ignorePatterns = new ArrayList<>();
 
     @Test
-    public void testPatternInvalidInput() throws InvalidVersionSpecificationException {
+    public void testPatternInvalidInput() {
         try {
             new Pattern(null);
             fail("NullPointerException expected.");
@@ -140,8 +140,7 @@ public class TestArtifactMatcher {
             final String scope,
             final String type,
             final String classifier,
-            boolean expectedResult)
-            throws InvalidVersionSpecificationException {
+            boolean expectedResult) {
         assertEquals(
                 expectedResult,
                 new ArtifactMatcher.Pattern(pattern)
@@ -155,8 +154,7 @@ public class TestArtifactMatcher {
             final String versionRange,
             final String scope,
             final String type,
-            final boolean expectedResult)
-            throws InvalidVersionSpecificationException {
+            final boolean expectedResult) {
         assertEquals(
                 expectedResult, matcher.match(createMockArtifact(groupId, artifactId, versionRange, scope, type, "")));
     }

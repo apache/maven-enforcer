@@ -190,7 +190,7 @@ public final class ArtifactMatcher {
                 .forEach(includePatterns::add));
     }
 
-    private boolean match(Function<Pattern, Boolean> matcher) throws InvalidVersionSpecificationException {
+    private boolean match(Function<Pattern, Boolean> matcher) {
         return excludePatterns.stream().anyMatch(matcher::apply)
                 && includePatterns.stream().noneMatch(matcher::apply);
     }
@@ -201,9 +201,8 @@ public final class ArtifactMatcher {
      * @param artifact the artifact to match
      * @return {@code true} if artifact matches any {@link #excludePatterns} and none of the {@link #includePatterns}, otherwise
      *         {@code false}
-     * @throws InvalidVersionSpecificationException if any pattern contains an invalid version range
      */
-    public boolean match(Artifact artifact) throws InvalidVersionSpecificationException {
+    public boolean match(Artifact artifact) {
         return match(p -> p.match(artifact));
     }
 
@@ -213,9 +212,8 @@ public final class ArtifactMatcher {
      * @param dependency the dependency to match
      * @return {@code true} if dependency matches any {@link #excludePatterns} and none of the {@link #includePatterns},
      *         otherwise {@code false}
-     * @throws InvalidVersionSpecificationException if any pattern contains an invalid version range
      */
-    public boolean match(Dependency dependency) throws InvalidVersionSpecificationException {
+    public boolean match(Dependency dependency) {
         return match(p -> p.match(dependency));
     }
 }

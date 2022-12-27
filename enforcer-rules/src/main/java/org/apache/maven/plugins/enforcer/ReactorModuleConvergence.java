@@ -80,7 +80,7 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
                 sb.append(System.lineSeparator());
             }
             throw new EnforcerRuleException(
-                    "Module parents have been found which could not be found in the reactor." + sb.toString());
+                    "Module parents have been found which could not be found in the reactor." + sb);
         }
     }
 
@@ -100,7 +100,7 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
                 sb.append(mavenProject.getId());
                 sb.append(System.lineSeparator());
             }
-            throw new EnforcerRuleException("Reactor contains modules without parents." + sb.toString());
+            throw new EnforcerRuleException("Reactor contains modules without parents." + sb);
         }
     }
 
@@ -128,7 +128,7 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
                 }
             }
             throw new EnforcerRuleException(
-                    "Reactor modules contains dependencies which do not reference the reactor." + sb.toString());
+                    "Reactor modules contains dependencies which do not reference the reactor." + sb);
             // CHECKSTYLE_ON: LineLength
         }
     }
@@ -154,8 +154,7 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
                 sb.append(mavenProject.getParent().getId());
                 sb.append(System.lineSeparator());
             }
-            throw new EnforcerRuleException(
-                    "Reactor modules have parents which contain a wrong version." + sb.toString());
+            throw new EnforcerRuleException("Reactor modules have parents which contain a wrong version." + sb);
         }
     }
 
@@ -175,7 +174,7 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
                 sb.append(mavenProject.getId());
                 sb.append(System.lineSeparator());
             }
-            throw new EnforcerRuleException("The reactor contains different versions." + sb.toString());
+            throw new EnforcerRuleException("The reactor contains different versions." + sb);
         }
     }
 

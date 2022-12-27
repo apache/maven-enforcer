@@ -19,7 +19,7 @@
 package org.apache.maven.plugins.enforcer.utils;
 
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugins.enforcer.EnforcerExpressionEvaluator;
+import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugins.enforcer.EnforcerTestUtils;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ public class TestMockEnforcerExpressionEvaluator {
     public void testEvaluate() {
         MavenSession session = EnforcerTestUtils.getMavenSession();
 
-        EnforcerExpressionEvaluator ev = new MockEnforcerExpressionEvaluator(session);
+        PluginParameterExpressionEvaluator ev = new MockEnforcerExpressionEvaluator(session);
         assertMatch(ev, "SNAPSHOT");
         assertMatch(ev, "RELEASE");
         assertMatch(ev, "SNAPSHOT");
@@ -53,7 +53,7 @@ public class TestMockEnforcerExpressionEvaluator {
      * @param ev the ev
      * @param exp the exp
      */
-    public void assertMatch(EnforcerExpressionEvaluator ev, String exp) {
+    public void assertMatch(PluginParameterExpressionEvaluator ev, String exp) {
         // the mock enforcer should return the name of the expression as the value.
         try {
             assertEquals(exp, ev.evaluate("${" + exp + "}"));

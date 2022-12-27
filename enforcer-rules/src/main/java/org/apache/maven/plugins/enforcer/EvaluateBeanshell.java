@@ -34,12 +34,7 @@ import org.codehaus.plexus.util.StringUtils;
 public class EvaluateBeanshell extends AbstractNonCacheableEnforcerRule {
 
     /** Beanshell interpreter. */
-    private static final ThreadLocal<Interpreter> INTERPRETER = new ThreadLocal<Interpreter>() {
-        @Override
-        protected Interpreter initialValue() {
-            return new Interpreter();
-        }
-    };
+    private static final ThreadLocal<Interpreter> INTERPRETER = ThreadLocal.withInitial(Interpreter::new);
 
     /** The condition to be evaluated.
      *

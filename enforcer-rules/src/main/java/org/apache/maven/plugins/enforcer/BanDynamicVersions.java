@@ -30,7 +30,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.maven.RepositoryUtils;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
@@ -292,11 +291,7 @@ public class BanDynamicVersions extends AbstractNonCacheableEnforcerRule {
 
         @Override
         public boolean test(DependencyNode depNode) {
-            try {
-                return artifactMatcher.match(ArtifactUtils.toArtifact(depNode));
-            } catch (InvalidVersionSpecificationException e) {
-                throw new IllegalArgumentException("Invalid version found for dependency node " + depNode, e);
-            }
+            return artifactMatcher.match(ArtifactUtils.toArtifact(depNode));
         }
     }
 

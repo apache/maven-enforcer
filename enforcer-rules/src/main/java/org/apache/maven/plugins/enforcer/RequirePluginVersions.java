@@ -18,7 +18,6 @@
  */
 package org.apache.maven.plugins.enforcer;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -65,7 +64,6 @@ import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
@@ -233,7 +231,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
                         + pluginWrapper.getVersion() + " source: " + pluginWrapper.getSource());
             }
             // now look for the versions that aren't valid and add to a list.
-            List<Plugin> failures = new ArrayList<Plugin>();
+            List<Plugin> failures = new ArrayList<>();
 
             for (Plugin plugin : allPlugins) {
                 if (!hasValidVersionSpecified(helper, plugin, pluginWrappers)) {
@@ -353,7 +351,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
         if (StringUtils.isNotEmpty(uncheckedPluginsList)) {
             // make sure there is a collection to add to.
             if (uncheckedPlugins == null) {
-                uncheckedPlugins = new HashSet<String>();
+                uncheckedPlugins = new HashSet<>();
             } else if (!uncheckedPlugins.isEmpty() && log != null) {
                 log.warn("The parameter 'unCheckedPlugins' is deprecated. Use 'unCheckedPluginList' instead");
             }
@@ -484,10 +482,9 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
      * @return the bound plugins
      * @throws PluginNotFoundException the plugin not found exception
      * @throws LifecycleExecutionException the lifecycle execution exception
-     * @throws IllegalAccessException the illegal access exception
      */
     protected Set<Plugin> getBoundPlugins(MavenProject project, String thePhases)
-            throws PluginNotFoundException, LifecycleExecutionException, IllegalAccessException {
+            throws PluginNotFoundException, LifecycleExecutionException {
 
         Set<Plugin> allPlugins = new HashSet<>();
 
@@ -813,13 +810,8 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
      *
      * @param project the project
      * @return the all plugin entries wrapped in a PluginWrapper Object
-     * @throws ArtifactResolutionException the artifact resolution exception
-     * @throws ArtifactNotFoundException the artifact not found exception
-     * @throws IOException Signals that an I/O exception has occurred.
-     * @throws XmlPullParserException the xml pull parser exception
      */
-    protected List<PluginWrapper> getAllPluginEntries(MavenProject project)
-            throws ArtifactResolutionException, ArtifactNotFoundException, IOException, XmlPullParserException {
+    protected List<PluginWrapper> getAllPluginEntries(MavenProject project) {
         List<PluginWrapper> plugins = new ArrayList<>();
         // now find all the plugin entries, either in
         // build.plugins or build.pluginManagement.plugins, profiles.plugins and reporting

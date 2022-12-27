@@ -20,8 +20,6 @@ package org.apache.maven.plugins.enforcer;
 
 import java.util.Collections;
 
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.plugin.logging.SystemStreamLog;
@@ -31,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 class BanDependencyManagementScopeTest {
     @Test
-    void testGetViolatingDependencies() throws EnforcerRuleException, InvalidVersionSpecificationException {
+    void testGetViolatingDependencies() {
         BanDependencyManagementScope rule = new BanDependencyManagementScope();
         DependencyManagement depMgmt = new DependencyManagement();
         Dependency depWithoutScope = createDependency("myGroup", "artifact1", null);

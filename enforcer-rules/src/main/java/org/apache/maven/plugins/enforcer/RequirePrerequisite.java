@@ -104,9 +104,7 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule {
                             + " ) doesn't match the required version: " + mavenVersion);
                 }
             }
-        } catch (ExpressionEvaluationException e) {
-            throw new EnforcerRuleException(e.getMessage(), e);
-        } catch (InvalidVersionSpecificationException e) {
+        } catch (ExpressionEvaluationException | InvalidVersionSpecificationException e) {
             throw new EnforcerRuleException(e.getMessage(), e);
         }
     }

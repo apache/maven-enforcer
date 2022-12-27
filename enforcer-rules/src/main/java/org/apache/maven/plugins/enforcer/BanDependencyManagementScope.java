@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.enforcer.rule.api.EnforcerRule2;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
@@ -85,13 +84,10 @@ public class BanDependencyManagementScope extends AbstractNonCacheableEnforcerRu
             }
         } catch (ExpressionEvaluationException e) {
             throw new EnforcerRuleException("Cannot resolve expression: " + e.getCause(), e);
-        } catch (InvalidVersionSpecificationException e) {
-            throw new EnforcerRuleException("Invalid version range give in excludes " + e.getCause(), e);
         }
     }
 
-    protected List<Dependency> getViolatingDependencies(Log logger, DependencyManagement depMgmt)
-            throws InvalidVersionSpecificationException {
+    protected List<Dependency> getViolatingDependencies(Log logger, DependencyManagement depMgmt) {
         final ArtifactMatcher excludesMatcher;
         if (excludes != null) {
             excludesMatcher = new ArtifactMatcher(excludes, Collections.emptyList());
