@@ -16,10 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer.util;
+package org.apache.maven.plugins.enforcer;
 
 /**
- * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- *
+ * Problems reported by EnforcerRuleManager.
  */
-public class EnforcerUtils {}
+public class EnforcerRuleManagerException extends Exception {
+
+    private static final long serialVersionUID = -7559335919839629986L;
+
+    public EnforcerRuleManagerException(Throwable cause) {
+        super(cause);
+    }
+
+    public EnforcerRuleManagerException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}

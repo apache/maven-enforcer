@@ -20,7 +20,9 @@ package org.apache.maven.plugins.enforcer;
 
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
@@ -40,19 +42,19 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.configuration.DefaultPlexusConfiguration;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 /**
  * This goal executes the defined enforcer-rules once per module.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-// CHECKSTYLE_OFF: LineLength
 @Mojo(
         name = "enforce",
         defaultPhase = LifecyclePhase.VALIDATE,
         requiresDependencyCollection = ResolutionScope.TEST,
         threadSafe = true)
-// CHECKSTYLE_ON: LineLength
 public class EnforceMojo extends AbstractMojo {
     /**
      * This is a static variable used to persist the cached results across plugin invocations.
@@ -104,10 +106,24 @@ public class EnforceMojo extends AbstractMojo {
     private boolean failIfNoRules = true;
 
     /**
-     * Array of objects that implement the EnforcerRule interface to execute.
+     * Rules configuration to execute as XML.
+     * Each first level tag represents rule name to execute.
+     * Inner tags are configurations for rule.
+     * Eg:
+     * <pre>
+     *     &lt;rules&gt;
+     *         &lt;alwaysFail/&gt;
+     *         &lt;alwaysPass&gt;
+     *             &lt;message&gt;message for rule&lt;/message&gt;
+     *         &lt;/alwaysPass&gt;
+     *         &lt;myRule implementation="org.example.MyRule"/&gt;
+     *     &lt;/rules>
+     * </pre>
+     *
+     * @since 1.0.0
      */
-    @Parameter(required = false)
-    private EnforcerRule[] rules;
+    @Parameter
+    private PlexusConfiguration rules;
 
     /**
      * Array of Strings that matches the EnforcerRules to execute.
@@ -123,32 +139,34 @@ public class EnforceMojo extends AbstractMojo {
     protected boolean ignoreCache = false;
 
     @Component
-    protected PlexusContainer container;
+    private PlexusContainer container;
 
-    private boolean havingRules() {
-        return rules != null && rules.length > 0;
-    }
+    @Component
+    private EnforcerRuleManager enforcerRuleManager;
 
     @Override
     public void execute() throws MojoExecutionException {
         Log log = this.getLog();
-
-        PluginParameterExpressionEvaluator evaluator = new PluginParameterExpressionEvaluator(session, mojoExecution);
-        if (commandLineRules != null && commandLineRules.length > 0) {
-            this.rules = createRulesFromCommandLineOptions();
-        }
 
         if (isSkip()) {
             log.info("Skipping Rule Enforcement.");
             return;
         }
 
-        if (!havingRules()) {
+        Optional<PlexusConfiguration> rulesFromCommandLine = createRulesFromCommandLineOptions();
+
+        List<EnforcerRuleDesc> rulesList;
+        try {
+            // current behavior - rules from command line override all other configured rules.
+            rulesList = enforcerRuleManager.createRules(rulesFromCommandLine.orElse(rules));
+        } catch (EnforcerRuleManagerException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        }
+
+        if (rulesList.isEmpty()) {
             if (isFailIfNoRules()) {
-                // CHECKSTYLE_OFF: LineLength
                 throw new MojoExecutionException(
                         "No rules are configured. Use the skip flag if you want to disable execution.");
-                // CHECKSTYLE_ON: LineLength
             } else {
                 log.warn("No rules are configured.");
                 return;
@@ -161,6 +179,7 @@ public class EnforceMojo extends AbstractMojo {
         String currentRule = "Unknown";
 
         // create my helper
+        PluginParameterExpressionEvaluator evaluator = new PluginParameterExpressionEvaluator(session, mojoExecution);
         EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper(session, evaluator, log, container);
 
         // if we are only warning, then disable
@@ -172,12 +191,13 @@ public class EnforceMojo extends AbstractMojo {
         boolean hasErrors = false;
 
         // go through each rule
-        for (int i = 0; i < rules.length; i++) {
+        for (int i = 0; i < rulesList.size(); i++) {
 
             // prevent against empty rules
-            EnforcerRule rule = rules[i];
-            final EnforcerLevel level = getLevel(rule);
-            if (rule != null) {
+            EnforcerRuleDesc ruleDesc = rulesList.get(i);
+            if (ruleDesc != null) {
+                EnforcerRule rule = ruleDesc.getRule();
+                EnforcerLevel level = getLevel(rule);
                 // store the current rule for
                 // logging purposes
                 currentRule = rule.getClass().getName();
@@ -242,22 +262,24 @@ public class EnforceMojo extends AbstractMojo {
         // CHECKSTYLE_ON: LineLength
     }
 
-    private EnforcerRule[] createRulesFromCommandLineOptions() throws MojoExecutionException {
-        EnforcerRule[] rules = new EnforcerRule[commandLineRules.length];
-        for (int i = 0; i < commandLineRules.length; i++) {
-            String rule = commandLineRules[i];
-            if (!rule.contains(".")) {
-                rule = getClass().getPackage().getName() + "." + Character.toUpperCase(rule.charAt(0))
-                        + rule.substring(1);
-            }
+    /**
+     * Create rules configuration based on command line provided rules list.
+     *
+     * @return an configuration in case where rules list is present or empty
+     */
+    private Optional<PlexusConfiguration> createRulesFromCommandLineOptions() {
 
-            try {
-                rules[i] = (EnforcerRule) Class.forName(rule).newInstance();
-            } catch (Exception e) {
-                throw new MojoExecutionException("Failed to create enforcer rules from command line argument", e);
-            }
+        if (commandLineRules == null || commandLineRules.length == 0) {
+            return Optional.empty();
         }
-        return rules;
+
+        PlexusConfiguration configuration = new DefaultPlexusConfiguration("rules");
+
+        for (String rule : commandLineRules) {
+            configuration.addChild(new DefaultPlexusConfiguration(rule));
+        }
+
+        return Optional.of(configuration);
     }
 
     /**
@@ -298,20 +320,6 @@ public class EnforceMojo extends AbstractMojo {
      */
     public void setFail(boolean theFail) {
         this.fail = theFail;
-    }
-
-    /**
-     * @return the rules
-     */
-    public EnforcerRule[] getRules() {
-        return this.rules;
-    }
-
-    /**
-     * @param theRules the rules to set
-     */
-    public void setRules(EnforcerRule[] theRules) {
-        this.rules = theRules;
     }
 
     /**

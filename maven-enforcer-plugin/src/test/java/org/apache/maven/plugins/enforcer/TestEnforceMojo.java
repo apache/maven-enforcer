@@ -18,6 +18,9 @@
  */
 package org.apache.maven.plugins.enforcer;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
@@ -26,12 +29,15 @@ import org.apache.maven.plugin.logging.Log;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 /**
  * Exhaustively check the enforcer mojo.
@@ -40,13 +46,16 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class TestEnforceMojo {
+class TestEnforceMojo {
+
+    @Mock
+    private EnforcerRuleManager ruleManager;
 
     @InjectMocks
-    EnforceMojo mojo;
+    private EnforceMojo mojo;
 
     @Test
-    public void testEnforceMojo() throws MojoExecutionException {
+    void testEnforceMojo() throws Exception {
         setupBasics(false);
 
         Log logSpy = setupLogSpy();
@@ -58,10 +67,11 @@ public class TestEnforceMojo {
             System.out.println("Caught Expected Exception:" + e.getLocalizedMessage());
         }
 
-        EnforcerRule[] rules = new EnforcerRule[10];
-        rules[0] = new MockEnforcerRule(true);
-        rules[1] = new MockEnforcerRule(true);
-        mojo.setRules(rules);
+        EnforcerRuleDesc[] rules = new EnforcerRuleDesc[2];
+        rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(true));
+        rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(true));
+
+        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
 
         mojo.execute();
 
@@ -86,117 +96,117 @@ public class TestEnforceMojo {
             System.out.println("Caught Expected Exception:" + e.getLocalizedMessage());
         }
 
-        ((MockEnforcerRule) rules[0]).setFailRule(false);
-        ((MockEnforcerRule) rules[1]).setFailRule(false);
+        ((MockEnforcerRule) rules[0].getRule()).setFailRule(false);
+        ((MockEnforcerRule) rules[1].getRule()).setFailRule(false);
         mojo.execute();
     }
 
     @Test
-    public void testCaching() throws MojoExecutionException {
+    void testCaching() throws Exception {
         setupBasics(true);
 
-        MockEnforcerRule[] rules = new MockEnforcerRule[10];
+        EnforcerRuleDesc[] rules = new EnforcerRuleDesc[10];
 
         // check that basic caching works.
-        rules[0] = new MockEnforcerRule(false, "", true, true);
-        rules[1] = new MockEnforcerRule(false, "", true, true);
-        mojo.setRules(rules);
+        rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
+        rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
+        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
 
         EnforceMojo.cache.clear();
         mojo.execute();
 
-        assertTrue(rules[0].executed, "Expected this rule to be executed.");
-        assertFalse(rules[1].executed, "Expected this rule not to be executed.");
+        assertTrue(((MockEnforcerRule) rules[0].getRule()).executed, "Expected this rule to be executed.");
+        assertFalse(((MockEnforcerRule) rules[1].getRule()).executed, "Expected this rule not to be executed.");
 
         // check that skip caching works.
-        rules[0] = new MockEnforcerRule(false, "", true, true);
-        rules[1] = new MockEnforcerRule(false, "", true, true);
-        mojo.setRules(rules);
+        rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
+        rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
+        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
 
         EnforceMojo.cache.clear();
         mojo.ignoreCache = true;
         mojo.execute();
 
-        assertTrue(rules[0].executed, "Expected this rule to be executed.");
-        assertTrue(rules[1].executed, "Expected this rule to be executed.");
+        assertTrue(((MockEnforcerRule) rules[0].getRule()).executed, "Expected this rule to be executed.");
+        assertTrue(((MockEnforcerRule) rules[1].getRule()).executed, "Expected this rule to be executed.");
 
         mojo.ignoreCache = false;
 
         // check that different ids are compared.
-        rules[0] = new MockEnforcerRule(false, "1", true, true);
-        rules[1] = new MockEnforcerRule(false, "2", true, true);
-        rules[2] = new MockEnforcerRule(false, "2", true, true);
-        mojo.setRules(rules);
+        rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "1", true, true));
+        rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "2", true, true));
+        rules[2] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "2", true, true));
+        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
 
         EnforceMojo.cache.clear();
         mojo.execute();
 
-        assertTrue(rules[0].executed, "Expected this rule to be executed.");
-        assertTrue(rules[1].executed, "Expected this rule to be executed.");
-        assertFalse(rules[2].executed, "Expected this rule not to be executed.");
+        assertTrue(((MockEnforcerRule) rules[0].getRule()).executed, "Expected this rule to be executed.");
+        assertTrue(((MockEnforcerRule) rules[1].getRule()).executed, "Expected this rule to be executed.");
+        assertFalse(((MockEnforcerRule) rules[2].getRule()).executed, "Expected this rule not to be executed.");
 
         // check that future overrides are working
-        rules[0] = new MockEnforcerRule(false, "1", true, true);
-        rules[1] = new MockEnforcerRule(false, "1", false, true);
+        rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "1", true, true));
+        rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "1", false, true));
         rules[2] = null;
-        mojo.setRules(rules);
+        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
 
         EnforceMojo.cache.clear();
         mojo.execute();
 
-        assertTrue(rules[0].executed, "Expected this rule to be executed.");
-        assertTrue(rules[1].executed, "Expected this rule to be executed.");
+        assertTrue(((MockEnforcerRule) rules[0].getRule()).executed, "Expected this rule to be executed.");
+        assertTrue(((MockEnforcerRule) rules[1].getRule()).executed, "Expected this rule to be executed.");
 
         // check that future isResultValid is used
-        rules[0] = new MockEnforcerRule(false, "1", true, true);
-        rules[1] = new MockEnforcerRule(false, "1", true, false);
+        rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "1", true, true));
+        rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "1", true, false));
         rules[2] = null;
-        mojo.setRules(rules);
+        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
 
         EnforceMojo.cache.clear();
         mojo.execute();
 
-        assertTrue(rules[0].executed, "Expected this rule to be executed.");
-        assertTrue(rules[1].executed, "Expected this rule to be executed.");
+        assertTrue(((MockEnforcerRule) rules[0].getRule()).executed, "Expected this rule to be executed.");
+        assertTrue(((MockEnforcerRule) rules[1].getRule()).executed, "Expected this rule to be executed.");
     }
 
     @Test
-    public void testCachePersistence1() throws MojoExecutionException {
+    void testCachePersistence1() throws Exception {
         setupBasics(true);
 
-        MockEnforcerRule[] rules = new MockEnforcerRule[10];
+        EnforcerRuleDesc[] rules = new EnforcerRuleDesc[10];
 
         // check that basic caching works.
-        rules[0] = new MockEnforcerRule(false, "", true, true);
-        rules[1] = new MockEnforcerRule(false, "", true, true);
-        mojo.setRules(rules);
+        rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
+        rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
+        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
 
         EnforceMojo.cache.clear();
         mojo.execute();
 
-        assertTrue(rules[0].executed, "Expected this rule to be executed.");
-        assertFalse(rules[1].executed, "Expected this rule not to be executed.");
+        assertTrue(((MockEnforcerRule) rules[0].getRule()).executed, "Expected this rule to be executed.");
+        assertFalse(((MockEnforcerRule) rules[1].getRule()).executed, "Expected this rule not to be executed.");
     }
 
     @Test
-    public void testCachePersistence2() throws MojoExecutionException {
+    void testCachePersistence2() throws Exception {
         setupBasics(true);
 
-        MockEnforcerRule[] rules = new MockEnforcerRule[10];
+        EnforcerRuleDesc[] rules = new EnforcerRuleDesc[10];
 
         // check that basic caching works.
-        rules[0] = new MockEnforcerRule(false, "", true, true);
-        rules[1] = new MockEnforcerRule(false, "", true, true);
-        mojo.setRules(rules);
+        rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
+        rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
+        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
 
         mojo.execute();
 
-        assertFalse(rules[0].executed, "Expected this rule not to be executed.");
-        assertFalse(rules[1].executed, "Expected this rule not to be executed.");
+        assertFalse(((MockEnforcerRule) rules[0].getRule()).executed, "Expected this rule not to be executed.");
+        assertFalse(((MockEnforcerRule) rules[1].getRule()).executed, "Expected this rule not to be executed.");
     }
 
     @Test
-    public void testCachePersistence3() throws MojoExecutionException {
+    void testCachePersistence3() throws Exception {
         System.gc();
 
         try {
@@ -206,21 +216,21 @@ public class TestEnforceMojo {
 
         setupBasics(true);
 
-        MockEnforcerRule[] rules = new MockEnforcerRule[10];
+        EnforcerRuleDesc[] rules = new EnforcerRuleDesc[10];
 
         // check that basic caching works.
-        rules[0] = new MockEnforcerRule(false, "", true, true);
-        rules[1] = new MockEnforcerRule(false, "", true, true);
-        mojo.setRules(rules);
+        rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
+        rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
+        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
 
         mojo.execute();
 
-        assertFalse(rules[0].executed, "Expected this rule not to be executed.");
-        assertFalse(rules[1].executed, "Expected this rule not to be executed.");
+        assertFalse(((MockEnforcerRule) rules[0].getRule()).executed, "Expected this rule not to be executed.");
+        assertFalse(((MockEnforcerRule) rules[1].getRule()).executed, "Expected this rule not to be executed.");
     }
 
     @Test
-    public void testLoggingOnEnforcerRuleExceptionWithMessage() throws MojoExecutionException, EnforcerRuleException {
+    void testLoggingOnEnforcerRuleExceptionWithMessage() throws Exception {
         // fail=false because this is out of scope here (also allows for cleaner test code without catch block)
         setupBasics(false);
 
@@ -228,9 +238,9 @@ public class TestEnforceMojo {
         EnforcerRuleException ruleException = new EnforcerRuleException("testMessage");
 
         EnforcerRule ruleMock = Mockito.mock(EnforcerRule.class);
-        Mockito.doThrow(ruleException).when(ruleMock).execute(Mockito.any(EnforcerRuleHelper.class));
-
-        mojo.setRules(new EnforcerRule[] {ruleMock});
+        Mockito.doThrow(ruleException).when(ruleMock).execute(any(EnforcerRuleHelper.class));
+        when(ruleManager.createRules(any()))
+                .thenReturn(Collections.singletonList(new EnforcerRuleDesc("mock", ruleMock)));
 
         Log logSpy = setupLogSpy();
 
@@ -238,15 +248,14 @@ public class TestEnforceMojo {
 
         Mockito.verify(logSpy).debug(Mockito.anyString(), Mockito.same(ruleException));
 
-        Mockito.verify(logSpy, Mockito.never()).warn(Mockito.anyString(), Mockito.any(Throwable.class));
+        Mockito.verify(logSpy, Mockito.never()).warn(Mockito.anyString(), any(Throwable.class));
 
         Mockito.verify(logSpy)
                 .warn(Mockito.matches(".* failed with message:" + System.lineSeparator() + ruleException.getMessage()));
     }
 
     @Test
-    public void testLoggingOnEnforcerRuleExceptionWithoutMessage()
-            throws MojoExecutionException, EnforcerRuleException {
+    void testLoggingOnEnforcerRuleExceptionWithoutMessage() throws Exception {
         // fail=false because this is out of scope here (also allows for cleaner test code without catch block)
         setupBasics(false);
 
@@ -255,9 +264,10 @@ public class TestEnforceMojo {
         EnforcerRuleException enforcerRuleException = new EnforcerRuleException(npe.getLocalizedMessage(), npe);
 
         EnforcerRule ruleMock = Mockito.mock(EnforcerRule.class);
-        Mockito.doThrow(enforcerRuleException).when(ruleMock).execute(Mockito.any(EnforcerRuleHelper.class));
+        Mockito.doThrow(enforcerRuleException).when(ruleMock).execute(any(EnforcerRuleHelper.class));
 
-        mojo.setRules(new EnforcerRule[] {ruleMock});
+        when(ruleManager.createRules(any()))
+                .thenReturn(Collections.singletonList(new EnforcerRuleDesc("mock", ruleMock)));
 
         Log logSpy = setupLogSpy();
 
@@ -269,7 +279,7 @@ public class TestEnforceMojo {
     }
 
     @Test
-    public void testFailIfNoTests() throws MojoExecutionException {
+    void testFailIfNoTests() throws MojoExecutionException {
         setupBasics(false);
         mojo.setFailIfNoRules(false);
 
@@ -277,7 +287,7 @@ public class TestEnforceMojo {
 
         mojo.execute();
 
-        Mockito.verify(logSpy).warn(Mockito.eq("No rules are configured."));
+        Mockito.verify(logSpy).warn("No rules are configured.");
         Mockito.verifyNoMoreInteractions(logSpy);
     }
 
