@@ -83,7 +83,7 @@
     <mockito.version>4.10.0</mockito.version>
     <project.build.outputTimestamp>2022-12-22T22:11:45Z</project.build.outputTimestamp>
     <!-- the same as Maven 3.2.5 -->
-    <aether.version>1.0.0.v20140518</aether.version>
+    <aether.version>1.1.0</aether.version>
   </properties>
 
   <dependencyManagement>
