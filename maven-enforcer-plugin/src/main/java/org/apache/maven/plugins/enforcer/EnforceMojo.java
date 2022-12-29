@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRule2;
@@ -128,18 +127,18 @@ public class EnforceMojo extends AbstractMojo {
     private PlexusConfiguration rules;
 
     /**
-     * Array of Strings that matches the EnforcerRules to execute.
+     * List of strings that matches the EnforcerRules to execute.
      */
     @Parameter(required = false, property = "rules")
-    private String[] commandLineRules;
+    private List<String> commandLineRules;
 
     /**
-     * Array of Strings that matches the EnforcerRules to skip.
+     * List of strings that matches the EnforcerRules to skip.
      *
      * @since 3.2.0
      */
     @Parameter(required = false, property = "enforcer.skipRules")
-    private String[] rulesToSkip;
+    private List<String> rulesToSkip;
 
     /**
      * Use this flag to disable rule result caching. This will cause all rules to execute on each project even if the
@@ -275,7 +274,7 @@ public class EnforceMojo extends AbstractMojo {
      */
     private Optional<PlexusConfiguration> createRulesFromCommandLineOptions() {
 
-        if (commandLineRules == null || commandLineRules.length == 0) {
+        if (commandLineRules == null || commandLineRules.isEmpty()) {
             return Optional.empty();
         }
 
@@ -296,11 +295,11 @@ public class EnforceMojo extends AbstractMojo {
      * @return list of filtered rules
      */
     private List<EnforcerRuleDesc> filterOutSkippedRules(List<EnforcerRuleDesc> allRules) {
-        if (rulesToSkip == null || rulesToSkip.length == 0) {
+        if (rulesToSkip == null || rulesToSkip.isEmpty()) {
             return allRules;
         }
         return allRules.stream()
-                .filter(ruleDesc -> !ArrayUtils.contains(rulesToSkip, ruleDesc.getName()))
+                .filter(ruleDesc -> !rulesToSkip.contains(ruleDesc.getName()))
                 .collect(Collectors.toList());
     }
 
