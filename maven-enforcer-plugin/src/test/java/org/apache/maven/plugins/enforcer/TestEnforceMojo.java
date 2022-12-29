@@ -20,6 +20,7 @@ package org.apache.maven.plugins.enforcer;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -35,6 +36,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -289,6 +291,32 @@ class TestEnforceMojo {
 
         Mockito.verify(logSpy).warn("No rules are configured.");
         Mockito.verifyNoMoreInteractions(logSpy);
+    }
+
+    @Test
+    void testFailIfBothRuleOverridePropertiesAreSet() throws MojoExecutionException {
+        setupBasics(false);
+
+        Log logSpy = setupLogSpy();
+        List<String> rules = Arrays.asList("rule1", "rule2");
+        mojo.setRulesToExecute(rules);
+
+        assertThatThrownBy(() -> mojo.setCommandLineRules(rules))
+                .isInstanceOf(MojoExecutionException.class)
+                .hasMessageContaining(
+                        "Detected the usage of both '-Drules' (which is deprecated) and '-Denforcer.rules'");
+    }
+
+    @Test
+    void testShouldPrintWarnWhenUsingDeprecatedRulesProperty() throws MojoExecutionException {
+        setupBasics(false);
+
+        Log logSpy = setupLogSpy();
+
+        mojo.setCommandLineRules(Arrays.asList("rule1", "rule2"));
+
+        Mockito.verify(logSpy)
+                .warn("Detected the usage of property '-Drules' which is deprecated. Use '-Denforcer.rules' instead.");
     }
 
     private void setupBasics(boolean fail) {

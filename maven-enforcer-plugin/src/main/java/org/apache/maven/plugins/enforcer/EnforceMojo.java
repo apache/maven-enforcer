@@ -118,19 +118,13 @@ public class EnforceMojo extends AbstractMojo {
      *             &lt;message&gt;message for rule&lt;/message&gt;
      *         &lt;/alwaysPass&gt;
      *         &lt;myRule implementation="org.example.MyRule"/&gt;
-     *     &lt;/rules>
+     *     &lt;/rules&gt;
      * </pre>
      *
      * @since 1.0.0
      */
     @Parameter
     private PlexusConfiguration rules;
-
-    /**
-     * List of strings that matches the EnforcerRules to execute.
-     */
-    @Parameter(required = false, property = "rules")
-    private List<String> commandLineRules;
 
     /**
      * List of strings that matches the EnforcerRules to skip.
@@ -152,6 +146,36 @@ public class EnforceMojo extends AbstractMojo {
 
     @Component
     private EnforcerRuleManager enforcerRuleManager;
+
+    private List<String> rulesToExecute;
+
+    /**
+     * List of strings that matches the EnforcerRules to execute. Replacement for the <code>rules</code> property.
+     *
+     * @since 3.2.0
+     */
+    @Parameter(required = false, property = "enforcer.rules")
+    public void setRulesToExecute(List<String> rulesToExecute) throws MojoExecutionException {
+        if (rulesToExecute != null && !rulesToExecute.isEmpty()) {
+            if (this.rulesToExecute != null && !this.rulesToExecute.isEmpty()) {
+                throw new MojoExecutionException("Detected the usage of both '-Drules' (which is deprecated) "
+                        + "and '-Denforcer.rules'. Please use only one of them, preferably '-Denforcer.rules'.");
+            }
+            this.rulesToExecute = rulesToExecute;
+        }
+    }
+
+    /**
+     * List of strings that matches the EnforcerRules to execute.
+     *
+     * @deprecated Use <code>enforcer.rules</code> property instead
+     */
+    @Parameter(required = false, property = "rules")
+    @Deprecated
+    public void setCommandLineRules(List<String> rulesToExecute) throws MojoExecutionException {
+        getLog().warn("Detected the usage of property '-Drules' which is deprecated. Use '-Denforcer.rules' instead.");
+        setRulesToExecute(rulesToExecute);
+    }
 
     @Override
     public void execute() throws MojoExecutionException {
@@ -274,21 +298,19 @@ public class EnforceMojo extends AbstractMojo {
      */
     private Optional<PlexusConfiguration> createRulesFromCommandLineOptions() {
 
-        if (commandLineRules == null || commandLineRules.isEmpty()) {
+        if (rulesToExecute == null || rulesToExecute.isEmpty()) {
             return Optional.empty();
         }
 
         PlexusConfiguration configuration = new DefaultPlexusConfiguration("rules");
-
-        for (String rule : commandLineRules) {
+        for (String rule : rulesToExecute) {
             configuration.addChild(new DefaultPlexusConfiguration(rule));
         }
-
         return Optional.of(configuration);
     }
 
     /**
-     * Filter our (remove) rules that have been specifically skipped via additional configuration.
+     * Filter out (remove) rules that have been specifically skipped via additional configuration.
      *
      * @param allRules list of enforcer rules to go through and filter
      *
