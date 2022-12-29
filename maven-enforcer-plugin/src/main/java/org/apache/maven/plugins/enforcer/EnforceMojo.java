@@ -23,7 +23,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRule2;
@@ -132,6 +134,14 @@ public class EnforceMojo extends AbstractMojo {
     private String[] commandLineRules;
 
     /**
+     * Array of Strings that matches the EnforcerRules to skip.
+     *
+     * @since 3.2.0
+     */
+    @Parameter(required = false, property = "enforcer.skipRules")
+    private String[] rulesToSkip;
+
+    /**
      * Use this flag to disable rule result caching. This will cause all rules to execute on each project even if the
      * rule indicates it can safely be cached.
      */
@@ -154,11 +164,11 @@ public class EnforceMojo extends AbstractMojo {
         }
 
         Optional<PlexusConfiguration> rulesFromCommandLine = createRulesFromCommandLineOptions();
-
         List<EnforcerRuleDesc> rulesList;
         try {
             // current behavior - rules from command line override all other configured rules.
-            rulesList = enforcerRuleManager.createRules(rulesFromCommandLine.orElse(rules));
+            List<EnforcerRuleDesc> allRules = enforcerRuleManager.createRules(rulesFromCommandLine.orElse(rules));
+            rulesList = filterOutSkippedRules(allRules);
         } catch (EnforcerRuleManagerException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         }
@@ -175,8 +185,6 @@ public class EnforceMojo extends AbstractMojo {
 
         // messages with warn/error flag
         Map<String, Boolean> messages = new LinkedHashMap<>();
-
-        String currentRule = "Unknown";
 
         // create my helper
         PluginParameterExpressionEvaluator evaluator = new PluginParameterExpressionEvaluator(session, mojoExecution);
@@ -200,7 +208,7 @@ public class EnforceMojo extends AbstractMojo {
                 EnforcerLevel level = getLevel(rule);
                 // store the current rule for
                 // logging purposes
-                currentRule = rule.getClass().getName();
+                String currentRule = rule.getClass().getName();
                 try {
                     if (ignoreCache || shouldExecute(rule)) {
                         // execute the rule
@@ -254,12 +262,10 @@ public class EnforceMojo extends AbstractMojo {
             }
         });
 
-        // CHECKSTYLE_OFF: LineLength
         if (fail && hasErrors) {
             throw new MojoExecutionException(
                     "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed.");
         }
-        // CHECKSTYLE_ON: LineLength
     }
 
     /**
@@ -280,6 +286,22 @@ public class EnforceMojo extends AbstractMojo {
         }
 
         return Optional.of(configuration);
+    }
+
+    /**
+     * Filter our (remove) rules that have been specifically skipped via additional configuration.
+     *
+     * @param allRules list of enforcer rules to go through and filter
+     *
+     * @return list of filtered rules
+     */
+    private List<EnforcerRuleDesc> filterOutSkippedRules(List<EnforcerRuleDesc> allRules) {
+        if (rulesToSkip == null || rulesToSkip.length == 0) {
+            return allRules;
+        }
+        return allRules.stream()
+                .filter(ruleDesc -> !ArrayUtils.contains(rulesToSkip, ruleDesc.getName()))
+                .collect(Collectors.toList());
     }
 
     /**
