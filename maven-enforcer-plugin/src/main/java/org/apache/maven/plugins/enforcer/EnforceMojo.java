@@ -173,7 +173,10 @@ public class EnforceMojo extends AbstractMojo {
     @Parameter(required = false, property = "rules")
     @Deprecated
     public void setCommandLineRules(List<String> rulesToExecute) throws MojoExecutionException {
-        getLog().warn("Detected the usage of property '-Drules' which is deprecated. Use '-Denforcer.rules' instead.");
+        if (rulesToExecute != null && !rulesToExecute.isEmpty()) {
+            getLog().warn(
+                            "Detected the usage of property '-Drules' which is deprecated. Use '-Denforcer.rules' instead.");
+        }
         setRulesToExecute(rulesToExecute);
     }
 

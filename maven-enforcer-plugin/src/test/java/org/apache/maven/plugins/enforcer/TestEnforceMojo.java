@@ -319,6 +319,17 @@ class TestEnforceMojo {
                 .warn("Detected the usage of property '-Drules' which is deprecated. Use '-Denforcer.rules' instead.");
     }
 
+    @Test
+    void testShouldNotPrintWarnWhenDeprecatedRulesPropertyIsEmpty() throws MojoExecutionException {
+        setupBasics(false);
+
+        Log logSpy = setupLogSpy();
+
+        mojo.setCommandLineRules(Collections.emptyList());
+
+        Mockito.verifyNoInteractions(logSpy);
+    }
+
     private void setupBasics(boolean fail) {
         mojo.setFail(fail);
         mojo.setSession(EnforcerTestUtils.getMavenSession());
