@@ -48,13 +48,17 @@ public class RequireJavaVendor extends AbstractNonCacheableEnforcerRule {
         if (excludes != null && excludes.contains(SystemUtils.JAVA_VENDOR)) {
             String message = getMessage();
             if (message == null) {
-                message = String.format("%s is an excluded Required Java Vendor", SystemUtils.JAVA_VENDOR);
+                message = String.format(
+                        "%s is an excluded Required Java Vendor (JAVA_HOME=%s)",
+                        SystemUtils.JAVA_VENDOR, SystemUtils.JAVA_HOME);
             }
             throw new EnforcerRuleException(message);
         } else if (includes != null && !includes.contains(SystemUtils.JAVA_VENDOR)) {
             String message = getMessage();
             if (message == null) {
-                message = String.format("%s is not an included Required Java Vendor", SystemUtils.JAVA_VENDOR);
+                message = String.format(
+                        "%s is not an included Required Java Vendor (JAVA_HOME=%s)",
+                        SystemUtils.JAVA_VENDOR, SystemUtils.JAVA_HOME);
             }
             throw new EnforcerRuleException(message);
         }
