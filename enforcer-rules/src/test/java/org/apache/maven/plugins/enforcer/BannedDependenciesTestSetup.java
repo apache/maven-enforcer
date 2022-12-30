@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
@@ -38,12 +37,11 @@ public class BannedDependenciesTestSetup {
         ArtifactStubFactory factory = new ArtifactStubFactory();
 
         project = new MockProject();
-        project.setArtifacts(factory.getMixedArtifacts());
         project.setDependencyArtifacts(factory.getScopedArtifacts());
 
         this.helper = EnforcerTestUtils.getHelper(project);
 
-        this.rule = newBannedDependenciesRule();
+        this.rule = new BannedDependencies();
         this.rule.setMessage(null);
 
         this.rule.setExcludes(this.excludes);
@@ -79,15 +77,5 @@ public class BannedDependenciesTestSetup {
 
     public void setExcludes(List<String> excludes) {
         this.excludes = excludes;
-    }
-
-    private BannedDependencies newBannedDependenciesRule() {
-        return new BannedDependencies() {
-            @Override
-            protected boolean validate(Artifact artifact) {
-                return (isSearchTransitive() ? project.getArtifacts() : project.getDependencyArtifacts())
-                        .stream().map(super::validate).reduce(true, Boolean::logicalAnd);
-            }
-        };
     }
 }

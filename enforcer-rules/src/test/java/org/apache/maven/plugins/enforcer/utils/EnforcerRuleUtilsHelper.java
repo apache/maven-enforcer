@@ -48,7 +48,7 @@ public class EnforcerRuleUtilsHelper {
             if (!shouldFail) {
                 fail("No Exception expected:" + e.getMessage());
             }
-            helper.getLog().debug(e.getMessage());
+            helper.getLog().debug("Rule failed as expected: " + e.getMessage());
         }
     }
 }
