@@ -29,6 +29,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 import static java.util.Optional.ofNullable;
+import static org.apache.maven.plugins.enforcer.utils.ArtifactUtils.matchDependencyArtifact;
 
 /**
  * This rule checks that no snapshots are included.
@@ -114,8 +115,9 @@ public class RequireReleaseDeps extends BannedDependenciesBase {
 
     @Override
     protected boolean validate(Artifact artifact) {
-        return ArtifactUtils.matchDependencyArtifact(artifact, excludes)
-                        && !ArtifactUtils.matchDependencyArtifact(artifact, includes)
+        // only check isSnapshot() if the artifact does not match (excludes minus includes)
+        // otherwise true
+        return (matchDependencyArtifact(artifact, excludes) && !matchDependencyArtifact(artifact, includes))
                 || !artifact.isSnapshot();
     }
 

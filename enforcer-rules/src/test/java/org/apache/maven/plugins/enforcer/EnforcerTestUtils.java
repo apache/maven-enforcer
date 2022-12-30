@@ -20,8 +20,6 @@ package org.apache.maven.plugins.enforcer;
 
 import java.util.Properties;
 
-import org.apache.maven.RepositoryUtils;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
@@ -33,6 +31,7 @@ import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.apache.maven.plugins.enforcer.utils.DependencyNodeBuilder;
 import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
@@ -41,15 +40,12 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.artifact.ArtifactType;
-import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.collection.CollectResult;
 import org.eclipse.aether.collection.DependencyCollectionException;
-import org.eclipse.aether.graph.DefaultDependencyNode;
 import org.eclipse.aether.graph.DependencyNode;
 
-import static java.util.Arrays.asList;
+import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -60,6 +56,10 @@ import static org.mockito.Mockito.when;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 public final class EnforcerTestUtils {
+
+    private static RepositorySystem REPOSITORY_SYSTEM = mock(RepositorySystem.class);
+    ;
+
     /**
      * Gets the maven session.
      *
@@ -112,20 +112,17 @@ public final class EnforcerTestUtils {
         return getHelper(project, false);
     }
 
-    private static RepositorySystem mockRepositorySystem() throws DependencyCollectionException {
-        ArtifactType jarType = RepositoryUtils.newArtifactType("jar", new DefaultArtifactHandler("jar"));
-        final DependencyNode node = new DefaultDependencyNode(
-                new DefaultArtifact("groupId", "artifactId", "classifier", "jar", "version", jarType));
-        node.setChildren(asList(
-                new DefaultDependencyNode(
-                        new DefaultArtifact("groupId", "artifact", "classifier", "jar", "1.0.0", jarType)),
-                new DefaultDependencyNode(
-                        new DefaultArtifact("groupId", "artifact", "classifier", "jar", "2.0.0", jarType))));
+    public static void provideCollectDependencies(DependencyNode node) {
+        try {
+            when(REPOSITORY_SYSTEM.collectDependencies(any(), any(CollectRequest.class)))
+                    .then(i -> new CollectResult(i.getArgument(1)).setRoot(node));
+        } catch (DependencyCollectionException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-        RepositorySystem mockRepositorySystem = mock(RepositorySystem.class);
-        when(mockRepositorySystem.collectDependencies(any(), any(CollectRequest.class)))
-                .then(i -> new CollectResult(i.getArgument(1)).setRoot(node));
-        return mockRepositorySystem;
+    public static void provideCollectDependencies() {
+        provideCollectDependencies(getUniformDependencyNodeTree());
     }
 
     /**
@@ -148,7 +145,8 @@ public final class EnforcerTestUtils {
             }
 
             PlexusContainer container = mock(PlexusContainer.class);
-            when(container.lookup(RepositorySystem.class)).then(i -> mockRepositorySystem());
+            when(container.lookup(RepositorySystem.class)).thenReturn(REPOSITORY_SYSTEM);
+            provideCollectDependencies();
 
             ClassWorld classWorld = new ClassWorld("test", EnforcerTestUtils.class.getClassLoader());
             MojoDescriptor mojoDescriptor = new MojoDescriptor();
@@ -191,5 +189,57 @@ public final class EnforcerTestUtils {
         plugin.setVersion(version);
         plugin.setLocation("version", new InputLocation(0, 0, inputSource));
         return plugin;
+    }
+
+    public static DependencyNode getUniformDependencyNodeTree() {
+        return new DependencyNodeBuilder()
+                .withType(DependencyNodeBuilder.Type.POM)
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childA")
+                        .withVersion("1.0.0")
+                        .build())
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childB")
+                        .withVersion("2.0.0")
+                        .build())
+                .build();
+    }
+
+    public static DependencyNode getDependencyNodeWithMultipleSnapshots() {
+        return new DependencyNodeBuilder()
+                .withType(DependencyNodeBuilder.Type.POM)
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childA")
+                        .withVersion("1.0.0")
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withArtifactId("childAA")
+                                .withVersion("1.0.0-SNAPSHOT")
+                                .build())
+                        .build())
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childB")
+                        .withVersion("2.0.0-SNAPSHOT")
+                        .build())
+                .build();
+    }
+
+    public static DependencyNode getDependencyNodeWithMultipleTestSnapshots() {
+        return new DependencyNodeBuilder()
+                .withType(DependencyNodeBuilder.Type.POM)
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childA")
+                        .withVersion("1.0.0")
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withArtifactId("childAA")
+                                .withVersion("1.0.0-SNAPSHOT")
+                                .withScope(SCOPE_TEST)
+                                .build())
+                        .build())
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childB")
+                        .withVersion("2.0.0-SNAPSHOT")
+                        .withScope(SCOPE_TEST)
+                        .build())
+                .build();
     }
 }

@@ -74,7 +74,6 @@ abstract class BannedDependenciesBase extends AbstractNonCacheableEnforcerRule {
             throw new EnforcerRuleException("Cannot resolve MavenSession", e);
         }
 
-        DependencyNode rootNode = ArtifactUtils.resolveTransitiveDependencies(helper);
         if (!searchTransitive) {
             String result = session.getCurrentProject().getDependencyArtifacts().stream()
                     .filter(a -> !validate(a))
@@ -91,6 +90,7 @@ abstract class BannedDependenciesBase extends AbstractNonCacheableEnforcerRule {
             }
         } else {
             StringBuilder messageBuilder = new StringBuilder();
+            DependencyNode rootNode = ArtifactUtils.resolveTransitiveDependencies(helper);
             if (!validate(rootNode, 0, messageBuilder)) {
                 throw new EnforcerRuleException(messageBuilder.toString());
             }

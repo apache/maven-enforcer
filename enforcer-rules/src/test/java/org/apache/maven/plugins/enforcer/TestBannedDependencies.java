@@ -21,9 +21,11 @@ package org.apache.maven.plugins.enforcer;
 import java.io.IOException;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.plugins.enforcer.utils.DependencyNodeBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.apache.maven.plugins.enforcer.EnforcerTestUtils.provideCollectDependencies;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -78,33 +80,48 @@ public class TestBannedDependencies {
 
         @Test
         public void testGroupIdArtifactIdVersion() {
-            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("testGroupId:release:1.0"));
+            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("default-group:childA:1.0.0"));
         }
 
         @Test
         public void testGroupIdArtifactId() {
-            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("testGroupId:release"));
+            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("default-group:childA"));
         }
 
         @Test
         public void testGroupId() {
-            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("testGroupId"));
+            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("default-group"));
         }
 
         @Test
         public void testSpaceTrimmingGroupIdArtifactIdVersion() {
             assertThrows(
-                    EnforcerRuleException.class, () -> addExcludeAndRunRule("  testGroupId  :  release   :   1.0    "));
+                    EnforcerRuleException.class,
+                    () -> addExcludeAndRunRule("  default-group  :  childA   :   1.0.0    "));
         }
 
         @Test
         public void groupIdArtifactIdVersionType() {
-            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("g:a:1.0:war"));
+            provideCollectDependencies(new DependencyNodeBuilder()
+                    .withType(DependencyNodeBuilder.Type.POM)
+                    .withChildNode(new DependencyNodeBuilder()
+                            .withArtifactId("childA")
+                            .withVersion("1.0.0")
+                            .withChildNode(new DependencyNodeBuilder()
+                                    .withType(DependencyNodeBuilder.Type.WAR)
+                                    .withArtifactId("childAA")
+                                    .withVersion("1.0.0-SNAPSHOT")
+                                    .build())
+                            .build())
+                    .build());
+            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("*:*:*:war"));
         }
 
         @Test
         public void groupIdArtifactIdVersionTypeScope() {
-            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("g:a:1.0:war:compile"));
+            EnforcerTestUtils.provideCollectDependencies(
+                    EnforcerTestUtils.getDependencyNodeWithMultipleTestSnapshots());
+            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("*:*:*:*:test"));
         }
 
         // @Test(expected = EnforcerRuleException.class)
@@ -130,22 +147,22 @@ public class TestBannedDependencies {
 
         @Test
         public void testWildcardForGroupIdArtifactIdVersion() throws Exception {
-            addExcludeAndRunRule("*:release:1.2");
+            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("*:childA:1.0.0"));
         }
 
         @Test
         public void testWildCardForGroupIdArtifactId() {
-            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("*:release"));
+            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("*:childA"));
         }
 
         @Test
         public void testWildcardForGroupIdWildcardForArtifactIdVersion() {
-            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("*:*:1.0"));
+            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("*:*:1.0.0"));
         }
 
         @Test
         public void testWildcardForGroupIdArtifactIdWildcardForVersion() {
-            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("*:release:*"));
+            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("*:childA:*"));
         }
     }
 
@@ -165,17 +182,18 @@ public class TestBannedDependencies {
 
         @Test
         public void groupIdArtifactIdWithWildcard() {
-            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("testGroupId:re*"));
+            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("default-group:ch*"));
         }
 
         @Test
         public void groupIdArtifactIdVersionTypeWildcardScope() {
-            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("g:a:1.0:war:co*"));
+            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("default-group:childA:1.0.0:jar:co*"));
         }
 
         @Test
         public void groupIdArtifactIdVersionWildcardTypeScope() {
-            assertThrows(EnforcerRuleException.class, () -> addExcludeAndRunRule("g:a:1.0:w*:compile"));
+            assertThrows(
+                    EnforcerRuleException.class, () -> addExcludeAndRunRule("default-group:childA:1.0.0:j*:compile"));
         }
     }
 
