@@ -23,14 +23,13 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * The Class TestRequireJavaVersion.
@@ -89,30 +88,44 @@ class TestRequireJavaVersion {
 
     @Test
     void excludingTheCurrentJavaVersionViaRangeThisShouldFailWithException() {
-        assertThrows(EnforcerRuleException.class, () -> {
-            String thisVersion = RequireJavaVersion.normalizeJDKVersion(SystemUtils.JAVA_VERSION);
+        String thisVersion = RequireJavaVersion.normalizeJDKVersion(SystemUtils.JAVA_VERSION);
+        String requiredVersion = "(" + thisVersion;
+        RequireJavaVersion rule = new RequireJavaVersion();
+        rule.setVersion(requiredVersion);
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
 
-            RequireJavaVersion rule = new RequireJavaVersion();
-            // exclude this version
-            rule.setVersion("(" + thisVersion);
-
-            EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
-            rule.execute(helper);
-            // intentionally no assertThat(...) because we expect and exception.
-        });
-        // intentionally no assertThat(...) because we expect and exception.
+        assertThatThrownBy(() -> rule.execute(helper))
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessage("The requested JDK version %s is invalid.", requiredVersion);
     }
 
     @Test
-    @Disabled
-    // TODO: Think about the intention of this test? What should it prove?
-    void thisShouldNotCrash() throws EnforcerRuleException {
+    void shouldIncludeJavaHomeLocationInTheErrorMessage() {
+        String thisVersion = RequireJavaVersion.normalizeJDKVersion(SystemUtils.JAVA_VERSION);
+        String requiredVersion = "10000";
         RequireJavaVersion rule = new RequireJavaVersion();
-        rule.setVersion(SystemUtils.JAVA_VERSION);
-
+        rule.setVersion(requiredVersion);
         EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
-        rule.execute(helper);
-        // intentionally no assertThat(...) because we don't expect and exception.
+
+        assertThatThrownBy(() -> rule.execute(helper))
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessage(
+                        "Detected JDK version %s (JAVA_HOME=%s) is not in the allowed range %s.",
+                        thisVersion, SystemUtils.JAVA_HOME, requiredVersion);
+    }
+
+    @Test
+    void shouldUseCustomErrorMessage() {
+        String requiredVersion = "10000";
+        String message = "My custom error message";
+        RequireJavaVersion rule = new RequireJavaVersion();
+        rule.setVersion(requiredVersion);
+        rule.setMessage(message);
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
+
+        assertThatThrownBy(() -> rule.execute(helper))
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessage(message);
     }
 
     /**

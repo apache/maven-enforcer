@@ -27,16 +27,14 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * The Class TestRequireJavaVendor.
  *
  * @author Tim Sijstermans
  */
-public class TestRequireJavaVendor {
+class TestRequireJavaVendor {
     private static final String NON_MATCHING_VENDOR = "non-matching-vendor";
 
     private RequireJavaVendor underTest;
@@ -47,7 +45,7 @@ public class TestRequireJavaVendor {
     }
 
     @Test
-    public void matchingInclude() throws EnforcerRuleException {
+    void matchingInclude() throws EnforcerRuleException {
         // Set the required vendor to the current system vendor
         underTest.setIncludes(Collections.singletonList(SystemUtils.JAVA_VENDOR));
         final EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
@@ -56,25 +54,33 @@ public class TestRequireJavaVendor {
     }
 
     @Test
-    public void nonMatchingInclude() {
+    void nonMatchingInclude() {
         // Set the included vendor to something irrelevant
         underTest.setIncludes(Collections.singletonList(NON_MATCHING_VENDOR));
         final EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> underTest.execute(helper));
-        assertThat(e.getMessage(), is(SystemUtils.JAVA_VENDOR + " is not an included Required Java Vendor"));
+
+        assertThatThrownBy(() -> underTest.execute(helper))
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessage(
+                        "%s is not an included Required Java Vendor (JAVA_HOME=%s)",
+                        SystemUtils.JAVA_VENDOR, SystemUtils.JAVA_HOME);
     }
 
     @Test
-    public void matchingExclude() {
+    void matchingExclude() {
         // Set the excluded vendor to current vendor name
         underTest.setExcludes(Collections.singletonList(SystemUtils.JAVA_VENDOR));
         final EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> underTest.execute(helper));
-        assertThat(e.getMessage(), is(SystemUtils.JAVA_VENDOR + " is an excluded Required Java Vendor"));
+
+        assertThatThrownBy(() -> underTest.execute(helper))
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessage(
+                        "%s is an excluded Required Java Vendor (JAVA_HOME=%s)",
+                        SystemUtils.JAVA_VENDOR, SystemUtils.JAVA_HOME);
     }
 
     @Test
-    public void nonMatchingExclude() throws EnforcerRuleException {
+    void nonMatchingExclude() throws EnforcerRuleException {
         // Set the excluded vendor to something nonsensical
         underTest.setExcludes(Collections.singletonList(NON_MATCHING_VENDOR));
         final EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
@@ -83,25 +89,33 @@ public class TestRequireJavaVendor {
     }
 
     @Test
-    public void matchingIncludeAndMatchingExclude() {
+    void matchingIncludeAndMatchingExclude() {
         underTest.setExcludes(Collections.singletonList(SystemUtils.JAVA_VENDOR));
         underTest.setIncludes(Collections.singletonList(SystemUtils.JAVA_VENDOR));
         final EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> underTest.execute(helper));
-        assertThat(e.getMessage(), is(SystemUtils.JAVA_VENDOR + " is an excluded Required Java Vendor"));
+
+        assertThatThrownBy(() -> underTest.execute(helper))
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessage(
+                        "%s is an excluded Required Java Vendor (JAVA_HOME=%s)",
+                        SystemUtils.JAVA_VENDOR, SystemUtils.JAVA_HOME);
     }
 
     @Test
-    public void matchAnyExclude() {
+    void matchAnyExclude() {
         // Set a bunch of excluded vendors
         underTest.setExcludes(Arrays.asList(SystemUtils.JAVA_VENDOR, SystemUtils.JAVA_VENDOR + "modified"));
         final EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> underTest.execute(helper));
-        assertThat(e.getMessage(), is(SystemUtils.JAVA_VENDOR + " is an excluded Required Java Vendor"));
+
+        assertThatThrownBy(() -> underTest.execute(helper))
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessage(
+                        "%s is an excluded Required Java Vendor (JAVA_HOME=%s)",
+                        SystemUtils.JAVA_VENDOR, SystemUtils.JAVA_HOME);
     }
 
     @Test
-    public void matchAnyInclude() throws EnforcerRuleException {
+    void matchAnyInclude() throws EnforcerRuleException {
         // Set a bunch of included vendors
         underTest.setIncludes(Arrays.asList(SystemUtils.JAVA_VENDOR, SystemUtils.JAVA_VENDOR + "modified"));
         final EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
@@ -110,7 +124,7 @@ public class TestRequireJavaVendor {
     }
 
     @Test
-    public void defaultRule() throws EnforcerRuleException {
+    void defaultRule() throws EnforcerRuleException {
         final EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
         underTest.execute(helper);
         // No assert and no expected exception because this test should not fail

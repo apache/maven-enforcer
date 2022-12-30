@@ -76,6 +76,8 @@ public class RequireJavaVersion extends AbstractVersionEnforcer {
                 + " Build: " + detectedJdkVersion.getBuildNumber() + " Qualifier: "
                 + detectedJdkVersion.getQualifier());
 
+        setCustomMessageIfNoneConfigured(detectedJdkVersion, getVersion());
+
         enforceVersion(helper.getLog(), "JDK", getVersion(), detectedJdkVersion);
     }
 
@@ -111,5 +113,14 @@ public class RequireJavaVersion extends AbstractVersionEnforcer {
         String version = buffer.toString();
         version = StringUtils.stripEnd(version, "-");
         return StringUtils.stripEnd(version, ".");
+    }
+
+    private void setCustomMessageIfNoneConfigured(ArtifactVersion detectedJdkVersion, String allowedVersionRange) {
+        if (getMessage() == null) {
+            String message = String.format(
+                    "Detected JDK version %s (JAVA_HOME=%s) is not in the allowed range %s.",
+                    detectedJdkVersion, SystemUtils.JAVA_HOME, allowedVersionRange);
+            super.setMessage(message);
+        }
     }
 }
