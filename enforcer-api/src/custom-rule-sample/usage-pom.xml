@@ -18,42 +18,53 @@
   * under the License. 
   *
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-enforcer-plugin-sample-usage</artifactId>
-    <version>1</version>
-    <packaging>jar</packaging>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>${project.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>custom-rule</groupId>
-                        <artifactId>custom-rule-sample</artifactId>
-                        <version>1.0</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>enforce</id>
-                        <configuration>
-                            <rules>
-                                <myCustomRule implementation="org.apache.maven.enforcer.rule.MyCustomRule">
-                                    <shouldIfail>false</shouldIfail>
-                                </myCustomRule>
-                            </rules>
-                        </configuration>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
+<!-- START SNIPPET: usage-pom -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+  <groupId>custom-rule</groupId>
+  <artifactId>maven-enforcer-plugin-sample-usage</artifactId>
+  <version>1</version>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <dependencies>
+          <!-- dependencies to your artifact contains rule implementation -->
+          <dependency>
+            <groupId>custom-rule</groupId>
+            <artifactId>custom-rule-sample</artifactId>
+            <version>1.0</version>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>enforce</id>
+            <configuration>
+              <rules>
+                <!-- rule name -->
+                <myCustomRule>
+                  <!-- rule parameters -->
+                  <shouldIfail>true</shouldIfail>
+                  <listParameters>
+                    <item>item 1</item>
+                    <item>item 2</item>
+                  </listParameters>
+                </myCustomRule>
+              </rules>
+            </configuration>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
+    <!-- END SNIPPET: usage-pom -->

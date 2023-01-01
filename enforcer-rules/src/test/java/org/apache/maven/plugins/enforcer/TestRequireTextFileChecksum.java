@@ -24,7 +24,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.plugins.enforcer.utils.NormalizeLineSeparatorReader.LineSeparator;
+import org.apache.maven.enforcer.rules.utils.NormalizeLineSeparatorReader.LineSeparator;
 import org.codehaus.plexus.util.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

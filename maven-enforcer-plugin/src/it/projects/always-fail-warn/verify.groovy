@@ -17,7 +17,7 @@
  * under the License.
  */
 File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( '[WARNING] Rule 0: org.apache.maven.plugins.enforcer.AlwaysFail warned with message:' )
+assert buildLog.text.contains( '[WARNING] Rule 0: org.apache.maven.enforcer.rules.AlwaysFail warned with message:' )
 
 
  
