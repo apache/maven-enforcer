@@ -24,12 +24,12 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.plugins.enforcer.utils.ArtifactUtils;
+import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 import static java.util.Optional.ofNullable;
-import static org.apache.maven.plugins.enforcer.utils.ArtifactUtils.matchDependencyArtifact;
+import static org.apache.maven.enforcer.rules.utils.ArtifactUtils.matchDependencyArtifact;
 
 /**
  * This rule checks that no snapshots are included.

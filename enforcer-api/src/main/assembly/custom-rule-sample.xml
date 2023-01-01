@@ -18,9 +18,9 @@
   * under the License. 
   *
 -->
-<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.1.1"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 https://maven.apache.org/xsd/assembly-2.1.0.xsd">
+    xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.1 https://maven.apache.org/xsd/assembly-2.1.1.xsd">
   <id>sample</id>
   <includeBaseDirectory>false</includeBaseDirectory>
   <formats>
@@ -28,21 +28,8 @@
   </formats>
   <fileSets>
     <fileSet>
-      <directory>src/custom-rule-sample</directory>
+      <directory>target/custom-rule-sample</directory>
       <outputDirectory>/custom-rule-sample</outputDirectory>
     </fileSet>
   </fileSets>
-  <files>
-    <!-- filters custom-rule's pom.xml to replace 'api.version' property with the current project version -->
-    <file>
-      <source>src/custom-rule-sample/pom.xml</source>
-      <outputDirectory>/custom-rule-sample</outputDirectory>
-      <filtered>true</filtered>
-    </file>
-    <file>
-      <source>src/custom-rule-sample/usage-pom.xml</source>
-      <outputDirectory>/custom-rule-sample</outputDirectory>
-      <filtered>true</filtered>
-    </file>
-  </files>
 </assembly>

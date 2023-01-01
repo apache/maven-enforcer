@@ -25,9 +25,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
+import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRule2;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleBase;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
@@ -41,6 +45,11 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.enforcer.internal.EnforcerLoggerError;
+import org.apache.maven.plugins.enforcer.internal.EnforcerLoggerWarn;
+import org.apache.maven.plugins.enforcer.internal.EnforcerRuleCache;
+import org.apache.maven.plugins.enforcer.internal.EnforcerRuleDesc;
+import org.apache.maven.plugins.enforcer.internal.EnforcerRuleManager;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.configuration.DefaultPlexusConfiguration;
@@ -147,6 +156,9 @@ public class EnforceMojo extends AbstractMojo {
     @Component
     private EnforcerRuleManager enforcerRuleManager;
 
+    @Component
+    private EnforcerRuleCache ruleCache;
+
     private List<String> rulesToExecute;
 
     /**
@@ -180,6 +192,10 @@ public class EnforceMojo extends AbstractMojo {
         setRulesToExecute(rulesToExecute);
     }
 
+    private EnforcerLogger enforcerLoggerError;
+
+    private EnforcerLogger enforcerLoggerWarn;
+
     @Override
     public void execute() throws MojoExecutionException {
         Log log = this.getLog();
@@ -209,6 +225,9 @@ public class EnforceMojo extends AbstractMojo {
             }
         }
 
+        enforcerLoggerError = new EnforcerLoggerError(log);
+        enforcerLoggerWarn = new EnforcerLoggerWarn(log);
+
         // messages with warn/error flag
         Map<String, Boolean> messages = new LinkedHashMap<>();
 
@@ -225,55 +244,31 @@ public class EnforceMojo extends AbstractMojo {
         boolean hasErrors = false;
 
         // go through each rule
-        for (int i = 0; i < rulesList.size(); i++) {
+        for (int ruleIndex = 0; ruleIndex < rulesList.size(); ruleIndex++) {
 
             // prevent against empty rules
-            EnforcerRuleDesc ruleDesc = rulesList.get(i);
+            EnforcerRuleDesc ruleDesc = rulesList.get(ruleIndex);
             if (ruleDesc != null) {
-                EnforcerRule rule = ruleDesc.getRule();
+                EnforcerRuleBase rule = ruleDesc.getRule();
                 EnforcerLevel level = getLevel(rule);
-                // store the current rule for
-                // logging purposes
-                String currentRule = rule.getClass().getName();
                 try {
-                    if (ignoreCache || shouldExecute(rule)) {
-                        // execute the rule
-                        // noinspection SynchronizationOnLocalVariableOrMethodParameter
-                        synchronized (rule) {
-                            log.info("Executing rule: " + currentRule);
-                            rule.execute(helper);
-                        }
-                    }
+                    executeRule(ruleIndex, ruleDesc, helper);
+                } catch (EnforcerRuleError e) {
+                    String ruleMessage = createRuleMessage(ruleIndex, ruleDesc, EnforcerLevel.ERROR, e);
+                    throw new MojoExecutionException(ruleMessage, e);
                 } catch (EnforcerRuleException e) {
-                    // i can throw an exception
-                    // because failfast will be
-                    // false if fail is false.
+
+                    String ruleMessage = createRuleMessage(ruleIndex, ruleDesc, level, e);
+
                     if (failFast && level == EnforcerLevel.ERROR) {
-                        throw new MojoExecutionException(
-                                currentRule + " failed with message:" + System.lineSeparator() + e.getMessage(), e);
+                        throw new MojoExecutionException(ruleMessage, e);
+                    }
+
+                    if (level == EnforcerLevel.ERROR) {
+                        hasErrors = true;
+                        messages.put(ruleMessage, true);
                     } else {
-                        // log a warning in case the exception message is missing
-                        // so that the user can figure out what is going on
-                        final String exceptionMessage = e.getMessage();
-                        if (exceptionMessage != null) {
-                            log.debug("Adding " + level + " message due to exception", e);
-                        } else {
-                            log.warn("Rule " + i + ": " + currentRule + " failed without a message", e);
-                        }
-                        // add the 'failed/warned' message including exceptionMessage
-                        // which might be null in rare cases
-                        if (level == EnforcerLevel.ERROR) {
-                            hasErrors = true;
-                            messages.put(
-                                    "Rule " + i + ": " + currentRule + " failed with message:" + System.lineSeparator()
-                                            + exceptionMessage,
-                                    true);
-                        } else {
-                            messages.put(
-                                    "Rule " + i + ": " + currentRule + " warned with message:" + System.lineSeparator()
-                                            + exceptionMessage,
-                                    false);
-                        }
+                        messages.put(ruleMessage, false);
                     }
                 }
             }
@@ -291,6 +286,52 @@ public class EnforceMojo extends AbstractMojo {
         if (fail && hasErrors) {
             throw new MojoExecutionException(
                     "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed.");
+        }
+    }
+
+    private void executeRule(int ruleIndex, EnforcerRuleDesc ruleDesc, EnforcerRuleHelper helper)
+            throws EnforcerRuleException {
+
+        if (getLog().isDebugEnabled()) {
+            getLog().debug(String.format("Executing Rule %d: %s", ruleIndex, ruleDesc.getRule()));
+        }
+
+        long startTime = System.currentTimeMillis();
+
+        try {
+            if (ruleDesc.getRule() instanceof EnforcerRule) {
+                executeRuleOld(ruleIndex, ruleDesc, helper);
+            } else if (ruleDesc.getRule() instanceof AbstractEnforcerRule) {
+                executeRuleNew(ruleIndex, ruleDesc);
+            }
+        } finally {
+            if (getLog().isDebugEnabled()) {
+                long workTime = System.currentTimeMillis() - startTime;
+                getLog().debug(String.format(
+                        "Finish Rule %d: %s take %d ms", ruleIndex, getRuleName(ruleDesc), workTime));
+            }
+        }
+    }
+
+    private void executeRuleOld(int ruleIndex, EnforcerRuleDesc ruleDesc, EnforcerRuleHelper helper)
+            throws EnforcerRuleException {
+
+        EnforcerRule rule = (EnforcerRule) ruleDesc.getRule();
+
+        if (ignoreCache || shouldExecute(rule)) {
+            rule.execute(helper);
+            getLog().info(String.format("Rule %d: %s executed", ruleIndex, getRuleName(ruleDesc)));
+        }
+    }
+
+    private void executeRuleNew(int ruleIndex, EnforcerRuleDesc ruleDesc) throws EnforcerRuleException {
+
+        AbstractEnforcerRule rule = (AbstractEnforcerRule) ruleDesc.getRule();
+        rule.setLog(rule.getLevel() == EnforcerLevel.ERROR ? enforcerLoggerError : enforcerLoggerWarn);
+
+        if (ignoreCache || !ruleCache.isCached(rule)) {
+            rule.execute();
+            getLog().info(String.format("Rule %d: %s executed", ruleIndex, getRuleName(ruleDesc)));
         }
     }
 
@@ -316,7 +357,6 @@ public class EnforceMojo extends AbstractMojo {
      * Filter out (remove) rules that have been specifically skipped via additional configuration.
      *
      * @param allRules list of enforcer rules to go through and filter
-     *
      * @return list of filtered rules
      */
     private List<EnforcerRuleDesc> filterOutSkippedRules(List<EnforcerRuleDesc> allRules) {
@@ -379,18 +419,50 @@ public class EnforceMojo extends AbstractMojo {
         return failFast;
     }
 
-    protected String createRuleMessage(int i, String currentRule, EnforcerRuleException e) {
-        return "Rule " + i + ": " + currentRule + " failed with message:" + System.lineSeparator() + e.getMessage();
+    private String createRuleMessage(
+            int ruleIndex, EnforcerRuleDesc ruleDesc, EnforcerLevel level, EnforcerRuleException e) {
+
+        StringBuilder result = new StringBuilder();
+        result.append("Rule ").append(ruleIndex).append(": ").append(getRuleName(ruleDesc));
+
+        if (level == EnforcerLevel.ERROR) {
+            result.append(" failed");
+        } else {
+            result.append(" warned");
+        }
+
+        if (e.getMessage() != null) {
+            result.append(" with message:").append(System.lineSeparator()).append(e.getMessage());
+        } else {
+            result.append(" without a message");
+        }
+
+        return result.toString();
+    }
+
+    private String getRuleName(EnforcerRuleDesc ruleDesc) {
+
+        Class<? extends EnforcerRuleBase> ruleClass = ruleDesc.getRule().getClass();
+
+        String ruleName = ruleClass.getName();
+
+        if (!ruleClass.getSimpleName().equalsIgnoreCase(ruleDesc.getName())) {
+            ruleName += "(" + ruleDesc.getName() + ")";
+        }
+
+        return ruleName;
     }
 
     /**
      * Returns the level of the rule, defaults to {@link EnforcerLevel#ERROR} for backwards compatibility.
      *
-     * @param rule might be of type {@link EnforcerRule2}.
+     * @param rule might be of type {{@link AbstractEnforcerRule} or {@link EnforcerRule2}
      * @return level of the rule.
      */
-    private EnforcerLevel getLevel(EnforcerRule rule) {
-        if (rule instanceof EnforcerRule2) {
+    private EnforcerLevel getLevel(EnforcerRuleBase rule) {
+        if (rule instanceof AbstractEnforcerRule) {
+            return ((AbstractEnforcerRule) rule).getLevel();
+        } else if (rule instanceof EnforcerRule2) {
             return ((EnforcerRule2) rule).getLevel();
         } else {
             return EnforcerLevel.ERROR;

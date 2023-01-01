@@ -21,6 +21,8 @@ package org.apache.maven.plugins.enforcer;
 import java.util.Properties;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rules.utils.DependencyNodeBuilder;
+import org.apache.maven.enforcer.rules.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.execution.MavenSession;
@@ -31,8 +33,6 @@ import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.apache.maven.plugins.enforcer.utils.DependencyNodeBuilder;
-import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.codehaus.plexus.PlexusContainer;
@@ -58,7 +58,6 @@ import static org.mockito.Mockito.when;
 public final class EnforcerTestUtils {
 
     private static RepositorySystem REPOSITORY_SYSTEM = mock(RepositorySystem.class);
-    ;
 
     /**
      * Gets the maven session.

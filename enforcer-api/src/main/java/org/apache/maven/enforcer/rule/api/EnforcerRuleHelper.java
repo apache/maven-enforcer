@@ -35,7 +35,10 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  * rules.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @deprecated Please see
+ *         <a href="https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html">Writing a custom rule</a>
  */
+@Deprecated
 public interface EnforcerRuleHelper extends ExpressionEvaluator {
 
     /**
@@ -50,9 +53,7 @@ public interface EnforcerRuleHelper extends ExpressionEvaluator {
      * Gets the component.
      *
      * @param clazz the clazz
-     *
      * @return the component
-     *
      * @throws ComponentLookupException the component lookup exception
      */
     @Nonnull
@@ -62,9 +63,7 @@ public interface EnforcerRuleHelper extends ExpressionEvaluator {
      * Gets the component.
      *
      * @param componentKey the component key
-     *
      * @return the component
-     *
      * @throws ComponentLookupException the component lookup exception
      */
     @Nonnull
@@ -73,11 +72,9 @@ public interface EnforcerRuleHelper extends ExpressionEvaluator {
     /**
      * Gets the component.
      *
-     * @param role the role
+     * @param role     the role
      * @param roleHint the role hint
-     *
      * @return the component
-     *
      * @throws ComponentLookupException the component lookup exception
      */
     Object getComponent(String role, String roleHint) throws ComponentLookupException;
@@ -85,11 +82,9 @@ public interface EnforcerRuleHelper extends ExpressionEvaluator {
     /**
      * Gets the component.
      *
-     * @param clazz the clazz
+     * @param clazz    the clazz
      * @param roleHint the role hint
-     *
      * @return the component
-     *
      * @throws ComponentLookupException the component lookup exception
      */
     <T> T getComponent(Class<T> clazz, String roleHint) throws ComponentLookupException;
@@ -98,9 +93,7 @@ public interface EnforcerRuleHelper extends ExpressionEvaluator {
      * Gets the component map.
      *
      * @param role the role
-     *
      * @return the component map
-     *
      * @throws ComponentLookupException the component lookup exception
      */
     Map<String, ?> getComponentMap(String role) throws ComponentLookupException;
@@ -109,9 +102,7 @@ public interface EnforcerRuleHelper extends ExpressionEvaluator {
      * Gets the component list.
      *
      * @param role the role
-     *
      * @return the component list
-     *
      * @throws ComponentLookupException the component lookup exception
      */
     List<?> getComponentList(String role) throws ComponentLookupException;
@@ -126,7 +117,7 @@ public interface EnforcerRuleHelper extends ExpressionEvaluator {
     /**
      * Gets a cached value, or uses the provided producer to compute it.
      *
-     * @param key a key to identify the value stored
+     * @param key      a key to identify the value stored
      * @param producer a supplier for the value if it's not already present
      * @return a previously-cached or freshly-computed value
      */

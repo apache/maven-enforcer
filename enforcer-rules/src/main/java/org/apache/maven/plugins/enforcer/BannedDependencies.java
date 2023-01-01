@@ -19,7 +19,7 @@
 package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugins.enforcer.utils.ArtifactUtils;
+import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 
 /**
  * This rule checks that lists of dependencies are not included.

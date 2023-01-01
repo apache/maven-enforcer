@@ -28,8 +28,8 @@ import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.plugins.enforcer.utils.NormalizeLineSeparatorReader;
-import org.apache.maven.plugins.enforcer.utils.NormalizeLineSeparatorReader.LineSeparator;
+import org.apache.maven.enforcer.rules.utils.NormalizeLineSeparatorReader;
+import org.apache.maven.enforcer.rules.utils.NormalizeLineSeparatorReader.LineSeparator;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**

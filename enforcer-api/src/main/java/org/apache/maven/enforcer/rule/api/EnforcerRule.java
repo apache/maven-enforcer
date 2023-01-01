@@ -25,8 +25,11 @@ import javax.annotation.Nullable;
  * Interface to be implemented by any rules executed by the enforcer.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @deprecated Please see
+ *         <a href="https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html">Writing a custom rule</a>
  */
-public interface EnforcerRule {
+@Deprecated
+public interface EnforcerRule extends EnforcerRuleBase {
 
     /**
      * This is the interface into the rule. This method should throw an exception
@@ -35,9 +38,8 @@ public interface EnforcerRule {
      * message as a warning.
      *
      * @param helper The helper provides access to the log, MavenSession and has
-     * helpers to get common components. It is also able to lookup components
-     * by class name.
-     *
+     *               helpers to get common components. It is also able to lookup components
+     *               by class name.
      * @throws EnforcerRuleException the enforcer rule exception
      */
     void execute(@Nonnull EnforcerRuleHelper helper) throws EnforcerRuleException;
@@ -59,8 +61,8 @@ public interface EnforcerRule {
      * your rule and then query them later.
      *
      * @param cachedRule the last cached instance of the rule. This is to be used by the rule to
-     * potentially determine if the results are still valid (ie if the configuration has been overridden)
-     *
+     *                   potentially determine if the results are still valid (ie if the configuration has been
+     *                   overridden)
      * @return <code>true</code> if the stored results are valid for the same id.
      */
     boolean isResultValid(@Nonnull EnforcerRule cachedRule);
@@ -70,7 +72,7 @@ public interface EnforcerRule {
      * that allow multiple results of the same rule to be cached.
      *
      * @return id to be used by the enforcer to determine uniqueness of cache results. The ids only need to be unique
-     * within a given rule implementation as the full key will be [classname]-[id]
+     *         within a given rule implementation as the full key will be [classname]-[id]
      */
     @Nullable
     String getCacheId();

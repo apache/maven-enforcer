@@ -21,7 +21,7 @@ package org.apache.maven.plugins.enforcer;
 import java.io.IOException;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.plugins.enforcer.utils.DependencyNodeBuilder;
+import org.apache.maven.enforcer.rules.utils.DependencyNodeBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
