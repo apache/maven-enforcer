@@ -16,28 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
-
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.plugin.logging.Log;
+package org.apache.maven.enforcer.rule.api;
 
 /**
- * Always pass. This rule is useful for testing the Enforcer configuration.
- * @author Ben Lidgey
+ * Base rule implementation for new API.
+ * <p>
+ * Used for internal purpose.
+ *
+ * @author Slawomir Jaranowski
+ * @since 3.2.0
  */
-public class AlwaysPass extends AbstractNonCacheableEnforcerRule {
+public abstract class AbstractEnforcerRuleBase implements EnforcerRuleBase {
 
-    @Override
-    public void execute(EnforcerRuleHelper helper) {
-        final Log log = helper.getLog();
+    /**
+     * EnforcerLogger instance
+     */
+    private EnforcerLogger log;
 
-        String message = getMessage();
+    /**
+     * Used by {@code EnforcerMojo} to inject logger instance
+     *
+     * @param log an {@link EnforcerLogger} instance
+     */
+    public void setLog(EnforcerLogger log) {
+        this.log = log;
+    }
 
-        StringBuilder buf = new StringBuilder();
-        if (message != null) {
-            buf.append(message).append(System.lineSeparator());
-        }
-        buf.append("Always pass!");
-        log.info(buf.toString());
+    /**
+     * Provide an {@link  EnforcerLogger} instance for Rule
+     *
+     * @return an {@link EnforcerLogger} instance
+     */
+    public EnforcerLogger getLog() {
+        return log;
     }
 }

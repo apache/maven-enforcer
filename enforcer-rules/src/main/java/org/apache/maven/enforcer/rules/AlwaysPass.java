@@ -16,20 +16,30 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
+
+import javax.inject.Named;
 
 /**
- * Problems reported by EnforcerRuleManager.
+ * Always pass. This rule is useful for testing the Enforcer configuration.
+ * @author Ben Lidgey
  */
-public class EnforcerRuleManagerException extends Exception {
+@Named("alwaysPass")
+public final class AlwaysPass extends AbstractStandardEnforcerRule {
 
-    private static final long serialVersionUID = -7559335919839629986L;
+    @Override
+    public void execute() {
 
-    public EnforcerRuleManagerException(Throwable cause) {
-        super(cause);
+        StringBuilder buf = new StringBuilder();
+        if (getMessage() != null) {
+            buf.append(getMessage()).append(System.lineSeparator());
+        }
+        buf.append("Always pass!");
+        getLog().info(buf.toString());
     }
 
-    public EnforcerRuleManagerException(String message, Throwable cause) {
-        super(message, cause);
+    @Override
+    public String toString() {
+        return String.format("AlwaysPass[level=%s, message=%s]", getLevel(), getMessage());
     }
 }

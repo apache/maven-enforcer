@@ -16,28 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.enforcer.rule.api;
 
-/**
- * An error occurring during the execution of a rule.
- * Rule can inform Enforcer plugin about critical state.
- * <p>
- * This exception break a build immediate.
- *
- * @author Slawomir Jaranowski
- * @since 3.2.0
- */
-public class EnforcerRuleError extends EnforcerRuleException {
-
-    public EnforcerRuleError(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public EnforcerRuleError(String message) {
-        super(message);
-    }
-
-    public EnforcerRuleError(Throwable cause) {
-        super(cause);
-    }
-}
+File buildLog = new File(basedir, 'build.log')
+assert buildLog.text.contains('[INFO] Rule Config Provider org.apache.maven.enforcer.rules.ExternalRules executed')
+assert buildLog.text.contains('[ERROR] Rule 0: org.apache.maven.enforcer.rules.AlwaysFail failed with message:')
+assert buildLog.text.contains('[ERROR] Rule 1: org.apache.maven.enforcer.rules.AlwaysFail failed with message:')

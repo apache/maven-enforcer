@@ -16,33 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.enforcer.rules;
+package org.apache.maven.enforcer.rules.utils;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 
 /**
- * Always fail. This rule is useful for testing the Enforcer configuration, or to always fail the build if a particular
- * profile is enabled.
- * @author Ben Lidgey
+ * A configured {@code ExpressionEvaluator} used by rules.
+ *
+ * @author Slawomir Jaranowski
+ * @since 3.2.0
  */
-@Named("alwaysFail")
-public final class AlwaysFail extends AbstractStandardEnforcerRule {
+@Named
+public class ExpressionEvaluator extends PluginParameterExpressionEvaluator {
 
-    @Override
-    public void execute() throws EnforcerRuleException {
-
-        StringBuilder buf = new StringBuilder();
-        if (getMessage() != null) {
-            buf.append(getMessage()).append(System.lineSeparator());
-        }
-        buf.append("Always fails!");
-        throw new EnforcerRuleException(buf.toString());
-    }
-
-    @Override
-    public String toString() {
-        return String.format("AlwaysFail[level=%s, message=%s]", getLevel(), getMessage());
+    @Inject
+    public ExpressionEvaluator(MavenSession session, MojoExecution mojoExecution) {
+        super(session, mojoExecution);
     }
 }

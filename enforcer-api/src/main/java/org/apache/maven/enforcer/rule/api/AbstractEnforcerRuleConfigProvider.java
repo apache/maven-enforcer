@@ -18,26 +18,33 @@
  */
 package org.apache.maven.enforcer.rule.api;
 
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+
 /**
- * An error occurring during the execution of a rule.
- * Rule can inform Enforcer plugin about critical state.
+ * Entry point for custom {@code Enforcer Rule} which provide additional rules configuration.
  * <p>
- * This exception break a build immediate.
+ * Provided configuration will be added to current rules list by {@code Enforcer Mojo}
  *
  * @author Slawomir Jaranowski
  * @since 3.2.0
  */
-public class EnforcerRuleError extends EnforcerRuleException {
+public abstract class AbstractEnforcerRuleConfigProvider extends AbstractEnforcerRuleBase {
 
-    public EnforcerRuleError(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public EnforcerRuleError(String message) {
-        super(message);
-    }
-
-    public EnforcerRuleError(Throwable cause) {
-        super(cause);
-    }
+    /**
+     * Produce rule configuration.
+     * <p>
+     * Returned configuration must contain rules configuration as in example:
+     * <pre>
+     *     &lt;rules&gt;
+     *         &lt;ruleName/&gt;
+     *         &lt;ruleName&gt;
+     *             &lt;ruleConfig&gt;config value&lt;/ruleConfig&gt;
+     *         &lt;/ruleName&gt;
+     *     &lt;/rules&gt;
+     * </pre>
+     *
+     * @return a rules configuration
+     * @throws EnforcerRuleError the error during executing
+     */
+    public abstract Xpp3Dom getRulesConfig() throws EnforcerRuleError;
 }

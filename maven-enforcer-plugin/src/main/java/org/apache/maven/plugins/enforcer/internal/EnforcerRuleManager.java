@@ -26,12 +26,16 @@ import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
+import org.apache.maven.enforcer.rule.api.AbstractEnforcerRuleBase;
+import org.apache.maven.enforcer.rule.api.EnforcerLevel;
+import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleBase;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
-import org.apache.maven.plugins.enforcer.EnforcerRuleManagerException;
+import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
@@ -76,10 +80,11 @@ public class EnforcerRuleManager {
      * Create enforcer rules based on xml configuration.
      *
      * @param rules a rules configuration
+     * @param log   a Mojo logger
      * @return List of rule instances
      * @throws EnforcerRuleManagerException report a problem during rules creating
      */
-    public List<EnforcerRuleDesc> createRules(PlexusConfiguration rules) throws EnforcerRuleManagerException {
+    public List<EnforcerRuleDesc> createRules(PlexusConfiguration rules, Log log) throws EnforcerRuleManagerException {
 
         List<EnforcerRuleDesc> result = new ArrayList<>();
 
@@ -96,8 +101,17 @@ public class EnforcerRuleManager {
         ExpressionEvaluator evaluator =
                 new PluginParameterExpressionEvaluator(sessionProvider.get(), mojoExecutionProvider.get());
 
+        EnforcerLogger enforcerLoggerError = new EnforcerLoggerError(log);
+        EnforcerLogger enforcerLoggerWarn = new EnforcerLoggerWarn(log);
+
         for (PlexusConfiguration ruleConfig : rules.getChildren()) {
-            EnforcerRuleDesc ruleDesc = createRuleDesc(ruleConfig.getName(), ruleConfig.getAttribute("implementation"));
+            // we need rule level before configuration in order to proper set logger and RuleDesc
+            EnforcerLevel ruleLevel = getRuleLevelFromConfig(ruleConfig);
+
+            EnforcerRuleDesc ruleDesc =
+                    createRuleDesc(ruleConfig.getName(), ruleConfig.getAttribute("implementation"), ruleLevel);
+            // setup logger before rule configuration
+            setupLoggerForRule(ruleDesc, ruleLevel == EnforcerLevel.ERROR ? enforcerLoggerError : enforcerLoggerWarn);
             if (ruleConfig.getChildCount() > 0) {
                 try {
                     componentConfigurator.configureComponent(ruleDesc.getRule(), ruleConfig, evaluator, classRealm);
@@ -110,13 +124,30 @@ public class EnforcerRuleManager {
         return result;
     }
 
-    private EnforcerRuleDesc createRuleDesc(String name, String implementation) throws EnforcerRuleManagerException {
+    private EnforcerLevel getRuleLevelFromConfig(PlexusConfiguration ruleConfig) {
+        PlexusConfiguration levelConfig = ruleConfig.getChild("level", false);
+        String level = Optional.ofNullable(levelConfig)
+                .map(PlexusConfiguration::getValue)
+                .orElse(EnforcerLevel.ERROR.name());
+        return EnforcerLevel.valueOf(level);
+    }
+
+    private void setupLoggerForRule(EnforcerRuleDesc ruleDesc, EnforcerLogger logger) {
+        EnforcerRuleBase rule = ruleDesc.getRule();
+        if (rule instanceof AbstractEnforcerRuleBase) {
+            AbstractEnforcerRuleBase ruleBase = (AbstractEnforcerRuleBase) rule;
+            ruleBase.setLog(logger);
+        }
+    }
+
+    private EnforcerRuleDesc createRuleDesc(String name, String implementation, EnforcerLevel ruleLevel)
+            throws EnforcerRuleManagerException {
 
         // component name should always start at lowercase character
         String ruleName = Character.toLowerCase(name.charAt(0)) + name.substring(1);
 
         try {
-            return new EnforcerRuleDesc(ruleName, plexusContainer.lookup(EnforcerRuleBase.class, ruleName));
+            return new EnforcerRuleDesc(ruleName, plexusContainer.lookup(EnforcerRuleBase.class, ruleName), ruleLevel);
         } catch (ComponentLookupException e) {
             // no component for rule
             // process old way, by  class name
@@ -136,7 +167,7 @@ public class EnforcerRuleManager {
 
         try {
             return new EnforcerRuleDesc(
-                    name, (EnforcerRuleBase) Class.forName(ruleClass).newInstance());
+                    ruleName, (EnforcerRuleBase) Class.forName(ruleClass).newInstance(), ruleLevel);
         } catch (Exception e) {
             throw new EnforcerRuleManagerException(
                     "Failed to create enforcer rules with name: " + ruleName + " or for class: " + ruleClass, e);

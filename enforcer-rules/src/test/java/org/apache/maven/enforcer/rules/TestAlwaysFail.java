@@ -21,8 +21,7 @@ package org.apache.maven.enforcer.rules;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * Test AlwaysFail rule.
@@ -30,16 +29,10 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author Ben Lidgey
  * @see AlwaysFail
  */
-public class TestAlwaysFail {
+class TestAlwaysFail {
     @Test
-    public void testExecute() {
-        final AlwaysFail rule = new AlwaysFail();
-        try {
-            // execute rule -- should throw EnforcerRuleException
-            rule.execute();
-            fail("Should throw EnforcerRuleException");
-        } catch (EnforcerRuleException e) {
-            assertNotNull(e.getMessage());
-        }
+    void testExecute() {
+        AlwaysFail rule = new AlwaysFail();
+        assertThatCode(rule::execute).isInstanceOf(EnforcerRuleException.class).hasMessage("Always fails!");
     }
 }

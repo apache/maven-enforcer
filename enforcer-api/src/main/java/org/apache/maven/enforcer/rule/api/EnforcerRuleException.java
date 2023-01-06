@@ -81,7 +81,7 @@ public class EnforcerRuleException extends Exception {
      * <code>message</code>.
      *
      * @param message the message
-     * @param cause the cause
+     * @param cause   the cause
      */
     public EnforcerRuleException(String message, Exception cause) {
         super(message, cause);
@@ -107,5 +107,15 @@ public class EnforcerRuleException extends Exception {
      */
     public EnforcerRuleException(String message) {
         super(message);
+    }
+
+    /**
+     * Construct a new <code>EnforcerRuleException</code> exception wrapping
+     * an underlying <code>Throwable</code>.
+     *
+     * @param cause the cause
+     */
+    public EnforcerRuleException(Throwable cause) {
+        super(cause);
     }
 }

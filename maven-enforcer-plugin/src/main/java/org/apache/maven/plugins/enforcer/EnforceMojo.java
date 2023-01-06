@@ -22,14 +22,14 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
+import org.apache.maven.enforcer.rule.api.AbstractEnforcerRuleConfigProvider;
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
-import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
-import org.apache.maven.enforcer.rule.api.EnforcerRule2;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleBase;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -45,15 +45,15 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.plugins.enforcer.internal.EnforcerLoggerError;
-import org.apache.maven.plugins.enforcer.internal.EnforcerLoggerWarn;
 import org.apache.maven.plugins.enforcer.internal.EnforcerRuleCache;
 import org.apache.maven.plugins.enforcer.internal.EnforcerRuleDesc;
 import org.apache.maven.plugins.enforcer.internal.EnforcerRuleManager;
+import org.apache.maven.plugins.enforcer.internal.EnforcerRuleManagerException;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.configuration.DefaultPlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 
 /**
  * This goal executes the defined enforcer-rules once per module.
@@ -192,10 +192,6 @@ public class EnforceMojo extends AbstractMojo {
         setRulesToExecute(rulesToExecute);
     }
 
-    private EnforcerLogger enforcerLoggerError;
-
-    private EnforcerLogger enforcerLoggerWarn;
-
     @Override
     public void execute() throws MojoExecutionException {
         Log log = this.getLog();
@@ -207,13 +203,14 @@ public class EnforceMojo extends AbstractMojo {
 
         Optional<PlexusConfiguration> rulesFromCommandLine = createRulesFromCommandLineOptions();
         List<EnforcerRuleDesc> rulesList;
-        try {
-            // current behavior - rules from command line override all other configured rules.
-            List<EnforcerRuleDesc> allRules = enforcerRuleManager.createRules(rulesFromCommandLine.orElse(rules));
-            rulesList = filterOutSkippedRules(allRules);
-        } catch (EnforcerRuleManagerException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
-        }
+
+        // current behavior - rules from command line override all other configured rules.
+        List<EnforcerRuleDesc> allRules = enforcerRuleManager.createRules(rulesFromCommandLine.orElse(rules), log);
+        rulesList = filterOutSkippedRules(allRules);
+
+        List<EnforcerRuleDesc> additionalRules = processRuleConfigProviders(rulesList);
+        rulesList = filterOutRuleConfigProviders(rulesList);
+        rulesList.addAll(additionalRules);
 
         if (rulesList.isEmpty()) {
             if (isFailIfNoRules()) {
@@ -224,9 +221,6 @@ public class EnforceMojo extends AbstractMojo {
                 return;
             }
         }
-
-        enforcerLoggerError = new EnforcerLoggerError(log);
-        enforcerLoggerWarn = new EnforcerLoggerWarn(log);
 
         // messages with warn/error flag
         Map<String, Boolean> messages = new LinkedHashMap<>();
@@ -246,30 +240,26 @@ public class EnforceMojo extends AbstractMojo {
         // go through each rule
         for (int ruleIndex = 0; ruleIndex < rulesList.size(); ruleIndex++) {
 
-            // prevent against empty rules
             EnforcerRuleDesc ruleDesc = rulesList.get(ruleIndex);
-            if (ruleDesc != null) {
-                EnforcerRuleBase rule = ruleDesc.getRule();
-                EnforcerLevel level = getLevel(rule);
-                try {
-                    executeRule(ruleIndex, ruleDesc, helper);
-                } catch (EnforcerRuleError e) {
-                    String ruleMessage = createRuleMessage(ruleIndex, ruleDesc, EnforcerLevel.ERROR, e);
+            EnforcerLevel level = ruleDesc.getLevel();
+            try {
+                executeRule(ruleIndex, ruleDesc, helper);
+            } catch (EnforcerRuleError e) {
+                String ruleMessage = createRuleMessage(ruleIndex, ruleDesc, EnforcerLevel.ERROR, e);
+                throw new MojoExecutionException(ruleMessage, e);
+            } catch (EnforcerRuleException e) {
+
+                String ruleMessage = createRuleMessage(ruleIndex, ruleDesc, level, e);
+
+                if (failFast && level == EnforcerLevel.ERROR) {
                     throw new MojoExecutionException(ruleMessage, e);
-                } catch (EnforcerRuleException e) {
+                }
 
-                    String ruleMessage = createRuleMessage(ruleIndex, ruleDesc, level, e);
-
-                    if (failFast && level == EnforcerLevel.ERROR) {
-                        throw new MojoExecutionException(ruleMessage, e);
-                    }
-
-                    if (level == EnforcerLevel.ERROR) {
-                        hasErrors = true;
-                        messages.put(ruleMessage, true);
-                    } else {
-                        messages.put(ruleMessage, false);
-                    }
+                if (level == EnforcerLevel.ERROR) {
+                    hasErrors = true;
+                    messages.put(ruleMessage, true);
+                } else {
+                    messages.put(ruleMessage, false);
                 }
             }
         }
@@ -289,11 +279,45 @@ public class EnforceMojo extends AbstractMojo {
         }
     }
 
+    private List<EnforcerRuleDesc> processRuleConfigProviders(List<EnforcerRuleDesc> rulesList) {
+        return rulesList.stream()
+                .filter(Objects::nonNull)
+                .filter(rd -> rd.getRule() instanceof AbstractEnforcerRuleConfigProvider)
+                .map(this::executeRuleConfigProvider)
+                .flatMap(xml -> enforcerRuleManager.createRules(xml, getLog()).stream())
+                .collect(Collectors.toList());
+    }
+
+    private List<EnforcerRuleDesc> filterOutRuleConfigProviders(List<EnforcerRuleDesc> rulesList) {
+        return rulesList.stream()
+                .filter(Objects::nonNull)
+                .filter(rd -> !(rd.getRule() instanceof AbstractEnforcerRuleConfigProvider))
+                .collect(Collectors.toList());
+    }
+
+    private XmlPlexusConfiguration executeRuleConfigProvider(EnforcerRuleDesc ruleDesc) {
+        AbstractEnforcerRuleConfigProvider ruleProducer = (AbstractEnforcerRuleConfigProvider) ruleDesc.getRule();
+
+        if (getLog().isDebugEnabled()) {
+            getLog().debug(String.format("Executing Rule Config Provider %s", ruleDesc.getRule()));
+        }
+
+        XmlPlexusConfiguration configuration = null;
+        try {
+            configuration = new XmlPlexusConfiguration(ruleProducer.getRulesConfig());
+        } catch (EnforcerRuleException e) {
+            throw new EnforcerRuleManagerException("Rules Provider error for: " + getRuleName(ruleDesc), e);
+        }
+        getLog().info(String.format("Rule Config Provider %s executed", getRuleName(ruleDesc)));
+
+        return configuration;
+    }
+
     private void executeRule(int ruleIndex, EnforcerRuleDesc ruleDesc, EnforcerRuleHelper helper)
             throws EnforcerRuleException {
 
         if (getLog().isDebugEnabled()) {
-            getLog().debug(String.format("Executing Rule %d: %s", ruleIndex, ruleDesc.getRule()));
+            getLog().debug(String.format("Executing Rule %d: %s", ruleIndex, ruleDesc));
         }
 
         long startTime = System.currentTimeMillis();
@@ -327,8 +351,6 @@ public class EnforceMojo extends AbstractMojo {
     private void executeRuleNew(int ruleIndex, EnforcerRuleDesc ruleDesc) throws EnforcerRuleException {
 
         AbstractEnforcerRule rule = (AbstractEnforcerRule) ruleDesc.getRule();
-        rule.setLog(rule.getLevel() == EnforcerLevel.ERROR ? enforcerLoggerError : enforcerLoggerWarn);
-
         if (ignoreCache || !ruleCache.isCached(rule)) {
             rule.execute();
             getLog().info(String.format("Rule %d: %s executed", ruleIndex, getRuleName(ruleDesc)));
@@ -451,22 +473,6 @@ public class EnforceMojo extends AbstractMojo {
         }
 
         return ruleName;
-    }
-
-    /**
-     * Returns the level of the rule, defaults to {@link EnforcerLevel#ERROR} for backwards compatibility.
-     *
-     * @param rule might be of type {{@link AbstractEnforcerRule} or {@link EnforcerRule2}
-     * @return level of the rule.
-     */
-    private EnforcerLevel getLevel(EnforcerRuleBase rule) {
-        if (rule instanceof AbstractEnforcerRule) {
-            return ((AbstractEnforcerRule) rule).getLevel();
-        } else if (rule instanceof EnforcerRule2) {
-            return ((EnforcerRule2) rule).getLevel();
-        } else {
-            return EnforcerLevel.ERROR;
-        }
     }
 
     /**

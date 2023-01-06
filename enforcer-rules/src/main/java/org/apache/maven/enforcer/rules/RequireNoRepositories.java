@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
@@ -40,7 +39,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 @Named("requireNoRepositories")
-public final class RequireNoRepositories extends AbstractEnforcerRule {
+public final class RequireNoRepositories extends AbstractStandardEnforcerRule {
 
     private static final String VERSION = " version:";
 
@@ -86,17 +85,11 @@ public final class RequireNoRepositories extends AbstractEnforcerRule {
      */
     private boolean allowSnapshotPluginRepositories = false;
 
-    private String message;
-
     private final MavenSession session;
 
     @Inject
     public RequireNoRepositories(MavenSession session) {
         this.session = Objects.requireNonNull(session);
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
     }
 
     public void setBanRepositories(boolean banRepositories) {
@@ -170,8 +163,8 @@ public final class RequireNoRepositories extends AbstractEnforcerRule {
         // if anything was found, log it then append the
         // optional message.
         if (!badModels.isEmpty()) {
-            if (StringUtils.isNotEmpty(message)) {
-                newMsg.append(message);
+            if (StringUtils.isNotEmpty(getMessage())) {
+                newMsg.append(getMessage());
             }
 
             throw new EnforcerRuleException(newMsg.toString());
