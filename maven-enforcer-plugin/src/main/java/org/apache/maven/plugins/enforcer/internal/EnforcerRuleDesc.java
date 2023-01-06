@@ -18,6 +18,7 @@
  */
 package org.apache.maven.plugins.enforcer.internal;
 
+import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleBase;
 
 /**
@@ -32,15 +33,31 @@ public class EnforcerRuleDesc {
 
     private final EnforcerRuleBase rule;
 
+    private final EnforcerLevel level;
+
     /**
      * Create a new Rule Description
      *
-     * @param name a rule name
-     * @param rule a rule instance
+     * @param name  a rule name
+     * @param rule  a rule instance
      */
     public EnforcerRuleDesc(String name, EnforcerRuleBase rule) {
         this.name = name;
         this.rule = rule;
+        this.level = EnforcerLevel.ERROR;
+    }
+
+    /**
+     * Create a new Rule Description
+     *
+     * @param name  a rule name
+     * @param rule  a rule instance
+     * @param level a rule level
+     */
+    public EnforcerRuleDesc(String name, EnforcerRuleBase rule, EnforcerLevel level) {
+        this.name = name;
+        this.rule = rule;
+        this.level = level;
     }
 
     public String getName() {
@@ -51,8 +68,12 @@ public class EnforcerRuleDesc {
         return rule;
     }
 
+    public EnforcerLevel getLevel() {
+        return level;
+    }
+
     @Override
     public String toString() {
-        return "EnforcerRuleDesc[name=" + name + ", rule=" + rule + "]";
+        return String.format("EnforcerRuleDesc[name=%s, rule=%s, level=%s]", name, rule, level);
     }
 }

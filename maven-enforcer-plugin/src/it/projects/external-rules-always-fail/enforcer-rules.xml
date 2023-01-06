@@ -22,5 +22,6 @@ under the License.
 <enforcer>
     <rules>
         <AlwaysFail/>
+        <AlwaysFail/>
     </rules>
 </enforcer>

@@ -22,5 +22,6 @@ under the License.
 <enforcer>
     <rules>
         <AlwaysPass/>
+        <AlwaysPass/>
     </rules>
 </enforcer>

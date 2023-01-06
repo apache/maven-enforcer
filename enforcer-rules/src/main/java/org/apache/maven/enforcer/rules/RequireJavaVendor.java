@@ -23,7 +23,6 @@ import javax.inject.Named;
 import java.util.List;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 
 /**
@@ -34,7 +33,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
  * @since 3.0.0
  */
 @Named("requireJavaVendor")
-public final class RequireJavaVendor extends AbstractEnforcerRule {
+public final class RequireJavaVendor extends AbstractStandardEnforcerRule {
     /**
      * Java vendors to include. If none is defined, all are included.
      *
@@ -45,11 +44,6 @@ public final class RequireJavaVendor extends AbstractEnforcerRule {
      * Java vendors to exclude.
      */
     private List<String> excludes;
-
-    /**
-     * A message used if the rule fails.
-     */
-    private String message;
 
     /**
      * The Java Vendor not changed during one Maven session,
@@ -69,8 +63,8 @@ public final class RequireJavaVendor extends AbstractEnforcerRule {
             result += "" + excludes.hashCode();
         }
 
-        if (message != null) {
-            result += "" + message.hashCode();
+        if (getMessage() != null) {
+            result += "" + getMessage().hashCode();
         }
 
         return result;
@@ -79,6 +73,7 @@ public final class RequireJavaVendor extends AbstractEnforcerRule {
     @Override
     public void execute() throws EnforcerRuleException {
         if (excludes != null && excludes.contains(SystemUtils.JAVA_VENDOR)) {
+            String message = getMessage();
             if (message == null) {
                 message = String.format(
                         "%s is an excluded Required Java Vendor (JAVA_HOME=%s)",
@@ -86,6 +81,7 @@ public final class RequireJavaVendor extends AbstractEnforcerRule {
             }
             throw new EnforcerRuleException(message);
         } else if (includes != null && !includes.contains(SystemUtils.JAVA_VENDOR)) {
+            String message = getMessage();
             if (message == null) {
                 message = String.format(
                         "%s is not an included Required Java Vendor (JAVA_HOME=%s)",
@@ -130,6 +126,6 @@ public final class RequireJavaVendor extends AbstractEnforcerRule {
     public String toString() {
         return String.format(
                 "RequireJavaVendor[level=%s, message=%s, includes=%s, excludes=%s]",
-                getLevel(), message, includes, excludes);
+                getLevel(), getMessage(), includes, excludes);
     }
 }

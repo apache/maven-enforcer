@@ -27,35 +27,12 @@ package org.apache.maven.enforcer.rule.api;
  * @author Slawomir Jaranowski
  * @since 3.2.0
  */
-public abstract class AbstractEnforcerRule implements EnforcerRuleBase {
-
-    /**
-     * EnforcerLogger instance
-     */
-    private EnforcerLogger log;
+public abstract class AbstractEnforcerRule extends AbstractEnforcerRuleBase {
 
     /**
      * Enforcer Rule execution level
      */
     private EnforcerLevel level = EnforcerLevel.ERROR;
-
-    /**
-     * Used by {@code EnforcerMojo} to inject logger instance
-     *
-     * @param log an {@link EnforcerLogger} instance
-     */
-    public void setLog(EnforcerLogger log) {
-        this.log = log;
-    }
-
-    /**
-     * Provide an {@link  EnforcerLogger} instance for Rule
-     *
-     * @return an {@link EnforcerLogger} instance
-     */
-    public EnforcerLogger getLog() {
-        return log;
-    }
 
     /**
      * Current Enforcer execution level

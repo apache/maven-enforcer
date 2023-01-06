@@ -89,7 +89,7 @@ class TestEnforceMojo {
         rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(true));
         rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(true));
 
-        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
+        when(ruleManager.createRules(any(), any())).thenReturn(Arrays.asList(rules));
 
         mojo.execute();
 
@@ -117,7 +117,7 @@ class TestEnforceMojo {
         rules[1] = new EnforcerRuleDesc("ruleBreakBuild", ruleBreakBuild);
         rules[2] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false));
 
-        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
+        when(ruleManager.createRules(any(), any())).thenReturn(Arrays.asList(rules));
 
         Assertions.assertThatCode(() -> mojo.execute())
                 .isInstanceOf(MojoExecutionException.class)
@@ -137,7 +137,7 @@ class TestEnforceMojo {
         rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(true));
         rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(true));
 
-        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
+        when(ruleManager.createRules(any(), any())).thenReturn(Arrays.asList(rules));
 
         try {
             mojo.setFailFast(false);
@@ -171,7 +171,7 @@ class TestEnforceMojo {
         // check that basic caching works.
         rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
         rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
-        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
+        when(ruleManager.createRules(any(), any())).thenReturn(Arrays.asList(rules));
 
         EnforceMojo.cache.clear();
         mojo.execute();
@@ -182,7 +182,7 @@ class TestEnforceMojo {
         // check that skip caching works.
         rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
         rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
-        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
+        when(ruleManager.createRules(any(), any())).thenReturn(Arrays.asList(rules));
 
         EnforceMojo.cache.clear();
         mojo.ignoreCache = true;
@@ -197,7 +197,7 @@ class TestEnforceMojo {
         rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "1", true, true));
         rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "2", true, true));
         rules[2] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "2", true, true));
-        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
+        when(ruleManager.createRules(any(), any())).thenReturn(Arrays.asList(rules));
 
         EnforceMojo.cache.clear();
         mojo.execute();
@@ -210,7 +210,7 @@ class TestEnforceMojo {
         rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "1", true, true));
         rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "1", false, true));
         rules[2] = null;
-        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
+        when(ruleManager.createRules(any(), any())).thenReturn(Arrays.asList(rules));
 
         EnforceMojo.cache.clear();
         mojo.execute();
@@ -222,7 +222,7 @@ class TestEnforceMojo {
         rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "1", true, true));
         rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "1", true, false));
         rules[2] = null;
-        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
+        when(ruleManager.createRules(any(), any())).thenReturn(Arrays.asList(rules));
 
         EnforceMojo.cache.clear();
         mojo.execute();
@@ -240,7 +240,7 @@ class TestEnforceMojo {
         // check that basic caching works.
         rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
         rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
-        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
+        when(ruleManager.createRules(any(), any())).thenReturn(Arrays.asList(rules));
 
         EnforceMojo.cache.clear();
         mojo.execute();
@@ -258,7 +258,7 @@ class TestEnforceMojo {
         // check that basic caching works.
         rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
         rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
-        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
+        when(ruleManager.createRules(any(), any())).thenReturn(Arrays.asList(rules));
 
         mojo.execute();
 
@@ -282,7 +282,7 @@ class TestEnforceMojo {
         // check that basic caching works.
         rules[0] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
         rules[1] = new EnforcerRuleDesc("mockEnforcerRule", new MockEnforcerRule(false, "", true, true));
-        when(ruleManager.createRules(any())).thenReturn(Arrays.asList(rules));
+        when(ruleManager.createRules(any(), any())).thenReturn(Arrays.asList(rules));
 
         mojo.execute();
 
@@ -300,7 +300,7 @@ class TestEnforceMojo {
 
         EnforcerRule ruleMock = Mockito.mock(EnforcerRule.class);
         Mockito.doThrow(ruleException).when(ruleMock).execute(any(EnforcerRuleHelper.class));
-        when(ruleManager.createRules(any()))
+        when(ruleManager.createRules(any(), any()))
                 .thenReturn(Collections.singletonList(new EnforcerRuleDesc("mock", ruleMock)));
 
         Log logSpy = setupLogSpy();
@@ -325,7 +325,7 @@ class TestEnforceMojo {
         EnforcerRule ruleMock = Mockito.mock(EnforcerRule.class);
         Mockito.doThrow(enforcerRuleException).when(ruleMock).execute(any(EnforcerRuleHelper.class));
 
-        when(ruleManager.createRules(any()))
+        when(ruleManager.createRules(any(), any()))
                 .thenReturn(Collections.singletonList(new EnforcerRuleDesc("mock", ruleMock)));
 
         Log logSpy = setupLogSpy();

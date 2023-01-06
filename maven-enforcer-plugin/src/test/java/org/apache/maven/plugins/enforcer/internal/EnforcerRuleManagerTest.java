@@ -22,13 +22,14 @@ import javax.inject.Provider;
 
 import java.util.List;
 
+import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleBase;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
-import org.apache.maven.plugins.enforcer.EnforcerRuleManagerException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.enforcer.TestRule1;
 import org.apache.maven.plugins.enforcer.TestRule2;
 import org.codehaus.plexus.PlexusContainer;
@@ -69,6 +70,9 @@ class EnforcerRuleManagerTest {
     @Mock
     private PlexusContainer plexusContainer;
 
+    @Mock
+    private Log mojoLog;
+
     private EnforcerRuleManager enforcerRuleManager;
 
     @BeforeEach
@@ -94,7 +98,7 @@ class EnforcerRuleManagerTest {
     @Test
     void nullConfigReturnEmptyRules() throws Exception {
 
-        List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(null);
+        List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(null, mojoLog);
 
         assertThat(rules).isEmpty();
     }
@@ -102,7 +106,8 @@ class EnforcerRuleManagerTest {
     @Test
     void emptyConfigReturnEmptyRules() throws Exception {
 
-        List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(new DefaultPlexusConfiguration("rules"));
+        List<EnforcerRuleDesc> rules =
+                enforcerRuleManager.createRules(new DefaultPlexusConfiguration("rules"), mojoLog);
 
         assertThat(rules).isEmpty();
     }
@@ -114,7 +119,7 @@ class EnforcerRuleManagerTest {
 
         PlexusConfiguration configuration = new DefaultPlexusConfiguration("rules").addChild("UnKnowRule", null);
 
-        assertThatCode(() -> enforcerRuleManager.createRules(configuration))
+        assertThatCode(() -> enforcerRuleManager.createRules(configuration, mojoLog))
                 .isInstanceOf(EnforcerRuleManagerException.class)
                 .hasMessage(
                         "Failed to create enforcer rules with name: unKnowRule or for class: org.apache.maven.plugins.enforcer.UnKnowRule")
@@ -135,7 +140,7 @@ class EnforcerRuleManagerTest {
                 .when(componentConfigurator)
                 .configureComponent(any(), any(), any(), any());
 
-        assertThatCode(() -> enforcerRuleManager.createRules(configuration))
+        assertThatCode(() -> enforcerRuleManager.createRules(configuration, mojoLog))
                 .isInstanceOf(EnforcerRuleManagerException.class)
                 .hasCauseInstanceOf(ComponentConfigurationException.class);
     }
@@ -149,14 +154,14 @@ class EnforcerRuleManagerTest {
                 .addChild("TestRule1", null)
                 .addChild("testRule2", null);
 
-        List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(configuration);
+        List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(configuration, mojoLog);
 
         assertThat(rules)
                 .hasSize(2)
                 .map(EnforcerRuleDesc::getRule)
                 .hasExactlyElementsOfTypes(TestRule1.class, TestRule2.class);
 
-        assertThat(rules).hasSize(2).map(EnforcerRuleDesc::getName).containsExactly("TestRule1", "testRule2");
+        assertThat(rules).hasSize(2).map(EnforcerRuleDesc::getName).containsExactly("testRule1", "testRule2");
     }
 
     @Test
@@ -170,7 +175,7 @@ class EnforcerRuleManagerTest {
                 .addChild("TestRule1", null)
                 .addChild("testRule2", null);
 
-        List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(configuration);
+        List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(configuration, mojoLog);
 
         assertThat(rules)
                 .hasSize(2)
@@ -191,7 +196,7 @@ class EnforcerRuleManagerTest {
         PlexusConfiguration configuration = new DefaultPlexusConfiguration("rules");
         configuration.addChild(ruleConfig);
 
-        List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(configuration);
+        List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(configuration, mojoLog);
 
         assertThat(rules).hasSize(1).map(EnforcerRuleDesc::getRule).hasExactlyElementsOfTypes(TestRule1.class);
 
@@ -208,7 +213,7 @@ class EnforcerRuleManagerTest {
         PlexusConfiguration configuration = new DefaultPlexusConfiguration("rules");
         configuration.addChild(ruleConfig);
 
-        List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(configuration);
+        List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(configuration, mock(Log.class));
         assertThat(rules).hasSize(1);
 
         ArgumentCaptor<EnforcerRule> ruleCaptor = ArgumentCaptor.forClass(EnforcerRule.class);
@@ -219,5 +224,19 @@ class EnforcerRuleManagerTest {
 
         assertThat(ruleCaptor.getValue()).isInstanceOf(TestRule1.class);
         assertThat(configurationCaptor.getValue()).isSameAs(ruleConfig);
+    }
+
+    @Test
+    void ruleLevelShouldBeDisoveredFromConfigured() throws Exception {
+
+        setupMocks();
+
+        PlexusConfiguration ruleConfig = new DefaultPlexusConfiguration("testRule1").addChild("level", "WARN");
+        PlexusConfiguration configuration = new DefaultPlexusConfiguration("rules");
+        configuration.addChild(ruleConfig);
+
+        List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(configuration, mock(Log.class));
+        assertThat(rules).hasSize(1);
+        assertThat(rules.get(0).getLevel()).isEqualTo(EnforcerLevel.WARN);
     }
 }

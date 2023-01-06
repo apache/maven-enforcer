@@ -16,23 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
 
 /**
- * An enforcer rules descriptor used by {@link ExternalRules}
+ * Abstract help rule.
  *
- * @author <a href="mailto:gastaldi@apache.org">George Gastaldi</a>
+ * @author Slawomir Jaranowski
+ * @since 3.2.0
  */
-public class EnforcerDescriptor {
-    EnforcerRule[] rules;
+abstract class AbstractStandardEnforcerRule extends AbstractEnforcerRule {
 
-    public EnforcerRule[] getRules() {
-        return rules;
+    private String message;
+
+    public String getMessage() {
+        return message;
     }
 
-    public void setRules(EnforcerRule[] rules) {
-        this.rules = rules;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

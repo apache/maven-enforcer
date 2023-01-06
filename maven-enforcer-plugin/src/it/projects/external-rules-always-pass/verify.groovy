@@ -16,21 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.junit.jupiter.api.Test;
-
-/**
- * Test AlwaysPass rule.
- *
- * @author Ben Lidgey
- * @see AlwaysPass
- */
-public class TestAlwaysPass {
-    @Test
-    public void testExecute() throws EnforcerRuleException {
-        AlwaysPass rule = new AlwaysPass();
-        rule.execute(EnforcerTestUtils.getHelper());
-    }
-}
+File buildLog = new File(basedir, 'build.log')
+assert buildLog.text.contains('[INFO] Rule Config Provider org.apache.maven.enforcer.rules.ExternalRules executed')
+assert buildLog.text.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.AlwaysPass executed')
+assert buildLog.text.contains('[INFO] Rule 1: org.apache.maven.enforcer.rules.AlwaysPass executed')

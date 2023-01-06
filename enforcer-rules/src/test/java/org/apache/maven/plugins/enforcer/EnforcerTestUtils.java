@@ -37,6 +37,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.classworlds.ClassWorld;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
@@ -147,9 +148,8 @@ public final class EnforcerTestUtils {
             when(container.lookup(RepositorySystem.class)).thenReturn(REPOSITORY_SYSTEM);
             provideCollectDependencies();
 
-            ClassWorld classWorld = new ClassWorld("test", EnforcerTestUtils.class.getClassLoader());
             MojoDescriptor mojoDescriptor = new MojoDescriptor();
-            mojoDescriptor.setRealm(classWorld.getClassRealm("test"));
+            mojoDescriptor.setRealm(getTestClassRealm());
             when(mockExecution.getMojoDescriptor()).thenReturn(mojoDescriptor);
             when(container.lookup(MojoExecution.class)).thenReturn(mockExecution);
             return new DefaultEnforcementRuleHelper(session, eval, new SystemStreamLog(), container);
@@ -240,5 +240,10 @@ public final class EnforcerTestUtils {
                         .withScope(SCOPE_TEST)
                         .build())
                 .build();
+    }
+
+    public static ClassRealm getTestClassRealm() {
+        ClassWorld classWorld = new ClassWorld("test", EnforcerTestUtils.class.getClassLoader());
+        return classWorld.getClassRealm("test");
     }
 }

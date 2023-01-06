@@ -18,31 +18,27 @@
  */
 package org.apache.maven.enforcer.rules;
 
-import javax.inject.Named;
-
+import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.Mockito.mock;
 
 /**
- * Always fail. This rule is useful for testing the Enforcer configuration, or to always fail the build if a particular
- * profile is enabled.
+ * Test AlwaysPass rule.
+ *
  * @author Ben Lidgey
+ * @see AlwaysPass
  */
-@Named("alwaysFail")
-public final class AlwaysFail extends AbstractStandardEnforcerRule {
+class TestAlwaysPass {
 
-    @Override
-    public void execute() throws EnforcerRuleException {
+    @Test
+    void testExecute() throws EnforcerRuleException {
 
-        StringBuilder buf = new StringBuilder();
-        if (getMessage() != null) {
-            buf.append(getMessage()).append(System.lineSeparator());
-        }
-        buf.append("Always fails!");
-        throw new EnforcerRuleException(buf.toString());
-    }
+        AlwaysPass rule = new AlwaysPass();
+        rule.setLog(mock(EnforcerLogger.class));
 
-    @Override
-    public String toString() {
-        return String.format("AlwaysFail[level=%s, message=%s]", getLevel(), getMessage());
+        assertThatCode(rule::execute).doesNotThrowAnyException();
     }
 }

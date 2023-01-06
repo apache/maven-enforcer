@@ -16,28 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.enforcer.rule.api;
+package org.apache.maven.plugins.enforcer.internal;
 
 /**
- * An error occurring during the execution of a rule.
- * Rule can inform Enforcer plugin about critical state.
- * <p>
- * This exception break a build immediate.
- *
- * @author Slawomir Jaranowski
- * @since 3.2.0
+ * Problems reported by EnforcerRuleManager.
  */
-public class EnforcerRuleError extends EnforcerRuleException {
+public class EnforcerRuleManagerException extends RuntimeException {
 
-    public EnforcerRuleError(String message, Throwable cause) {
-        super(message, cause);
-    }
+    private static final long serialVersionUID = -7559335919839629986L;
 
-    public EnforcerRuleError(String message) {
-        super(message);
-    }
-
-    public EnforcerRuleError(Throwable cause) {
+    public EnforcerRuleManagerException(Throwable cause) {
         super(cause);
+    }
+
+    public EnforcerRuleManagerException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
