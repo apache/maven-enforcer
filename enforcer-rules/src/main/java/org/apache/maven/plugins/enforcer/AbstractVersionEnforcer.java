@@ -77,12 +77,12 @@ public abstract class AbstractVersionEnforcer extends AbstractStandardEnforcerRu
                     vr = VersionRange.createFromVersionSpec(requiredVersionRange);
 
                     if (containsVersion(vr, actualVersion)) {
-                        log.debug(msg + " is allowed in the range " + requiredVersionRange + ".");
+                        log.debug(msg + " is allowed in the range " + toString(vr) + ".");
                     } else {
                         String message = getMessage();
 
                         if (StringUtils.isEmpty(message)) {
-                            message = msg + " is not in the allowed range " + vr + ".";
+                            message = msg + " is not in the allowed range " + toString(vr) + ".";
                         }
 
                         throw new EnforcerRuleException(message);
@@ -95,6 +95,14 @@ public abstract class AbstractVersionEnforcer extends AbstractStandardEnforcerRu
         }
     }
 
+    protected static String toString(VersionRange vr) {
+        // as recommended version is used as lower bound in this context modify the string representation
+        if (vr.getRecommendedVersion() != null) {
+            return "[" + vr.getRecommendedVersion().toString() + ",)";
+        } else {
+            return vr.toString();
+        }
+    }
     /**
      * Copied from Artifact.VersionRange. This is tweaked to handle singular ranges properly. Currently the default
      * containsVersion method assumes a singular version means allow everything. This method assumes that "2.0.4" ==

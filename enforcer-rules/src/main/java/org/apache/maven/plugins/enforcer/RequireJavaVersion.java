@@ -27,6 +27,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.plugin.logging.Log;
@@ -76,7 +78,7 @@ public class RequireJavaVersion extends AbstractVersionEnforcer {
                 + " Build: " + detectedJdkVersion.getBuildNumber() + " Qualifier: "
                 + detectedJdkVersion.getQualifier());
 
-        setCustomMessageIfNoneConfigured(detectedJdkVersion, getVersion());
+        setCustomMessageIfNoneConfigured(detectedJdkVersion, getVersion(), log);
 
         enforceVersion(helper.getLog(), "JDK", getVersion(), detectedJdkVersion);
     }
@@ -115,11 +117,20 @@ public class RequireJavaVersion extends AbstractVersionEnforcer {
         return StringUtils.stripEnd(version, ".");
     }
 
-    private void setCustomMessageIfNoneConfigured(ArtifactVersion detectedJdkVersion, String allowedVersionRange) {
+    private void setCustomMessageIfNoneConfigured(
+            ArtifactVersion detectedJdkVersion, String allowedVersionRange, Log log) {
         if (getMessage() == null) {
+            String version;
+            try {
+                VersionRange vr = VersionRange.createFromVersionSpec(allowedVersionRange);
+                version = AbstractVersionEnforcer.toString(vr);
+            } catch (InvalidVersionSpecificationException e) {
+                log.debug("Could not parse allowed version range " + allowedVersionRange, e);
+                version = allowedVersionRange;
+            }
             String message = String.format(
                     "Detected JDK version %s (JAVA_HOME=%s) is not in the allowed range %s.",
-                    detectedJdkVersion, SystemUtils.JAVA_HOME, allowedVersionRange);
+                    detectedJdkVersion, SystemUtils.JAVA_HOME, version);
             super.setMessage(message);
         }
     }

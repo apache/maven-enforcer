@@ -111,7 +111,7 @@ class TestRequireJavaVersion {
                 .isInstanceOf(EnforcerRuleException.class)
                 .hasMessage(
                         "Detected JDK version %s (JAVA_HOME=%s) is not in the allowed range %s.",
-                        thisVersion, SystemUtils.JAVA_HOME, requiredVersion);
+                        thisVersion, SystemUtils.JAVA_HOME, "[" + requiredVersion + ",)");
     }
 
     @Test
