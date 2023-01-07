@@ -18,6 +18,7 @@
  */
 package org.apache.maven.plugins.enforcer;
 
+import org.apache.maven.enforcer.rules.utils.OSUtil;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -44,11 +45,12 @@ public class DisplayInfoMojo extends AbstractMojo {
         String mavenVersion = session.getSystemProperties().getProperty("maven.version");
         String javaVersion = System.getProperty("java.version");
         String javaVendor = System.getProperty("java.vendor");
+
         getLog().info("Maven Version: " + mavenVersion);
         getLog().info("JDK Version: " + javaVersion + " normalized as: "
                 + RequireJavaVersion.normalizeJDKVersion(javaVersion));
         getLog().info("Java Vendor: " + javaVendor);
-        RequireOS os = new RequireOS();
-        os.displayOSInfo(getLog(), true);
+
+        getLog().info(OSUtil.getOSInfo());
     }
 }

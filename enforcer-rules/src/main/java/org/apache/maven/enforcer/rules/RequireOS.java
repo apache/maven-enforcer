@@ -16,19 +16,20 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
 
-import java.util.Iterator;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import java.util.Objects;
+
+import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rules.utils.OSUtil;
 import org.apache.maven.model.Activation;
 import org.apache.maven.model.ActivationOS;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.profile.activation.ProfileActivator;
-import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -38,8 +39,9 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
+@Named("requireOS")
 public class RequireOS extends AbstractStandardEnforcerRule {
-    private ProfileActivator activator;
+    private final ProfileActivator activator;
 
     /**
      * The OS family type desired<br />
@@ -56,69 +58,46 @@ public class RequireOS extends AbstractStandardEnforcerRule {
      * <li>z/os</li>
      * <li>os/400</li>
      * </ul>
-     *
-     * @see {@link #setFamily(String)}
-     * @see {@link #getFamily()}
      */
     private String family = null;
 
     /**
      * The OS name desired.
-     *
-     * @see {@link #setName(String)}
-     * @see {@link #getName()}
      */
     private String name = null;
 
     /**
      * The OS version desired.
-     *
-     * @see {@link #setVersion(String)}
-     * @see {@link #getVersion()}
      */
     private String version = null;
 
     /**
      * The OS architecture desired.
-     *
-     * @see {@link #setArch(String)}
-     * @see {@link #getArch()}
      */
     private String arch = null;
 
     /**
      * Display detected OS information.
-     *
-     * @see {@link #setDisplay(boolean)}
-     * @see {@link #isDisplay()}
      */
     private boolean display = false;
 
     /**
      * Instantiates a new RequireOS.
      */
-    public RequireOS() {}
-
-    // For testing
-    RequireOS(ProfileActivator activator) {
-        this.activator = activator;
+    @Inject
+    RequireOS(@Named("os") ProfileActivator activator) {
+        this.activator = Objects.requireNonNull(activator);
     }
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
+    public void execute() throws EnforcerRuleException {
 
-        displayOSInfo(helper.getLog(), display);
+        displayOSInfo();
 
         if (allParamsEmpty()) {
-            throw new EnforcerRuleException("All parameters can not be empty. "
-                    + "You must pick at least one of (family, name, version, arch) "
-                    + "or use -Denforcer.os.display=true to see the current OS information.");
-        }
-
-        try {
-            activator = helper.getComponent(ProfileActivator.class, "os");
-        } catch (ComponentLookupException e) {
-            throw new EnforcerRuleException(e.getMessage());
+            throw new EnforcerRuleError("All parameters can not be empty. "
+                    + "You must pick at least one of (family, name, version, arch), "
+                    + "you can use mvn enforcer:display-info to see the current OS information.");
         }
 
         if (isValidFamily(this.family)) {
@@ -139,32 +118,21 @@ public class RequireOS extends AbstractStandardEnforcerRule {
                 throw new EnforcerRuleException(message);
             }
         } else {
-            final int minimumBufferSize = 50;
-            StringBuilder buffer = new StringBuilder(minimumBufferSize);
-            Iterator<?> iter = Os.getValidFamilies().iterator();
-            while (iter.hasNext()) {
-                buffer.append(iter.next());
-                buffer.append(", ");
-            }
-            String help = StringUtils.stripEnd(buffer.toString().trim(), ".");
-            throw new EnforcerRuleException("Invalid Family type used. Valid family types are: " + help);
+            String validFamilies = String.join(",", Os.getValidFamilies());
+            throw new EnforcerRuleError("Invalid Family type used. Valid family types are: " + validFamilies);
         }
     }
 
     /**
      * Log the current OS information.
-     *
-     * @param log the log
-     * @param info the info
      */
-    public void displayOSInfo(Log log, boolean info) {
-        String string = "OS Info: Arch: " + Os.OS_ARCH + " Family: " + Os.OS_FAMILY + " Name: " + Os.OS_NAME
-                + " Version: " + Os.OS_VERSION;
+    private void displayOSInfo() {
+        String string = OSUtil.getOSInfo();
 
-        if (!info) {
-            log.debug(string);
+        if (!display) {
+            getLog().debug(string);
         } else {
-            log.info(string);
+            getLog().info(string);
         }
     }
 
@@ -184,12 +152,10 @@ public class RequireOS extends AbstractStandardEnforcerRule {
      * @return true if all parameters are empty.
      */
     public boolean allParamsEmpty() {
-        // CHECKSTYLE_OFF: LineLength
         return (StringUtils.isEmpty(family)
                 && StringUtils.isEmpty(arch)
                 && StringUtils.isEmpty(name)
                 && StringUtils.isEmpty(version));
-        // CHECKSTYLE_ON: LineLength
     }
 
     /**
@@ -259,30 +225,12 @@ public class RequireOS extends AbstractStandardEnforcerRule {
     }
 
     /**
-     * Gets the arch.
-     *
-     * @return the arch
-     */
-    public String getArch() {
-        return this.arch;
-    }
-
-    /**
      * Sets the arch.
      *
      * @param theArch the arch to set
      */
     public void setArch(String theArch) {
         this.arch = theArch;
-    }
-
-    /**
-     * Gets the family.
-     *
-     * @return the family
-     */
-    public String getFamily() {
-        return this.family;
     }
 
     /**
@@ -295,30 +243,12 @@ public class RequireOS extends AbstractStandardEnforcerRule {
     }
 
     /**
-     * Gets the name.
-     *
-     * @return the name
-     */
-    public String getName() {
-        return this.name;
-    }
-
-    /**
      * Sets the name.
      *
      * @param theName the name to set
      */
     public void setName(String theName) {
         this.name = theName;
-    }
-
-    /**
-     * Gets the version.
-     *
-     * @return the version
-     */
-    public String getVersion() {
-        return this.version;
     }
 
     /**
@@ -335,10 +265,6 @@ public class RequireOS extends AbstractStandardEnforcerRule {
      */
     public final void setDisplay(boolean display) {
         this.display = display;
-    }
-
-    public final boolean isDisplay() {
-        return display;
     }
 
     @Override
@@ -358,18 +284,5 @@ public class RequireOS extends AbstractStandardEnforcerRule {
             b.append(family.hashCode());
         }
         return b.toString();
-    }
-
-    @Override
-    public boolean isCacheable() {
-        // the os is not going to change between projects in the same build.
-        return true;
-    }
-
-    @Override
-    public boolean isResultValid(EnforcerRule theCachedRule) {
-        // i will always return the hash of the parameters as my id. If my parameters are the same, this
-        // rule must always have the same result.
-        return true;
     }
 }

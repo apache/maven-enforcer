@@ -16,28 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
 
 import java.util.Iterator;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rule.api.EnforcerLogger;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
 import org.apache.maven.model.profile.activation.OperatingSystemProfileActivator;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.codehaus.plexus.util.Os;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 /**
  * Exhaustively check the OS mojo.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class TestRequireOS {
+class TestRequireOS {
 
     /**
      * Test os.
@@ -47,8 +47,6 @@ public class TestRequireOS {
         Log log = new SystemStreamLog();
 
         RequireOS rule = new RequireOS(new OperatingSystemProfileActivator());
-
-        rule.displayOSInfo(log, true);
 
         Iterator<String> iter = Os.getValidFamilies().iterator();
         String validFamily;
@@ -66,66 +64,62 @@ public class TestRequireOS {
         log.info("Testing Mojo Using Valid Family: " + validFamily + " Invalid Family: " + invalidFamily);
 
         rule.setFamily(validFamily);
-        assertTrue(rule.isAllowed());
+        assertThat(rule.isAllowed()).isTrue();
 
         rule.setFamily(invalidFamily);
-        assertFalse(rule.isAllowed());
+        assertThat(rule.isAllowed()).isFalse();
 
         rule.setFamily("!" + invalidFamily);
-        assertTrue(rule.isAllowed());
+        assertThat(rule.isAllowed()).isTrue();
 
         rule.setFamily(null);
         rule.setArch(Os.OS_ARCH);
-        assertTrue(rule.isAllowed());
+        assertThat(rule.isAllowed()).isTrue();
 
         rule.setArch("somecrazyarch");
-        assertFalse(rule.isAllowed());
+        assertThat(rule.isAllowed()).isFalse();
 
         rule.setArch("!somecrazyarch");
-        assertTrue(rule.isAllowed());
+        assertThat(rule.isAllowed()).isTrue();
 
         rule.setArch(null);
 
         rule.setName(Os.OS_NAME);
-        assertTrue(rule.isAllowed());
+        assertThat(rule.isAllowed()).isTrue();
 
         rule.setName("somecrazyname");
-        assertFalse(rule.isAllowed());
+        assertThat(rule.isAllowed()).isFalse();
 
         rule.setName("!somecrazyname");
-        assertTrue(rule.isAllowed());
+        assertThat(rule.isAllowed()).isTrue();
 
         rule.setName(null);
 
         rule.setVersion(Os.OS_VERSION);
-        assertTrue(rule.isAllowed());
+        assertThat(rule.isAllowed()).isTrue();
 
         rule.setVersion("somecrazyversion");
-        assertFalse(rule.isAllowed());
+        assertThat(rule.isAllowed()).isFalse();
 
         rule.setVersion("!somecrazyversion");
-        assertTrue(rule.isAllowed());
+        assertThat(rule.isAllowed()).isTrue();
     }
 
     @Test
-    public void testInvalidFamily() {
-        RequireOS rule = new RequireOS();
-
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
-        helper.getContainer().addComponent(new OperatingSystemProfileActivator(), "os");
+    void testInvalidFamily() {
+        RequireOS rule = new RequireOS(new OperatingSystemProfileActivator());
+        rule.setLog(Mockito.mock(EnforcerLogger.class));
 
         rule.setFamily("junk");
-        try {
-            rule.execute(helper);
-            fail("Expected MojoExecution Exception because of invalid family type");
-        } catch (EnforcerRuleException e) {
-            assertThat(e.getMessage(), startsWith("Invalid Family type used. Valid family types are: "));
-        }
+        assertThatCode(rule::execute)
+                .isInstanceOf(EnforcerRuleError.class)
+                .hasMessageStartingWith("Invalid Family type used. Valid family types are: ");
     }
 
     @Test
-    public void testId() {
-        RequireOS rule = new RequireOS();
-        rule.getCacheId();
+    void testId() {
+        RequireOS rule = new RequireOS(new OperatingSystemProfileActivator());
+        rule.setVersion("1.2");
+        assertThat(rule.getCacheId()).isNotEmpty();
     }
 }
