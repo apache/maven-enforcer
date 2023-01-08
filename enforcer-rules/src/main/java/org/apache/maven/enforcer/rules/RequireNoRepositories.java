@@ -22,15 +22,22 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Repository;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.settings.Profile;
+import org.apache.maven.settings.RepositoryBase;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -62,14 +69,14 @@ public final class RequireNoRepositories extends AbstractStandardEnforcerRule {
      *
      * @see #setAllowedRepositories(List)
      */
-    private List<String> allowedRepositories = Collections.emptyList();
+    private List<String> allowedRepositories;
 
     /**
      * Specify explicitly allowed plugin repositories. This is a list of ids.
      *
      * @see #setAllowedPluginRepositories(List)
      */
-    private List<String> allowedPluginRepositories = Collections.emptyList();
+    private List<String> allowedPluginRepositories;
 
     /**
      * Whether to allow repositories which only resolve snapshots. By default they are banned.
@@ -118,6 +125,30 @@ public final class RequireNoRepositories extends AbstractStandardEnforcerRule {
 
     @Override
     public void execute() throws EnforcerRuleException {
+
+        // Maven 4 Model contains repositories defined in settings.xml
+        // As workaround we exclude repositories defined in settings.xml
+        // https://issues.apache.org/jira/browse/MNG-7228
+        if (banRepositories) {
+            Collection<String> reposIdsFromSettings = getRepoIdsFromSettings(Profile::getRepositories);
+            if (!reposIdsFromSettings.isEmpty()) {
+                getLog().debug(() -> "Allow repositories from settings: " + reposIdsFromSettings);
+            }
+
+            allowedRepositories = Optional.ofNullable(allowedRepositories).orElseGet(ArrayList::new);
+            allowedRepositories.addAll(reposIdsFromSettings);
+        }
+
+        if (banPluginRepositories) {
+            Collection<String> reposIdsFromSettings = getRepoIdsFromSettings(Profile::getPluginRepositories);
+            if (!reposIdsFromSettings.isEmpty()) {
+                getLog().debug(() -> "Allow plugin repositories from settings: " + reposIdsFromSettings);
+            }
+
+            allowedPluginRepositories =
+                    Optional.ofNullable(allowedPluginRepositories).orElseGet(ArrayList::new);
+            allowedPluginRepositories.addAll(reposIdsFromSettings);
+        }
 
         List<MavenProject> sortedProjects = session.getProjectDependencyGraph().getSortedProjects();
 
@@ -171,6 +202,26 @@ public final class RequireNoRepositories extends AbstractStandardEnforcerRule {
         }
     }
 
+    private Collection<String> getRepoIdsFromSettings(
+            Function<Profile, List<org.apache.maven.settings.Repository>> getRepositoriesFunc) {
+
+        List<String> activeProfileIds = Optional.ofNullable(session.getProjectBuildingRequest())
+                .map(ProjectBuildingRequest::getActiveProfileIds)
+                .orElse(Collections.emptyList());
+
+        List<String> inactiveProfileIds = Optional.ofNullable(session.getProjectBuildingRequest())
+                .map(ProjectBuildingRequest::getInactiveProfileIds)
+                .orElse(Collections.emptyList());
+
+        return session.getSettings().getProfiles().stream()
+                .filter(p -> activeProfileIds.contains(p.getId()))
+                .filter(p -> !inactiveProfileIds.contains(p.getId()))
+                .map(getRepositoriesFunc)
+                .flatMap(Collection::stream)
+                .map(RepositoryBase::getId)
+                .collect(Collectors.toSet());
+    }
+
     /**
      * @param repos          all repositories, never {@code null}
      * @param allowedRepos   allowed repositories, never {@code null}
@@ -194,5 +245,18 @@ public final class RequireNoRepositories extends AbstractStandardEnforcerRule {
             }
         }
         return bannedRepos;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "RequireNoRepositories[banRepositories=%b, allowSnapshotRepositories=%b, allowedRepositories=%s, "
+                        + "banPluginRepositories=%b, allowSnapshotPluginRepositories=%b, allowedPluginRepositories=%s]",
+                banRepositories,
+                allowSnapshotRepositories,
+                allowedRepositories,
+                banPluginRepositories,
+                allowSnapshotPluginRepositories,
+                allowedPluginRepositories);
     }
 }
