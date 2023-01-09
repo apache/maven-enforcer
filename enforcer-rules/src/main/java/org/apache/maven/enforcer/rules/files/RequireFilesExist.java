@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.files;
+
+import javax.inject.Named;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +26,8 @@ import java.io.IOException;
 /**
  * The Class RequireFilesExist.
  */
-public class RequireFilesExist extends AbstractRequireFiles {
+@Named("requireFilesExist")
+public final class RequireFilesExist extends AbstractRequireFiles {
     @Override
     boolean checkFile(File file) {
         // if we get here and the handle is null, treat it as a success

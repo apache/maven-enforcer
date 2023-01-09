@@ -16,16 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.files;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Objects;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
  * Rule to validate the main artifact is within certain size constraints.
@@ -33,7 +34,8 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * @author brianf
  * @author Roman Stumm
  */
-public class RequireFilesSize extends AbstractRequireFiles {
+@Named("requireFilesSize")
+public final class RequireFilesSize extends AbstractRequireFiles {
 
     private static final long MAXSIZE = 10000;
 
@@ -46,37 +48,29 @@ public class RequireFilesSize extends AbstractRequireFiles {
     /** The error msg. */
     private String errorMsg;
 
-    /** The log. */
-    private Log log;
+    private final MavenProject project;
+
+    @Inject
+    public RequireFilesSize(MavenProject project) {
+        this.project = Objects.requireNonNull(project);
+    }
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        this.log = helper.getLog();
+    public void execute() throws EnforcerRuleException {
 
         // if the file is already defined, use that. Otherwise get the main artifact.
-        if (getFiles().length == 0) {
-            try {
-                MavenProject project = (MavenProject) helper.evaluate("${project}");
-                setFiles(new File[1]);
-                getFiles()[0] = project.getArtifact().getFile();
-
-                super.execute(helper);
-            } catch (ExpressionEvaluationException e) {
-                throw new EnforcerRuleException("Unable to retrieve the project.", e);
-            }
+        if (getFiles().isEmpty()) {
+            setFilesList(Collections.singletonList(project.getArtifact().getFile()));
+            super.execute();
         } else {
-            super.execute(helper);
+            super.execute();
         }
     }
 
     @Override
-    public boolean isCacheable() {
-        return false;
-    }
-
-    @Override
-    public boolean isResultValid(EnforcerRule cachedRule) {
-        return false;
+    public String getCacheId() {
+        // non cached rule - return null
+        return null;
     }
 
     @Override
@@ -97,7 +91,7 @@ public class RequireFilesSize extends AbstractRequireFiles {
                 return false;
             } else {
 
-                this.log.debug(file
+                getLog().debug(() -> file
                         + " size ("
                         + length
                         + ") is OK ("
@@ -119,16 +113,8 @@ public class RequireFilesSize extends AbstractRequireFiles {
         return this.errorMsg;
     }
 
-    public long getMaxsize() {
-        return maxsize;
-    }
-
     public void setMaxsize(long maxsize) {
         this.maxsize = maxsize;
-    }
-
-    public long getMinsize() {
-        return minsize;
     }
 
     public void setMinsize(long minsize) {

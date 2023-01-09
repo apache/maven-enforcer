@@ -30,17 +30,17 @@ Require File Size
 
    The following parameters are supported by this rule:
    
-   * message - an optional message to the user if the rule fails.
+   * <<message>> - an optional message to the user if the rule fails.
    
-   * files - A list of files to check. If this list is empty, the main project artifact will be checked.
+   * <<files>> - A list of files to check. If this list is empty, the main project artifact will be checked.
    
-   * maxsize - maximum size in bytes for this file.
+   * <<maxsize>> - maximum size in bytes for this file.
    
-   * minsize - minimum size in bytes for this file.
+   * <<minsize>> - minimum size in bytes for this file.
    
-   * allowNulls - If null files should be allowed. If allowed, they will be treated as if they do exist. Default is false.
+   * <<allowNulls>> - If null files should be allowed. If allowed, they will be treated as if they do exist. Default is false.
 
-   * satisfyAny - Allows that one of files can make the rule pass, instead of all the files. Default is false.
+   * <<satisfyAny>> - Allows that one of files can make the rule pass, instead of all the files. Default is false.
    
    []
 

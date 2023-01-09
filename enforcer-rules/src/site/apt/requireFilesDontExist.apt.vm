@@ -30,13 +30,13 @@ Require Files Don't Exist
 
    The following parameters are supported by this rule:
    
-   * message - an optional message to the user if the rule fails.
+   * <<message>> - an optional message to the user if the rule fails.
    
-   * files - A list of files to check.
+   * <<files>> - A list of files to check.
    
-   * allowNulls - If null files should be allowed. If allowed, they will be treated as if they do not exist. Default is false.
+   * <<allowNulls>> - If null files should be allowed. If allowed, they will be treated as if they do not exist. Default is false.
 
-   * satisfyAny - Allows that one of files can make the rule pass, instead of all the files. Default is false.
+   * <<satisfyAny>> - Allows that one of files can make the rule pass, instead of all the files. Default is false.
    
    []
 

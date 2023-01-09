@@ -16,25 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.enforcer.rules;
+package org.apache.maven.enforcer.rules.files;
 
-import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
+import javax.inject.Named;
+
+import java.io.File;
 
 /**
- * Abstract help rule.
- *
- * @author Slawomir Jaranowski
- * @since 3.2.0
+ * The Class RequireFilesDontExist.
  */
-public abstract class AbstractStandardEnforcerRule extends AbstractEnforcerRule {
-
-    private String message;
-
-    public String getMessage() {
-        return message;
+@Named("requireFilesDontExist")
+public final class RequireFilesDontExist extends AbstractRequireFiles {
+    @Override
+    boolean checkFile(File file) {
+        // if we get here and the handle is null, treat it as a success
+        return file == null ? true : !file.exists();
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    @Override
+    String getErrorMsg() {
+        return "Some files should not exist:" + System.lineSeparator();
     }
 }
