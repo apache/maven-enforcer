@@ -22,7 +22,7 @@ def buildLog = new File( basedir, 'build.log' ).text
 assert buildLog.contains( '[WARNING] The POM for org.example:test-not-existing:jar:1.0 is missing, no dependency information available' )
 
 // rule executed
-assert buildLog.contains( '[INFO] Rule 0: org.apache.maven.plugins.enforcer.AlwaysPass executed' )
+assert buildLog.contains( '[INFO] Rule 0: org.apache.maven.enforcer.rules.AlwaysPass executed' )
 assert buildLog.contains( '[INFO] Rule 1: org.apache.maven.plugins.enforcer.BanTransitiveDependencies executed' )
 assert buildLog.contains( '[INFO] Rule 2: org.apache.maven.plugins.enforcer.BannedDependencies executed' )
 assert buildLog.contains( '[INFO] Rule 3: org.apache.maven.plugins.enforcer.DependencyConvergence executed')
