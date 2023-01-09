@@ -16,22 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+def buildLog = new File(basedir, 'build.log').text
 
-import java.io.File;
-
-/**
- * The Class RequireFilesDontExist.
- */
-public class RequireFilesDontExist extends AbstractRequireFiles {
-    @Override
-    boolean checkFile(File file) {
-        // if we get here and the handle is null, treat it as a success
-        return file == null ? true : !file.exists();
-    }
-
-    @Override
-    String getErrorMsg() {
-        return "Some files should not exist:" + System.lineSeparator();
-    }
-}
+// rule executed
+assert buildLog.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.files.RequireFilesDontExist executed')

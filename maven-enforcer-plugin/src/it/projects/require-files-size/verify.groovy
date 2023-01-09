@@ -16,25 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.enforcer.rules;
+def buildLog = new File(basedir, 'build.log').text
 
-import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
-
-/**
- * Abstract help rule.
- *
- * @author Slawomir Jaranowski
- * @since 3.2.0
- */
-public abstract class AbstractStandardEnforcerRule extends AbstractEnforcerRule {
-
-    private String message;
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-}
+// rule executed
+assert buildLog.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.files.RequireFilesSize executed')

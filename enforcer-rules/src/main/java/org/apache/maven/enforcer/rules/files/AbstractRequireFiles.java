@@ -16,25 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.files;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
 
 /**
  * Contains the common code to compare an array of files against a requirement.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public abstract class AbstractRequireFiles extends AbstractStandardEnforcerRule {
+abstract class AbstractRequireFiles extends AbstractStandardEnforcerRule {
 
-    /** Array of files to check. */
-    private File[] files;
+    /** List of files to check. */
+    private List<File> files = Collections.emptyList();
 
     /** if null file handles should be allowed. If they are allowed, it means treat it as a success. */
     private boolean allowNulls = false;
@@ -60,10 +61,10 @@ public abstract class AbstractRequireFiles extends AbstractStandardEnforcerRule 
     abstract String getErrorMsg();
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
+    public void execute() throws EnforcerRuleException {
 
-        if (!allowNulls && files.length == 0) {
-            throw new EnforcerRuleException("The file list is empty and Null files are disabled.");
+        if (!allowNulls && files.isEmpty()) {
+            throw new EnforcerRuleError("The file list is empty and Null files are disabled.");
         }
 
         List<File> failures = new ArrayList<>();
@@ -76,7 +77,7 @@ public abstract class AbstractRequireFiles extends AbstractStandardEnforcerRule 
         }
 
         if (satisfyAny) {
-            int passed = files.length - failures.size();
+            int passed = files.size() - failures.size();
             if (passed == 0) {
                 fail(failures);
             }
@@ -109,58 +110,31 @@ public abstract class AbstractRequireFiles extends AbstractStandardEnforcerRule 
 
     @Override
     public String getCacheId() {
-        return Integer.toString(hashCode(files));
+        return Integer.toString(files.hashCode());
     }
 
-    /**
-     * Calculates a hash code for the specified array as <code>Arrays.hashCode()</code> would do. Unfortunately, the
-     * mentioned method is only available for Java 1.5 and later.
-     *
-     * @param items The array for which to compute the hash code, may be <code>null</code>.
-     * @return The hash code for the array.
-     */
-    private static int hashCode(Object[] items) {
-        int hash = 0;
-        if (items != null) {
-            hash = 1;
-            for (Object item : items) {
-                hash = 31 * hash + (item == null ? 0 : item.hashCode());
-            }
-        }
-        return hash;
-    }
-
-    @Override
-    public boolean isCacheable() {
-        return true;
-    }
-
-    @Override
-    public boolean isResultValid(EnforcerRule cachedRule) {
-        return true;
-    }
-
-    public File[] getFiles() {
-        return files;
-    }
-
-    public void setFiles(File[] files) {
+    void setFilesList(List<File> files) {
         this.files = files;
     }
 
-    public boolean isAllowNulls() {
-        return allowNulls;
+    // method using for testing purpose ...
+
+    List<File> getFiles() {
+        return files;
     }
 
-    public void setAllowNulls(boolean allowNulls) {
+    void setAllowNulls(boolean allowNulls) {
         this.allowNulls = allowNulls;
     }
 
-    public boolean isSatisfyAny() {
-        return satisfyAny;
+    void setSatisfyAny(boolean satisfyAny) {
+        this.satisfyAny = satisfyAny;
     }
 
-    public void setSatisfyAny(boolean satisfyAny) {
-        this.satisfyAny = satisfyAny;
+    @Override
+    public String toString() {
+        return String.format(
+                "%s[message=%s, files=%s, allowNulls=%b, satisfyAny=%b, level=%s]",
+                getClass().getSimpleName(), getMessage(), files, allowNulls, satisfyAny, getLevel());
     }
 }

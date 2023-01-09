@@ -16,36 +16,41 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.files;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test the "require files don't exist" rule.
  *
  * @author <a href="brianf@apache.org">Brian Fox</a>
  */
-public class TestRequireFilesDontExist {
+class TestRequireFilesDontExist {
     @TempDir
     public File temporaryFolder;
 
     private final RequireFilesDontExist rule = new RequireFilesDontExist();
 
     @Test
-    public void testFileExists() throws IOException {
+    void testFileExists() throws IOException {
         File f = File.createTempFile("junit", null, temporaryFolder);
 
-        rule.setFiles(new File[] {f});
+        rule.setFilesList(Collections.singletonList(f));
 
         try {
-            rule.execute(EnforcerTestUtils.getHelper());
+            rule.execute();
             fail("Expected an Exception.");
         } catch (EnforcerRuleException e) {
             assertNotNull(e.getMessage());
@@ -54,10 +59,10 @@ public class TestRequireFilesDontExist {
     }
 
     @Test
-    public void testEmptyFile() {
-        rule.setFiles(new File[] {null});
+    void testEmptyFile() {
+        rule.setFilesList(Collections.singletonList(null));
         try {
-            rule.execute(EnforcerTestUtils.getHelper());
+            rule.execute();
             fail("Should get exception");
         } catch (EnforcerRuleException e) {
             assertNotNull(e.getMessage());
@@ -65,22 +70,22 @@ public class TestRequireFilesDontExist {
     }
 
     @Test
-    public void testEmptyFileAllowNull() {
-        rule.setFiles(new File[] {null});
+    void testEmptyFileAllowNull() {
+        rule.setFilesList(Collections.singletonList(null));
         rule.setAllowNulls(true);
         try {
-            rule.execute(EnforcerTestUtils.getHelper());
+            rule.execute();
         } catch (EnforcerRuleException e) {
             fail("Unexpected Exception:" + e.getLocalizedMessage());
         }
     }
 
     @Test
-    public void testEmptyFileList() {
-        rule.setFiles(new File[] {});
-        assertEquals(0, rule.getFiles().length);
+    void testEmptyFileList() {
+        rule.setFilesList(Collections.emptyList());
+        assertTrue(rule.getFiles().isEmpty());
         try {
-            rule.execute(EnforcerTestUtils.getHelper());
+            rule.execute();
             fail("Should get exception");
         } catch (EnforcerRuleException e) {
             assertNotNull(e.getMessage());
@@ -88,31 +93,31 @@ public class TestRequireFilesDontExist {
     }
 
     @Test
-    public void testEmptyFileListAllowNull() {
-        rule.setFiles(new File[] {});
-        assertEquals(0, rule.getFiles().length);
+    void testEmptyFileListAllowNull() {
+        rule.setFilesList(Collections.emptyList());
+        assertTrue(rule.getFiles().isEmpty());
         rule.setAllowNulls(true);
         try {
-            rule.execute(EnforcerTestUtils.getHelper());
+            rule.execute();
         } catch (EnforcerRuleException e) {
             fail("Unexpected Exception:" + e.getLocalizedMessage());
         }
     }
 
     @Test
-    public void testFileDoesNotExist() throws EnforcerRuleException, IOException {
+    void testFileDoesNotExist() throws EnforcerRuleException, IOException {
         File f = File.createTempFile("junit", null, temporaryFolder);
         f.delete();
 
         assertFalse(f.exists());
 
-        rule.setFiles(new File[] {f});
+        rule.setFilesList(Collections.singletonList(f));
 
-        rule.execute(EnforcerTestUtils.getHelper());
+        rule.execute();
     }
 
     @Test
-    public void testFileDoesNotExistSatisfyAny() throws EnforcerRuleException, IOException {
+    void testFileDoesNotExistSatisfyAny() throws EnforcerRuleException, IOException {
         File f = File.createTempFile("junit", null, temporaryFolder);
         f.delete();
 
@@ -122,17 +127,17 @@ public class TestRequireFilesDontExist {
 
         assertTrue(g.exists());
 
-        rule.setFiles(new File[] {f, g.getCanonicalFile()});
+        rule.setFilesList(Arrays.asList(f, g.getCanonicalFile()));
         rule.setSatisfyAny(true);
 
-        rule.execute(EnforcerTestUtils.getHelper());
+        rule.execute();
     }
 
     /**
      * Test id.
      */
     @Test
-    public void testId() {
-        rule.getCacheId();
+    void testId() {
+        assertNotNull(rule.getCacheId());
     }
 }
