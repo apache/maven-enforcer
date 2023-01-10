@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.checksum;
+
+import javax.inject.Named;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,8 +26,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
 
 /**
  * Rule to validate a binary file to match the specified checksum.
@@ -34,9 +37,10 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
  * @author Lyubomyr Shaydariv
  * @see RequireTextFileChecksum
  */
-public class RequireFileChecksum extends AbstractNonCacheableEnforcerRule {
+@Named("requireFileChecksum")
+public class RequireFileChecksum extends AbstractStandardEnforcerRule {
 
-    protected File file;
+    private File file;
 
     private String checksum;
 
@@ -45,17 +49,17 @@ public class RequireFileChecksum extends AbstractNonCacheableEnforcerRule {
     private String nonexistentFileMessage;
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
+    public void execute() throws EnforcerRuleException {
         if (this.file == null) {
-            throw new EnforcerRuleException("Input file unspecified");
+            throw new EnforcerRuleError("Input file unspecified");
         }
 
         if (this.type == null) {
-            throw new EnforcerRuleException("Hash type unspecified");
+            throw new EnforcerRuleError("Hash type unspecified");
         }
 
         if (this.checksum == null) {
-            throw new EnforcerRuleException("Checksum unspecified");
+            throw new EnforcerRuleError("Checksum unspecified");
         }
 
         if (!this.file.exists()) {
@@ -67,12 +71,11 @@ public class RequireFileChecksum extends AbstractNonCacheableEnforcerRule {
         }
 
         if (this.file.isDirectory()) {
-            throw new EnforcerRuleException(
-                    "Cannot calculate the checksum of directory: " + this.file.getAbsolutePath());
+            throw new EnforcerRuleError("Cannot calculate the checksum of directory: " + this.file.getAbsolutePath());
         }
 
         if (!this.file.canRead()) {
-            throw new EnforcerRuleException("Cannot read file: " + this.file.getAbsolutePath());
+            throw new EnforcerRuleError("Cannot read file: " + this.file.getAbsolutePath());
         }
 
         String checksum = calculateChecksum();
@@ -96,6 +99,10 @@ public class RequireFileChecksum extends AbstractNonCacheableEnforcerRule {
         this.file = file;
     }
 
+    public File getFile() {
+        return file;
+    }
+
     /**
      * The expected checksum value.
      *
@@ -103,6 +110,10 @@ public class RequireFileChecksum extends AbstractNonCacheableEnforcerRule {
      */
     public void setChecksum(String checksum) {
         this.checksum = checksum;
+    }
+
+    public String getChecksum() {
+        return checksum;
     }
 
     /**
@@ -114,6 +125,10 @@ public class RequireFileChecksum extends AbstractNonCacheableEnforcerRule {
         this.type = type;
     }
 
+    public String getType() {
+        return type;
+    }
+
     /**
      * The friendly message to use when the file does not exist.
      *
@@ -123,29 +138,40 @@ public class RequireFileChecksum extends AbstractNonCacheableEnforcerRule {
         this.nonexistentFileMessage = nonexistentFileMessage;
     }
 
+    public String getNonexistentFileMessage() {
+        return nonexistentFileMessage;
+    }
+
     protected String calculateChecksum() throws EnforcerRuleException {
         try (InputStream inputStream = Files.newInputStream(this.file.toPath())) {
             return calculateChecksum(inputStream);
         } catch (IOException e) {
-            throw new EnforcerRuleException("Unable to calculate checksum", e);
+            throw new EnforcerRuleError("Unable to calculate checksum", e);
         }
     }
 
     protected String calculateChecksum(InputStream inputStream) throws IOException, EnforcerRuleException {
-        String checksum;
+        String result;
         if ("md5".equals(this.type)) {
-            checksum = DigestUtils.md5Hex(inputStream);
+            result = DigestUtils.md5Hex(inputStream);
         } else if ("sha1".equals(this.type)) {
-            checksum = DigestUtils.sha1Hex(inputStream);
+            result = DigestUtils.sha1Hex(inputStream);
         } else if ("sha256".equals(this.type)) {
-            checksum = DigestUtils.sha256Hex(inputStream);
+            result = DigestUtils.sha256Hex(inputStream);
         } else if ("sha384".equals(this.type)) {
-            checksum = DigestUtils.sha384Hex(inputStream);
+            result = DigestUtils.sha384Hex(inputStream);
         } else if ("sha512".equals(this.type)) {
-            checksum = DigestUtils.sha512Hex(inputStream);
+            result = DigestUtils.sha512Hex(inputStream);
         } else {
-            throw new EnforcerRuleException("Unsupported hash type: " + this.type);
+            throw new EnforcerRuleError("Unsupported hash type: " + this.type);
         }
-        return checksum;
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "RequireFileChecksum[file=%s, checksum=%s, type=%s, nonexistentFileMessage=%s, level=%s]",
+                file, checksum, type, nonexistentFileMessage, getLevel());
     }
 }

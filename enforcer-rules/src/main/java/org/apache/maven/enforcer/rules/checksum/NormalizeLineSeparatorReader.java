@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.enforcer.rules.utils;
+package org.apache.maven.enforcer.rules.checksum;
 
 import java.io.FilterReader;
 import java.io.IOException;
@@ -25,7 +25,7 @@ import java.io.Reader;
 /**
  * Converts Unix line separators to Windows ones and vice-versa.
  */
-public class NormalizeLineSeparatorReader extends FilterReader {
+class NormalizeLineSeparatorReader extends FilterReader {
 
     private static final int EOL = -1;
 
@@ -84,7 +84,7 @@ public class NormalizeLineSeparatorReader extends FilterReader {
 
     Character previousCharacter;
 
-    public NormalizeLineSeparatorReader(Reader reader, LineSeparator lineSeparator) {
+    NormalizeLineSeparatorReader(Reader reader, LineSeparator lineSeparator) {
         super(reader);
         this.lineSeparator = lineSeparator;
         bufferedCharacter = null;

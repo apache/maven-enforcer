@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.apache.maven.its.enforcer</groupId>
+  <artifactId>test</artifactId>
+  <version>1.0</version>
+  <url>https://issues.apache.org/jira/browse/MENFORCER-361</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>@project.version@</version>
+        <executions>
+          <execution>
+            <id>test</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireTextFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>md5</type>
+                  <checksum>7c5b65d44e8123e70d24d9eef17e9fa2</checksum>
+                </requireTextFileChecksum>
+                <requireTextFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>sha1</type>
+                  <checksum>278661cbaf6a1bcbd34e3877b6de0e8bd7097846</checksum>
+                </requireTextFileChecksum>
+                <requireTextFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>sha256</type>
+                  <checksum>61b825d68516541151e5ce0145e54765c48cd5802b886aee8fb8cf1953f02d10</checksum>
+                </requireTextFileChecksum>
+                <requireTextFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>sha384</type>
+                  <checksum>6f9e6b81487911c5a339c541016a459acaf8312e430ccabe5c10cb2ddf9a307f4595c78555f911377f4fb853ffe87046</checksum>
+                </requireTextFileChecksum>
+                <requireTextFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>sha512</type>
+                  <checksum>c51c3cf07c87af78dd7af4407ae3993ea1051d8a7c260cf34bbaa41c468dcd3b62d2be3d9a09807a8595d0065e2d75d1bf9ffc8276d567a983ff057f6b51b0cc</checksum>
+                </requireTextFileChecksum>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

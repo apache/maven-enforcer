@@ -16,32 +16,55 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.checksum;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 
+import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rules.utils.NormalizeLineSeparatorReader.LineSeparator;
+import org.apache.maven.enforcer.rules.checksum.NormalizeLineSeparatorReader.LineSeparator;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.Mockito.when;
 
 /**
  * Test the "RequireTextFileChecksum" rule
  */
-public class TestRequireTextFileChecksum {
+@ExtendWith(MockitoExtension.class)
+class TestRequireTextFileChecksum {
 
-    private final RequireTextFileChecksum rule = new RequireTextFileChecksum();
+    @Mock
+    private MavenProject project;
+
+    @Mock
+    private EnforcerLogger log;
+
+    @InjectMocks
+    private RequireTextFileChecksum rule;
 
     @TempDir
-    public File temporaryFolder;
+    private File temporaryFolder;
+
+    @BeforeEach
+    void setup() {
+        rule.setLog(log);
+    }
 
     @Test
-    public void testFileChecksumMd5NormalizedFromUnixToWindows() throws IOException, EnforcerRuleException {
+    void testFileChecksumMd5NormalizedFromUnixToWindows() throws IOException, EnforcerRuleException {
         File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite(f, "line1\nline2\n");
 
@@ -51,11 +74,11 @@ public class TestRequireTextFileChecksum {
         rule.setNormalizeLineSeparatorTo(LineSeparator.WINDOWS);
         rule.setEncoding(StandardCharsets.US_ASCII.name());
 
-        rule.execute(EnforcerTestUtils.getHelper());
+        rule.execute();
     }
 
     @Test
-    public void testFileChecksumMd5NormalizedFromWindowsToWindows() throws IOException, EnforcerRuleException {
+    void testFileChecksumMd5NormalizedFromWindowsToWindows() throws IOException, EnforcerRuleException {
         File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite(f, "line1\r\nline2\r\n");
 
@@ -65,11 +88,11 @@ public class TestRequireTextFileChecksum {
         rule.setNormalizeLineSeparatorTo(LineSeparator.WINDOWS);
         rule.setEncoding(StandardCharsets.US_ASCII.name());
 
-        rule.execute(EnforcerTestUtils.getHelper());
+        rule.execute();
     }
 
     @Test
-    public void testFileChecksumMd5NormalizedFromWindowsToUnix() throws IOException, EnforcerRuleException {
+    void testFileChecksumMd5NormalizedFromWindowsToUnix() throws IOException, EnforcerRuleException {
         File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite(f, "line1\r\nline2\r\n");
 
@@ -79,11 +102,11 @@ public class TestRequireTextFileChecksum {
         rule.setNormalizeLineSeparatorTo(LineSeparator.UNIX);
         rule.setEncoding(StandardCharsets.US_ASCII.name());
 
-        rule.execute(EnforcerTestUtils.getHelper());
+        rule.execute();
     }
 
     @Test
-    public void testFileChecksumMd5NormalizedFromUnixToUnix() throws IOException, EnforcerRuleException {
+    void testFileChecksumMd5NormalizedFromUnixToUnix() throws IOException, EnforcerRuleException {
         File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite(f, "line1\nline2\n");
 
@@ -93,22 +116,23 @@ public class TestRequireTextFileChecksum {
         rule.setNormalizeLineSeparatorTo(LineSeparator.UNIX);
         rule.setEncoding(StandardCharsets.US_ASCII.name());
 
-        rule.execute(EnforcerTestUtils.getHelper());
+        rule.execute();
     }
 
     @Test
-    public void testFileChecksumMd5NormalizedWithMissingFileCharsetParameter()
-            throws IOException, EnforcerRuleException {
+    void testFileChecksumMd5NormalizedWithMissingFileCharsetParameter() throws IOException, EnforcerRuleException {
         File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite(f, "line1\nline2\n");
+
+        when(project.getProperties()).thenReturn(new Properties());
 
         rule.setFile(f);
         rule.setChecksum("4fcc82a88ee38e0aa16c17f512c685c9");
         rule.setType("md5");
         rule.setNormalizeLineSeparatorTo(LineSeparator.UNIX);
 
-        rule.execute(EnforcerTestUtils.getHelper());
+        rule.execute();
         // name is not unique therefore compare generated charset
-        Assertions.assertEquals(Charset.forName(System.getProperty("file.encoding")), rule.encoding);
+        Assertions.assertEquals(Charset.forName(System.getProperty("file.encoding")), rule.getEncoding());
     }
 }
