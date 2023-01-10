@@ -19,4 +19,4 @@
 File buildLog = new File( basedir, 'build.log' )
 
 assert buildLog.text.contains( 'Rule 0: org.apache.maven.plugins.enforcer.BanTransitiveDependencies failed with message:' )
-assert buildLog.text.contains( 'org.apache.maven.its.enforcer:module1:jar:1.0-SNAPSHOT:compile has transitive dependencies:' )
+assert buildLog.text.contains( 'org.apache.maven.its.enforcer:module1:jar:1.0-SNAPSHOT has transitive dependencies:' )

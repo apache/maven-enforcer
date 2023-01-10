@@ -43,7 +43,9 @@ under the License.
             </goals>
             <configuration>
               <rules>
-                <AlwaysFail/>
+                <alwaysFail>
+                  <message>alwaysFail test message</message>
+                </alwaysFail>
               </rules>
             </configuration>
           </execution>

@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,42 +16,42 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
+package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.plugin.testing.ArtifactStubFactory;
+import org.apache.maven.enforcer.rules.utils.DependencyNodeBuilder;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class RequireUpperBoundDepsTest
-{
+public class RequireUpperBoundDepsTest {
 
     @Test
-    public void testRule()
-        throws IOException
-    {
-        ArtifactStubFactory factory = new ArtifactStubFactory();
+    public void testRule() {
         MockProject project = new MockProject();
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper( project );
-        project.setArtifacts( factory.getMixedArtifacts() );
-        project.setDependencyArtifacts( factory.getScopedArtifacts() );
+        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(project);
         RequireUpperBoundDeps rule = new RequireUpperBoundDeps();
+        EnforcerTestUtils.provideCollectDependencies(new DependencyNodeBuilder()
+                .withType(DependencyNodeBuilder.Type.POM)
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childA")
+                        .withVersion("1.0.0")
+                        .build())
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childA")
+                        .withVersion("2.0.0")
+                        .build())
+                .build());
 
-        try
-        {
-            rule.execute( helper );
-            fail( "Did not detect upper bounds error" );
-        }
-        catch ( EnforcerRuleException ex )
-        {
-            assertThat( ex.getMessage(), containsString( "groupId:artifactId:version:classifier" ) );
+        try {
+            rule.execute(helper);
+            fail("Did not detect upper bounds error");
+        } catch (EnforcerRuleException ex) {
+            assertThat(ex.getMessage(), containsString("default-group:childA:1.0.0:classifier"));
+            assertThat(ex.getMessage(), containsString("default-group:childA:2.0.0:classifier"));
         }
     }
-
 }

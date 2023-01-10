@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,18 +16,13 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.enforcer;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Properties;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rules.utils.DependencyNodeBuilder;
+import org.apache.maven.enforcer.rules.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionResult;
 import org.apache.maven.execution.MavenSession;
@@ -40,45 +33,54 @@ import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.descriptor.MojoDescriptor;
 import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.apache.maven.plugins.enforcer.utils.MockEnforcerExpressionEvaluator;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilder;
-import org.apache.maven.shared.dependency.graph.internal.DefaultDependencyNode;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.classworlds.ClassWorld;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.mockito.Mockito;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.collection.CollectResult;
+import org.eclipse.aether.collection.DependencyCollectionException;
+import org.eclipse.aether.graph.DependencyNode;
+
+import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * The Class EnforcerTestUtils.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public final class EnforcerTestUtils
-{
+public final class EnforcerTestUtils {
+
+    private static RepositorySystem REPOSITORY_SYSTEM = mock(RepositorySystem.class);
+
     /**
      * Gets the maven session.
      *
      * @return the maven session
      */
-    public static MavenSession getMavenSession()
-    {
-        PlexusContainer mock = mock( PlexusContainer.class );
+    public static MavenSession getMavenSession() {
+        PlexusContainer mock = mock(PlexusContainer.class);
 
-        MavenExecutionRequest mer = mock( MavenExecutionRequest.class );
-        ProjectBuildingRequest buildingRequest = mock( ProjectBuildingRequest.class );
-        when( buildingRequest.setRepositorySession( any() ) ).thenReturn( buildingRequest );
-        when( mer.getProjectBuildingRequest() ).thenReturn( buildingRequest );
+        MavenExecutionRequest mer = mock(MavenExecutionRequest.class);
+        ProjectBuildingRequest buildingRequest = mock(ProjectBuildingRequest.class);
+        when(buildingRequest.setRepositorySession(any())).thenReturn(buildingRequest);
+        when(mer.getProjectBuildingRequest()).thenReturn(buildingRequest);
 
         Properties systemProperties = new Properties();
-        systemProperties.put( "maven.version", "3.0" );
-        when( mer.getUserProperties() ).thenReturn( new Properties() );
-        when( mer.getSystemProperties() ).thenReturn( systemProperties );
+        systemProperties.put("maven.version", "3.0");
+        when(mer.getUserProperties()).thenReturn(new Properties());
+        when(mer.getSystemProperties()).thenReturn(systemProperties);
 
-        MavenExecutionResult meresult = mock( MavenExecutionResult.class );
-        return new MavenSession( mock, null, mer, meresult );
+        MavenExecutionResult meResult = mock(MavenExecutionResult.class);
+
+        return new MavenSession(mock, new DefaultRepositorySystemSession(), mer, meResult);
     }
 
     /**
@@ -86,9 +88,8 @@ public final class EnforcerTestUtils
      *
      * @return the helper
      */
-    public static EnforcerRuleHelper getHelper()
-    {
-        return getHelper( new MockProject(), false );
+    public static EnforcerRuleHelper getHelper() {
+        return getHelper(new MockProject(), false);
     }
 
     /**
@@ -97,9 +98,8 @@ public final class EnforcerTestUtils
      * @param mockExpression the mock expression
      * @return the helper
      */
-    public static EnforcerRuleHelper getHelper( boolean mockExpression )
-    {
-        return getHelper( new MockProject(), mockExpression );
+    public static EnforcerRuleHelper getHelper(boolean mockExpression) {
+        return getHelper(new MockProject(), mockExpression);
     }
 
     /**
@@ -108,9 +108,21 @@ public final class EnforcerTestUtils
      * @param project the project
      * @return the helper
      */
-    public static EnforcerRuleHelper getHelper( MavenProject project )
-    {
-        return getHelper( project, false );
+    public static EnforcerRuleHelper getHelper(MavenProject project) {
+        return getHelper(project, false);
+    }
+
+    public static void provideCollectDependencies(DependencyNode node) {
+        try {
+            when(REPOSITORY_SYSTEM.collectDependencies(any(), any(CollectRequest.class)))
+                    .then(i -> new CollectResult(i.getArgument(1)).setRoot(node));
+        } catch (DependencyCollectionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void provideCollectDependencies() {
+        provideCollectDependencies(getUniformDependencyNodeTree());
     }
 
     /**
@@ -120,55 +132,30 @@ public final class EnforcerTestUtils
      * @param mockExpression the mock expression
      * @return the helper
      */
-    public static EnforcerRuleHelper getHelper( MavenProject project, boolean mockExpression )
-    {
-        MavenSession session = getMavenSession();
-        MojoExecution mockExecution = mock( MojoExecution.class );
-        ExpressionEvaluator eval;
-        if ( mockExpression )
-        {
-            eval = new MockEnforcerExpressionEvaluator( session );
-        }
-        else
-        {
-            session.setCurrentProject( project );
-            eval = new PluginParameterExpressionEvaluator( session, mockExecution );
-        }
-        PlexusContainer container = Mockito.mock( PlexusContainer.class );
+    public static EnforcerRuleHelper getHelper(MavenProject project, boolean mockExpression) {
+        try {
+            MavenSession session = getMavenSession();
+            MojoExecution mockExecution = mock(MojoExecution.class);
+            ExpressionEvaluator eval;
+            if (mockExpression) {
+                eval = new MockEnforcerExpressionEvaluator(session);
+            } else {
+                session.setCurrentProject(project);
+                eval = new PluginParameterExpressionEvaluator(session, mockExecution);
+            }
 
-        Artifact artifact =
-            new DefaultArtifact( "groupId", "artifactId", "version", "compile", "jar", "classifier", null );
-        Artifact v1 = new DefaultArtifact( "groupId", "artifact", "1.0.0", "compile", "jar", "", null );
-        Artifact v2 = new DefaultArtifact( "groupId", "artifact", "2.0.0", "compile", "jar", "", null );
-        final DefaultDependencyNode node = new DefaultDependencyNode( artifact );
-        DefaultDependencyNode child1 = new DefaultDependencyNode( node, v1, null, null, null );
-        child1.setChildren( Collections.emptyList() );
-        DefaultDependencyNode child2 = new DefaultDependencyNode( node, v2, null, null, null );
-        child2.setChildren( Collections.emptyList() );
-        node.setChildren( Arrays.asList( child1, child2 ) );
+            PlexusContainer container = mock(PlexusContainer.class);
+            when(container.lookup(RepositorySystem.class)).thenReturn(REPOSITORY_SYSTEM);
+            provideCollectDependencies();
 
-        try
-        {
-            when( container.lookup( DependencyCollectorBuilder.class ) )
-                    .thenReturn( ( buildingRequest, filter ) -> node );
+            MojoDescriptor mojoDescriptor = new MojoDescriptor();
+            mojoDescriptor.setRealm(getTestClassRealm());
+            when(mockExecution.getMojoDescriptor()).thenReturn(mojoDescriptor);
+            when(container.lookup(MojoExecution.class)).thenReturn(mockExecution);
+            return new DefaultEnforcementRuleHelper(session, eval, new SystemStreamLog(), container);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        catch ( ComponentLookupException e )
-        {
-            // test will fail
-        }
-        ClassWorld classWorld = new ClassWorld( "test", EnforcerTestUtils.class.getClassLoader() );
-        MojoDescriptor mojoDescriptor = new MojoDescriptor();
-        mojoDescriptor.setRealm( classWorld.getClassRealm( "test" ) );
-        when( mockExecution.getMojoDescriptor() ).thenReturn( mojoDescriptor );
-        try
-        {
-            when( container.lookup( MojoExecution.class ) ).thenReturn( mockExecution );
-        }
-        catch ( ComponentLookupException e )
-        {
-            // test will fail
-        }
-        return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(), container );
     }
 
     /**
@@ -178,10 +165,9 @@ public final class EnforcerTestUtils
      * @param eval the expression evaluator to use
      * @return the helper
      */
-    public static EnforcerRuleHelper getHelper( MavenProject project, ExpressionEvaluator eval )
-    {
+    public static EnforcerRuleHelper getHelper(MavenProject project, ExpressionEvaluator eval) {
         MavenSession session = getMavenSession();
-        return new DefaultEnforcementRuleHelper( session, eval, new SystemStreamLog(), null );
+        return new DefaultEnforcementRuleHelper(session, eval, new SystemStreamLog(), null);
     }
 
     /**
@@ -192,16 +178,72 @@ public final class EnforcerTestUtils
      * @param version the version
      * @return the plugin
      */
-    public static Plugin newPlugin( String groupId, String artifactId, String version )
-    {
+    public static Plugin newPlugin(String groupId, String artifactId, String version) {
         InputSource inputSource = new InputSource();
-        inputSource.setModelId( "unit" );
+        inputSource.setModelId("unit");
 
         Plugin plugin = new Plugin();
-        plugin.setArtifactId( artifactId );
-        plugin.setGroupId( groupId );
-        plugin.setVersion( version );
-        plugin.setLocation( "version", new InputLocation( 0, 0, inputSource ) );
+        plugin.setArtifactId(artifactId);
+        plugin.setGroupId(groupId);
+        plugin.setVersion(version);
+        plugin.setLocation("version", new InputLocation(0, 0, inputSource));
         return plugin;
+    }
+
+    public static DependencyNode getUniformDependencyNodeTree() {
+        return new DependencyNodeBuilder()
+                .withType(DependencyNodeBuilder.Type.POM)
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childA")
+                        .withVersion("1.0.0")
+                        .build())
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childB")
+                        .withVersion("2.0.0")
+                        .build())
+                .build();
+    }
+
+    public static DependencyNode getDependencyNodeWithMultipleSnapshots() {
+        return new DependencyNodeBuilder()
+                .withType(DependencyNodeBuilder.Type.POM)
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childA")
+                        .withVersion("1.0.0")
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withArtifactId("childAA")
+                                .withVersion("1.0.0-SNAPSHOT")
+                                .build())
+                        .build())
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childB")
+                        .withVersion("2.0.0-SNAPSHOT")
+                        .build())
+                .build();
+    }
+
+    public static DependencyNode getDependencyNodeWithMultipleTestSnapshots() {
+        return new DependencyNodeBuilder()
+                .withType(DependencyNodeBuilder.Type.POM)
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childA")
+                        .withVersion("1.0.0")
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withArtifactId("childAA")
+                                .withVersion("1.0.0-SNAPSHOT")
+                                .withScope(SCOPE_TEST)
+                                .build())
+                        .build())
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childB")
+                        .withVersion("2.0.0-SNAPSHOT")
+                        .withScope(SCOPE_TEST)
+                        .build())
+                .build();
+    }
+
+    public static ClassRealm getTestClassRealm() {
+        ClassWorld classWorld = new ClassWorld("test", EnforcerTestUtils.class.getClassLoader());
+        return classWorld.getClassRealm("test");
     }
 }

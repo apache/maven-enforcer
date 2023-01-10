@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.enforcer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,8 +28,8 @@ import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.plugins.enforcer.utils.NormalizeLineSeparatorReader;
-import org.apache.maven.plugins.enforcer.utils.NormalizeLineSeparatorReader.LineSeparator;
+import org.apache.maven.enforcer.rules.utils.NormalizeLineSeparatorReader;
+import org.apache.maven.enforcer.rules.utils.NormalizeLineSeparatorReader.LineSeparator;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
@@ -39,64 +38,51 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * @author Konrad Windszus
  * @see RequireFileChecksum
  */
-public class RequireTextFileChecksum
-    extends RequireFileChecksum
-{
+public class RequireTextFileChecksum extends RequireFileChecksum {
     private NormalizeLineSeparatorReader.LineSeparator normalizeLineSeparatorTo = LineSeparator.UNIX;
 
     Charset encoding;
 
-    public void setNormalizeLineSeparatorTo( NormalizeLineSeparatorReader.LineSeparator normalizeLineSeparatorTo )
-    {
+    public void setNormalizeLineSeparatorTo(NormalizeLineSeparatorReader.LineSeparator normalizeLineSeparatorTo) {
         this.normalizeLineSeparatorTo = normalizeLineSeparatorTo;
     }
 
-    public void setEncoding( String encoding )
-    {
-        this.encoding = Charset.forName( encoding );
+    public void setEncoding(String encoding) {
+        this.encoding = Charset.forName(encoding);
     }
 
     @Override
-    public void execute( EnforcerRuleHelper helper )
-        throws EnforcerRuleException
-    {
+    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
         // set defaults
-        if ( encoding == null )
-        {
+        if (encoding == null) {
             // https://maven.apache.org/plugins/maven-resources-plugin/examples/encoding.html
-            try
-            {
-                String encoding = (String) helper.evaluate( "${project.build.sourceEncoding}" );
-                if ( StringUtils.isBlank( encoding ) )
-                {
-                    encoding = System.getProperty( "file.encoding" );
-                    helper.getLog().warn( "File encoding has not been set, using platform encoding " + encoding
-                        + ". Build is platform dependent!" );
+            try {
+                String encoding = (String) helper.evaluate("${project.build.sourceEncoding}");
+                if (StringUtils.isBlank(encoding)) {
+                    encoding = System.getProperty("file.encoding");
+                    helper.getLog()
+                            .warn("File encoding has not been set, using platform encoding " + encoding
+                                    + ". Build is platform dependent!");
                 }
-                this.encoding = Charset.forName( encoding );
-            }
-            catch ( ExpressionEvaluationException e )
-            {
-                throw new EnforcerRuleException( "Unable to retrieve the project's build source encoding "
-                    + "(${project.build.sourceEncoding}): ", e );
+                this.encoding = Charset.forName(encoding);
+            } catch (ExpressionEvaluationException e) {
+                throw new EnforcerRuleException(
+                        "Unable to retrieve the project's build source encoding "
+                                + "(${project.build.sourceEncoding}): ",
+                        e);
             }
         }
-        super.execute( helper );
+        super.execute(helper);
     }
 
     @Override
-    protected String calculateChecksum()
-        throws EnforcerRuleException
-    {
-        try ( Reader reader = new NormalizeLineSeparatorReader( Files.newBufferedReader( file.toPath(), encoding ),
-                                                                normalizeLineSeparatorTo );
-                        InputStream inputStream = new ReaderInputStream( reader, encoding ) )
-        {
-            return super.calculateChecksum( inputStream );
-        }
-        catch ( IOException e )
-        {
-            throw new EnforcerRuleException( "Unable to calculate checksum (with normalized line separators)", e );
+    protected String calculateChecksum() throws EnforcerRuleException {
+        try (Reader reader = new NormalizeLineSeparatorReader(
+                        Files.newBufferedReader(file.toPath(), encoding), normalizeLineSeparatorTo);
+                InputStream inputStream = new ReaderInputStream(reader, encoding)) {
+            return super.calculateChecksum(inputStream);
+        } catch (IOException e) {
+            throw new EnforcerRuleException("Unable to calculate checksum (with normalized line separators)", e);
         }
     }
 }

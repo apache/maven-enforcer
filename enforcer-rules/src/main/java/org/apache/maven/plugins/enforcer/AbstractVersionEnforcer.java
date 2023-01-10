@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
@@ -32,9 +31,7 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public abstract class AbstractVersionEnforcer
-    extends AbstractStandardEnforcerRule
-{
+public abstract class AbstractVersionEnforcer extends AbstractStandardEnforcerRule {
 
     /**
      * Specify the required version. Some examples are:
@@ -45,7 +42,7 @@ public abstract class AbstractVersionEnforcer
      * <li><code>[2.0.5,)</code> Versions 2.0.5 and higher</li>
      * <li><code>(,2.0.5],[2.1.1,)</code> Versions up to 2.0.5 (included) and 2.1.1 or higher</li>
      * </ul>
-     * 
+     *
      * @see {@link #setVersion(String)}
      * @see {@link #getVersion()}
      */
@@ -61,56 +58,51 @@ public abstract class AbstractVersionEnforcer
      * @throws EnforcerRuleException the enforcer rule exception
      */
     // CHECKSTYLE_OFF: LineLength
-    public void enforceVersion( Log log, String variableName, String requiredVersionRange, ArtifactVersion actualVersion )
-        throws EnforcerRuleException
-    // CHECKSTYLE_ON: LineLength
-    {
-        if ( StringUtils.isEmpty( requiredVersionRange ) )
-        {
-            throw new EnforcerRuleException( variableName + " version can't be empty." );
-        }
-        else
-        {
+    public void enforceVersion(Log log, String variableName, String requiredVersionRange, ArtifactVersion actualVersion)
+            throws EnforcerRuleException
+                // CHECKSTYLE_ON: LineLength
+            {
+        if (StringUtils.isEmpty(requiredVersionRange)) {
+            throw new EnforcerRuleException(variableName + " version can't be empty.");
+        } else {
 
             VersionRange vr;
             String msg = "Detected " + variableName + " Version: " + actualVersion;
 
             // short circuit check if the strings are exactly equal
-            if ( actualVersion.toString().equals( requiredVersionRange ) )
-            {
-                log.debug( msg + " is allowed in the range " + requiredVersionRange + "." );
-            }
-            else
-            {
-                try
-                {
-                    vr = VersionRange.createFromVersionSpec( requiredVersionRange );
+            if (actualVersion.toString().equals(requiredVersionRange)) {
+                log.debug(msg + " is allowed in the range " + requiredVersionRange + ".");
+            } else {
+                try {
+                    vr = VersionRange.createFromVersionSpec(requiredVersionRange);
 
-                    if ( containsVersion( vr, actualVersion ) )
-                    {
-                        log.debug( msg + " is allowed in the range " + requiredVersionRange + "." );
-                    }
-                    else
-                    {
+                    if (containsVersion(vr, actualVersion)) {
+                        log.debug(msg + " is allowed in the range " + toString(vr) + ".");
+                    } else {
                         String message = getMessage();
 
-                        if ( StringUtils.isEmpty( message ) )
-                        {
-                            message = msg + " is not in the allowed range " + vr + ".";
+                        if (StringUtils.isEmpty(message)) {
+                            message = msg + " is not in the allowed range " + toString(vr) + ".";
                         }
 
-                        throw new EnforcerRuleException( message );
+                        throw new EnforcerRuleException(message);
                     }
-                }
-                catch ( InvalidVersionSpecificationException e )
-                {
-                    throw new EnforcerRuleException( "The requested " + variableName + " version "
-                        + requiredVersionRange + " is invalid.", e );
+                } catch (InvalidVersionSpecificationException e) {
+                    throw new EnforcerRuleException(
+                            "The requested " + variableName + " version " + requiredVersionRange + " is invalid.", e);
                 }
             }
         }
     }
 
+    protected static String toString(VersionRange vr) {
+        // as recommended version is used as lower bound in this context modify the string representation
+        if (vr.getRecommendedVersion() != null) {
+            return "[" + vr.getRecommendedVersion().toString() + ",)";
+        } else {
+            return vr.toString();
+        }
+    }
     /**
      * Copied from Artifact.VersionRange. This is tweaked to handle singular ranges properly. Currently the default
      * containsVersion method assumes a singular version means allow everything. This method assumes that "2.0.4" ==
@@ -120,46 +112,35 @@ public abstract class AbstractVersionEnforcer
      * @param theVersion the version to be checked.
      * @return true if the version is contained by the range.
      */
-    public static boolean containsVersion( VersionRange allowedRange, ArtifactVersion theVersion )
-    {
+    public static boolean containsVersion(VersionRange allowedRange, ArtifactVersion theVersion) {
         ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
-        if ( recommendedVersion == null )
-        {
-            return allowedRange.containsVersion( theVersion );
-        }
-        else
-        {
+        if (recommendedVersion == null) {
+            return allowedRange.containsVersion(theVersion);
+        } else {
             // only singular versions ever have a recommendedVersion
-            int compareTo = recommendedVersion.compareTo( theVersion );
-            return ( compareTo <= 0 );
+            int compareTo = recommendedVersion.compareTo(theVersion);
+            return (compareTo <= 0);
         }
     }
 
     @Override
-    public String getCacheId()
-    {
-        if ( StringUtils.isNotEmpty( version ) )
-        {
+    public String getCacheId() {
+        if (StringUtils.isNotEmpty(version)) {
             // return the hashcodes of the parameter that matters
             return "" + version.hashCode();
-        }
-        else
-        {
+        } else {
             return "0";
         }
-
     }
 
     @Override
-    public boolean isCacheable()
-    {
+    public boolean isCacheable() {
         // the maven version is not going to change between projects in the same build.
         return true;
     }
 
     @Override
-    public boolean isResultValid( EnforcerRule theCachedRule )
-    {
+    public boolean isResultValid(EnforcerRule theCachedRule) {
         // i will always return the hash of the parameters as my id. If my parameters are the same, this
         // rule must always have the same result.
         return true;
@@ -170,8 +151,7 @@ public abstract class AbstractVersionEnforcer
      *
      * @return the required version
      */
-    public final String getVersion()
-    {
+    public final String getVersion() {
         return this.version;
     }
 
@@ -187,9 +167,7 @@ public abstract class AbstractVersionEnforcer
      *
      * @param theVersion the required version to set
      */
-    public final void setVersion( String theVersion )
-    {
+    public void setVersion(String theVersion) {
         this.version = theVersion;
     }
-
 }

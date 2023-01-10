@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,9 +16,7 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
@@ -34,24 +30,23 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * This class is intended to test the {@link BanDistributionManagement} rule.
  *
  * @author <a href="mailto:khmarbaise@apache.org">Karl Heinz Marbaise</a>
  */
-public class BanDistributionManagementTest
-{
+public class BanDistributionManagementTest {
     private MavenProject project;
 
     private EnforcerRuleHelper helper;
 
     @Test
-    public void shouldNotFailWithoutDistributionManagement()
-        throws Exception
-    {
+    public void shouldNotFailWithoutDistributionManagement() throws Exception {
         BanDistributionManagement rule = setupProjectWithoutDistributionManagement();
-        rule.execute( helper );
+        rule.execute(helper);
         // intentionally no assert cause in case of an exception the test will be red.
     }
 
@@ -66,13 +61,12 @@ public class BanDistributionManagementTest
      *
      */
     @Test
-    public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepository()
-    {
-        assertThrows( EnforcerRuleException.class, () -> {
+    public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepository() {
+        assertThrows(EnforcerRuleException.class, () -> {
             BanDistributionManagement rule =
-                setupProjectWithDistributionManagement( new DeploymentRepository(), null, null );
-            rule.execute( helper );
-        } );
+                    setupProjectWithDistributionManagement(new DeploymentRepository(), null, null);
+            rule.execute(helper);
+        });
         // intentionally no assert cause we expect an exception.
     }
 
@@ -90,13 +84,12 @@ public class BanDistributionManagementTest
      *
      */
     @Test
-    public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepositorySnapshotRepository()
-    {
-        assertThrows( EnforcerRuleException.class, () -> {
-            BanDistributionManagement rule =
-                setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(), null );
-            rule.execute( helper );
-        } );
+    public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepositorySnapshotRepository() {
+        assertThrows(EnforcerRuleException.class, () -> {
+            BanDistributionManagement rule = setupProjectWithDistributionManagement(
+                    new DeploymentRepository(), new DeploymentRepository(), null);
+            rule.execute(helper);
+        });
         // intentionally no assert cause we expect an exception.
     }
 
@@ -117,15 +110,13 @@ public class BanDistributionManagementTest
      *
      */
     @Test
-    public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepositorySnapshotRepositorySite()
-    {
-        assertThrows( EnforcerRuleException.class, () -> {
-            BanDistributionManagement rule =
-                setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(),
-                                                        new Site() );
-            rule.execute( helper );
+    public void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepositorySnapshotRepositorySite() {
+        assertThrows(EnforcerRuleException.class, () -> {
+            BanDistributionManagement rule = setupProjectWithDistributionManagement(
+                    new DeploymentRepository(), new DeploymentRepository(), new Site());
+            rule.execute(helper);
             // intentionally no assert cause we expect an exception.
-        } );
+        });
         // intentionally no assert cause we expect an exception.
     }
 
@@ -137,17 +128,14 @@ public class BanDistributionManagementTest
      *   &lt;/repository&gt;
      * &lt;/distributionManagement&gt;
      * </pre>
-     * 
+     *
      * @throws Exception if any occurs
      */
     @Test
-    public void shouldAllowDistributionManagementHavingRepository()
-        throws Exception
-    {
-        BanDistributionManagement rule =
-            setupProjectWithDistributionManagement( new DeploymentRepository(), null, null );
-        rule.setAllowRepository( true );
-        rule.execute( helper );
+    public void shouldAllowDistributionManagementHavingRepository() throws Exception {
+        BanDistributionManagement rule = setupProjectWithDistributionManagement(new DeploymentRepository(), null, null);
+        rule.setAllowRepository(true);
+        rule.execute(helper);
         // intentionally no assert cause in case of an exception the test will be red.
     }
 
@@ -162,18 +150,16 @@ public class BanDistributionManagementTest
      *   &lt;/snapshotRepository&gt;
      * &lt;/distributionManagement&gt;
      * </pre>
-     * 
+     *
      * @throws Exception if any occurs
      */
     @Test
-    public void shouldAllowDistributionManagementHavingRepositorySnapshotRepository()
-        throws Exception
-    {
+    public void shouldAllowDistributionManagementHavingRepositorySnapshotRepository() throws Exception {
         BanDistributionManagement rule =
-            setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(), null );
-        rule.setAllowRepository( true );
-        rule.setAllowSnapshotRepository( true );
-        rule.execute( helper );
+                setupProjectWithDistributionManagement(new DeploymentRepository(), new DeploymentRepository(), null);
+        rule.setAllowRepository(true);
+        rule.setAllowSnapshotRepository(true);
+        rule.execute(helper);
         // intentionally no assert cause in case of an exception the test will be red.
     }
 
@@ -191,100 +177,85 @@ public class BanDistributionManagementTest
      *   &lt;/site&gt;
      * &lt;/distributionManagement&gt;
      * </pre>
-     * 
+     *
      * @throws Exception if any occurs
      */
     @Test
-    public void shouldAllowDistributionManagementHavingRepositorySnapshotRepositorySite()
-        throws Exception
-    {
-        BanDistributionManagement rule =
-            setupProjectWithDistributionManagement( new DeploymentRepository(), new DeploymentRepository(),
-                                                    new Site() );
-        rule.setAllowRepository( true );
-        rule.setAllowSnapshotRepository( true );
-        rule.setAllowSite( true );
-        rule.execute( helper );
+    public void shouldAllowDistributionManagementHavingRepositorySnapshotRepositorySite() throws Exception {
+        BanDistributionManagement rule = setupProjectWithDistributionManagement(
+                new DeploymentRepository(), new DeploymentRepository(), new Site());
+        rule.setAllowRepository(true);
+        rule.setAllowSnapshotRepository(true);
+        rule.setAllowSite(true);
+        rule.execute(helper);
         // intentionally no assert cause in case of an exception the test will be red.
     }
 
     @Test
-    public void shouldThrowExceptionCauseParentProjectHasDistributionManagementSnapshotRepository()
-        throws Exception
-    {
+    public void shouldThrowExceptionCauseParentProjectHasDistributionManagementSnapshotRepository() throws Exception {
         BanDistributionManagement rule =
-            setupProjectWithParentDistributionManagement( null, new DeploymentRepository(), null );
+                setupProjectWithParentDistributionManagement(null, new DeploymentRepository(), null);
 
-        rule.setAllowSnapshotRepository( true );
+        rule.setAllowSnapshotRepository(true);
 
-        rule.execute( helper );
+        rule.execute(helper);
     }
 
-    private BanDistributionManagement setupProjectWithParentDistributionManagement( DeploymentRepository repository,
-                                                                                    DeploymentRepository snapshotRepository,
-                                                                                    Site site )
-        throws ExpressionEvaluationException
-    {
-        project = setupProject( null );
+    private BanDistributionManagement setupProjectWithParentDistributionManagement(
+            DeploymentRepository repository, DeploymentRepository snapshotRepository, Site site)
+            throws ExpressionEvaluationException {
+        project = setupProject(null);
 
-        DistributionManagement dmParent = mock( DistributionManagement.class );
-        when( dmParent.getRepository() ).thenReturn( repository );
-        when( dmParent.getSnapshotRepository() ).thenReturn( snapshotRepository );
-        when( dmParent.getSite() ).thenReturn( site );
+        DistributionManagement dmParent = mock(DistributionManagement.class);
+        when(dmParent.getRepository()).thenReturn(repository);
+        when(dmParent.getSnapshotRepository()).thenReturn(snapshotRepository);
+        when(dmParent.getSite()).thenReturn(site);
 
-        MavenProject parentProject = mock( MavenProject.class );
-        Model model = mock( Model.class );
-        when( model.getDistributionManagement() ).thenReturn( dmParent );
-        when( parentProject.getOriginalModel() ).thenReturn( model );
-        when( project.getParent() ).thenReturn( parentProject );
+        MavenProject parentProject = mock(MavenProject.class);
+        Model model = mock(Model.class);
+        when(model.getDistributionManagement()).thenReturn(dmParent);
+        when(parentProject.getOriginalModel()).thenReturn(model);
+        when(project.getParent()).thenReturn(parentProject);
 
         return setupEnforcerRule();
     }
 
-    private BanDistributionManagement setupProjectWithoutDistributionManagement()
-        throws ExpressionEvaluationException
-    {
-        project = setupProject( null );
+    private BanDistributionManagement setupProjectWithoutDistributionManagement() throws ExpressionEvaluationException {
+        project = setupProject(null);
         return setupEnforcerRule();
     }
 
-    private BanDistributionManagement setupProjectWithDistributionManagement( DeploymentRepository repository,
-                                                                              DeploymentRepository snapshotRepository,
-                                                                              Site site )
-        throws ExpressionEvaluationException
-    {
-        DistributionManagement dm = mock( DistributionManagement.class );
-        when( dm.getRepository() ).thenReturn( repository );
-        when( dm.getSnapshotRepository() ).thenReturn( snapshotRepository );
-        when( dm.getSite() ).thenReturn( site );
+    private BanDistributionManagement setupProjectWithDistributionManagement(
+            DeploymentRepository repository, DeploymentRepository snapshotRepository, Site site)
+            throws ExpressionEvaluationException {
+        DistributionManagement dm = mock(DistributionManagement.class);
+        when(dm.getRepository()).thenReturn(repository);
+        when(dm.getSnapshotRepository()).thenReturn(snapshotRepository);
+        when(dm.getSite()).thenReturn(site);
 
-        project = setupProject( dm );
+        project = setupProject(dm);
 
-        when( project.getParent() ).thenReturn( mock( MavenProject.class ) );
-        when( project.isExecutionRoot() ).thenReturn( true );
+        when(project.getParent()).thenReturn(mock(MavenProject.class));
+        when(project.isExecutionRoot()).thenReturn(true);
 
         return setupEnforcerRule();
     }
 
-    private MavenProject setupProject( DistributionManagement distributionManagement )
-    {
-        MavenProject project = mock( MavenProject.class );
-        when( project.getPackaging() ).thenReturn( "jar" );
-        Model mavenModel = mock( Model.class );
-        when( project.getOriginalModel() ).thenReturn( mavenModel );
-        when( mavenModel.getDistributionManagement() ).thenReturn( distributionManagement );
+    private MavenProject setupProject(DistributionManagement distributionManagement) {
+        MavenProject project = mock(MavenProject.class);
+        when(project.getPackaging()).thenReturn("jar");
+        Model mavenModel = mock(Model.class);
+        when(project.getOriginalModel()).thenReturn(mavenModel);
+        when(mavenModel.getDistributionManagement()).thenReturn(distributionManagement);
         return project;
     }
 
-    private BanDistributionManagement setupEnforcerRule()
-        throws ExpressionEvaluationException
-    {
-        helper = mock( EnforcerRuleHelper.class );
-        when( helper.evaluate( "${project}" ) ).thenReturn( project );
+    private BanDistributionManagement setupEnforcerRule() throws ExpressionEvaluationException {
+        helper = mock(EnforcerRuleHelper.class);
+        when(helper.evaluate("${project}")).thenReturn(project);
         BanDistributionManagement rule = new BanDistributionManagement();
 
-        when( helper.getLog() ).thenReturn( mock( Log.class ) );
+        when(helper.getLog()).thenReturn(mock(Log.class));
         return rule;
     }
-
 }

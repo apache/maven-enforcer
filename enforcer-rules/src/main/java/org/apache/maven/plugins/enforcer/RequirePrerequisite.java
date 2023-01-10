@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.enforcer;
 
 import java.util.List;
 
@@ -33,12 +32,10 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * @author Robert Scholte
  * @since 1.3
  */
-public class RequirePrerequisite
-    extends AbstractNonCacheableEnforcerRule
-{
+public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule {
     /**
      * Only the projects with one of these packagings will be enforced to have the correct prerequisite.
-     * 
+     *
      * @since 1.4
      */
     private List<String> packagings;
@@ -50,83 +47,65 @@ public class RequirePrerequisite
 
     /**
      * Set the mavenVersion Can either be version or a range, e.g. {@code 2.2.1} or {@code [2.2.1,)}
-     * 
+     *
      * @param mavenVersion the version or {@code null}
      */
-    public void setMavenVersion( String mavenVersion )
-    {
+    public void setMavenVersion(String mavenVersion) {
         this.mavenVersion = mavenVersion;
     }
 
     /**
      * Only the projects with one of these packagings will be enforced to have the correct prerequisite.
-     * 
+     *
      * @since 1.4
      * @param packagings the list of packagings
      */
-    public void setPackagings( List<String> packagings )
-    {
+    public void setPackagings(List<String> packagings) {
         this.packagings = packagings;
     }
 
     @Override
-    public void execute( EnforcerRuleHelper helper )
-        throws EnforcerRuleException
-    {
-        try
-        {
-            MavenProject project = (MavenProject) helper.evaluate( "${project}" );
+    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
+        try {
+            MavenProject project = (MavenProject) helper.evaluate("${project}");
 
-            if ( "pom".equals( project.getPackaging() ) )
-            {
-                helper.getLog().debug( "Packaging is pom, skipping requirePrerequisite rule" );
+            if ("pom".equals(project.getPackaging())) {
+                helper.getLog().debug("Packaging is pom, skipping requirePrerequisite rule");
                 return;
             }
 
-            if ( packagings != null && !packagings.contains( project.getPackaging() ) )
-            {
+            if (packagings != null && !packagings.contains(project.getPackaging())) {
                 // CHECKSTYLE_OFF: LineLength
-                helper.getLog().debug( "Packaging is " + project.getPackaging() + ", skipping requirePrerequisite rule" );
+                helper.getLog().debug("Packaging is " + project.getPackaging() + ", skipping requirePrerequisite rule");
                 return;
                 // CHECKSTYLE_ON: LineLength
             }
 
             Prerequisites prerequisites = project.getPrerequisites();
 
-            if ( prerequisites == null )
-            {
-                throw new EnforcerRuleException( "Requires prerequisite not set" );
+            if (prerequisites == null) {
+                throw new EnforcerRuleException("Requires prerequisite not set");
             }
 
-            if ( mavenVersion != null )
-            {
+            if (mavenVersion != null) {
 
-                VersionRange requiredVersionRange = VersionRange.createFromVersionSpec( mavenVersion );
+                VersionRange requiredVersionRange = VersionRange.createFromVersionSpec(mavenVersion);
 
-                if ( !requiredVersionRange.hasRestrictions() )
-                {
-                    requiredVersionRange = VersionRange.createFromVersionSpec( "[" + mavenVersion + ",)" );
+                if (!requiredVersionRange.hasRestrictions()) {
+                    requiredVersionRange = VersionRange.createFromVersionSpec("[" + mavenVersion + ",)");
                 }
 
-                VersionRange specifiedVersion = VersionRange.createFromVersionSpec( prerequisites.getMaven() );
+                VersionRange specifiedVersion = VersionRange.createFromVersionSpec(prerequisites.getMaven());
 
-                VersionRange restrictedVersionRange = requiredVersionRange.restrict( specifiedVersion );
+                VersionRange restrictedVersionRange = requiredVersionRange.restrict(specifiedVersion);
 
-                if ( restrictedVersionRange.getRecommendedVersion() == null )
-                {
-                    throw new EnforcerRuleException( "The specified Maven prerequisite( " + specifiedVersion
-                        + " ) doesn't match the required version: " + mavenVersion );
+                if (restrictedVersionRange.getRecommendedVersion() == null) {
+                    throw new EnforcerRuleException("The specified Maven prerequisite( " + specifiedVersion
+                            + " ) doesn't match the required version: " + mavenVersion);
                 }
             }
-        }
-        catch ( ExpressionEvaluationException e )
-        {
-            throw new EnforcerRuleException( e.getMessage(), e );
-        }
-        catch ( InvalidVersionSpecificationException e )
-        {
-            throw new EnforcerRuleException( e.getMessage(), e );
+        } catch (ExpressionEvaluationException | InvalidVersionSpecificationException e) {
+            throw new EnforcerRuleException(e.getMessage(), e);
         }
     }
-
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,30 +16,54 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import java.util.Set;
+package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
+import org.apache.maven.execution.MavenSession;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
  * This rule checks that lists of plugins are not included.
  *
  * @author <a href="mailto:velo.br@gmail.com">Marvin Froeder</a>
  */
-public class BannedPlugins
-    extends BannedDependencies
-{
+public class BannedPlugins extends BannedDependenciesBase {
+
     @Override
-    protected Set<Artifact> getDependenciesToCheck( ProjectBuildingRequest buildingRequest )
-    {
-        return buildingRequest.getProject().getPluginArtifacts();
+    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
+        MavenSession session;
+        try {
+            session = (MavenSession) helper.evaluate("${session}");
+        } catch (ExpressionEvaluationException e) {
+            throw new EnforcerRuleException("Cannot resolve MavenSession", e);
+        }
+
+        String result = session.getCurrentProject().getPluginArtifacts().stream()
+                .filter(a -> !validate(a))
+                .collect(
+                        StringBuilder::new,
+                        (messageBuilder, node) -> messageBuilder
+                                .append(node.getId())
+                                .append(" <--- ")
+                                .append(getErrorMessage()),
+                        (m1, m2) -> m1.append(m2.toString()))
+                .toString();
+        if (!result.isEmpty()) {
+            throw new EnforcerRuleException(result);
+        }
     }
 
     @Override
-    protected CharSequence getErrorMessage( Artifact artifact )
-    {
-        return "Found Banned Plugin: " + artifact.getId() + System.lineSeparator();
+    protected String getErrorMessage() {
+        return "banned plugin";
     }
 
+    @Override
+    protected boolean validate(Artifact artifact) {
+        return !ArtifactUtils.matchDependencyArtifact(artifact, excludes)
+                || ArtifactUtils.matchDependencyArtifact(artifact, includes);
+    }
 }

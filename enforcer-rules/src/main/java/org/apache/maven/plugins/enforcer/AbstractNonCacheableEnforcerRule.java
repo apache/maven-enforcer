@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 
@@ -27,24 +26,19 @@ import org.apache.maven.enforcer.rule.api.EnforcerRule;
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public abstract class AbstractNonCacheableEnforcerRule
-    extends AbstractStandardEnforcerRule
-{
+public abstract class AbstractNonCacheableEnforcerRule extends AbstractStandardEnforcerRule {
     @Override
-    public String getCacheId()
-    {
+    public String getCacheId() {
         return "0";
     }
 
     @Override
-    public boolean isCacheable()
-    {
+    public boolean isCacheable() {
         return false;
     }
 
     @Override
-    public boolean isResultValid( EnforcerRule cachedRule )
-    {
+    public boolean isResultValid(EnforcerRule cachedRule) {
         return false;
     }
 }

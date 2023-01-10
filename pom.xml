@@ -21,20 +21,32 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <artifactId>maven-parent</artifactId>
     <groupId>org.apache.maven</groupId>
-    <version>37</version>
+    <artifactId>maven-parent</artifactId>
+    <version>39</version>
     <relativePath />
   </parent>
   <groupId>org.apache.maven.enforcer</groupId>
   <artifactId>enforcer</artifactId>
-  <version>3.1.1-SNAPSHOT</version>
+  <version>3.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Apache Maven Enforcer</name>
   <description>Enforcer is a build rule execution framework.</description>
   <url>https://maven.apache.org/enforcer/</url>
   <inceptionYear>2007</inceptionYear>
+
+  <contributors>
+    <contributor>
+      <name>Simon Wang</name>
+      <email>wangyf2010@gmail.com</email>
+      <organization>eBay Inc.</organization>
+    </contributor>
+    <contributor>
+      <name>George Gastaldi</name>
+      <email>gastaldi@apache.org</email>
+    </contributor>
+  </contributors>
 
   <modules>
     <module>enforcer-api</module>
@@ -46,8 +58,8 @@
   <scm>
     <connection>scm:git:https://gitbox.apache.org/repos/asf/maven-enforcer.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/maven-enforcer.git</developerConnection>
-    <url>https://github.com/apache/maven-enforcer/tree/${project.scm.tag}</url>
     <tag>HEAD</tag>
+    <url>https://github.com/apache/maven-enforcer/tree/${project.scm.tag}</url>
   </scm>
   <issueManagement>
     <system>jira</system>
@@ -68,13 +80,15 @@
     <maven.version>3.2.5</maven.version>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
     <javaVersion>8</javaVersion>
-    <mockito.version>4.7.0</mockito.version>
-    <surefire.version>3.0.0-M7</surefire.version>
-    <project.build.outputTimestamp>2022-06-07T15:09:53Z</project.build.outputTimestamp>
+    <mockito.version>4.11.0</mockito.version>
+    <project.build.outputTimestamp>2022-12-22T22:11:45Z</project.build.outputTimestamp>
+    <!-- the same as Maven 3.2.5 -->
+    <aether.version>1.0.0.v20140518</aether.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <!-- project dependencies -->
       <dependency>
         <groupId>org.apache.maven.enforcer</groupId>
         <artifactId>enforcer-api</artifactId>
@@ -92,43 +106,72 @@
         <type>test-jar</type>
         <scope>test</scope>
       </dependency>
+
+      <!-- Maven Core dependencies -->
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-artifact</artifactId>
         <version>${maven.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-plugin-api</artifactId>
         <version>${maven.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-core</artifactId>
         <version>${maven.version}</version>
+        <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-compat</artifactId>
-        <version>${maven.version}</version>
-        <scope>test</scope>
+        <groupId>org.eclipse.aether</groupId>
+        <artifactId>aether-api</artifactId>
+        <version>${aether.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.aether</groupId>
+        <artifactId>aether-util</artifactId>
+        <version>${aether.version}</version>
+      </dependency>
+
+      <!-- other dependencies -->
+      <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>1.15</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.11.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>3.12.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven.shared</groupId>
-        <artifactId>maven-common-artifact-filters</artifactId>
-        <version>3.2.0</version>
+        <artifactId>maven-shared-utils</artifactId>
+        <version>3.3.4</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-utils</artifactId>
-        <version>3.4.2</version>
+        <version>3.5.0</version>
       </dependency>
+
+      <!-- test dependencies -->
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.9.0</version>
-        <scope>import</scope>
+        <version>5.9.1</version>
         <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
@@ -143,64 +186,34 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-        <version>3.12.0</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-codec</groupId>
-        <artifactId>commons-codec</artifactId>
-        <version>1.15</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-io</groupId>
-        <artifactId>commons-io</artifactId>
-        <version>2.11.0</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.maven.plugin-testing</groupId>
         <artifactId>maven-plugin-testing-harness</artifactId>
         <version>3.3.0</version>
         <scope>test</scope>
         <exclusions>
           <exclusion>
-            <artifactId>plexus-container-default</artifactId>
             <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-container-default</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>org.apache.maven.shared</groupId>
-        <artifactId>maven-dependency-tree</artifactId>
-        <version>3.1.1</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.shared</groupId>
-        <artifactId>maven-shared-utils</artifactId>
-        <version>3.3.4</version>
-      </dependency>
-      <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.23.1</version>
+        <version>3.24.1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
 
-  <contributors>
-    <contributor>
-      <name>Simon Wang</name>
-      <email>wangyf2010@gmail.com</email>
-      <organization>eBay Inc.</organization>
-    </contributor>
-    <contributor>
-      <name>George Gastaldi</name>
-      <email>gastaldi@apache.org</email>
-    </contributor>
-  </contributors>
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <!-- remove with future parent upgrade -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-invoker-plugin</artifactId>
+          <version>3.4.0</version>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
@@ -224,10 +237,10 @@
         <reportSets>
           <reportSet>
             <id>aggregate</id>
-            <inherited>false</inherited>
             <reports>
               <report>aggregate</report>
             </reports>
+            <inherited>false</inherited>
           </reportSet>
         </reportSets>
       </plugin>

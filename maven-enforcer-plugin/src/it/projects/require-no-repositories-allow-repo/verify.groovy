@@ -17,6 +17,6 @@
  * under the License.
  */
 File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( '[ERROR] Rule 0: org.apache.maven.plugins.enforcer.RequireNoRepositories failed with message:' )
+assert buildLog.text.contains( '[ERROR] Rule 0: org.apache.maven.enforcer.rules.RequireNoRepositories failed with message:' )
 assert buildLog.text.contains( 'Some poms have repositories defined:' )
 assert buildLog.text.contains( 'org.apache.maven.its.enforcer:test version:1.0 has plugin repositories [plugin-repo]' )

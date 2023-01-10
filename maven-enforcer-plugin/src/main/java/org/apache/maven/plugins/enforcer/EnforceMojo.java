@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,44 +16,56 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.enforcer;
 
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
+import org.apache.maven.enforcer.rule.api.AbstractEnforcerRuleConfigProvider;
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
-import org.apache.maven.enforcer.rule.api.EnforcerRule2;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleBase;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.enforcer.internal.EnforcerRuleCache;
+import org.apache.maven.plugins.enforcer.internal.EnforcerRuleDesc;
+import org.apache.maven.plugins.enforcer.internal.EnforcerRuleManager;
+import org.apache.maven.plugins.enforcer.internal.EnforcerRuleManagerException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
-import org.codehaus.plexus.context.Context;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.codehaus.plexus.configuration.DefaultPlexusConfiguration;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
+import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 
 /**
  * This goal executes the defined enforcer-rules once per module.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-// CHECKSTYLE_OFF: LineLength
-@Mojo( name = "enforce", defaultPhase = LifecyclePhase.VALIDATE, requiresDependencyCollection = ResolutionScope.TEST, threadSafe = true )
-//CHECKSTYLE_ON: LineLength
-public class EnforceMojo
-    extends AbstractMojo
-    implements Contextualizable
-{
+@Mojo(
+        name = "enforce",
+        defaultPhase = LifecyclePhase.VALIDATE,
+        requiresDependencyCollection = ResolutionScope.TEST,
+        threadSafe = true)
+public class EnforceMojo extends AbstractMojo {
     /**
      * This is a static variable used to persist the cached results across plugin invocations.
      */
@@ -64,112 +74,150 @@ public class EnforceMojo
     /**
      * MojoExecution needed by the ExpressionEvaluator
      */
-    @Parameter( defaultValue = "${mojoExecution}", readonly = true, required = true )
+    @Parameter(defaultValue = "${mojoExecution}", readonly = true, required = true)
     protected MojoExecution mojoExecution;
 
     /**
      * The MavenSession
      */
-    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
     protected MavenSession session;
 
     /**
      * POM
      */
-    @Parameter( defaultValue = "${project}", readonly = true, required = true )
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
 
     /**
      * Flag to easily skip all checks
      */
-    @Parameter( property = "enforcer.skip", defaultValue = "false" )
+    @Parameter(property = "enforcer.skip", defaultValue = "false")
     protected boolean skip = false;
 
     /**
      * Flag to fail the build if at least one check fails.
      */
-    @Parameter( property = "enforcer.fail", defaultValue = "true" )
+    @Parameter(property = "enforcer.fail", defaultValue = "true")
     private boolean fail = true;
 
     /**
      * Fail on the first rule that doesn't pass
      */
-    @Parameter( property = "enforcer.failFast", defaultValue = "false" )
+    @Parameter(property = "enforcer.failFast", defaultValue = "false")
     private boolean failFast = false;
 
     /**
      * Flag to fail the build if no rules are present
      *
-     * @since 3.1.1
+     * @since 3.2.0
      */
-    @Parameter( property = "enforcer.failIfNoRules", defaultValue = "true" )
+    @Parameter(property = "enforcer.failIfNoRules", defaultValue = "true")
     private boolean failIfNoRules = true;
 
     /**
-     * Array of objects that implement the EnforcerRule interface to execute.
+     * Rules configuration to execute as XML.
+     * Each first level tag represents rule name to execute.
+     * Inner tags are configurations for rule.
+     * Eg:
+     * <pre>
+     *     &lt;rules&gt;
+     *         &lt;alwaysFail/&gt;
+     *         &lt;alwaysPass&gt;
+     *             &lt;message&gt;message for rule&lt;/message&gt;
+     *         &lt;/alwaysPass&gt;
+     *         &lt;myRule implementation="org.example.MyRule"/&gt;
+     *     &lt;/rules&gt;
+     * </pre>
+     *
+     * @since 1.0.0
      */
-    @Parameter( required = false )
-    private EnforcerRule[] rules;
+    @Parameter
+    private PlexusConfiguration rules;
 
     /**
-     * Array of Strings that matches the EnforcerRules to execute.
+     * List of strings that matches the EnforcerRules to skip.
+     *
+     * @since 3.2.0
      */
-    @Parameter( required = false, property = "rules" )
-    private String[] commandLineRules;
+    @Parameter(required = false, property = "enforcer.skipRules")
+    private List<String> rulesToSkip;
 
     /**
      * Use this flag to disable rule result caching. This will cause all rules to execute on each project even if the
      * rule indicates it can safely be cached.
      */
-    @Parameter( property = "enforcer.ignoreCache", defaultValue = "false" )
+    @Parameter(property = "enforcer.ignoreCache", defaultValue = "false")
     protected boolean ignoreCache = false;
 
-    // set by the contextualize method. Only way to get the
-    // plugin's container in 2.0.x
-    protected PlexusContainer container;
+    @Component
+    private PlexusContainer container;
 
-    @Override
-    public void contextualize( Context context )
-        throws ContextException
-    {
-        container = (PlexusContainer) context.get( PlexusConstants.PLEXUS_KEY );
+    @Component
+    private EnforcerRuleManager enforcerRuleManager;
+
+    @Component
+    private EnforcerRuleCache ruleCache;
+
+    private List<String> rulesToExecute;
+
+    /**
+     * List of strings that matches the EnforcerRules to execute. Replacement for the <code>rules</code> property.
+     *
+     * @since 3.2.0
+     */
+    @Parameter(required = false, property = "enforcer.rules")
+    public void setRulesToExecute(List<String> rulesToExecute) throws MojoExecutionException {
+        if (rulesToExecute != null && !rulesToExecute.isEmpty()) {
+            if (this.rulesToExecute != null && !this.rulesToExecute.isEmpty()) {
+                throw new MojoExecutionException("Detected the usage of both '-Drules' (which is deprecated) "
+                        + "and '-Denforcer.rules'. Please use only one of them, preferably '-Denforcer.rules'.");
+            }
+            this.rulesToExecute = rulesToExecute;
+        }
     }
 
-    private boolean havingRules()
-    {
-        return rules != null && rules.length > 0;
+    /**
+     * List of strings that matches the EnforcerRules to execute.
+     *
+     * @deprecated Use <code>enforcer.rules</code> property instead
+     */
+    @Parameter(required = false, property = "rules")
+    @Deprecated
+    public void setCommandLineRules(List<String> rulesToExecute) throws MojoExecutionException {
+        if (rulesToExecute != null && !rulesToExecute.isEmpty()) {
+            getLog().warn(
+                            "Detected the usage of property '-Drules' which is deprecated. Use '-Denforcer.rules' instead.");
+        }
+        setRulesToExecute(rulesToExecute);
     }
 
     @Override
-    public void execute()
-        throws MojoExecutionException
-    {
+    public void execute() throws MojoExecutionException {
         Log log = this.getLog();
 
-        EnforcerExpressionEvaluator evaluator =
-            new EnforcerExpressionEvaluator( session, mojoExecution );
-        if ( commandLineRules != null && commandLineRules.length > 0 )
-        {
-            this.rules = createRulesFromCommandLineOptions();
-        }
-        
-        if ( isSkip() )
-        {
-            log.info( "Skipping Rule Enforcement." );
+        if (isSkip()) {
+            log.info("Skipping Rule Enforcement.");
             return;
         }
 
-        if ( !havingRules() )
-        {
-            if ( isFailIfNoRules() )
-            {
-                // CHECKSTYLE_OFF: LineLength
-                throw new MojoExecutionException( "No rules are configured. Use the skip flag if you want to disable execution." );
-                // CHECKSTYLE_ON: LineLength
-            }
-            else
-            {
-                log.warn( "No rules are configured." );
+        Optional<PlexusConfiguration> rulesFromCommandLine = createRulesFromCommandLineOptions();
+        List<EnforcerRuleDesc> rulesList;
+
+        // current behavior - rules from command line override all other configured rules.
+        List<EnforcerRuleDesc> allRules = enforcerRuleManager.createRules(rulesFromCommandLine.orElse(rules), log);
+        rulesList = filterOutSkippedRules(allRules);
+
+        List<EnforcerRuleDesc> additionalRules = processRuleConfigProviders(rulesList);
+        rulesList = filterOutRuleConfigProviders(rulesList);
+        rulesList.addAll(additionalRules);
+
+        if (rulesList.isEmpty()) {
+            if (isFailIfNoRules()) {
+                throw new MojoExecutionException(
+                        "No rules are configured. Use the skip flag if you want to disable execution.");
+            } else {
+                log.warn("No rules are configured.");
                 return;
             }
         }
@@ -177,129 +225,169 @@ public class EnforceMojo
         // messages with warn/error flag
         Map<String, Boolean> messages = new LinkedHashMap<>();
 
-        String currentRule = "Unknown";
-
         // create my helper
-        EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper( session, evaluator, log, container );
+        PluginParameterExpressionEvaluator evaluator = new PluginParameterExpressionEvaluator(session, mojoExecution);
+        EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper(session, evaluator, log, container);
 
         // if we are only warning, then disable
         // failFast
-        if ( !fail )
-        {
+        if (!fail) {
             failFast = false;
         }
 
         boolean hasErrors = false;
 
         // go through each rule
-        for ( int i = 0; i < rules.length; i++ )
-        {
+        for (int ruleIndex = 0; ruleIndex < rulesList.size(); ruleIndex++) {
 
-            // prevent against empty rules
-            EnforcerRule rule = rules[i];
-            final EnforcerLevel level = getLevel( rule );
-            if ( rule != null )
-            {
-                // store the current rule for
-                // logging purposes
-                currentRule = rule.getClass().getName();
-                try
-                {
-                    if ( ignoreCache || shouldExecute( rule ) )
-                    {
-                        // execute the rule
-                        // noinspection SynchronizationOnLocalVariableOrMethodParameter
-                        synchronized ( rule )
-                        {
-                            log.info( "Executing rule: " + currentRule );
-                            rule.execute( helper );
-                        }
-                    }
+            EnforcerRuleDesc ruleDesc = rulesList.get(ruleIndex);
+            EnforcerLevel level = ruleDesc.getLevel();
+            try {
+                executeRule(ruleIndex, ruleDesc, helper);
+            } catch (EnforcerRuleError e) {
+                String ruleMessage = createRuleMessage(ruleIndex, ruleDesc, EnforcerLevel.ERROR, e);
+                throw new MojoExecutionException(ruleMessage, e);
+            } catch (EnforcerRuleException e) {
+
+                String ruleMessage = createRuleMessage(ruleIndex, ruleDesc, level, e);
+
+                if (failFast && level == EnforcerLevel.ERROR) {
+                    throw new MojoExecutionException(ruleMessage, e);
                 }
-                catch ( EnforcerRuleException e )
-                {
-                    // i can throw an exception
-                    // because failfast will be
-                    // false if fail is false.
-                    if ( failFast && level == EnforcerLevel.ERROR )
-                    {
-                        throw new MojoExecutionException( currentRule + " failed with message:"
-                            + System.lineSeparator() + e.getMessage(), e );
-                    }
-                    else
-                    {
-                        // log a warning in case the exception message is missing
-                        // so that the user can figure out what is going on
-                        final String exceptionMessage = e.getMessage();
-                        if ( exceptionMessage != null )
-                        {
-                            log.debug( "Adding " + level + " message due to exception", e );
-                        }
-                        else
-                        {
-                            log.warn( "Rule " + i + ": " + currentRule + " failed without a message", e );
-                        }
-                        // add the 'failed/warned' message including exceptionMessage
-                        // which might be null in rare cases
-                        if ( level == EnforcerLevel.ERROR )
-                        {
-                            hasErrors = true;
-                            messages.put( "Rule " + i + ": " + currentRule + " failed with message:"
-                                 + System.lineSeparator() + exceptionMessage, true );
-                        }
-                        else
-                        {
-                            messages.put( "Rule " + i + ": " + currentRule + " warned with message:"
-                                 + System.lineSeparator() + exceptionMessage, false );
-                        }
-                    }
+
+                if (level == EnforcerLevel.ERROR) {
+                    hasErrors = true;
+                    messages.put(ruleMessage, true);
+                } else {
+                    messages.put(ruleMessage, false);
                 }
             }
         }
 
         // log any messages
-        messages.forEach( ( message, error ) ->
-        {
-            if ( fail && error )
-            {
-                log.error( message );
+        messages.forEach((message, error) -> {
+            if (fail && error) {
+                log.error(message);
+            } else {
+                log.warn(message);
             }
-            else
-            {
-                log.warn( message );
-            }
-        } );
+        });
 
-        // CHECKSTYLE_OFF: LineLength
-        if ( fail && hasErrors )
-        {
-            throw new MojoExecutionException( "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed." );
+        if (fail && hasErrors) {
+            throw new MojoExecutionException(
+                    "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed.");
         }
-        // CHECKSTYLE_ON: LineLength
     }
 
-    private EnforcerRule[] createRulesFromCommandLineOptions() throws MojoExecutionException 
-    {
-        EnforcerRule[] rules = new EnforcerRule[commandLineRules.length];
-        for ( int i = 0; i < commandLineRules.length; i++ ) 
-        {
-            String rule = commandLineRules[i];
-            if ( !rule.contains( "." ) )
-            {
-                rule = getClass().getPackage().getName() 
-                    + "." + Character.toUpperCase( rule.charAt( 0 ) ) + rule.substring( 1 ); 
+    private List<EnforcerRuleDesc> processRuleConfigProviders(List<EnforcerRuleDesc> rulesList) {
+        return rulesList.stream()
+                .filter(Objects::nonNull)
+                .filter(rd -> rd.getRule() instanceof AbstractEnforcerRuleConfigProvider)
+                .map(this::executeRuleConfigProvider)
+                .flatMap(xml -> enforcerRuleManager.createRules(xml, getLog()).stream())
+                .collect(Collectors.toList());
+    }
+
+    private List<EnforcerRuleDesc> filterOutRuleConfigProviders(List<EnforcerRuleDesc> rulesList) {
+        return rulesList.stream()
+                .filter(Objects::nonNull)
+                .filter(rd -> !(rd.getRule() instanceof AbstractEnforcerRuleConfigProvider))
+                .collect(Collectors.toList());
+    }
+
+    private XmlPlexusConfiguration executeRuleConfigProvider(EnforcerRuleDesc ruleDesc) {
+        AbstractEnforcerRuleConfigProvider ruleProducer = (AbstractEnforcerRuleConfigProvider) ruleDesc.getRule();
+
+        if (getLog().isDebugEnabled()) {
+            getLog().debug(String.format("Executing Rule Config Provider %s", ruleDesc.getRule()));
+        }
+
+        XmlPlexusConfiguration configuration = null;
+        try {
+            configuration = new XmlPlexusConfiguration(ruleProducer.getRulesConfig());
+        } catch (EnforcerRuleException e) {
+            throw new EnforcerRuleManagerException("Rules Provider error for: " + getRuleName(ruleDesc), e);
+        }
+        getLog().info(String.format("Rule Config Provider %s executed", getRuleName(ruleDesc)));
+
+        return configuration;
+    }
+
+    private void executeRule(int ruleIndex, EnforcerRuleDesc ruleDesc, EnforcerRuleHelper helper)
+            throws EnforcerRuleException {
+
+        if (getLog().isDebugEnabled()) {
+            getLog().debug(String.format("Executing Rule %d: %s", ruleIndex, ruleDesc));
+        }
+
+        long startTime = System.currentTimeMillis();
+
+        try {
+            if (ruleDesc.getRule() instanceof EnforcerRule) {
+                executeRuleOld(ruleIndex, ruleDesc, helper);
+            } else if (ruleDesc.getRule() instanceof AbstractEnforcerRule) {
+                executeRuleNew(ruleIndex, ruleDesc);
             }
-            
-            try 
-            {
-                rules[i] = ( EnforcerRule ) Class.forName( rule ).newInstance();
-            }
-            catch ( Exception e ) 
-            {
-                throw new MojoExecutionException( "Failed to create enforcer rules from command line argument", e );
+        } finally {
+            if (getLog().isDebugEnabled()) {
+                long workTime = System.currentTimeMillis() - startTime;
+                getLog().debug(String.format(
+                        "Finish Rule %d: %s take %d ms", ruleIndex, getRuleName(ruleDesc), workTime));
             }
         }
-        return rules;
+    }
+
+    private void executeRuleOld(int ruleIndex, EnforcerRuleDesc ruleDesc, EnforcerRuleHelper helper)
+            throws EnforcerRuleException {
+
+        EnforcerRule rule = (EnforcerRule) ruleDesc.getRule();
+
+        if (ignoreCache || shouldExecute(rule)) {
+            rule.execute(helper);
+            getLog().info(String.format("Rule %d: %s executed", ruleIndex, getRuleName(ruleDesc)));
+        }
+    }
+
+    private void executeRuleNew(int ruleIndex, EnforcerRuleDesc ruleDesc) throws EnforcerRuleException {
+
+        AbstractEnforcerRule rule = (AbstractEnforcerRule) ruleDesc.getRule();
+        if (ignoreCache || !ruleCache.isCached(rule)) {
+            rule.execute();
+            getLog().info(String.format("Rule %d: %s executed", ruleIndex, getRuleName(ruleDesc)));
+        }
+    }
+
+    /**
+     * Create rules configuration based on command line provided rules list.
+     *
+     * @return an configuration in case where rules list is present or empty
+     */
+    private Optional<PlexusConfiguration> createRulesFromCommandLineOptions() {
+
+        if (rulesToExecute == null || rulesToExecute.isEmpty()) {
+            return Optional.empty();
+        }
+
+        PlexusConfiguration configuration = new DefaultPlexusConfiguration("rules");
+        for (String rule : rulesToExecute) {
+            configuration.addChild(new DefaultPlexusConfiguration(rule));
+        }
+        return Optional.of(configuration);
+    }
+
+    /**
+     * Filter out (remove) rules that have been specifically skipped via additional configuration.
+     *
+     * @param allRules list of enforcer rules to go through and filter
+     * @return list of filtered rules
+     */
+    private List<EnforcerRuleDesc> filterOutSkippedRules(List<EnforcerRuleDesc> allRules) {
+        if (rulesToSkip == null || rulesToSkip.isEmpty()) {
+            return allRules;
+        }
+        return allRules.stream()
+                .filter(ruleDesc -> !rulesToSkip.contains(ruleDesc.getName()))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -308,25 +396,22 @@ public class EnforceMojo
      * @param rule the rule to verify
      * @return {@code true} if rule should be executed, otherwise {@code false}
      */
-    protected boolean shouldExecute( EnforcerRule rule )
-    {
-        if ( rule.isCacheable() )
-        {
+    protected boolean shouldExecute(EnforcerRule rule) {
+        if (rule.isCacheable()) {
             Log log = this.getLog();
-            log.debug( "Rule " + rule.getClass().getName() + " is cacheable." );
+            log.debug("Rule " + rule.getClass().getName() + " is cacheable.");
             String key = rule.getClass().getName() + " " + rule.getCacheId();
-            if ( EnforceMojo.cache.containsKey( key ) )
-            {
-                log.debug( "Key " + key + " was found in the cache" );
-                if ( rule.isResultValid( cache.get( key ) ) )
-                {
-                    log.debug( "The cached results are still valid. Skipping the rule: " + rule.getClass().getName() );
+            if (EnforceMojo.cache.containsKey(key)) {
+                log.debug("Key " + key + " was found in the cache");
+                if (rule.isResultValid(cache.get(key))) {
+                    log.debug("The cached results are still valid. Skipping the rule: "
+                            + rule.getClass().getName());
                     return false;
                 }
             }
 
             // add it to the cache of executed rules
-            EnforceMojo.cache.put( key, rule );
+            EnforceMojo.cache.put(key, rule);
         }
         return true;
     }
@@ -334,133 +419,115 @@ public class EnforceMojo
     /**
      * @return the fail
      */
-    public boolean isFail()
-    {
+    public boolean isFail() {
         return this.fail;
     }
 
     /**
      * @param theFail the fail to set
      */
-    public void setFail( boolean theFail )
-    {
+    public void setFail(boolean theFail) {
         this.fail = theFail;
-    }
-
-    /**
-     * @return the rules
-     */
-    public EnforcerRule[] getRules()
-    {
-        return this.rules;
-    }
-
-    /**
-     * @param theRules the rules to set
-     */
-    public void setRules( EnforcerRule[] theRules )
-    {
-        this.rules = theRules;
     }
 
     /**
      * @param theFailFast the failFast to set
      */
-    public void setFailFast( boolean theFailFast )
-    {
+    public void setFailFast(boolean theFailFast) {
         this.failFast = theFailFast;
     }
 
-    public boolean isFailFast()
-    {
+    public boolean isFailFast() {
         return failFast;
     }
 
-    protected String createRuleMessage( int i, String currentRule, EnforcerRuleException e )
-    {
-        return "Rule " + i + ": " + currentRule + " failed with message:" + System.lineSeparator() + e.getMessage();
+    private String createRuleMessage(
+            int ruleIndex, EnforcerRuleDesc ruleDesc, EnforcerLevel level, EnforcerRuleException e) {
+
+        StringBuilder result = new StringBuilder();
+        result.append("Rule ").append(ruleIndex).append(": ").append(getRuleName(ruleDesc));
+
+        if (level == EnforcerLevel.ERROR) {
+            result.append(" failed");
+        } else {
+            result.append(" warned");
+        }
+
+        if (e.getMessage() != null) {
+            result.append(" with message:").append(System.lineSeparator()).append(e.getMessage());
+        } else {
+            result.append(" without a message");
+        }
+
+        return result.toString();
     }
 
-    /**
-     * Returns the level of the rule, defaults to {@link EnforcerLevel#ERROR} for backwards compatibility.
-     *
-     * @param rule might be of type {@link EnforcerRule2}.
-     * @return level of the rule.
-     */
-    private EnforcerLevel getLevel( EnforcerRule rule )
-    {
-        if ( rule instanceof EnforcerRule2 )
-        {
-            return ( (EnforcerRule2) rule ).getLevel();
+    private String getRuleName(EnforcerRuleDesc ruleDesc) {
+
+        Class<? extends EnforcerRuleBase> ruleClass = ruleDesc.getRule().getClass();
+
+        String ruleName = ruleClass.getName();
+
+        if (!ruleClass.getSimpleName().equalsIgnoreCase(ruleDesc.getName())) {
+            ruleName += "(" + ruleDesc.getName() + ")";
         }
-        else
-        {
-            return EnforcerLevel.ERROR;
-        }
+
+        return ruleName;
     }
 
     /**
      * @return the skip
      */
-    public boolean isSkip()
-    {
+    public boolean isSkip() {
         return this.skip;
     }
 
     /**
      * @param theSkip the skip to set
      */
-    public void setSkip( boolean theSkip )
-    {
+    public void setSkip(boolean theSkip) {
         this.skip = theSkip;
     }
 
     /**
      * @return the failIfNoRules
      */
-    public boolean isFailIfNoRules()
-    {
+    public boolean isFailIfNoRules() {
         return this.failIfNoRules;
     }
 
     /**
      * @param thefailIfNoRules the failIfNoRules to set
      */
-    public void setFailIfNoRules( boolean thefailIfNoRules )
-    {
+    public void setFailIfNoRules(boolean thefailIfNoRules) {
         this.failIfNoRules = thefailIfNoRules;
     }
 
     /**
      * @return the project
      */
-    public MavenProject getProject()
-    {
+    public MavenProject getProject() {
         return this.project;
     }
 
     /**
      * @param theProject the project to set
      */
-    public void setProject( MavenProject theProject )
-    {
+    public void setProject(MavenProject theProject) {
         this.project = theProject;
     }
 
     /**
      * @return the session
      */
-    public MavenSession getSession()
-    {
+    public MavenSession getSession() {
         return this.session;
     }
 
     /**
      * @param theSession the session to set
      */
-    public void setSession( MavenSession theSession )
-    {
+    public void setSession(MavenSession theSession) {
         this.session = theSession;
     }
-
 }

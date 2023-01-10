@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.enforcer;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -40,39 +39,29 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 /**
  * Since Maven 3 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique. Early versions of Maven
  * 3 already warn, this rule can force to break a build for this reason.
- * 
+ *
  * @author Robert Scholte
  * @since 1.3
  */
-public class BanDuplicatePomDependencyVersions
-    extends AbstractNonCacheableEnforcerRule
-{
+public class BanDuplicatePomDependencyVersions extends AbstractNonCacheableEnforcerRule {
     @Override
-    public void execute( EnforcerRuleHelper helper )
-        throws EnforcerRuleException
-    {
+    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
         // get the project
         MavenProject project;
-        try
-        {
-            project = (MavenProject) helper.evaluate( "${project}" );
-        }
-        catch ( ExpressionEvaluationException eee )
-        {
-            throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
+        try {
+            project = (MavenProject) helper.evaluate("${project}");
+        } catch (ExpressionEvaluationException eee) {
+            throw new EnforcerRuleException("Unable to retrieve the MavenProject: ", eee);
         }
 
         // re-read model, because M3 uses optimized model
         MavenXpp3Reader modelReader = new MavenXpp3Reader();
 
         Model model;
-        try ( FileInputStream pomInputStream = new FileInputStream( project.getFile() ) )
-        {
-            model = modelReader.read( pomInputStream, false );
-        }
-        catch ( IOException | XmlPullParserException e )
-        {
-            throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", e );
+        try (FileInputStream pomInputStream = new FileInputStream(project.getFile())) {
+            model = modelReader.read(pomInputStream, false);
+        } catch (IOException | XmlPullParserException e) {
+            throw new EnforcerRuleException("Unable to retrieve the MavenProject: ", e);
         }
 
         // @todo reuse ModelValidator when possible
@@ -89,113 +78,100 @@ public class BanDuplicatePomDependencyVersions
 
         // if( modelValidator == null )
         // {
-        maven2Validation( helper, model );
+        maven2Validation(helper, model);
         // }
         // else
         // {
         // }
     }
 
-    private void maven2Validation( EnforcerRuleHelper helper, Model model )
-        throws EnforcerRuleException
-    {
+    private void maven2Validation(EnforcerRuleHelper helper, Model model) throws EnforcerRuleException {
         List<Dependency> dependencies = model.getDependencies();
-        Map<String, Integer> duplicateDependencies = validateDependencies( dependencies );
+        Map<String, Integer> duplicateDependencies = validateDependencies(dependencies);
 
         int duplicates = duplicateDependencies.size();
 
         StringBuilder summary = new StringBuilder();
-        messageBuilder( duplicateDependencies, "dependencies.dependency", summary );
+        messageBuilder(duplicateDependencies, "dependencies.dependency", summary);
 
-        if ( model.getDependencyManagement() != null )
-        {
-            List<Dependency> managementDependencies = model.getDependencyManagement().getDependencies();
-            Map<String, Integer> duplicateManagementDependencies = validateDependencies( managementDependencies );
+        if (model.getDependencyManagement() != null) {
+            List<Dependency> managementDependencies =
+                    model.getDependencyManagement().getDependencies();
+            Map<String, Integer> duplicateManagementDependencies = validateDependencies(managementDependencies);
             duplicates += duplicateManagementDependencies.size();
 
-            messageBuilder( duplicateManagementDependencies, "dependencyManagement.dependencies.dependency", summary );
+            messageBuilder(duplicateManagementDependencies, "dependencyManagement.dependencies.dependency", summary);
         }
 
         List<Profile> profiles = model.getProfiles();
-        for ( Profile profile : profiles )
-        {
+        for (Profile profile : profiles) {
             List<Dependency> profileDependencies = profile.getDependencies();
 
-            Map<String, Integer> duplicateProfileDependencies = validateDependencies( profileDependencies );
+            Map<String, Integer> duplicateProfileDependencies = validateDependencies(profileDependencies);
 
             duplicates += duplicateProfileDependencies.size();
 
-            messageBuilder( duplicateProfileDependencies, "profiles.profile[" + profile.getId()
-                + "].dependencies.dependency", summary );
+            messageBuilder(
+                    duplicateProfileDependencies,
+                    "profiles.profile[" + profile.getId() + "].dependencies.dependency",
+                    summary);
 
-            if ( profile.getDependencyManagement() != null )
-            {
-                List<Dependency> profileManagementDependencies = profile.getDependencyManagement().getDependencies();
+            if (profile.getDependencyManagement() != null) {
+                List<Dependency> profileManagementDependencies =
+                        profile.getDependencyManagement().getDependencies();
 
                 Map<String, Integer> duplicateProfileManagementDependencies =
-                    validateDependencies( profileManagementDependencies );
+                        validateDependencies(profileManagementDependencies);
 
                 duplicates += duplicateProfileManagementDependencies.size();
 
-                messageBuilder( duplicateProfileManagementDependencies, "profiles.profile[" + profile.getId()
-                    + "].dependencyManagement.dependencies.dependency", summary );
+                messageBuilder(
+                        duplicateProfileManagementDependencies,
+                        "profiles.profile[" + profile.getId() + "].dependencyManagement.dependencies.dependency",
+                        summary);
             }
         }
 
-        if ( summary.length() > 0 )
-        {
+        if (summary.length() > 0) {
             StringBuilder message = new StringBuilder();
-            message.append( "Found " )
-                .append( duplicates )
-                .append( " duplicate dependency " );
-            message.append( duplicateDependencies.size() == 1 ? "declaration" : "declarations" )
-                .append( " in this project:" + System.lineSeparator() );
-            message.append( summary );
-            throw new EnforcerRuleException( message.toString() );
+            message.append("Found ").append(duplicates).append(" duplicate dependency ");
+            message.append(duplicateDependencies.size() == 1 ? "declaration" : "declarations")
+                    .append(" in this project:" + System.lineSeparator());
+            message.append(summary);
+            throw new EnforcerRuleException(message.toString());
         }
     }
 
-    private void messageBuilder( Map<String, Integer> duplicateDependencies, String prefix, StringBuilder message )
-    {
-        if ( !duplicateDependencies.isEmpty() )
-        {
-            for ( Map.Entry<String, Integer> entry : duplicateDependencies.entrySet() )
-            {
-                message.append( " - " )
-                    .append( prefix )
-                    .append( '[' )
-                    .append( entry.getKey() )
-                    .append( "] ( " )
-                    .append( entry.getValue() )
-                    .append( " times )" + System.lineSeparator() );
+    private void messageBuilder(Map<String, Integer> duplicateDependencies, String prefix, StringBuilder message) {
+        if (!duplicateDependencies.isEmpty()) {
+            for (Map.Entry<String, Integer> entry : duplicateDependencies.entrySet()) {
+                message.append(" - ")
+                        .append(prefix)
+                        .append('[')
+                        .append(entry.getKey())
+                        .append("] ( ")
+                        .append(entry.getValue())
+                        .append(" times )" + System.lineSeparator());
             }
         }
     }
 
-    private Map<String, Integer> validateDependencies( List<Dependency> dependencies )
-        throws EnforcerRuleException
-    {
+    private Map<String, Integer> validateDependencies(List<Dependency> dependencies) {
         Map<String, Integer> duplicateDeps = new HashMap<>();
         Set<String> deps = new HashSet<>();
-        for ( Dependency dependency : dependencies )
-        {
+        for (Dependency dependency : dependencies) {
             String key = dependency.getManagementKey();
 
-            if ( deps.contains( key ) )
-            {
+            if (deps.contains(key)) {
                 int times = 1;
-                if ( duplicateDeps.containsKey( key ) )
-                {
-                    times = duplicateDeps.get( key );
+                if (duplicateDeps.containsKey(key)) {
+                    times = duplicateDeps.get(key);
                 }
-                duplicateDeps.put( key, times + 1 );
-            }
-            else
-            {
-                deps.add( key );
+                duplicateDeps.put(key, times + 1);
+            } else {
+                deps.add(key);
             }
         }
         return duplicateDeps;
     }
-
 }

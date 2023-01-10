@@ -24,21 +24,24 @@
   <parent>
     <groupId>org.apache.maven.enforcer</groupId>
     <artifactId>enforcer</artifactId>
-    <version>3.1.1-SNAPSHOT</version>
+    <version>3.2.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>enforcer-api</artifactId>
   <packaging>jar</packaging>
 
   <name>Apache Maven Enforcer API</name>
-  <description>
-    This component provides the generic interfaces needed to implement custom rules for the maven-enforcer-plugin.
-  </description>
+  <description>This component provides the generic interfaces needed to implement custom rules for the maven-enforcer-plugin.</description>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.google.code.findbugs</groupId>
@@ -52,14 +55,37 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>custom-rule</id>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <phase>pre-site</phase>
+            <configuration>
+              <outputDirectory>${project.build.directory}/custom-rule-sample</outputDirectory>
+              <escapeString>\</escapeString>
+              <resources>
+                <resource>
+                  <directory>src/custom-rule-sample</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
             <id>custom-rule</id>
-            <phase>pre-site</phase>
             <goals>
               <goal>single</goal>
             </goals>
+            <phase>pre-site</phase>
             <configuration>
               <finalName>custom-rule</finalName>
               <outputDirectory>target/site</outputDirectory>

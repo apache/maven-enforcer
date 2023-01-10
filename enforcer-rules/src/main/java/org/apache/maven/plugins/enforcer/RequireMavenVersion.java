@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -30,31 +29,21 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class RequireMavenVersion
-    extends AbstractVersionEnforcer
-{
+public class RequireMavenVersion extends AbstractVersionEnforcer {
     @Override
-    public void execute( EnforcerRuleHelper helper )
-        throws EnforcerRuleException
-    {
-        try
-        {
-            MavenSession mavenSession = (MavenSession) helper.evaluate( "${session}" );
-            String mavenVersion = mavenSession.getSystemProperties().getProperty( "maven.version" );
-            helper.getLog().debug( "Detected Maven Version: " + mavenVersion );
-            if ( mavenVersion == null )
-            {
+    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
+        try {
+            MavenSession mavenSession = (MavenSession) helper.evaluate("${session}");
+            String mavenVersion = mavenSession.getSystemProperties().getProperty("maven.version");
+            helper.getLog().debug("Detected Maven Version: " + mavenVersion);
+            if (mavenVersion == null) {
                 throw new EnforcerRuleException(
-                        "Unable to detect Maven Version - missing system property - maven.version" );
+                        "Unable to detect Maven Version - missing system property - maven.version");
             }
-            DefaultArtifactVersion detectedVersion = new DefaultArtifactVersion( mavenVersion );
-            enforceVersion( helper.getLog(), "Maven", getVersion(), detectedVersion );
+            DefaultArtifactVersion detectedVersion = new DefaultArtifactVersion(mavenVersion);
+            enforceVersion(helper.getLog(), "Maven", getVersion(), detectedVersion);
+        } catch (ExpressionEvaluationException e) {
+            throw new EnforcerRuleException("Unable to retrieve the session.", e);
         }
-        catch ( ExpressionEvaluationException e )
-        {
-            throw new EnforcerRuleException( "Unable to retrieve the session.", e );
-        }
-
     }
-
 }

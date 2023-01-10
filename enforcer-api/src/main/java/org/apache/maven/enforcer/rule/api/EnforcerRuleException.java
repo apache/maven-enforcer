@@ -1,5 +1,3 @@
-package org.apache.maven.enforcer.rule.api;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.enforcer.rule.api;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,17 +16,17 @@ package org.apache.maven.enforcer.rule.api;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.enforcer.rule.api;
 
 /**
- * An exception occurring during the execution of a rule. Based off of
- * EnforcerRuleException, but separated to keep the rule dependencies to a
- * minimum.
+ * An exception occurring during the execution of a rule.
+ * <p>
+ * Enforcer plugin takes decision based on configuration and {@code Enforcer Rule} level
+ * whether build should pass or fail.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class EnforcerRuleException
-    extends Exception
-{
+public class EnforcerRuleException extends Exception {
 
     /** serialVersionUID. */
     private static final long serialVersionUID = 1L;
@@ -43,9 +41,10 @@ public class EnforcerRuleException
      * Gets the long message.
      *
      * @return the long message
+     * @deprecated not used
      */
-    public String getLongMessage()
-    {
+    @Deprecated
+    public String getLongMessage() {
         return longMessage;
     }
 
@@ -53,9 +52,10 @@ public class EnforcerRuleException
      * Gets the source.
      *
      * @return the source
+     * @deprecated not used
      */
-    public Object getSource()
-    {
+    @Deprecated
+    public Object getSource() {
         return source;
     }
 
@@ -63,13 +63,14 @@ public class EnforcerRuleException
      * Construct a new <code>EnforcerRuleException</code> exception providing
      * the source and a short and long message.
      *
-     * @param source the source
+     * @param source       the source
      * @param shortMessage the short message
-     * @param longMessage the long message
+     * @param longMessage  the long message
+     * @deprecated {@code source} and {@code longMessage} are not used
      */
-    public EnforcerRuleException( Object source, String shortMessage, String longMessage )
-    {
-        super( shortMessage );
+    @Deprecated
+    public EnforcerRuleException(Object source, String shortMessage, String longMessage) {
+        super(shortMessage);
         this.source = source;
         this.longMessage = longMessage;
     }
@@ -80,11 +81,10 @@ public class EnforcerRuleException
      * <code>message</code>.
      *
      * @param message the message
-     * @param cause the cause
+     * @param cause   the cause
      */
-    public EnforcerRuleException( String message, Exception cause )
-    {
-        super( message, cause );
+    public EnforcerRuleException(String message, Exception cause) {
+        super(message, cause);
     }
 
     /**
@@ -93,11 +93,10 @@ public class EnforcerRuleException
      * <code>message</code>.
      *
      * @param message the message
-     * @param cause the cause
+     * @param cause   the cause
      */
-    public EnforcerRuleException( String message, Throwable cause )
-    {
-        super( message, cause );
+    public EnforcerRuleException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
@@ -106,8 +105,17 @@ public class EnforcerRuleException
      *
      * @param message the message
      */
-    public EnforcerRuleException( String message )
-    {
-        super( message );
+    public EnforcerRuleException(String message) {
+        super(message);
+    }
+
+    /**
+     * Construct a new <code>EnforcerRuleException</code> exception wrapping
+     * an underlying <code>Throwable</code>.
+     *
+     * @param cause the cause
+     */
+    public EnforcerRuleException(Throwable cause) {
+        super(cause);
     }
 }

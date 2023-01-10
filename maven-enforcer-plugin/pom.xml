@@ -24,39 +24,38 @@
   <parent>
     <groupId>org.apache.maven.enforcer</groupId>
     <artifactId>enforcer</artifactId>
-    <version>3.1.1-SNAPSHOT</version>
+    <version>3.2.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-enforcer-plugin</artifactId>
   <packaging>maven-plugin</packaging>
 
+  <name>Apache Maven Enforcer Plugin</name>
+  <description>The Loving Iron Fist of Maven</description>
+
   <prerequisites>
     <maven>${maven.version}</maven>
   </prerequisites>
-
-  <name>Apache Maven Enforcer Plugin</name>
-  <description>The Loving Iron Fist of Maven</description>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.36</version>
       <scope>provided</scope>
     </dependency>
 
@@ -70,11 +69,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.maven.enforcer</groupId>
-      <artifactId>enforcer-rules</artifactId>
-      <type>test-jar</type>
-    </dependency>
-    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-junit-jupiter</artifactId>
       <scope>test</scope>
@@ -84,9 +78,25 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
+    <resources>
+      <!-- Include super-pom defined main/resources
+        Removing this section will break the build.
+        Since we have defined a new build/resources
+        section for the Apache process LICENSE and NOTICE
+        files, this original default section is now
+        required. -->
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -121,17 +131,6 @@
         </executions>
       </plugin>
     </plugins>
-    <resources>
-      <!-- Include super-pom defined main/resources
-        Removing this section will break the build.
-        Since we have defined a new build/resources
-        section for the Apache process LICENSE and NOTICE
-        files, this original default section is now
-        required. -->
-      <resource>
-        <directory>${basedir}/src/main/resources</directory>
-      </resource>
-    </resources>
   </build>
 
   <reporting>
@@ -146,9 +145,6 @@
   <profiles>
     <profile>
       <id>run-its</id>
-      <properties>
-        <maven.it.failure.ignore>false</maven.it.failure.ignore>
-      </properties>
       <build>
         <plugins>
           <plugin>
@@ -162,7 +158,6 @@
               <postBuildHookScript>verify</postBuildHookScript>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <settingsFile>src/it/mrm/settings.xml</settingsFile>
-              <ignoreFailures>${maven.it.failure.ignore}</ignoreFailures>
               <goals>
                 <goal>validate</goal>
               </goals>
@@ -185,15 +180,7 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>mrm-maven-plugin</artifactId>
-            <version>1.4.1</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>start</goal>
-                  <goal>stop</goal>
-                </goals>
-              </execution>
-            </executions>
+            <version>1.5.0</version>
             <configuration>
               <propertyName>repository.proxy.url</propertyName>
               <repositories>
@@ -206,6 +193,14 @@
                 <proxyRepo />
               </repositories>
             </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>start</goal>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>

@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,185 +16,144 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.enforcer;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.execution.MavenSession;
+import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
+import org.apache.maven.enforcer.rules.utils.DependencyVersionMap;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.enforcer.utils.DependencyVersionMap;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilder;
-import org.apache.maven.shared.dependency.graph.DependencyCollectorBuilderException;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.eclipse.aether.collection.DependencyCollectionContext;
+import org.eclipse.aether.collection.DependencySelector;
+import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
+
+import static org.apache.maven.artifact.Artifact.SCOPE_PROVIDED;
+import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 
 /**
  * @author <a href="mailto:rex@e-hoffman.org">Rex Hoffman</a>
  */
-public class DependencyConvergence
-    implements EnforcerRule
-{
+public class DependencyConvergence implements EnforcerRule {
     private static Log log;
 
     private boolean uniqueVersions;
 
-    public void setUniqueVersions( boolean uniqueVersions )
-    {
+    private List<String> includes;
+
+    private List<String> excludes;
+
+    private DependencyVersionMap dependencyVersionMap;
+
+    public void setUniqueVersions(boolean uniqueVersions) {
         this.uniqueVersions = uniqueVersions;
     }
 
-    // CHECKSTYLE_OFF: LineLength
-    /**
-     * Uses the {@link EnforcerRuleHelper} to populate the values of the
-     * {@link DependencyTreeBuilder#buildDependencyTree(MavenProject, ArtifactRepository, ArtifactFactory, ArtifactMetadataSource, ArtifactFilter, ArtifactCollector)}
-     * factory method. <br/>
-     * This method simply exists to hide all the ugly lookup that the {@link EnforcerRuleHelper} has to do.
-     * 
-     * @param helper
-     * @return a Dependency Node which is the root of the project's dependency tree
-     * @throws EnforcerRuleException
-     */
-    // CHECKSTYLE_ON: LineLength
-    private DependencyNode getNode( EnforcerRuleHelper helper )
-        throws EnforcerRuleException
-    {
-        try
-        {
-            MavenProject project = (MavenProject) helper.evaluate( "${project}" );
-            MavenSession session = (MavenSession) helper.evaluate( "${session}" );
-            DependencyCollectorBuilder dependencyCollectorBuilder =
-                helper.getComponent( DependencyCollectorBuilder.class );
-            ArtifactRepository repository = (ArtifactRepository) helper.evaluate( "${localRepository}" );
-
-            ProjectBuildingRequest buildingRequest =
-                new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
-            buildingRequest.setProject( project );
-            buildingRequest.setLocalRepository( repository );
-            ArtifactFilter filter = ( Artifact a ) -> ( "compile".equalsIgnoreCase( a.getScope () )
-                    || "runtime".equalsIgnoreCase( a.getScope () ) )
-                    && !a.isOptional();
-
-            return dependencyCollectorBuilder.collectDependencyGraph( buildingRequest, filter );
-        }
-        catch ( ExpressionEvaluationException | ComponentLookupException e )
-        {
-            throw new EnforcerRuleException( "Unable to lookup a component " + e.getLocalizedMessage(), e );
-        }
-        catch ( DependencyCollectorBuilderException e )
-        {
-            throw new EnforcerRuleException( "Could not build dependency tree " + e.getLocalizedMessage(), e );
-        }
-    }
-
     @Override
-    public void execute( EnforcerRuleHelper helper )
-        throws EnforcerRuleException
-    {
-        if ( log == null )
-        {
+    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
+        if (log == null) {
             log = helper.getLog();
         }
-        try
-        {
-            DependencyNode node = getNode( helper );
-            DependencyVersionMap visitor = new DependencyVersionMap( log );
-            visitor.setUniqueVersions( uniqueVersions );
-            node.accept( visitor );
-            List<CharSequence> errorMsgs = new ArrayList<>();
-            errorMsgs.addAll( getConvergenceErrorMsgs( visitor.getConflictedVersionNumbers() ) );
-            for ( CharSequence errorMsg : errorMsgs )
-            {
-                log.warn( errorMsg );
+        try {
+            DependencyNode node = ArtifactUtils.resolveTransitiveDependencies(
+                    helper,
+                    // TODO: use a modified version of ExclusionDependencySelector to process excludes and includes
+                    new DependencySelector() {
+                        @Override
+                        public boolean selectDependency(Dependency dependency) {
+                            // regular OptionalDependencySelector only discriminates optional dependencies at level 2+
+                            return !dependency.isOptional()
+                                    // regular scope selectors only discard transitive dependencies
+                                    // and always allow direct dependencies
+                                    && !dependency.getScope().equals(SCOPE_TEST)
+                                    && !dependency.getScope().equals(SCOPE_PROVIDED);
+                        }
+
+                        @Override
+                        public DependencySelector deriveChildSelector(DependencyCollectionContext context) {
+                            return this;
+                        }
+                    },
+                    // process dependency exclusions
+                    new ExclusionDependencySelector());
+            dependencyVersionMap = new DependencyVersionMap(log).setUniqueVersions(uniqueVersions);
+            node.accept(dependencyVersionMap);
+
+            List<CharSequence> errorMsgs = new ArrayList<>(
+                    getConvergenceErrorMsgs(dependencyVersionMap.getConflictedVersionNumbers(includes, excludes)));
+            for (CharSequence errorMsg : errorMsgs) {
+                log.warn(errorMsg);
             }
-            if ( errorMsgs.size() > 0 )
-            {
-                throw new EnforcerRuleException( "Failed while enforcing releasability. "
-                    + "See above detailed error message." );
+            if (errorMsgs.size() > 0) {
+                throw new EnforcerRuleException(
+                        "Failed while enforcing releasability. " + "See above detailed error message.");
             }
-        }
-        catch ( Exception e )
-        {
-            throw new EnforcerRuleException( e.getLocalizedMessage(), e );
+        } catch (Exception e) {
+            throw new EnforcerRuleException(e.getLocalizedMessage(), e);
         }
     }
 
-    private StringBuilder buildTreeString( DependencyNode node )
-    {
+    private StringBuilder buildTreeString(DependencyNode node) {
         List<String> loc = new ArrayList<>();
         DependencyNode currentNode = node;
-        while ( currentNode != null )
-        {
-            loc.add( currentNode.getArtifact().toString() );
-            currentNode = currentNode.getParent();
+        while (currentNode != null) {
+            // ArtifactUtils.toArtifact(node) adds scope and optional information, if present
+            loc.add(ArtifactUtils.toArtifact(currentNode).toString());
+            currentNode = dependencyVersionMap.getParent(currentNode);
         }
-        Collections.reverse( loc );
+        Collections.reverse(loc);
         StringBuilder builder = new StringBuilder();
-        for ( int i = 0; i < loc.size(); i++ )
-        {
-            for ( int j = 0; j < i; j++ )
-            {
-                builder.append( "  " );
+        for (int i = 0; i < loc.size(); i++) {
+            for (int j = 0; j < i; j++) {
+                builder.append("  ");
             }
-            builder.append( "+-" + loc.get( i ) );
-            builder.append( System.lineSeparator() );
+            builder.append("+-").append(loc.get(i)).append(System.lineSeparator());
         }
         return builder;
     }
 
-    private List<String> getConvergenceErrorMsgs( List<List<DependencyNode>> errors )
-    {
+    private List<String> getConvergenceErrorMsgs(List<List<DependencyNode>> errors) {
         List<String> errorMsgs = new ArrayList<>();
-        for ( List<DependencyNode> nodeList : errors )
-        {
-            errorMsgs.add( buildConvergenceErrorMsg( nodeList ) );
+        for (List<DependencyNode> nodeList : errors) {
+            errorMsgs.add(buildConvergenceErrorMsg(nodeList));
         }
         return errorMsgs;
     }
 
-    private String buildConvergenceErrorMsg( List<DependencyNode> nodeList )
-    {
+    private String buildConvergenceErrorMsg(List<DependencyNode> nodeList) {
         StringBuilder builder = new StringBuilder();
-        builder.append( System.lineSeparator() + "Dependency convergence error for "
-            + nodeList.get( 0 ).getArtifact().toString()
-            + " paths to dependency are:" + System.lineSeparator() );
-        if ( nodeList.size() > 0 )
-        {
-            builder.append( buildTreeString( nodeList.get( 0 ) ) );
+        builder.append(System.lineSeparator())
+                .append("Dependency convergence error for ")
+                .append(nodeList.get(0).getArtifact().toString())
+                .append(" paths to dependency are:")
+                .append(System.lineSeparator());
+        if (nodeList.size() > 0) {
+            builder.append(buildTreeString(nodeList.get(0)));
         }
-        for ( DependencyNode node : nodeList.subList( 1, nodeList.size() ) )
-        {
-            builder.append( "and" + System.lineSeparator() );
-            builder.append( buildTreeString( node ) );
+        for (DependencyNode node : nodeList.subList(1, nodeList.size())) {
+            builder.append("and").append(System.lineSeparator()).append(buildTreeString(node));
         }
         return builder.toString();
     }
 
     @Override
-    public String getCacheId()
-    {
+    public String getCacheId() {
         return "";
     }
 
     @Override
-    public boolean isCacheable()
-    {
+    public boolean isCacheable() {
         return false;
     }
 
     @Override
-    public boolean isResultValid( EnforcerRule rule )
-    {
+    public boolean isResultValid(EnforcerRule ignored) {
         return false;
     }
 }

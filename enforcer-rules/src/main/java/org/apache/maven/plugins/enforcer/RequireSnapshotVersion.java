@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -28,9 +27,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 /**
  * This rule checks that the current project is not a release.
  */
-public class RequireSnapshotVersion
-    extends AbstractNonCacheableEnforcerRule
-{
+public class RequireSnapshotVersion extends AbstractNonCacheableEnforcerRule {
 
     /**
      * Allows this rule to fail when the parent is defined as a release.
@@ -38,58 +35,43 @@ public class RequireSnapshotVersion
     private boolean failWhenParentIsRelease = true;
 
     @Override
-    public void execute( EnforcerRuleHelper helper )
-        throws EnforcerRuleException
-    {
+    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
 
-        MavenProject project = getProject( false, helper );
+        MavenProject project = getProject(false, helper);
         Artifact artifact = project.getArtifact();
 
-        if ( !artifact.isSnapshot() )
-        {
+        if (!artifact.isSnapshot()) {
             String message = getMessage();
             StringBuilder sb = new StringBuilder();
-            if ( message != null )
-            {
-                sb.append( message ).append( System.lineSeparator() );
+            if (message != null) {
+                sb.append(message).append(System.lineSeparator());
             }
-            sb.append( "This project cannot be a release:" ).append( artifact.getId() );
-            throw new EnforcerRuleException( sb.toString() );
+            sb.append("This project cannot be a release:").append(artifact.getId());
+            throw new EnforcerRuleException(sb.toString());
         }
-        if ( failWhenParentIsRelease && project.hasParent() )
-        {
+        if (failWhenParentIsRelease && project.hasParent()) {
             // project.getParentArtifact() does not work here if a "CI Friendly Version" is used (e.g. ${revision})
-            Artifact parentArtifact = getProject( true, helper ).getArtifact();
-            if ( parentArtifact != null && !parentArtifact.isSnapshot() )
-            {
-                throw new EnforcerRuleException( "Parent cannot be a release: " + parentArtifact.getId() );
+            Artifact parentArtifact = getProject(true, helper).getArtifact();
+            if (parentArtifact != null && !parentArtifact.isSnapshot()) {
+                throw new EnforcerRuleException("Parent cannot be a release: " + parentArtifact.getId());
             }
         }
-
     }
 
-    private MavenProject getProject( boolean parent, EnforcerRuleHelper helper )
-        throws EnforcerRuleException
-    {
+    private MavenProject getProject(boolean parent, EnforcerRuleHelper helper) throws EnforcerRuleException {
         String expression = parent ? "${project.parent}" : "${project}";
-        try
-        {
-            return (MavenProject) helper.evaluate( expression );
-        }
-        catch ( ExpressionEvaluationException eee )
-        {
-            throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
+        try {
+            return (MavenProject) helper.evaluate(expression);
+        } catch (ExpressionEvaluationException eee) {
+            throw new EnforcerRuleException("Unable to retrieve the MavenProject: ", eee);
         }
     }
 
-    public boolean isFailWhenParentIsRelease()
-    {
+    public boolean isFailWhenParentIsRelease() {
         return failWhenParentIsRelease;
     }
 
-    public void setFailWhenParentIsRelease( boolean failWhenParentIsRelease )
-    {
+    public void setFailWhenParentIsRelease(boolean failWhenParentIsRelease) {
         this.failWhenParentIsRelease = failWhenParentIsRelease;
     }
-
 }

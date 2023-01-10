@@ -1,5 +1,3 @@
-package org.apache.maven.enforcer.rule.api;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.enforcer.rule.api;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.enforcer.rule.api;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.enforcer.rule.api;
 
 import javax.annotation.Nonnull;
 
@@ -26,9 +25,11 @@ import javax.annotation.Nonnull;
  *
  * @author Mirko Friedenhagen
  * @since 1.4
+ * @deprecated Please see
+ *         <a href="https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html">Writing a custom rule</a>
  */
-public interface EnforcerRule2 extends EnforcerRule
-{
+@Deprecated
+public interface EnforcerRule2 extends EnforcerRule {
     /**
      * Returns the level of enforcement.
      *
@@ -36,5 +37,4 @@ public interface EnforcerRule2 extends EnforcerRule
      */
     @Nonnull
     EnforcerLevel getLevel();
-
 }

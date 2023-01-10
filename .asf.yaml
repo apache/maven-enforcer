@@ -24,3 +24,9 @@ github:
     - maven-plugins
     - maven-enforcer-plugin
     - maven
+  enabled_merge_buttons:
+    squash: true
+    merge: false
+    rebase: true
+  autolink_jira:
+    - MENFORCER

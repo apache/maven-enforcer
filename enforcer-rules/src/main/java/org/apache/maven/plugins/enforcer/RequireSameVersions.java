@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.enforcer;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.enforcer;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.enforcer;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.enforcer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,9 +37,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  * @author Robert Scholte
  * @since 1.3
  */
-public class RequireSameVersions
-    extends AbstractNonCacheableEnforcerRule
-{
+public class RequireSameVersions extends AbstractNonCacheableEnforcerRule {
     private boolean uniqueVersions;
 
     private Set<String> dependencies = new HashSet<>();
@@ -52,80 +49,67 @@ public class RequireSameVersions
     private Set<String> reportPlugins = new HashSet<>();
 
     @Override
-    public void execute( EnforcerRuleHelper helper )
-        throws EnforcerRuleException
-    {
+    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
         // get the project
         MavenProject project;
-        try
-        {
-            project = (MavenProject) helper.evaluate( "${project}" );
-        }
-        catch ( ExpressionEvaluationException eee )
-        {
-            throw new EnforcerRuleException( "Unable to retrieve the MavenProject: ", eee );
+        try {
+            project = (MavenProject) helper.evaluate("${project}");
+        } catch (ExpressionEvaluationException eee) {
+            throw new EnforcerRuleException("Unable to retrieve the MavenProject: ", eee);
         }
 
         // consider including profile based artifacts
         Map<String, List<String>> versionMembers = new LinkedHashMap<>();
 
-        Set<String> buildPluginSet = new HashSet<>( buildPlugins );
-        buildPluginSet.addAll( plugins );
-        Set<String> reportPluginSet = new HashSet<>( reportPlugins );
-        reportPluginSet.addAll( plugins );
+        Set<String> buildPluginSet = new HashSet<>(buildPlugins);
+        buildPluginSet.addAll(plugins);
+        Set<String> reportPluginSet = new HashSet<>(reportPlugins);
+        reportPluginSet.addAll(plugins);
 
         // CHECKSTYLE_OFF: LineLength
-        versionMembers.putAll( collectVersionMembers( project.getArtifacts(), dependencies, " (dependency)" ) );
-        versionMembers.putAll( collectVersionMembers( project.getPluginArtifacts(), buildPlugins, " (buildPlugin)" ) );
-        versionMembers.putAll( collectVersionMembers( project.getReportArtifacts(), reportPlugins, " (reportPlugin)" ) );
+        versionMembers.putAll(collectVersionMembers(project.getArtifacts(), dependencies, " (dependency)"));
+        versionMembers.putAll(collectVersionMembers(project.getPluginArtifacts(), buildPlugins, " (buildPlugin)"));
+        versionMembers.putAll(collectVersionMembers(project.getReportArtifacts(), reportPlugins, " (reportPlugin)"));
         // CHECKSTYLE_ON: LineLength
 
-        if ( versionMembers.size() > 1 )
-        {
-            StringBuilder builder = new StringBuilder( "Found entries with different versions"
-                + System.lineSeparator() );
-            for ( Map.Entry<String, List<String>> entry : versionMembers.entrySet() )
-            {
-                builder.append( "Entries with version " ).append( entry.getKey() ).append( System.lineSeparator() );
-                for ( String conflictId : entry.getValue() )
-                {
-                    builder.append( "- " ).append( conflictId ).append( System.lineSeparator() );
+        if (versionMembers.size() > 1) {
+            StringBuilder builder = new StringBuilder("Found entries with different versions" + System.lineSeparator());
+            for (Map.Entry<String, List<String>> entry : versionMembers.entrySet()) {
+                builder.append("Entries with version ").append(entry.getKey()).append(System.lineSeparator());
+                for (String conflictId : entry.getValue()) {
+                    builder.append("- ").append(conflictId).append(System.lineSeparator());
                 }
             }
-            throw new EnforcerRuleException( builder.toString() );
+            throw new EnforcerRuleException(builder.toString());
         }
     }
 
-    private Map<String, List<String>> collectVersionMembers( Set<Artifact> artifacts, Collection<String> patterns,
-                                                             String source )
-    {
+    private Map<String, List<String>> collectVersionMembers(
+            Set<Artifact> artifacts, Collection<String> patterns, String source) {
         Map<String, List<String>> versionMembers = new LinkedHashMap<>();
 
         List<Pattern> regExs = new ArrayList<>();
-        for ( String pattern : patterns )
-        {
-            String regex = pattern.replace( ".", "\\." ).replace( "*", ".*" ).replace( ":", "\\:" ).replace( '?', '.' );
+        for (String pattern : patterns) {
+            String regex = pattern.replace(".", "\\.")
+                    .replace("*", ".*")
+                    .replace(":", "\\:")
+                    .replace('?', '.');
 
             // pattern is groupId[:artifactId[:type[:classifier]]]
-            regExs.add( Pattern.compile( regex + "(\\:.+)?" ) );
+            regExs.add(Pattern.compile(regex + "(\\:.+)?"));
         }
 
-        for ( Artifact artifact : artifacts )
-        {
-            for ( Pattern regEx : regExs )
-            {
-                if ( regEx.matcher( artifact.getDependencyConflictId() ).matches() )
-                {
+        for (Artifact artifact : artifacts) {
+            for (Pattern regEx : regExs) {
+                if (regEx.matcher(artifact.getDependencyConflictId()).matches()) {
                     String version = uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
-                    if ( !versionMembers.containsKey( version ) )
-                    {
-                        versionMembers.put( version, new ArrayList<String>() );
+                    if (!versionMembers.containsKey(version)) {
+                        versionMembers.put(version, new ArrayList<>());
                     }
-                    versionMembers.get( version ).add( artifact.getDependencyConflictId() + source );
+                    versionMembers.get(version).add(artifact.getDependencyConflictId() + source);
                 }
             }
         }
         return versionMembers;
     }
-
 }

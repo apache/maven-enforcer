@@ -1,5 +1,3 @@
-package org.apache.maven.enforcer.rule.api;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.enforcer.rule.api;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.enforcer.rule.api;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.enforcer.rule.api;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,9 +25,11 @@ import javax.annotation.Nullable;
  * Interface to be implemented by any rules executed by the enforcer.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @deprecated Please see
+ *         <a href="https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html">Writing a custom rule</a>
  */
-public interface EnforcerRule
-{
+@Deprecated
+public interface EnforcerRule extends EnforcerRuleBase {
 
     /**
      * This is the interface into the rule. This method should throw an exception
@@ -37,13 +38,11 @@ public interface EnforcerRule
      * message as a warning.
      *
      * @param helper The helper provides access to the log, MavenSession and has
-     * helpers to get common components. It is also able to lookup components
-     * by class name.
-     *
+     *               helpers to get common components. It is also able to lookup components
+     *               by class name.
      * @throws EnforcerRuleException the enforcer rule exception
      */
-    void execute( @Nonnull EnforcerRuleHelper helper )
-        throws EnforcerRuleException;
+    void execute(@Nonnull EnforcerRuleHelper helper) throws EnforcerRuleException;
 
     /**
      * This method tells the enforcer if the rule results may be cached. If the result is true,
@@ -62,20 +61,19 @@ public interface EnforcerRule
      * your rule and then query them later.
      *
      * @param cachedRule the last cached instance of the rule. This is to be used by the rule to
-     * potentially determine if the results are still valid (ie if the configuration has been overridden)
-     *
+     *                   potentially determine if the results are still valid (ie if the configuration has been
+     *                   overridden)
      * @return <code>true</code> if the stored results are valid for the same id.
      */
-    boolean isResultValid( @Nonnull EnforcerRule cachedRule );
+    boolean isResultValid(@Nonnull EnforcerRule cachedRule);
 
     /**
      * If the rule is to be cached, this id is used as part of the key. This can allow rules to take parameters
      * that allow multiple results of the same rule to be cached.
      *
      * @return id to be used by the enforcer to determine uniqueness of cache results. The ids only need to be unique
-     * within a given rule implementation as the full key will be [classname]-[id]
+     *         within a given rule implementation as the full key will be [classname]-[id]
      */
     @Nullable
     String getCacheId();
-
 }
