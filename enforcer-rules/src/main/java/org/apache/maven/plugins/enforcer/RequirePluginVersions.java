@@ -834,59 +834,35 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
     }
 
     private void getProfilePluginManagementPlugins(List<PluginWrapper> plugins, Model model, Profile profile) {
-        try {
-            List<Plugin> modelPlugins = profile.getBuild().getPluginManagement().getPlugins();
-            plugins.addAll(PluginWrapper.addAll(utils.resolvePlugins(modelPlugins), banMavenDefaults));
-        } catch (NullPointerException e) {
-            // guess there are no plugins here.
-        }
+        List<Plugin> modelPlugins = profile.getBuild().getPluginManagement().getPlugins();
+        plugins.addAll(PluginWrapper.addAll(utils.resolvePlugins(modelPlugins), banMavenDefaults));
     }
 
     private void getProfileReportingPlugins(List<PluginWrapper> plugins, Model model, Profile profile) {
-        try {
-            List<ReportPlugin> modelReportPlugins = profile.getReporting().getPlugins();
-            // add the reporting plugins
-            plugins.addAll(PluginWrapper.addAll(utils.resolveReportPlugins(modelReportPlugins), banMavenDefaults));
-        } catch (NullPointerException e) {
-            // guess there are no plugins here.
-        }
+        List<ReportPlugin> modelReportPlugins = profile.getReporting().getPlugins();
+        // add the reporting plugins
+        plugins.addAll(PluginWrapper.addAll(utils.resolveReportPlugins(modelReportPlugins), banMavenDefaults));
     }
 
     private void getProfilePlugins(List<PluginWrapper> plugins, Model model, Profile profile) {
-        try {
-            List<Plugin> modelPlugins = profile.getBuild().getPlugins();
-            plugins.addAll(PluginWrapper.addAll(utils.resolvePlugins(modelPlugins), banMavenDefaults));
-        } catch (NullPointerException e) {
-            // guess there are no plugins here.
-        }
+        List<Plugin> modelPlugins = profile.getBuild().getPlugins();
+        plugins.addAll(PluginWrapper.addAll(utils.resolvePlugins(modelPlugins), banMavenDefaults));
     }
 
     private void getPlugins(List<PluginWrapper> plugins, Model model) {
-        try {
-            List<Plugin> modelPlugins = model.getBuild().getPlugins();
-            plugins.addAll(PluginWrapper.addAll(utils.resolvePlugins(modelPlugins), banMavenDefaults));
-        } catch (NullPointerException e) {
-            // guess there are no plugins here.
-        }
+        List<Plugin> modelPlugins = model.getBuild().getPlugins();
+        plugins.addAll(PluginWrapper.addAll(utils.resolvePlugins(modelPlugins), banMavenDefaults));
     }
 
     private void getPluginManagementPlugins(List<PluginWrapper> plugins, Model model) {
-        try {
-            List<Plugin> modelPlugins = model.getBuild().getPluginManagement().getPlugins();
-            plugins.addAll(PluginWrapper.addAll(utils.resolvePlugins(modelPlugins), banMavenDefaults));
-        } catch (NullPointerException e) {
-            // guess there are no plugins here.
-        }
+        List<Plugin> modelPlugins = model.getBuild().getPluginManagement().getPlugins();
+        plugins.addAll(PluginWrapper.addAll(utils.resolvePlugins(modelPlugins), banMavenDefaults));
     }
 
     private void getReportingPlugins(List<PluginWrapper> plugins, Model model) {
-        try {
-            List<ReportPlugin> modelReportPlugins = model.getReporting().getPlugins();
-            // add the reporting plugins
-            plugins.addAll(PluginWrapper.addAll(utils.resolveReportPlugins(modelReportPlugins), banMavenDefaults));
-        } catch (NullPointerException e) {
-            // guess there are no plugins here.
-        }
+        List<ReportPlugin> modelReportPlugins = model.getReporting().getPlugins();
+        // add the reporting plugins
+        plugins.addAll(PluginWrapper.addAll(utils.resolveReportPlugins(modelReportPlugins), banMavenDefaults));
     }
 
     /**
