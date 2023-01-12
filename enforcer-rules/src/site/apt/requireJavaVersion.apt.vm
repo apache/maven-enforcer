@@ -29,9 +29,9 @@ Require Java Version
 
    The following parameters are supported by this rule:
    
-   * message - an optional message to the user if the rule fails.
+   * <<message>> - an optional message to the user if the rule fails.
    
-   * {{{../apidocs/org/apache/maven/plugins/enforcer/AbstractVersionEnforcer.html#version}version}} - {{{./versionRanges.html}range}} of allowed JDKs.
+   * <<version>> - {{{./versionRanges.html}range}} of allowed JDKs.
 
    For JDK 1.8 you can also use simple <<<8>>> as <version> - it will be internally changed to <<<1.8>>>
    
@@ -55,10 +55,10 @@ Require Java Version
 +---+
 mvn enforcer:display-info
 ...
-[enforcer:display-info]
-Maven Version: 2.0.8
-JDK Version: 1.5.0_11 normalized as: 1.5.0-11
-OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
+[INFO] Maven Version: 3.8.7
+[INFO] JDK Version: 1.8.0_352 normalized as: 1.8.0-352
+[INFO] Java Vendor: Homebrew
+[INFO] OS Info - Arch: x86_64, Family: mac, Name: mac os x, Version: 12.6.1
 +---+
  
    Sample Plugin Configuration:

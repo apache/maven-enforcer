@@ -25,22 +25,27 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rules.utils.ArtifactMatcher.Pattern;
+import org.apache.maven.enforcer.rules.version.RequireJavaVersion;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class TestArtifactMatcher {
+class TestArtifactMatcher {
 
     Collection<String> patterns = new ArrayList<>();
 
     Collection<String> ignorePatterns = new ArrayList<>();
 
     @Test
-    public void testPatternInvalidInput() {
+    void testPatternInvalidInput() {
         try {
             new Pattern(null);
             fail("NullPointerException expected.");
@@ -68,7 +73,7 @@ public class TestArtifactMatcher {
     }
 
     @Test
-    public void testPattern() throws InvalidVersionSpecificationException {
+    void testPattern() throws InvalidVersionSpecificationException {
         executePatternMatch(
                 "groupId:artifactId:1.0:jar:compile", "groupId", "artifactId", "1.0", "compile", "jar", true);
 
@@ -100,7 +105,7 @@ public class TestArtifactMatcher {
     }
 
     @Test
-    public void testMatch() throws InvalidVersionSpecificationException {
+    void testMatch() {
         patterns.add("groupId:artifactId:1.0");
         patterns.add("*:anotherArtifact");
 
@@ -170,5 +175,47 @@ public class TestArtifactMatcher {
 
         VersionRange version = VersionRange.createFromVersion(versionRange);
         return new DefaultArtifact(groupId, artifactId, version, scope, type, classifier, artifactHandler);
+    }
+
+    /**
+     * Test contains version.
+     *
+     * @throws InvalidVersionSpecificationException the invalid version specification exception
+     */
+    @Test
+    void testContainsVersion() throws InvalidVersionSpecificationException {
+        ArtifactVersion version = new DefaultArtifactVersion("2.0.5");
+        // test ranges
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[2.0.5,)"), version));
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[2.0.4,)"), version));
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[2.0.4,2.0.5]"), version));
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[2.0.4,2.0.6]"), version));
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[2.0.4,2.0.6)"), version));
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[2.0,)"), version));
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[2.0.0,)"), version));
+        // not matching versions
+        assertFalse(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[2.0.4,2.0.5)"), version));
+        assertFalse(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[2.0.6,)"), version));
+        assertFalse(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("(2.0.5,)"), version));
+
+        // test singular versions -> 2.0.5 == [2.0.5,) or x >= 2.0.5
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("2.0"), version));
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("2.0.4"), version));
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("2.0.5"), version));
+
+        assertFalse(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("2.0.6"), version));
+
+        version = new DefaultArtifactVersion("1.5.0-7");
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[1.5.0,)"), version));
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[1.5,1.6)"), version));
+
+        version = new DefaultArtifactVersion(RequireJavaVersion.normalizeJDKVersion("1.5.0-07"));
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[1.5.0,)"), version));
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[1.5,1.6)"), version));
+
+        // MENFORCER-50
+        version = new DefaultArtifactVersion("2.1.0-M1-RC12");
+        assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[2.1.0-M1-RC12,)"), version));
+        assertFalse(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[2.1.0-M1,)"), version));
     }
 }

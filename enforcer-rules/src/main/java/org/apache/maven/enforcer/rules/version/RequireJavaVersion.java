@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.version;
+
+import javax.inject.Named;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -30,8 +32,6 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -39,7 +39,8 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class RequireJavaVersion extends AbstractVersionEnforcer {
+@Named("requireJavaVersion")
+public final class RequireJavaVersion extends AbstractVersionEnforcer {
 
     private static final Pattern JDK8_VERSION_PATTERN = Pattern.compile("([\\[(,]?)(1\\.8|8)([]),]?)");
 
@@ -63,24 +64,23 @@ public class RequireJavaVersion extends AbstractVersionEnforcer {
     }
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
+    public void execute() throws EnforcerRuleException {
         String javaVersion = SystemUtils.JAVA_VERSION;
-        Log log = helper.getLog();
 
-        log.debug("Detected Java String: '" + javaVersion + "'");
+        getLog().debug("Detected Java String: '" + javaVersion + "'");
         javaVersion = normalizeJDKVersion(javaVersion);
-        log.debug("Normalized Java String: '" + javaVersion + "'");
+        getLog().debug("Normalized Java String: '" + javaVersion + "'");
 
         ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion(javaVersion);
 
-        log.debug("Parsed Version: Major: " + detectedJdkVersion.getMajorVersion() + " Minor: "
+        getLog().debug("Parsed Version: Major: " + detectedJdkVersion.getMajorVersion() + " Minor: "
                 + detectedJdkVersion.getMinorVersion() + " Incremental: " + detectedJdkVersion.getIncrementalVersion()
                 + " Build: " + detectedJdkVersion.getBuildNumber() + " Qualifier: "
                 + detectedJdkVersion.getQualifier());
 
-        setCustomMessageIfNoneConfigured(detectedJdkVersion, getVersion(), log);
+        setCustomMessageIfNoneConfigured(detectedJdkVersion, getVersion());
 
-        enforceVersion(helper.getLog(), "JDK", getVersion(), detectedJdkVersion);
+        enforceVersion("JDK", getVersion(), detectedJdkVersion);
     }
 
     /**
@@ -117,15 +117,14 @@ public class RequireJavaVersion extends AbstractVersionEnforcer {
         return StringUtils.stripEnd(version, ".");
     }
 
-    private void setCustomMessageIfNoneConfigured(
-            ArtifactVersion detectedJdkVersion, String allowedVersionRange, Log log) {
+    private void setCustomMessageIfNoneConfigured(ArtifactVersion detectedJdkVersion, String allowedVersionRange) {
         if (getMessage() == null) {
             String version;
             try {
                 VersionRange vr = VersionRange.createFromVersionSpec(allowedVersionRange);
                 version = AbstractVersionEnforcer.toString(vr);
             } catch (InvalidVersionSpecificationException e) {
-                log.debug("Could not parse allowed version range " + allowedVersionRange, e);
+                getLog().debug("Could not parse allowed version range " + allowedVersionRange + " " + e.getMessage());
                 version = allowedVersionRange;
             }
             String message = String.format(

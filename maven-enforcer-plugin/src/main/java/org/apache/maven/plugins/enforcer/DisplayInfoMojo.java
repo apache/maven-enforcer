@@ -19,6 +19,7 @@
 package org.apache.maven.plugins.enforcer;
 
 import org.apache.maven.enforcer.rules.utils.OSUtil;
+import org.apache.maven.enforcer.rules.version.RequireJavaVersion;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Mojo;
