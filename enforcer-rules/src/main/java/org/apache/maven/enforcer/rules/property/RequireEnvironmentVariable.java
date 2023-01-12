@@ -16,17 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.property;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import javax.inject.Named;
 
 /**
  * This rule checks that certain environment variable is set.
  *
  * @author <a href='mailto:marvin[at]marvinformatics[dot]com'>Marvin Froeder</a>
  */
-public class RequireEnvironmentVariable extends AbstractPropertyEnforcerRule {
+@Named("requireEnvironmentVariable")
+public final class RequireEnvironmentVariable extends AbstractPropertyEnforcerRule {
 
     /**
      * Specify the required variable.
@@ -39,36 +39,22 @@ public class RequireEnvironmentVariable extends AbstractPropertyEnforcerRule {
      * @see #setVariableName(String)
      * @see #getVariableName()
      */
-    public final void setVariableName(String variableName) {
+    public void setVariableName(String variableName) {
         this.variableName = variableName;
     }
 
-    public final String getVariableName() {
+    public String getVariableName() {
         return variableName;
     }
 
     @Override
-    public String resolveValue(EnforcerRuleHelper helper) {
-        String envValue = System.getenv(variableName);
-        return envValue;
-    }
-
-    @Override
-    public boolean isCacheable() {
-        // environment variables won't change while maven is on the run
-        return true;
-    }
-
-    @Override
-    public boolean isResultValid(EnforcerRule cachedRule) {
-        // this rule shall always have the same result, since environment
-        // variables are set before maven is launched
-        return true;
+    public String resolveValue() {
+        return System.getenv(variableName);
     }
 
     @Override
     public String getCacheId() {
-        return variableName;
+        return String.valueOf(toString().hashCode());
     }
 
     @Override
@@ -79,5 +65,12 @@ public class RequireEnvironmentVariable extends AbstractPropertyEnforcerRule {
     @Override
     public String getName() {
         return "Environment variable";
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "RequireEnvironmentVariable[variableName=%s, message=%s, regex=%s, regexMessage=%s]",
+                variableName, getMessage(), getRegex(), getRegexMessage());
     }
 }

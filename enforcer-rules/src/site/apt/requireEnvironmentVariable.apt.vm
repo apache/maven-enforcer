@@ -27,16 +27,21 @@ Require Environment Variable
 
   This rule checks that a specified environment variable is set.
 
+  The following parameters are supported by this rule:
+   
+  * <<message>> - an optional message to the user if the rule fails.
+   
+  * <<variableName>> - The name of the environment variable to be checked for.
 
-   The following parameters are supported by this rule:
-   
-   * message - an optional message to the user if the rule fails.
-   
-   * variableName - The name of the environment variable to be checked for.
-   
-   []
+  * <<regex>> - an optional regular expression used to check the value of the property.
 
-   
+  * <<regexMessage>> - an optional message to the user if the regex check fails.
+
+  []
+
+  The regex is applied to the entire value of the environment variable (i.e. using the regex "match" method),
+  and not just a substring of the environment variable value.
+
   Sample Plugin Configuration:
   
 +---+
