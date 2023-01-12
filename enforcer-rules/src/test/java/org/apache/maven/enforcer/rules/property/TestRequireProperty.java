@@ -16,46 +16,58 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.property;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rules.utils.ExpressionEvaluator;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.when;
 
 /**
- * Unit test for {@link RequireEnvironmentVariable}}
+ * The Class TestRequireProperty.
  *
- * @author <a href='mailto:marvin[at]marvinformatics[dot]com'>Marvin Froeder</a>
+ * @author Paul Gier
  */
-public class TestRequireEnvironmentVariable {
+@ExtendWith(MockitoExtension.class)
+class TestRequireProperty {
+
+    @Mock
+    private ExpressionEvaluator evaluator;
+
+    @InjectMocks
+    private RequireProperty rule;
 
     /**
      * Test rule.
      *
      */
     @Test
-    public void testRule() {
-        MockProject project = new MockProject();
-        project.setProperty("testProp", "This is a test.");
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(project);
+    void testRule() throws Exception {
 
-        RequireEnvironmentVariable rule = new RequireEnvironmentVariable();
-        // this env variable should not be set
-        rule.setVariableName("JUNK");
+        // this property should not be set
+        rule.setProperty("testPropJunk");
 
         try {
-            rule.execute(helper);
+            rule.execute();
             fail("Expected an exception.");
         } catch (EnforcerRuleException e) {
             // expected to catch this.
         }
 
-        // PATH shall be common to windows and linux
-        rule.setVariableName("PATH");
+        when(evaluator.evaluate("${testProp}")).thenReturn("This is a test.");
+
+        // this property should be set by the surefire
+        // plugin
+        rule.setProperty("testProp");
         try {
-            rule.execute(helper);
+            rule.execute();
         } catch (EnforcerRuleException e) {
             fail("This should not throw an exception");
         }
@@ -66,28 +78,36 @@ public class TestRequireEnvironmentVariable {
      *
      */
     @Test
-    public void testRuleWithRegex() {
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
+    void testRuleWithRegex() throws Exception {
 
-        RequireEnvironmentVariable rule = new RequireEnvironmentVariable();
-        rule.setVariableName("PATH");
+        when(evaluator.evaluate("${testProp}")).thenReturn("This is a test.");
+
+        rule.setProperty("testProp");
         // This expression should not match the property
         // value
         rule.setRegex("[^abc]");
 
         try {
-            rule.execute(helper);
+            rule.execute();
             fail("Expected an exception.");
         } catch (EnforcerRuleException e) {
             // expected to catch this.
         }
 
-        // can't really predict what a PATH will looks like, just enforce it ain't empty
-        rule.setRegex(".{1,}");
+        // this expr should match the property
+        rule.setRegex("[This].*[.]");
         try {
-            rule.execute(helper);
+            rule.execute();
         } catch (EnforcerRuleException e) {
             fail("This should not throw an exception");
         }
+    }
+
+    /**
+     * Test id.
+     */
+    @Test
+    void ruleShouldNotBeCached() {
+        assertThat(rule.getCacheId()).isNull();
     }
 }

@@ -29,13 +29,13 @@ Require Property
 
   The following parameters are supported by this rule:
    
-  * property - the property to evaluate.
+  * <<property>> - the property to evaluate.
    
-  * message - an optional message to the user if the rule fails. Default is: "Property 'xxx' is required for this build".	
+  * <<message>> - an optional message to the user if the rule fails. Default is: "Property 'xxx' is required for this build".
    
-  * regex - a regular expression used to check the value of the property.
+  * <<regex>> - an optional regular expression used to check the value of the property.
    
-  * regexMessage - an optional message to the user if the regex check fails.
+  * <<regexMessage>> - an optional message to the user if the regex check fails.
 
   []
 

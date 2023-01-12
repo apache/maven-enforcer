@@ -16,10 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.property;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
 
 /**
  * Abstract enforcer rule that give a foundation to validate properties from multiple sources.
@@ -27,7 +27,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
  * @author Paul Gier
  * @author <a href='mailto:marvin[at]marvinformatics[dot]com'>Marvin Froeder</a>
  */
-public abstract class AbstractPropertyEnforcerRule extends AbstractNonCacheableEnforcerRule {
+abstract class AbstractPropertyEnforcerRule extends AbstractStandardEnforcerRule {
 
     /**
      * Match the property value to a given regular expression. Defaults to <code>null</code> (any value is ok).
@@ -44,10 +44,6 @@ public abstract class AbstractPropertyEnforcerRule extends AbstractNonCacheableE
      * @see {@link #getRegexMessage()}
      */
     private String regexMessage = null;
-
-    public AbstractPropertyEnforcerRule() {
-        super();
-    }
 
     /**
      * Set the property value to a given regular expression. Defaults to <code>null</code> (any value is ok).
@@ -86,8 +82,8 @@ public abstract class AbstractPropertyEnforcerRule extends AbstractNonCacheableE
     }
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        Object propValue = resolveValue(helper);
+    public void execute() throws EnforcerRuleException {
+        Object propValue = resolveValue();
 
         // Check that the property is not null or empty string
         if (propValue == null) {
@@ -123,8 +119,7 @@ public abstract class AbstractPropertyEnforcerRule extends AbstractNonCacheableE
     /**
      * Resolves the property value
      *
-     * @param helper
      * @throws EnforcerRuleException
      */
-    protected abstract Object resolveValue(EnforcerRuleHelper helper) throws EnforcerRuleException;
+    protected abstract Object resolveValue() throws EnforcerRuleException;
 }

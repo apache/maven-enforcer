@@ -16,10 +16,15 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.property;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import java.util.Objects;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rules.utils.ExpressionEvaluator;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
@@ -27,7 +32,8 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  *
  * @author Paul Gier
  */
-public class RequireProperty extends AbstractPropertyEnforcerRule {
+@Named("requireProperty")
+public final class RequireProperty extends AbstractPropertyEnforcerRule {
 
     /**
      * Specify the required property.
@@ -37,23 +43,24 @@ public class RequireProperty extends AbstractPropertyEnforcerRule {
      */
     private String property = null;
 
-    public final void setProperty(String property) {
+    private final ExpressionEvaluator evaluator;
+
+    @Inject
+    public RequireProperty(ExpressionEvaluator evaluator) {
+        this.evaluator = Objects.requireNonNull(evaluator);
+    }
+
+    public void setProperty(String property) {
         this.property = property;
     }
 
     @Override
-    public Object resolveValue(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        Object propValue = null;
+    public Object resolveValue() throws EnforcerRuleException {
         try {
-            propValue = helper.evaluate("${" + property + "}");
-        } catch (ExpressionEvaluationException eee) {
-            throw new EnforcerRuleException("Unable to evaluate property: " + property, eee);
+            return evaluator.evaluate("${" + property + "}");
+        } catch (ExpressionEvaluationException e) {
+            throw new EnforcerRuleException(e);
         }
-        return propValue;
-    }
-
-    protected String resolveValue() {
-        return null;
     }
 
     @Override
@@ -64,5 +71,12 @@ public class RequireProperty extends AbstractPropertyEnforcerRule {
     @Override
     public String getName() {
         return "Property";
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "RequireProperty[property=%s, message=%s, regex=%s, regexMessage=%s]",
+                property, getMessage(), getRegex(), getRegexMessage());
     }
 }

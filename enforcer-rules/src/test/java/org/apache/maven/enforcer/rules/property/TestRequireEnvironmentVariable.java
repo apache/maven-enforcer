@@ -16,47 +16,42 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.property;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * The Class TestRequireProperty.
+ * Unit test for {@link RequireEnvironmentVariable}}
  *
- * @author Paul Gier
+ * @author <a href='mailto:marvin[at]marvinformatics[dot]com'>Marvin Froeder</a>
  */
-public class TestRequireProperty {
+class TestRequireEnvironmentVariable {
 
+    private RequireEnvironmentVariable rule = new RequireEnvironmentVariable();
     /**
      * Test rule.
      *
      */
     @Test
-    public void testRule() {
-        MockProject project = new MockProject();
-        project.setProperty("testProp", "This is a test.");
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(project);
-
-        RequireProperty rule = new RequireProperty();
-        // this property should not be set
-        rule.setProperty("testPropJunk");
+    void testRule() {
+        // this env variable should not be set
+        rule.setVariableName("JUNK");
 
         try {
-            rule.execute(helper);
+            rule.execute();
             fail("Expected an exception.");
         } catch (EnforcerRuleException e) {
             // expected to catch this.
         }
 
-        // this property should be set by the surefire
-        // plugin
-        rule.setProperty("testProp");
+        // PATH shall be common to windows and linux
+        rule.setVariableName("PATH");
         try {
-            rule.execute(helper);
+            rule.execute();
         } catch (EnforcerRuleException e) {
             fail("This should not throw an exception");
         }
@@ -67,39 +62,32 @@ public class TestRequireProperty {
      *
      */
     @Test
-    public void testRuleWithRegex() {
-        MockProject project = new MockProject();
-        project.setProperty("testProp", "This is a test.");
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(project);
+    void testRuleWithRegex() {
 
-        RequireProperty rule = new RequireProperty();
-        rule.setProperty("testProp");
+        rule.setVariableName("PATH");
         // This expression should not match the property
         // value
         rule.setRegex("[^abc]");
 
         try {
-            rule.execute(helper);
+            rule.execute();
             fail("Expected an exception.");
         } catch (EnforcerRuleException e) {
             // expected to catch this.
         }
 
-        // this expr should match the property
-        rule.setRegex("[This].*[.]");
+        // can't really predict what a PATH will looks like, just enforce it ain't empty
+        rule.setRegex(".{1,}");
         try {
-            rule.execute(helper);
+            rule.execute();
         } catch (EnforcerRuleException e) {
             fail("This should not throw an exception");
         }
     }
 
-    /**
-     * Test id.
-     */
     @Test
-    public void testId() {
-        RequireProperty rule = new RequireProperty();
-        rule.getCacheId();
+    void ruleShouldBeCached() {
+        rule.setVariableName("TEST");
+        Assertions.assertThat(rule.getCacheId()).isNotEmpty();
     }
 }
