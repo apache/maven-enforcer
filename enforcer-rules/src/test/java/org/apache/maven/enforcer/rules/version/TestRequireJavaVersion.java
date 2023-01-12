@@ -16,13 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.version;
 
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -30,6 +31,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 /**
  * The Class TestRequireJavaVersion.
@@ -38,6 +40,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class TestRequireJavaVersion {
 
+    private RequireJavaVersion rule;
+
+    @BeforeEach
+    void setup() {
+        rule = new RequireJavaVersion();
+        rule.setLog(mock(EnforcerLogger.class));
+    }
     /**
      * Test fix jdk version.
      */
@@ -76,13 +85,10 @@ class TestRequireJavaVersion {
     void settingsTheJavaVersionAsNormalizedVersionShouldNotFail() throws EnforcerRuleException {
         String normalizedJDKVersion = RequireJavaVersion.normalizeJDKVersion(SystemUtils.JAVA_VERSION);
 
-        RequireJavaVersion rule = new RequireJavaVersion();
         rule.setVersion(normalizedJDKVersion);
 
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
-
         // test the singular version
-        rule.execute(helper);
+        rule.execute();
         // intentionally no assertThat(...) because we don't expect and exception.
     }
 
@@ -90,11 +96,9 @@ class TestRequireJavaVersion {
     void excludingTheCurrentJavaVersionViaRangeThisShouldFailWithException() {
         String thisVersion = RequireJavaVersion.normalizeJDKVersion(SystemUtils.JAVA_VERSION);
         String requiredVersion = "(" + thisVersion;
-        RequireJavaVersion rule = new RequireJavaVersion();
         rule.setVersion(requiredVersion);
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
 
-        assertThatThrownBy(() -> rule.execute(helper))
+        assertThatThrownBy(() -> rule.execute())
                 .isInstanceOf(EnforcerRuleException.class)
                 .hasMessage("The requested JDK version %s is invalid.", requiredVersion);
     }
@@ -103,11 +107,9 @@ class TestRequireJavaVersion {
     void shouldIncludeJavaHomeLocationInTheErrorMessage() {
         String thisVersion = RequireJavaVersion.normalizeJDKVersion(SystemUtils.JAVA_VERSION);
         String requiredVersion = "10000";
-        RequireJavaVersion rule = new RequireJavaVersion();
         rule.setVersion(requiredVersion);
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
 
-        assertThatThrownBy(() -> rule.execute(helper))
+        assertThatThrownBy(() -> rule.execute())
                 .isInstanceOf(EnforcerRuleException.class)
                 .hasMessage(
                         "Detected JDK version %s (JAVA_HOME=%s) is not in the allowed range %s.",
@@ -118,12 +120,10 @@ class TestRequireJavaVersion {
     void shouldUseCustomErrorMessage() {
         String requiredVersion = "10000";
         String message = "My custom error message";
-        RequireJavaVersion rule = new RequireJavaVersion();
         rule.setVersion(requiredVersion);
         rule.setMessage(message);
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
 
-        assertThatThrownBy(() -> rule.execute(helper))
+        assertThatThrownBy(() -> rule.execute())
                 .isInstanceOf(EnforcerRuleException.class)
                 .hasMessage(message);
     }
@@ -133,7 +133,6 @@ class TestRequireJavaVersion {
      */
     @Test
     void testId() {
-        RequireJavaVersion rule = new RequireJavaVersion();
         assertThat(rule.getCacheId()).isEqualTo("0");
     }
 
@@ -154,8 +153,7 @@ class TestRequireJavaVersion {
     @ParameterizedTest
     @MethodSource
     void fixJava8ShortVersion(String input, String expected) {
-        RequireJavaVersion requireJavaVersion = new RequireJavaVersion();
-        requireJavaVersion.setVersion(input);
-        assertThat(requireJavaVersion.getVersion()).isEqualTo(expected);
+        rule.setVersion(input);
+        assertThat(rule.getVersion()).isEqualTo(expected);
     }
 }

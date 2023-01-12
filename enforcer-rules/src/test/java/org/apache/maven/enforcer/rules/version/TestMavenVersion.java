@@ -16,24 +16,43 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.version;
 
-import java.util.Properties;
-
+import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.execution.MavenSession;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.apache.maven.rtinfo.RuntimeInformation;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.when;
 
 /**
  * The Class TestMavenVersion.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class TestMavenVersion {
+@ExtendWith(MockitoExtension.class)
+class TestMavenVersion {
+
+    @Mock
+    private RuntimeInformation runtimeInformation;
+
+    @Mock
+    private EnforcerLogger log;
+
+    @InjectMocks
+    private RequireMavenVersion rule;
+
+    @BeforeEach
+    void setup() {
+        rule.setLog(log);
+    }
 
     /**
      * Test rule.
@@ -41,21 +60,20 @@ public class TestMavenVersion {
      * @throws EnforcerRuleException the enforcer rule exception
      */
     @Test
-    public void testRule() throws EnforcerRuleException {
+    void testRule() throws EnforcerRuleException {
 
-        RequireMavenVersion rule = new RequireMavenVersion();
+        when(runtimeInformation.getMavenVersion()).thenReturn("3.0");
+
         rule.setVersion("2.0.5");
 
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
-
         // test the singular version
-        rule.execute(helper);
+        rule.execute();
 
         // exclude this version
         rule.setVersion("(2.0.5");
 
         try {
-            rule.execute(helper);
+            rule.execute();
             fail("Expected an exception.");
         } catch (EnforcerRuleException e) {
             // expected to catch this.
@@ -63,7 +81,7 @@ public class TestMavenVersion {
 
         // this shouldn't crash
         rule.setVersion("2.0.5_01");
-        rule.execute(helper);
+        rule.execute();
     }
 
     /**
@@ -72,27 +90,22 @@ public class TestMavenVersion {
      * @throws EnforcerRuleException the enforcer rule exception
      */
     @Test
-    public void checkRequireVersionMatrix() throws EnforcerRuleException, ExpressionEvaluationException {
-        RequireMavenVersion rule = new RequireMavenVersion();
+    void checkRequireVersionMatrix() throws EnforcerRuleException {
 
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
-        MavenSession mavenSession = (MavenSession) helper.evaluate("${session}");
-        Properties systemProperties = mavenSession.getSystemProperties();
-
-        systemProperties.setProperty("maven.version", "3.6.1");
+        when(runtimeInformation.getMavenVersion()).thenReturn("3.6.1");
         rule.setVersion("3.6.0");
-        rule.execute(helper);
+        rule.execute();
 
-        systemProperties.setProperty("maven.version", "3.6.2");
+        when(runtimeInformation.getMavenVersion()).thenReturn("3.6.2");
         rule.setVersion("3.6.0");
-        rule.execute(helper);
+        rule.execute();
         rule.setVersion("3.6.1");
-        rule.execute(helper);
+        rule.execute();
         rule.setVersion("3.6.2");
-        rule.execute(helper);
+        rule.execute();
         rule.setVersion("3.6.3");
         try {
-            rule.execute(helper);
+            rule.execute();
             fail("Expected an exception.");
         } catch (EnforcerRuleException e) {
             // expected to catch this.
@@ -103,8 +116,8 @@ public class TestMavenVersion {
      * Test id.
      */
     @Test
-    public void testId() {
-        RequireMavenVersion rule = new RequireMavenVersion();
-        rule.getCacheId();
+    void testId() {
+        rule.setVersion("3.3.3");
+        assertThat(rule.getCacheId()).isNotEmpty();
     }
 }

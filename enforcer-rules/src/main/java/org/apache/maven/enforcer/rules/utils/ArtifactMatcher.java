@@ -24,11 +24,11 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.plugins.enforcer.AbstractVersionEnforcer;
 import org.codehaus.plexus.util.StringUtils;
 
 import static java.util.Optional.ofNullable;
@@ -126,7 +126,7 @@ public final class ArtifactMatcher {
 
                 case 3:
                     if (!matches(parts[2], version)) {
-                        if (!AbstractVersionEnforcer.containsVersion(
+                        if (!containsVersion(
                                 VersionRange.createFromVersionSpec(parts[2]), new DefaultArtifactVersion(version))) {
                             return false;
                         }
@@ -215,5 +215,25 @@ public final class ArtifactMatcher {
      */
     public boolean match(Dependency dependency) {
         return match(p -> p.match(dependency));
+    }
+
+    /**
+     * Copied from Artifact.VersionRange. This is tweaked to handle singular ranges properly. Currently the default
+     * containsVersion method assumes a singular version means allow everything. This method assumes that "2.0.4" ==
+     * "[2.0.4,)"
+     *
+     * @param allowedRange range of allowed versions.
+     * @param theVersion   the version to be checked.
+     * @return true if the version is contained by the range.
+     */
+    public static boolean containsVersion(VersionRange allowedRange, ArtifactVersion theVersion) {
+        ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
+        if (recommendedVersion == null) {
+            return allowedRange.containsVersion(theVersion);
+        } else {
+            // only singular versions ever have a recommendedVersion
+            int compareTo = recommendedVersion.compareTo(theVersion);
+            return (compareTo <= 0);
+        }
     }
 }

@@ -29,9 +29,9 @@ Require Maven Version
 
    The following parameters are supported by this rule:
    
-   * message - an optional message to the user if the rule fails.
+   * <<message>> - an optional message to the user if the rule fails.
 
-   * {{{../enforcer-rules/apidocs/org/apache/maven/plugins/enforcer/AbstractVersionEnforcer.html#version}version}} - {{{./versionRanges.html}range}} of allowed Maven versions.
+   * <<version>> - {{{./versionRanges.html}range}} of allowed Maven versions.
    
    []
 
