@@ -18,6 +18,7 @@
  */
 package org.apache.maven.plugins.enforcer.internal;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -56,7 +57,7 @@ public class EnforcerRuleCache {
         logger.debug("Check cache for {} with id {}", ruleClass, cacheId);
 
         synchronized (this) {
-            List<String> cacheIdList = cache.computeIfAbsent(ruleClass, (k) -> new ArrayList<>());
+            List<String> cacheIdList = cache.computeIfAbsent(ruleClass, k -> new ArrayList<>());
             if (cacheIdList.contains(cacheId)) {
                 logger.debug("Already cached {} with id {}", ruleClass, cacheId);
                 return true;
@@ -66,5 +67,12 @@ public class EnforcerRuleCache {
         }
 
         return false;
+    }
+
+    @PreDestroy
+    public void cleanup() {
+        synchronized (this) {
+            cache.clear();
+        }
     }
 }

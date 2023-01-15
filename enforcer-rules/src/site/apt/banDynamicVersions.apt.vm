@@ -68,12 +68,9 @@ Ban Dynamic Versions
         * <<<org.apache.*:maven-*:*>>>
         
         []
-   
-  * <<message>> - an optional message to the user if the rule fails.
-  
+
   []
 
-   
   Sample Plugin Configuration:
   
 +---+

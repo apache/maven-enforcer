@@ -16,27 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.MavenArtifactRepository;
+import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.plugins.enforcer.MockProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
 
 /**
  * Test the "banned repositories" rule.
  *
  * @author <a href="mailto:wangyf2010@gmail.com">Simon Wang</a>
  */
-public class TestBannedRepositories {
-    private EnforcerRuleHelper helper;
+class TestBannedRepositories {
 
     private BannedRepositories rule;
 
@@ -44,18 +45,17 @@ public class TestBannedRepositories {
 
     @BeforeEach
     public void setUp() {
-        rule = new BannedRepositories();
-        rule.setMessage("my message");
-
         project = new MockProject();
         project.setGroupId("org.apache.maven.plugins.enforcer.test");
         project.setVersion("1.0-SNAPSHOT");
 
-        helper = EnforcerTestUtils.getHelper(project);
+        rule = new BannedRepositories(project);
+        rule.setMessage("my message");
+        rule.setLog(mock(EnforcerLogger.class));
     }
 
     @Test
-    public void testNoCheckRules() throws EnforcerRuleException {
+    void testNoCheckRules() throws EnforcerRuleException {
         ArtifactRepository repo1 = new MavenArtifactRepository("repo1", "http://repo1/", null, null, null);
         List<ArtifactRepository> repos = new ArrayList<>();
         repos.add(repo1);
@@ -63,11 +63,11 @@ public class TestBannedRepositories {
         project.setRemoteArtifactRepositories(repos);
         project.setPluginArtifactRepositories(repos);
 
-        rule.execute(helper);
+        rule.execute();
     }
 
     @Test
-    public void testBannedRepositories() {
+    void testBannedRepositories() {
         ArtifactRepository repo1 = new MavenArtifactRepository("repo1", "http://repo1/", null, null, null);
         ArtifactRepository repo2 = new MavenArtifactRepository("repo1", "http://repo1/test", null, null, null);
         ArtifactRepository repo3 = new MavenArtifactRepository("repo1", "http://repo2/test", null, null, null);
@@ -87,14 +87,14 @@ public class TestBannedRepositories {
         rule.setBannedRepositories(bannedRepositories);
 
         try {
-            rule.execute(helper);
+            rule.execute();
             fail("should throw exception");
         } catch (EnforcerRuleException e) {
         }
     }
 
     @Test
-    public void testAllowedRepositoriesAllOK() throws EnforcerRuleException {
+    void testAllowedRepositoriesAllOK() throws EnforcerRuleException {
         ArtifactRepository repo1 = new MavenArtifactRepository("repo1", "http://repo1/", null, null, null);
         ArtifactRepository repo2 = new MavenArtifactRepository("repo1", "http://repo1/test", null, null, null);
 
@@ -113,11 +113,11 @@ public class TestBannedRepositories {
         rule.setAllowedRepositories(bannedRepositories);
         rule.setAllowedPluginRepositories(bannedRepositories);
 
-        rule.execute(helper);
+        rule.execute();
     }
 
     @Test
-    public void testAllowedRepositoriesException() {
+    void testAllowedRepositoriesException() {
         ArtifactRepository repo1 = new MavenArtifactRepository("repo1", "http://repo1/", null, null, null);
         ArtifactRepository repo2 = new MavenArtifactRepository("repo1", "http://repo1/test", null, null, null);
         ArtifactRepository repo3 = new MavenArtifactRepository("repo1", "http://repo2/test", null, null, null);
@@ -138,7 +138,7 @@ public class TestBannedRepositories {
         rule.setAllowedRepositories(patterns);
 
         try {
-            rule.execute(helper);
+            rule.execute();
             fail("should throw exception");
         } catch (EnforcerRuleException e) {
         }

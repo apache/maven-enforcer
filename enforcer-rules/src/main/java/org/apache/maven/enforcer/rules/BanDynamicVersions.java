@@ -16,7 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.text.ChoiceFormat;
 import java.util.ArrayDeque;
@@ -31,15 +34,12 @@ import java.util.stream.Collectors;
 
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.enforcer.rules.utils.ArtifactMatcher;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
-import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.utils.logging.MessageBuilder;
 import org.apache.maven.shared.utils.logging.MessageUtils;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -50,7 +50,6 @@ import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
-import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
 import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
@@ -68,7 +67,8 @@ import org.eclipse.aether.version.VersionConstraint;
  *
  * @since 3.2.0
  */
-public class BanDynamicVersions extends AbstractNonCacheableEnforcerRule {
+@Named("banDynamicVersions")
+public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
 
     private static final String RELEASE = "RELEASE";
 
@@ -118,42 +118,23 @@ public class BanDynamicVersions extends AbstractNonCacheableEnforcerRule {
      * Any of the sections can be a wildcard by using '*' (e.g. {@code group:*:1.0}).
      * <br>
      * Any of the ignored dependencies may have dynamic versions.
-     *
-     * @see {@link #setIgnores(List)}
      */
     private List<String> ignores = null;
 
-    public void setIgnores(List<String> ignores) {
-        this.ignores = ignores;
-    }
+    private final MavenProject project;
 
-    public void setAllowSnapshots(boolean allowSnapshots) {
-        this.allowSnapshots = allowSnapshots;
-    }
+    private final RepositorySystem repoSystem;
 
-    public void setAllowLatest(boolean allowLatest) {
-        this.allowLatest = allowLatest;
-    }
+    private final MavenSession mavenSession;
 
-    public void setAllowRelease(boolean allowRelease) {
-        this.allowRelease = allowRelease;
-    }
-
-    public void setAllowRanges(boolean allowRanges) {
-        this.allowRanges = allowRanges;
-    }
-
-    public void setExcludeOptionals(boolean excludeOptionals) {
-        this.excludeOptionals = excludeOptionals;
-    }
-
-    public void setExcludedScopes(String[] excludedScopes) {
-        this.excludedScopes = excludedScopes;
+    @Inject
+    public BanDynamicVersions(MavenProject project, RepositorySystem repoSystem, MavenSession mavenSession) {
+        this.project = Objects.requireNonNull(project);
+        this.repoSystem = Objects.requireNonNull(repoSystem);
+        this.mavenSession = Objects.requireNonNull(mavenSession);
     }
 
     private final class BannedDynamicVersionCollector implements DependencyVisitor {
-
-        private final Log log;
 
         private final Deque<DependencyNode> nodeStack; // all intermediate nodes (without the root node)
 
@@ -167,8 +148,7 @@ public class BanDynamicVersions extends AbstractNonCacheableEnforcerRule {
             return numViolations;
         }
 
-        BannedDynamicVersionCollector(Log log, Predicate<DependencyNode> predicate) {
-            this.log = log;
+        BannedDynamicVersionCollector(Predicate<DependencyNode> predicate) {
             nodeStack = new ArrayDeque<>();
             this.predicate = predicate;
             this.isRoot = true;
@@ -193,7 +173,7 @@ public class BanDynamicVersions extends AbstractNonCacheableEnforcerRule {
                 }
                 return !allowRanges;
             } else {
-                log.warn("Unexpected version constraint found: " + versionConstraint);
+                getLog().warn("Unexpected version constraint found: " + versionConstraint);
             }
             return false;
         }
@@ -203,10 +183,10 @@ public class BanDynamicVersions extends AbstractNonCacheableEnforcerRule {
             if (isRoot) {
                 isRoot = false;
             } else {
-                log.debug("Found node " + node + " with version constraint " + node.getVersionConstraint());
+                getLog().debug("Found node " + node + " with version constraint " + node.getVersionConstraint());
                 if (predicate.test(node) && isBannedDynamicVersion(node.getVersionConstraint())) {
                     MessageBuilder msgBuilder = MessageUtils.buffer();
-                    log.warn(msgBuilder
+                    getLog().warn(msgBuilder
                             .a("Dependency ")
                             .strong(node.getDependency())
                             .mojo(dumpIntermediatePath(nodeStack))
@@ -229,27 +209,12 @@ public class BanDynamicVersions extends AbstractNonCacheableEnforcerRule {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        MavenProject project;
-        DefaultRepositorySystemSession newRepoSession;
-        RepositorySystem repoSystem;
-        List<RemoteRepository> remoteRepositories;
-        try {
-            project = (MavenProject) Objects.requireNonNull(helper.evaluate("${project}"), "${project} is null");
-            RepositorySystemSession repoSession = (RepositorySystemSession) Objects.requireNonNull(
-                    helper.evaluate("${repositorySystemSession}"), "${repositorySystemSession} is null");
-            // get a new session to be able to tweak the dependency selector
-            newRepoSession = new DefaultRepositorySystemSession(repoSession);
-            remoteRepositories = (List<RemoteRepository>) helper.evaluate("${project.remoteProjectRepositories}");
-            repoSystem = helper.getComponent(RepositorySystem.class);
-        } catch (ExpressionEvaluationException eee) {
-            throw new EnforcerRuleException("Cannot resolve expression", eee);
-        } catch (ComponentLookupException cle) {
-            throw new EnforcerRuleException("Unable to retrieve component RepositorySystem", cle);
-        }
-        Log log = helper.getLog();
+    public void execute() throws EnforcerRuleException {
+
+        // get a new session to be able to tweak the dependency selector
+        DefaultRepositorySystemSession newRepoSession =
+                new DefaultRepositorySystemSession(mavenSession.getRepositorySession());
 
         Collection<DependencySelector> depSelectors = new ArrayList<>();
         depSelectors.add(new ScopeDependencySelector(excludedScopes));
@@ -261,8 +226,7 @@ public class BanDynamicVersions extends AbstractNonCacheableEnforcerRule {
         Dependency rootDependency = RepositoryUtils.toDependency(project.getArtifact(), null);
         try {
             // use root dependency with unresolved direct dependencies
-            int numViolations = emitDependenciesWithBannedDynamicVersions(
-                    rootDependency, repoSystem, newRepoSession, remoteRepositories, log);
+            int numViolations = emitDependenciesWithBannedDynamicVersions(rootDependency, newRepoSession);
             if (numViolations > 0) {
                 ChoiceFormat dependenciesFormat = new ChoiceFormat("1#dependency|1<dependencies");
                 throw new EnforcerRuleException("Found " + numViolations + " "
@@ -295,14 +259,9 @@ public class BanDynamicVersions extends AbstractNonCacheableEnforcerRule {
         }
     }
 
-    protected int emitDependenciesWithBannedDynamicVersions(
-            org.eclipse.aether.graph.Dependency rootDependency,
-            RepositorySystem repoSystem,
-            RepositorySystemSession repoSession,
-            List<RemoteRepository> remoteRepositories,
-            Log log)
-            throws DependencyCollectionException {
-        CollectRequest collectRequest = new CollectRequest(rootDependency, remoteRepositories);
+    private int emitDependenciesWithBannedDynamicVersions(
+            Dependency rootDependency, RepositorySystemSession repoSession) throws DependencyCollectionException {
+        CollectRequest collectRequest = new CollectRequest(rootDependency, project.getRemoteProjectRepositories());
         CollectResult collectResult = repoSystem.collectDependencies(repoSession, collectRequest);
         Predicate<DependencyNode> predicate;
         if (ignores != null && !ignores.isEmpty()) {
@@ -310,9 +269,23 @@ public class BanDynamicVersions extends AbstractNonCacheableEnforcerRule {
         } else {
             predicate = d -> true;
         }
-        BannedDynamicVersionCollector bannedDynamicVersionCollector = new BannedDynamicVersionCollector(log, predicate);
+        BannedDynamicVersionCollector bannedDynamicVersionCollector = new BannedDynamicVersionCollector(predicate);
         DependencyVisitor depVisitor = new TreeDependencyVisitor(bannedDynamicVersionCollector);
         collectResult.getRoot().accept(depVisitor);
         return bannedDynamicVersionCollector.getNumViolations();
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "BanDynamicVersions[allowSnapshots=%b, allowLatest=%b, allowRelease=%b, allowRanges=%b, allowRangesWithIdenticalBounds=%b, excludeOptionals=%b, excludedScopes=%s, ignores=%s]",
+                allowSnapshots,
+                allowLatest,
+                allowRelease,
+                allowRanges,
+                allowRangesWithIdenticalBounds,
+                excludeOptionals,
+                excludedScopes,
+                ignores);
     }
 }

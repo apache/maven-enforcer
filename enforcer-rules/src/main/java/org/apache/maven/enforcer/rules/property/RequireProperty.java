@@ -37,9 +37,6 @@ public final class RequireProperty extends AbstractPropertyEnforcerRule {
 
     /**
      * Specify the required property.
-     *
-     * @see {@link #setProperty(String)}
-     * @see {@link #getPropertyName()}
      */
     private String property = null;
 
@@ -76,7 +73,7 @@ public final class RequireProperty extends AbstractPropertyEnforcerRule {
     @Override
     public String toString() {
         return String.format(
-                "RequireProperty[property=%s, message=%s, regex=%s, regexMessage=%s]",
-                property, getMessage(), getRegex(), getRegexMessage());
+                "RequireProperty[message=%s, property=%s, regex=%s, regexMessage=%s]",
+                getMessage(), property, getRegex(), getRegexMessage());
     }
 }

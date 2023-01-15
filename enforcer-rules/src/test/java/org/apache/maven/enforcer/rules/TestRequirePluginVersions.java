@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,26 +24,93 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.enforcer.rule.api.EnforcerLogger;
+import org.apache.maven.enforcer.rules.utils.EnforcerRuleUtils;
+import org.apache.maven.enforcer.rules.utils.ExpressionEvaluator;
 import org.apache.maven.enforcer.rules.utils.PluginWrapper;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.lifecycle.DefaultLifecycles;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.PluginManager;
+import org.apache.maven.plugins.enforcer.EnforcerTestUtils;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.rtinfo.RuntimeInformation;
+import org.codehaus.plexus.PlexusContainer;
+import org.eclipse.aether.RepositorySystem;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.when;
 
 /**
  * The Class TestRequirePluginVersions.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class TestRequirePluginVersions {
+@ExtendWith(MockitoExtension.class)
+class TestRequirePluginVersions {
+
+    @Mock
+    private PluginManager pluginManager;
+
+    @Mock
+    private ArtifactFactory factory;
+
+    @Mock
+    private RepositorySystem repositorySystem;
+
+    @Mock
+    private MavenSession session;
+
+    @Mock
+    private EnforcerRuleUtils utils;
+
+    @Mock
+    private RuntimeInformation runtimeInformation;
+
+    @Mock
+    private DefaultLifecycles defaultLifeCycles;
+
+    @Mock
+    private MavenProject project;
+
+    @Mock
+    private ExpressionEvaluator evaluator;
+
+    @Mock
+    private PlexusContainer container;
+
+    @InjectMocks
+    private RequirePluginVersions rule;
+
+    @BeforeEach
+    void setup() {
+        rule.setLog(Mockito.mock(EnforcerLogger.class));
+    }
 
     /**
      * Test has version specified.
      */
     @Test
-    public void testHasVersionSpecified() {
+    void testHasVersionSpecified() throws Exception {
+
+        when(evaluator.evaluate(anyString())).thenAnswer(i -> i.getArgument(0));
+        when(evaluator.evaluate(isNull())).thenReturn(null);
+
         Plugin source = new Plugin();
         source.setArtifactId("foo");
         source.setGroupId("group");
@@ -73,55 +140,55 @@ public class TestRequirePluginVersions {
 
         List<PluginWrapper> pluginWrappers = PluginWrapper.addAll(plugins, false);
 
-        RequirePluginVersions rule = new RequirePluginVersions();
         rule.setBanLatest(false);
         rule.setBanRelease(false);
         rule.setBanSnapshots(false);
 
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper();
-
-        assertTrue(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertTrue(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         // check that LATEST is allowed
         source.setArtifactId("c-artifact");
-        assertTrue(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertTrue(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         // check that LATEST is banned
         rule.setBanLatest(true);
-        assertFalse(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertFalse(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         // check that LATEST is exhaustively checked
         rule.setBanSnapshots(false);
         source.setArtifactId("f-artifact");
-        assertFalse(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertFalse(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         rule.setBanLatest(false);
         rule.setBanSnapshots(true);
-        assertFalse(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertFalse(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         // check that TIMESTAMP is allowed
         rule.setBanTimestamps(false);
         source.setArtifactId("g-artifact");
-        assertTrue(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertTrue(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         // check that RELEASE is allowed
         source.setArtifactId("d-artifact");
-        assertTrue(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertTrue(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         // check that RELEASE is banned
         rule.setBanRelease(true);
-        assertFalse(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertFalse(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         // check that RELEASE is exhaustively checked
         source.setArtifactId("e-artifact");
-        assertFalse(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertFalse(rule.hasValidVersionSpecified(source, pluginWrappers));
     }
 
     /**
      * Test has version specified with properties.
      */
     @Test
-    public void testHasVersionSpecifiedWithProperties() {
+    void testHasVersionSpecifiedWithProperties() throws Exception {
+
+        when(evaluator.evaluate(anyString())).thenAnswer(i -> ((String) i.getArgument(0)).replaceAll("\\$\\{|}", ""));
+
         Plugin source = new Plugin();
         source.setGroupId("group");
 
@@ -136,48 +203,45 @@ public class TestRequirePluginVersions {
 
         List<PluginWrapper> pluginWrappers = PluginWrapper.addAll(plugins, false);
 
-        RequirePluginVersions rule = new RequirePluginVersions();
         rule.setBanLatest(false);
         rule.setBanRelease(false);
         rule.setBanSnapshots(false);
 
-        EnforcerRuleHelper helper = EnforcerTestUtils.getHelper(true);
-
         source.setArtifactId("a-artifact");
-        assertTrue(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertTrue(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         source.setArtifactId("b-artifact");
-        assertTrue(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertTrue(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         source.setArtifactId("c-artifact");
-        assertTrue(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertTrue(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         source.setArtifactId("d-artifact");
-        assertTrue(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertTrue(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         // this one checks empty property values
         source.setArtifactId("e-artifact");
-        assertFalse(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertFalse(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         // this one checks empty property values
         source.setArtifactId("f-artifact");
-        assertFalse(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertFalse(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         rule.setBanLatest(true);
         source.setArtifactId("c-artifact");
-        assertFalse(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertFalse(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         rule.setBanRelease(true);
         source.setArtifactId("d-artifact");
-        assertFalse(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertFalse(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         rule.setBanSnapshots(true);
         source.setArtifactId("a-artifact");
-        assertFalse(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertFalse(rule.hasValidVersionSpecified(source, pluginWrappers));
 
         // release versions should pass everything
         source.setArtifactId("b-artifact");
-        assertTrue(rule.hasValidVersionSpecified(helper, source, pluginWrappers));
+        assertTrue(rule.hasValidVersionSpecified(source, pluginWrappers));
     }
 
     /**
@@ -186,8 +250,7 @@ public class TestRequirePluginVersions {
      * @throws MojoExecutionException the mojo execution exception
      */
     @Test
-    public void testGetAdditionalPluginsNull() throws MojoExecutionException {
-        RequirePluginVersions rule = new RequirePluginVersions();
+    void testGetAdditionalPluginsNull() throws MojoExecutionException {
         rule.addAdditionalPlugins(null, null);
     }
 
@@ -195,8 +258,7 @@ public class TestRequirePluginVersions {
      * Test get additional plugins invalid format.
      */
     @Test
-    public void testGetAdditionalPluginsInvalidFormat() {
-        RequirePluginVersions rule = new RequirePluginVersions();
+    void testGetAdditionalPluginsInvalidFormat() {
 
         List<String> additional = new ArrayList<>();
 
@@ -226,8 +288,7 @@ public class TestRequirePluginVersions {
      * @throws MojoExecutionException the mojo execution exception
      */
     @Test
-    public void testGetAdditionalPluginsEmptySet() throws MojoExecutionException {
-        RequirePluginVersions rule = new RequirePluginVersions();
+    void testGetAdditionalPluginsEmptySet() throws MojoExecutionException {
 
         Set<Plugin> plugins = new HashSet<>();
         plugins.add(EnforcerTestUtils.newPlugin("group", "a-artifact", "1.0"));
@@ -252,8 +313,7 @@ public class TestRequirePluginVersions {
      * @throws MojoExecutionException the mojo execution exception
      */
     @Test
-    public void testGetAdditionalPlugins() throws MojoExecutionException {
-        RequirePluginVersions rule = new RequirePluginVersions();
+    void testGetAdditionalPlugins() throws MojoExecutionException {
 
         Set<Plugin> plugins = new HashSet<>();
         plugins.add(EnforcerTestUtils.newPlugin("group", "a-artifact", "1.0"));
@@ -279,8 +339,7 @@ public class TestRequirePluginVersions {
      * @throws MojoExecutionException the mojo execution exception
      */
     @Test
-    public void testGetUncheckedPlugins() throws MojoExecutionException {
-        RequirePluginVersions rule = new RequirePluginVersions();
+    void testGetUncheckedPlugins() throws MojoExecutionException {
 
         Set<Plugin> plugins = new HashSet<>();
         plugins.add(EnforcerTestUtils.newPlugin("group", "a-artifact", "1.0"));
@@ -305,8 +364,7 @@ public class TestRequirePluginVersions {
      * Test combining values from both lists
      */
     @Test
-    public void testCombinePlugins() {
-        RequirePluginVersions rule = new RequirePluginVersions();
+    void testCombinePlugins() {
 
         Set<String> plugins = new HashSet<>();
         plugins.add("group:a-artifact");
@@ -329,8 +387,7 @@ public class TestRequirePluginVersions {
      * Test combining with an empty list
      */
     @Test
-    public void testCombinePlugins1() {
-        RequirePluginVersions rule = new RequirePluginVersions();
+    void testCombinePlugins1() {
 
         Set<String> plugins = new HashSet<>();
         Collection<String> results = rule.combineUncheckedPlugins(plugins, "group2:a,group3:b");
@@ -346,8 +403,7 @@ public class TestRequirePluginVersions {
      * Test combining with a null list
      */
     @Test
-    public void testCombinePlugins2() {
-        RequirePluginVersions rule = new RequirePluginVersions();
+    void testCombinePlugins2() {
 
         Collection<String> results = rule.combineUncheckedPlugins(null, "group2:a,group3:b");
 
@@ -362,8 +418,7 @@ public class TestRequirePluginVersions {
      * Test combining with an empty string
      */
     @Test
-    public void testCombinePlugins3() {
-        RequirePluginVersions rule = new RequirePluginVersions();
+    void testCombinePlugins3() {
 
         Set<String> plugins = new HashSet<>();
         plugins.add("group:a-artifact");
@@ -382,8 +437,7 @@ public class TestRequirePluginVersions {
      * Test combining with a null string
      */
     @Test
-    public void testCombinePlugins4() {
-        RequirePluginVersions rule = new RequirePluginVersions();
+    void testCombinePlugins4() {
 
         Set<String> plugins = new HashSet<>();
         plugins.add("group:a-artifact");
@@ -402,8 +456,7 @@ public class TestRequirePluginVersions {
      * Test combining with an invalid plugin string
      */
     @Test
-    public void testCombinePlugins5() {
-        RequirePluginVersions rule = new RequirePluginVersions();
+    void testCombinePlugins5() {
 
         Set<String> plugins = new HashSet<>();
         plugins.add("group:a-artifact");
@@ -422,9 +475,9 @@ public class TestRequirePluginVersions {
     /**
      * Assert contains plugin.
      *
-     * @param group the group
+     * @param group    the group
      * @param artifact the artifact
-     * @param theSet the the set
+     * @param theSet   the the set
      */
     private void assertContainsPlugin(String group, String artifact, Collection<Plugin> theSet) {
         Plugin p = new Plugin();
@@ -436,9 +489,9 @@ public class TestRequirePluginVersions {
     /**
      * Assert doesn't contain plugin.
      *
-     * @param group the group
+     * @param group    the group
      * @param artifact the artifact
-     * @param theSet the the set
+     * @param theSet   the the set
      */
     private void assertNotContainPlugin(String group, String artifact, Collection<Plugin> theSet) {
         Plugin p = new Plugin();
@@ -451,8 +504,7 @@ public class TestRequirePluginVersions {
      * Test id.
      */
     @Test
-    public void testId() {
-        RequirePluginVersions rule = new RequirePluginVersions();
+    void testId() {
         rule.getCacheId();
     }
 }

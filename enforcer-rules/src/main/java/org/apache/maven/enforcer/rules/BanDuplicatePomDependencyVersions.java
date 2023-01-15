@@ -16,7 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,16 +27,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
+import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -43,16 +46,18 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @author Robert Scholte
  * @since 1.3
  */
-public class BanDuplicatePomDependencyVersions extends AbstractNonCacheableEnforcerRule {
+@Named("banDuplicatePomDependencyVersions")
+public final class BanDuplicatePomDependencyVersions extends AbstractStandardEnforcerRule {
+
+    private final MavenProject project;
+
+    @Inject
+    public BanDuplicatePomDependencyVersions(MavenProject project) {
+        this.project = Objects.requireNonNull(project);
+    }
+
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        // get the project
-        MavenProject project;
-        try {
-            project = (MavenProject) helper.evaluate("${project}");
-        } catch (ExpressionEvaluationException eee) {
-            throw new EnforcerRuleException("Unable to retrieve the MavenProject: ", eee);
-        }
+    public void execute() throws EnforcerRuleException {
 
         // re-read model, because M3 uses optimized model
         MavenXpp3Reader modelReader = new MavenXpp3Reader();
@@ -61,7 +66,7 @@ public class BanDuplicatePomDependencyVersions extends AbstractNonCacheableEnfor
         try (FileInputStream pomInputStream = new FileInputStream(project.getFile())) {
             model = modelReader.read(pomInputStream, false);
         } catch (IOException | XmlPullParserException e) {
-            throw new EnforcerRuleException("Unable to retrieve the MavenProject: ", e);
+            throw new EnforcerRuleError("Unable to retrieve the MavenProject: ", e);
         }
 
         // @todo reuse ModelValidator when possible
@@ -78,14 +83,14 @@ public class BanDuplicatePomDependencyVersions extends AbstractNonCacheableEnfor
 
         // if( modelValidator == null )
         // {
-        maven2Validation(helper, model);
+        maven2Validation(model);
         // }
         // else
         // {
         // }
     }
 
-    private void maven2Validation(EnforcerRuleHelper helper, Model model) throws EnforcerRuleException {
+    private void maven2Validation(Model model) throws EnforcerRuleException {
         List<Dependency> dependencies = model.getDependencies();
         Map<String, Integer> duplicateDependencies = validateDependencies(dependencies);
 

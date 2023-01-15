@@ -30,9 +30,9 @@ Beanshell
 
    The following parameters are supported by this rule:
    
-   * condition - the beanshell statement to evaluate.
+   * <<condition>> - the beanshell statement to evaluate.
    
-   * message - an optional message to the user if the rule fails.
+   * <<message>> - an optional message to the user if the rule fails.
    
    []
 

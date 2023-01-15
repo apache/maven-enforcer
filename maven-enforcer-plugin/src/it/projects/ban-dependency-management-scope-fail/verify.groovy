@@ -17,7 +17,7 @@
  * under the License.
  */
 File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( '[ERROR] Rule 0: org.apache.maven.plugins.enforcer.BanDependencyManagementScope failed with message:' )
+assert buildLog.text.contains( '[ERROR] Rule 0: org.apache.maven.enforcer.rules.BanDependencyManagementScope failed with message:' )
 assert buildLog.text.contains( 'Scope other than \'import\' is not allowed in \'dependencyManagement\'' )
 assert buildLog.text.contains( 'Banned scope \'provided\' used on dependency \'org.apache.maven.plugins.enforcer.its:menforcer138_archiver:jar\' @ line 65, column 19' )
 assert buildLog.text.contains( 'Banned scope \'test\' used on dependency \'org.apache.maven.plugins.enforcer.its:menforcer138_utils:jar\' @ line 71, column 19' )

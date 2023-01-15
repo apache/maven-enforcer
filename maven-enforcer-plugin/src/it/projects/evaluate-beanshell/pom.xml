@@ -46,6 +46,9 @@ under the License.
                 <evaluateBeanshell>
                   <condition>${project.artifactId} == test</condition>
                 </evaluateBeanshell>
+                <evaluateBeanshell>
+                  <condition>${project.version} == 1.0</condition>
+                </evaluateBeanshell>
               </rules>
             </configuration>
           </execution>

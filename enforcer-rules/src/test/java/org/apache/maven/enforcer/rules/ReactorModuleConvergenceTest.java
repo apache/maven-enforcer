@@ -16,18 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.execution.ProjectDependencyGraph;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,21 +41,16 @@ import static org.mockito.Mockito.when;
  *
  * @author <a href="mailto:khmarbaise@apache.org">Karl Heinz Marbaise</a>
  */
-public class ReactorModuleConvergenceTest {
+class ReactorModuleConvergenceTest {
     private MavenSession session;
-
-    private EnforcerRuleHelper helper;
 
     private ReactorModuleConvergence rule;
 
     @BeforeEach
     public void before() throws ExpressionEvaluationException {
         session = mock(MavenSession.class);
-        helper = mock(EnforcerRuleHelper.class);
-        when(helper.evaluate("${session}")).thenReturn(session);
-        when(helper.getLog()).thenReturn(mock(Log.class));
-
-        rule = new ReactorModuleConvergence();
+        rule = new ReactorModuleConvergence(session);
+        rule.setLog(mock(EnforcerLogger.class));
     }
 
     private void setupSortedProjects(List<MavenProject> projectList) {
@@ -66,14 +60,14 @@ public class ReactorModuleConvergenceTest {
     }
 
     @Test
-    public void shouldNotFailWithNoProject() throws EnforcerRuleException {
+    void shouldNotFailWithNoProject() throws EnforcerRuleException {
         setupSortedProjects(Collections.emptyList());
 
-        rule.execute(helper);
+        rule.execute();
     }
 
     @Test
-    public void shouldNotFailWithAValidProject() throws EnforcerRuleException {
+    void shouldNotFailWithAValidProject() throws EnforcerRuleException {
         MavenProject mp1 = createProjectParent();
         MavenProject mp2 = createProjectChild1(mp1);
         MavenProject mp3 = createProjectChild2(mp1);
@@ -81,11 +75,11 @@ public class ReactorModuleConvergenceTest {
         List<MavenProject> theList = Arrays.asList(mp1, mp2, mp3);
         setupSortedProjects(theList);
 
-        rule.execute(helper);
+        rule.execute();
     }
 
     @Test
-    public void shouldFailWithWrongVersionInOneChild() {
+    void shouldFailWithWrongVersionInOneChild() {
         assertThrows(EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
             MavenProject mp2 = createProjectChild1(mp1);
@@ -94,7 +88,7 @@ public class ReactorModuleConvergenceTest {
             List<MavenProject> theList = Arrays.asList(mp1, mp2, mp3);
             setupSortedProjects(theList);
 
-            rule.execute(helper);
+            rule.execute();
 
             // intentionally no assertTrue() cause we expect getting an exception.
         });
@@ -103,7 +97,7 @@ public class ReactorModuleConvergenceTest {
     }
 
     @Test
-    public void shouldFailWithWrongParent() {
+    void shouldFailWithWrongParent() {
         assertThrows(EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
 
@@ -120,7 +114,7 @@ public class ReactorModuleConvergenceTest {
             List<MavenProject> theList = Arrays.asList(mp1, mp2, mp3);
             setupSortedProjects(theList);
 
-            rule.execute(helper);
+            rule.execute();
 
             // intentionally no assertTrue() cause we expect getting an exception.
         });
@@ -129,7 +123,7 @@ public class ReactorModuleConvergenceTest {
     }
 
     @Test
-    public void shouldNotFailWithACompanyParent() throws EnforcerRuleException {
+    void shouldNotFailWithACompanyParent() throws EnforcerRuleException {
         MavenProject companyParent = createCompanyParent();
         MavenProject mp1 = createProjectParent(companyParent);
 
@@ -139,11 +133,11 @@ public class ReactorModuleConvergenceTest {
         List<MavenProject> theList = Arrays.asList(mp1, mp2, mp3);
         setupSortedProjects(theList);
 
-        rule.execute(helper);
+        rule.execute();
     }
 
     @Test
-    public void shouldFailWithMissingParentsInReactory() {
+    void shouldFailWithMissingParentsInReactory() {
         assertThrows(EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
             MavenProject mp2 = createProjectChild1(mp1);
@@ -152,12 +146,12 @@ public class ReactorModuleConvergenceTest {
             List<MavenProject> theList = Arrays.asList(mp1, mp2, mp3);
             setupSortedProjects(theList);
 
-            rule.execute(helper);
+            rule.execute();
         });
     }
 
     @Test
-    public void shouldFailWithAParentWhichIsNotPartOfTheReactory() {
+    void shouldFailWithAParentWhichIsNotPartOfTheReactory() {
         assertThrows(EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
 
@@ -174,7 +168,7 @@ public class ReactorModuleConvergenceTest {
             List<MavenProject> theList = Arrays.asList(mp1, mp2, mp3);
             setupSortedProjects(theList);
 
-            rule.execute(helper);
+            rule.execute();
 
             // intentionally no assertTrue() cause we expect getting an exception.
         });
@@ -183,7 +177,7 @@ public class ReactorModuleConvergenceTest {
     }
 
     @Test
-    public void shouldNotFailWithDependencyInReactory() throws EnforcerRuleException {
+    void shouldNotFailWithDependencyInReactory() throws EnforcerRuleException {
         MavenProject mp1 = createProjectParent();
         MavenProject mp2 = createProjectChild1(mp1);
 
@@ -199,11 +193,11 @@ public class ReactorModuleConvergenceTest {
         List<MavenProject> theList = Arrays.asList(mp1, mp2, mp3);
         setupSortedProjects(theList);
 
-        rule.execute(helper);
+        rule.execute();
     }
 
     @Test
-    public void shouldFailWithWrongDependencyInReactor() {
+    void shouldFailWithWrongDependencyInReactor() {
         assertThrows(EnforcerRuleException.class, () -> {
             MavenProject mp1 = createProjectParent();
             MavenProject mp2 = createProjectChild1(mp1);
@@ -219,7 +213,7 @@ public class ReactorModuleConvergenceTest {
             List<MavenProject> theList = Arrays.asList(mp1, mp2, mp3);
             setupSortedProjects(theList);
 
-            rule.execute(helper);
+            rule.execute();
 
             // intentionally no assertTrue() cause we expect getting an exception.
         });

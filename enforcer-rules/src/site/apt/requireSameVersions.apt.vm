@@ -30,15 +30,15 @@
 
    The following parameters are supported by this rule:
    
-   * dependencies - an optional list of dependency patterns
+   * <<dependencies>> - an optional list of dependency patterns
    
-   * buildPlugins - an optional list of build plugin patterns
+   * <<buildPlugins>> - an optional list of build plugin patterns
    
-   * reportPlugins - an optional list of report plugin patterns
+   * <<reportPlugins>> - an optional list of report plugin patterns
    
-   * plugins - an optional list of both build and report plugin patterns
+   * <<plugins>> - an optional list of both build and report plugin patterns
     
-   * uniqueVersions - if SNAPSHOTs should be compared by their timestamped version or not. Default: false 
+   * <<uniqueVersions>> - if SNAPSHOTs should be compared by their timestamped version or not. Default: false
 
    []
 

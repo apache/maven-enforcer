@@ -16,14 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import java.util.Objects;
 
 import bsh.EvalError;
 import bsh.Interpreter;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.plugin.logging.Log;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -31,36 +35,40 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author hugonnem
  */
-public class EvaluateBeanshell extends AbstractNonCacheableEnforcerRule {
+@Named("evaluateBeanshell")
+public final class EvaluateBeanshell extends AbstractStandardEnforcerRule {
 
     /** Beanshell interpreter. */
-    private static final ThreadLocal<Interpreter> INTERPRETER = ThreadLocal.withInitial(Interpreter::new);
+    private final Interpreter interpreter = new Interpreter();
 
     /** The condition to be evaluated.
-     *
-     * @see {@link #setCondition(String)}
-     * @see {@link #getCondition()}
      * */
     private String condition;
 
-    public final void setCondition(String condition) {
+    private final ExpressionEvaluator evaluator;
+
+    @Inject
+    public EvaluateBeanshell(ExpressionEvaluator evaluator) {
+        this.evaluator = Objects.requireNonNull(evaluator);
+    }
+
+    public void setCondition(String condition) {
         this.condition = condition;
     }
 
-    public final String getCondition() {
+    public String getCondition() {
         return condition;
     }
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        Log log = helper.getLog();
+    public void execute() throws EnforcerRuleException {
 
         try {
-            log.debug("Echo condition : " + this.condition);
+            getLog().debug("Echo condition : " + condition);
             // Evaluate condition within Plexus Container
-            String script = (String) helper.evaluate(this.condition);
-            log.debug("Echo script : " + script);
-            if (!evaluateCondition(script, log)) {
+            String script = (String) evaluator.evaluate(condition);
+            getLog().debug("Echo script : " + script);
+            if (!evaluateCondition(script)) {
                 String message = getMessage();
                 if (StringUtils.isEmpty(message)) {
                     message = "The expression \"" + condition + "\" is not true.";
@@ -76,18 +84,22 @@ public class EvaluateBeanshell extends AbstractNonCacheableEnforcerRule {
      * Evaluate expression using Beanshell.
      *
      * @param script the expression to be evaluated
-     * @param log the logger
      * @return boolean the evaluation of the expression
      * @throws EnforcerRuleException if the script could not be evaluated
      */
-    protected boolean evaluateCondition(String script, Log log) throws EnforcerRuleException {
+    private boolean evaluateCondition(String script) throws EnforcerRuleException {
         Boolean evaluation;
         try {
-            evaluation = (Boolean) INTERPRETER.get().eval(script);
-            log.debug("Echo evaluating : " + evaluation);
+            evaluation = (Boolean) interpreter.eval(script);
+            getLog().debug("Echo evaluating : " + evaluation);
         } catch (EvalError ex) {
             throw new EnforcerRuleException("Couldn't evaluate condition: " + script, ex);
         }
-        return evaluation.booleanValue();
+        return evaluation;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("EvaluateBeanshell[message=%s, condition=%s]", getMessage(), condition);
     }
 }

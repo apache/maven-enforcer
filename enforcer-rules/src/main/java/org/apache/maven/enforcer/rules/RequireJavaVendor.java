@@ -125,7 +125,6 @@ public final class RequireJavaVendor extends AbstractStandardEnforcerRule {
     @Override
     public String toString() {
         return String.format(
-                "RequireJavaVendor[level=%s, message=%s, includes=%s, excludes=%s]",
-                getLevel(), getMessage(), includes, excludes);
+                "RequireJavaVendor[message=%s, includes=%s, excludes=%s]", getMessage(), includes, excludes);
     }
 }

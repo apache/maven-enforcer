@@ -35,18 +35,18 @@ Banned Specified Repositories
 
 * Support Parameters
 
-   * banRepositories - Specify banned non-plugin repositories. This is a black list of http/https url patterns.
+   * <<banRepositories>> - Specify banned non-plugin repositories. This is a black list of http/https url patterns.
 
-   * banPluginRepositories - Specify banned plugin repositories. This is a black list of http/https url patterns.
+   * <<banPluginRepositories>> - Specify banned plugin repositories. This is a black list of http/https url patterns.
 
-   * allowedRepositories - Specify explicitly allowed non-plugin repositories. This is a white list of http/https url patterns.
+   * <<allowedRepositories>> - Specify explicitly allowed non-plugin repositories. This is a white list of http/https url patterns.
 
-   * allowedPluginRepositories - Specify explicitly allowed plugin repositories. This is a white list of http/https url patternes.
+   * <<allowedPluginRepositories>> - Specify explicitly allowed plugin repositories. This is a white list of http/https url patternes.
 
 * Sample Configuration
 
    For example, one company want to limit repositories usage. But different developers might use different settings.xml.
-   Even their projects' pom defined different repostories too.
+   Even their projects' pom defined different repositories too.
    For this case, could leverage this enforcer rule to banned specified repositories or even use allowedRepositories/allowedPluginRepositories to banned others unexpected repositories.
    
    Ex. http://repo1/xyz is the repository that want to be banned.
@@ -106,7 +106,7 @@ Banned Specified Repositories
 
    * http/https url patterns support wildcard "*"
    
-   * This rule will detect banned repositories on maven session itself istead of pom or settings, so if users defined "mirrorOf" in settings.xml, even defined banned repositories in pom.xml, it won't be detected.
+   * This rule will detect banned repositories on maven session itself instead of pom or settings, so if users defined "mirrorOf" in settings.xml, even defined banned repositories in pom.xml, it won't be detected.
 
 +---+
 	<mirrors>

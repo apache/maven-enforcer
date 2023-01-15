@@ -250,8 +250,9 @@ public final class RequireNoRepositories extends AbstractStandardEnforcerRule {
     @Override
     public String toString() {
         return String.format(
-                "RequireNoRepositories[banRepositories=%b, allowSnapshotRepositories=%b, allowedRepositories=%s, "
+                "RequireNoRepositories[message=%s, banRepositories=%b, allowSnapshotRepositories=%b, allowedRepositories=%s, "
                         + "banPluginRepositories=%b, allowSnapshotPluginRepositories=%b, allowedPluginRepositories=%s]",
+                getMessage(),
                 banRepositories,
                 allowSnapshotRepositories,
                 allowedRepositories,

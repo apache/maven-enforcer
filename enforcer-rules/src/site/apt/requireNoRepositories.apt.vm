@@ -29,17 +29,19 @@ Require No Repositories
 
    The following parameters are supported by this rule:
 
-   * banRepositories - Whether to ban non-plugin repositories. By default they are banned (true).
+   * <<banRepositories>> - Whether to ban non-plugin repositories. By default they are banned (true).
 
-   * banPluginRepositories - Whether to ban plugin repositories. By default they are banned (true).
+   * <<banPluginRepositories>> - Whether to ban plugin repositories. By default they are banned (true).
 
-   * allowedRepositories - Specify explicitly allowed non-plugin repositories. This is a list of ids.
+   * <<allowedRepositories>> - Specify explicitly allowed non-plugin repositories. This is a list of ids.
 
-   * allowedPluginRepositories - Specify explicitly allowed plugin repositories. This is a list of ids.
+   * <<allowedPluginRepositories>> - Specify explicitly allowed plugin repositories. This is a list of ids.
 
-   * allowSnapshotRepositories - Whether to allow repositories which only resolve snapshots. By default they are banned (false).
+   * <<allowSnapshotRepositories>> - Whether to allow repositories which only resolve snapshots. By default they are banned (false).
 
-   * allowSnapshotPluginRepositories - Whether to allow plugin repositories which only resolve snapshots. By default they are banned (false).
+   * <<allowSnapshotPluginRepositories>> - Whether to allow plugin repositories which only resolve snapshots. By default they are banned (false).
+
+   * <<message>> - an optional message to the user if the rule fails.
 
    []
 

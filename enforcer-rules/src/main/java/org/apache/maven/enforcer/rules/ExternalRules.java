@@ -42,7 +42,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * @since 3.2.0
  */
 @Named("externalRules")
-public class ExternalRules extends AbstractEnforcerRuleConfigProvider {
+public final class ExternalRules extends AbstractEnforcerRuleConfigProvider {
     private static final String LOCATION_PREFIX_CLASSPATH = "classpath:";
 
     /**

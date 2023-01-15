@@ -16,23 +16,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Prerequisites;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
  * @author Robert Scholte
  * @since 1.3
  */
-public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule {
+@Named("requirePrerequisite")
+public final class RequirePrerequisite extends AbstractStandardEnforcerRule {
     /**
      * Only the projects with one of these packagings will be enforced to have the correct prerequisite.
      *
@@ -44,6 +47,13 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule {
      * Can either be version or a range, e.g. {@code 2.2.1} or {@code [2.2.1,)}
      */
     private String mavenVersion;
+
+    private final MavenProject project;
+
+    @Inject
+    public RequirePrerequisite(MavenProject project) {
+        this.project = Objects.requireNonNull(project);
+    }
 
     /**
      * Set the mavenVersion Can either be version or a range, e.g. {@code 2.2.1} or {@code [2.2.1,)}
@@ -65,20 +75,17 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule {
     }
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
+    public void execute() throws EnforcerRuleException {
         try {
-            MavenProject project = (MavenProject) helper.evaluate("${project}");
 
             if ("pom".equals(project.getPackaging())) {
-                helper.getLog().debug("Packaging is pom, skipping requirePrerequisite rule");
+                getLog().debug("Packaging is pom, skipping requirePrerequisite rule");
                 return;
             }
 
             if (packagings != null && !packagings.contains(project.getPackaging())) {
-                // CHECKSTYLE_OFF: LineLength
-                helper.getLog().debug("Packaging is " + project.getPackaging() + ", skipping requirePrerequisite rule");
+                getLog().debug("Packaging is " + project.getPackaging() + ", skipping requirePrerequisite rule");
                 return;
-                // CHECKSTYLE_ON: LineLength
             }
 
             Prerequisites prerequisites = project.getPrerequisites();
@@ -104,8 +111,13 @@ public class RequirePrerequisite extends AbstractNonCacheableEnforcerRule {
                             + " ) doesn't match the required version: " + mavenVersion);
                 }
             }
-        } catch (ExpressionEvaluationException | InvalidVersionSpecificationException e) {
+        } catch (InvalidVersionSpecificationException e) {
             throw new EnforcerRuleException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("RequirePrerequisite[packagings=%s, mavenVersion=%s]", packagings, mavenVersion);
     }
 }

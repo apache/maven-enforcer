@@ -43,6 +43,6 @@ public final class AlwaysFail extends AbstractStandardEnforcerRule {
 
     @Override
     public String toString() {
-        return String.format("AlwaysFail[level=%s, message=%s]", getLevel(), getMessage());
+        return String.format("AlwaysFail[message=%s]", getMessage());
     }
 }

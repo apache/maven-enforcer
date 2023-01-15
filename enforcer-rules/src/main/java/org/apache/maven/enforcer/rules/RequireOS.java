@@ -40,7 +40,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 @Named("requireOS")
-public class RequireOS extends AbstractStandardEnforcerRule {
+public final class RequireOS extends AbstractStandardEnforcerRule {
     private final ProfileActivator activator;
 
     /**
@@ -263,7 +263,7 @@ public class RequireOS extends AbstractStandardEnforcerRule {
     /**
      * @param display The value for the display.
      */
-    public final void setDisplay(boolean display) {
+    public void setDisplay(boolean display) {
         this.display = display;
     }
 
@@ -284,5 +284,12 @@ public class RequireOS extends AbstractStandardEnforcerRule {
             b.append(family.hashCode());
         }
         return b.toString();
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "RequireOS[message=%s, arch=%s, family=%s, name=%s, version=%s, display=%b]",
+                getMessage(), arch, family, name, version, display);
     }
 }

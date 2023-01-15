@@ -16,16 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -33,75 +35,71 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class RequireActiveProfile extends AbstractNonCacheableEnforcerRule {
+@Named("requireActiveProfile")
+public final class RequireActiveProfile extends AbstractStandardEnforcerRule {
 
     /** Comma separated list of profiles to check.
-     *
-     * @see {@link #setProfiles(String)}
-     * @see {@link #getProfiles()}
      */
     private String profiles = null;
 
     /** If all profiles must be active. If false, only one must be active
-     *
-     * @see {@link #setAll(boolean)}
-     * @see {@link #isAll()}
      */
     private boolean all = true;
 
-    public final String getProfiles() {
+    private final MavenProject project;
+
+    @Inject
+    public RequireActiveProfile(MavenProject project) {
+        this.project = Objects.requireNonNull(project);
+    }
+
+    public String getProfiles() {
         return profiles;
     }
 
-    public final void setProfiles(String profiles) {
+    public void setProfiles(String profiles) {
         this.profiles = profiles;
     }
 
-    public final boolean isAll() {
+    public boolean isAll() {
         return all;
     }
 
-    public final void setAll(boolean all) {
+    public void setAll(boolean all) {
         this.all = all;
     }
 
     @Override
-    public void execute(EnforcerRuleHelper theHelper) throws EnforcerRuleException {
+    public void execute() throws EnforcerRuleException {
         List<String> missingProfiles = new ArrayList<>();
-        try {
-            MavenProject project = (MavenProject) theHelper.evaluate("${project}");
-            if (StringUtils.isNotEmpty(profiles)) {
-                String[] profileIds = profiles.split(",");
-                for (String profileId : profileIds) {
-                    if (!isProfileActive(project, profileId)) {
-                        missingProfiles.add(profileId);
-                    }
-                }
-
-                boolean fail = false;
-                if (!missingProfiles.isEmpty()) {
-                    if (all || missingProfiles.size() == profileIds.length) {
-                        fail = true;
-                    }
-                }
-
-                if (fail) {
-                    String message = getMessage();
-                    StringBuilder buf = new StringBuilder();
-                    if (message != null) {
-                        buf.append(message + System.lineSeparator());
-                    }
-
-                    for (String profile : missingProfiles) {
-                        buf.append("Profile \"" + profile + "\" is not activated." + System.lineSeparator());
-                    }
-
-                    throw new EnforcerRuleException(buf.toString());
+        if (StringUtils.isNotEmpty(profiles)) {
+            String[] profileIds = profiles.split(",");
+            for (String profileId : profileIds) {
+                if (!isProfileActive(project, profileId)) {
+                    missingProfiles.add(profileId);
                 }
             }
 
-        } catch (ExpressionEvaluationException e) {
-            throw new EnforcerRuleException("Unable to retrieve the project.", e);
+            boolean fail = false;
+            if (!missingProfiles.isEmpty()) {
+                if (all || missingProfiles.size() == profileIds.length) {
+                    fail = true;
+                }
+            }
+
+            if (fail) {
+                String message = getMessage();
+                StringBuilder buf = new StringBuilder();
+                if (message != null) {
+                    buf.append(message + System.lineSeparator());
+                }
+
+                for (String profile : missingProfiles) {
+                    buf.append("Profile \"" + profile + "\" is not activated." + System.lineSeparator());
+                }
+
+                throw new EnforcerRuleException(buf.toString());
+            }
         }
     }
 
@@ -112,7 +110,7 @@ public class RequireActiveProfile extends AbstractNonCacheableEnforcerRule {
      * @param profileId the profile name
      * @return <code>true</code> if profile is active, otherwise <code>false</code>
      */
-    protected boolean isProfileActive(MavenProject project, String profileId) {
+    private boolean isProfileActive(MavenProject project, String profileId) {
         for (Map.Entry<String, List<String>> entry :
                 project.getInjectedProfileIds().entrySet()) {
             if (entry.getValue().contains(profileId)) {
@@ -120,5 +118,10 @@ public class RequireActiveProfile extends AbstractNonCacheableEnforcerRule {
             }
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("RequireActiveProfile[message=%s, profiles=%s, all=%b]", getMessage(), profiles, all);
     }
 }

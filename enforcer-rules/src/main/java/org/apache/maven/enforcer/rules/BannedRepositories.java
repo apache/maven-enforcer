@@ -16,17 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -34,7 +36,8 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author <a href="mailto:wangyf2010@gmail.com">Simon Wang</a>
  */
-public class BannedRepositories extends AbstractNonCacheableEnforcerRule {
+@Named("bannedRepositories")
+public final class BannedRepositories extends AbstractStandardEnforcerRule {
 
     // ----------------------------------------------------------------------
     // Mojo parameters
@@ -43,63 +46,53 @@ public class BannedRepositories extends AbstractNonCacheableEnforcerRule {
     /**
      * Specify explicitly banned non-plugin repositories. This is a list of repository url patterns. Support wildcard
      * "*".
-     *
-     * @see {@link #setBannedRepositories(List)}
      */
     private List<String> bannedRepositories = Collections.emptyList();
 
     /**
      * Specify explicitly banned plugin repositories. This is a list of repository url patterns. Support wildcard "*".
-     *
-     * @see {@link #setBannedPluginRepositories(List)}
      */
     private List<String> bannedPluginRepositories = Collections.emptyList();
 
     /**
      * Specify explicitly allowed non-plugin repositories, then all others repositories would be banned. This is a list
      * of repository url patterns. Support wildcard "*".
-     *
-     * @see {@link #setAllowedRepositories(List)}
      */
     private List<String> allowedRepositories = Collections.emptyList();
 
     /**
      * Specify explicitly allowed plugin repositories, then all others repositories would be banned. This is a list of
      * repository url patterns. Support wildcard "*".
-     *
-     * @see {@link #setAllowedPluginRepositories(List)}
      */
     private List<String> allowedPluginRepositories = Collections.emptyList();
+
+    private final MavenProject project;
+
+    @Inject
+    public BannedRepositories(MavenProject project) {
+        this.project = Objects.requireNonNull(project);
+    }
 
     // ----------------------------------------------------------------------
     // Public methods
     // ----------------------------------------------------------------------
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        MavenProject project;
-        try {
-            project = (MavenProject) helper.evaluate("${project}");
+    public void execute() throws EnforcerRuleException {
 
-            List<ArtifactRepository> resultBannedRepos = checkRepositories(
-                    project.getRemoteArtifactRepositories(), this.allowedRepositories, this.bannedRepositories);
+        List<ArtifactRepository> resultBannedRepos = checkRepositories(
+                project.getRemoteArtifactRepositories(), this.allowedRepositories, this.bannedRepositories);
 
-            List<ArtifactRepository> resultBannedPluginRepos = checkRepositories(
-                    project.getPluginArtifactRepositories(),
-                    this.allowedPluginRepositories,
-                    this.bannedPluginRepositories);
+        List<ArtifactRepository> resultBannedPluginRepos = checkRepositories(
+                project.getPluginArtifactRepositories(), this.allowedPluginRepositories, this.bannedPluginRepositories);
 
-            String repoErrMsg = populateErrorMessage(resultBannedRepos, " ");
-            String pluginRepoErrMsg = populateErrorMessage(resultBannedPluginRepos, " plugin ");
+        String repoErrMsg = populateErrorMessage(resultBannedRepos, " ");
+        String pluginRepoErrMsg = populateErrorMessage(resultBannedPluginRepos, " plugin ");
 
-            String errMsg = repoErrMsg + pluginRepoErrMsg;
+        String errMsg = repoErrMsg + pluginRepoErrMsg;
 
-            if (errMsg != null && !StringUtils.isEmpty(errMsg)) {
-                throw new EnforcerRuleException(errMsg);
-            }
-
-        } catch (ExpressionEvaluationException e) {
-            throw new EnforcerRuleException(e.getLocalizedMessage());
+        if (errMsg != null && !StringUtils.isEmpty(errMsg)) {
+            throw new EnforcerRuleException(errMsg);
         }
     }
 
@@ -109,10 +102,6 @@ public class BannedRepositories extends AbstractNonCacheableEnforcerRule {
 
     protected void setBannedRepositories(List<String> bannedRepositories) {
         this.bannedRepositories = bannedRepositories;
-    }
-
-    protected void setBannedPluginRepositories(List<String> bannedPluginRepositories) {
-        this.bannedPluginRepositories = bannedPluginRepositories;
     }
 
     protected void setAllowedRepositories(List<String> allowedRepositories) {
@@ -137,6 +126,10 @@ public class BannedRepositories extends AbstractNonCacheableEnforcerRule {
      */
     private List<ArtifactRepository> checkRepositories(
             List<ArtifactRepository> repositories, List<String> includes, List<String> excludes) {
+
+        getLog().debug(() -> String.format(
+                "Check repositories: %s, for includes=%s and excludes=%s", repositories, includes, excludes));
+
         List<ArtifactRepository> bannedRepos = new ArrayList<>();
 
         for (ArtifactRepository repo : repositories) {
@@ -185,5 +178,12 @@ public class BannedRepositories extends AbstractNonCacheableEnforcerRule {
             urls.append(repo.getId() + " - " + repo.getUrl() + System.lineSeparator());
         }
         return urls.toString();
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "BannedRepositories[bannedRepositories=%s, bannedPluginRepositories=%s, allowedRepositories=%s, allowedPluginRepositories=%s",
+                bannedRepositories, bannedPluginRepositories, allowedRepositories, allowedPluginRepositories);
     }
 }

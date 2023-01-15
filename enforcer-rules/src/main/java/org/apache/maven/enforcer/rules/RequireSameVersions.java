@@ -16,7 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,20 +27,20 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
  * @author Robert Scholte
  * @since 1.3
  */
-public class RequireSameVersions extends AbstractNonCacheableEnforcerRule {
+@Named("requireSameVersions")
+public final class RequireSameVersions extends AbstractStandardEnforcerRule {
     private boolean uniqueVersions;
 
     private Set<String> dependencies = new HashSet<>();
@@ -48,15 +51,15 @@ public class RequireSameVersions extends AbstractNonCacheableEnforcerRule {
 
     private Set<String> reportPlugins = new HashSet<>();
 
+    private final MavenProject project;
+
+    @Inject
+    public RequireSameVersions(MavenProject project) {
+        this.project = Objects.requireNonNull(project);
+    }
+
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        // get the project
-        MavenProject project;
-        try {
-            project = (MavenProject) helper.evaluate("${project}");
-        } catch (ExpressionEvaluationException eee) {
-            throw new EnforcerRuleException("Unable to retrieve the MavenProject: ", eee);
-        }
+    public void execute() throws EnforcerRuleException {
 
         // consider including profile based artifacts
         Map<String, List<String>> versionMembers = new LinkedHashMap<>();
@@ -111,5 +114,12 @@ public class RequireSameVersions extends AbstractNonCacheableEnforcerRule {
             }
         }
         return versionMembers;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "RequireSameVersions[dependencies=%s, buildPlugins=%s, reportPlugins=%s, plugins=%s, uniqueVersions=%b]",
+                dependencies, buildPlugins, reportPlugins, plugins, uniqueVersions);
     }
 }

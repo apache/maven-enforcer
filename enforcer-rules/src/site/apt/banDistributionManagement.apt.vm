@@ -29,14 +29,12 @@ Ban Distribution Management
   in your pom files.
 
   The following parameters are supported by this rule:
-  
-  * message - an optional message to the user if the rule fails.
-   
-  * allowRepository - You can allow repository entry (default: false).
 
-  * allowSnapshotRepository - you can allow snapshotRepository entry (default: false).
+  * <<allowRepository>> - You can allow repository entry (default: false).
 
-  * allowSite - You can allow site entry (default: false).
+  * <<allowSnapshotRepository>> - you can allow snapshotRepository entry (default: false).
+
+  * <<allowSite>> - You can allow site entry (default: false).
    
   []
 
