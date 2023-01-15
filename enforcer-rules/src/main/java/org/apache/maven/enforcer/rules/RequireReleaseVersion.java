@@ -16,35 +16,39 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import java.util.Objects;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
  * This rule checks that the current project is not a snapshot.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class RequireReleaseVersion extends AbstractNonCacheableEnforcerRule {
+@Named("requireReleaseVersion")
+public final class RequireReleaseVersion extends AbstractStandardEnforcerRule {
+
+    private final MavenProject project;
 
     /**
      * Allows this rule to fail when the parent is defined as a snapshot.
-     *
-     * @parameter
-     *
-     * @see {@link #setFailWhenParentIsSnapshot(boolean)}
-     * @see {@link #isFailWhenParentIsSnapshot()}
      */
     private boolean failWhenParentIsSnapshot = true;
 
-    @Override
-    public void execute(EnforcerRuleHelper theHelper) throws EnforcerRuleException {
+    @Inject
+    public RequireReleaseVersion(MavenProject project) {
+        this.project = Objects.requireNonNull(project);
+    }
 
-        MavenProject project = getProject(theHelper);
+    @Override
+    public void execute() throws EnforcerRuleException {
 
         if (project.getArtifact().isSnapshot()) {
             String message = getMessage();
@@ -64,24 +68,12 @@ public class RequireReleaseVersion extends AbstractNonCacheableEnforcerRule {
         }
     }
 
-    /**
-     * @param helper
-     * @return The evaluated {@link MavenProject}.
-     * @throws EnforcerRuleException
-     */
-    private MavenProject getProject(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        try {
-            return (MavenProject) helper.evaluate("${project}");
-        } catch (ExpressionEvaluationException eee) {
-            throw new EnforcerRuleException("Unable to retrieve the MavenProject: ", eee);
-        }
-    }
-
-    public final boolean isFailWhenParentIsSnapshot() {
-        return failWhenParentIsSnapshot;
-    }
-
-    public final void setFailWhenParentIsSnapshot(boolean failWhenParentIsSnapshot) {
+    public void setFailWhenParentIsSnapshot(boolean failWhenParentIsSnapshot) {
         this.failWhenParentIsSnapshot = failWhenParentIsSnapshot;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("RequireReleaseVersion[failWhenParentIsSnapshot=%b]", failWhenParentIsSnapshot);
     }
 }

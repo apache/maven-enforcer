@@ -16,137 +16,121 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
 
 import java.util.Collections;
 
+import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.model.Prerequisites;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class RequirePrerequisiteTest {
+@ExtendWith(MockitoExtension.class)
+class RequirePrerequisiteTest {
+
+    @Mock
     private MavenProject project;
 
-    private EnforcerRuleHelper helper;
+    @Mock
+    private EnforcerLogger log;
+
+    @InjectMocks
+    private RequirePrerequisite rule;
 
     @BeforeEach
-    public void before() throws ExpressionEvaluationException {
-        project = mock(MavenProject.class);
+    void before() {
+        rule.setLog(log);
         when(project.getPackaging()).thenReturn("maven-plugin");
-
-        helper = mock(EnforcerRuleHelper.class);
-        when(helper.evaluate("${project}")).thenReturn(project);
     }
 
     @Test
-    public void testNoPrerequisite() {
-        assertThrows(EnforcerRuleException.class, () -> {
-            RequirePrerequisite rule = new RequirePrerequisite();
-            rule.execute(helper);
-        });
+    void testNoPrerequisite() {
+        assertThrows(EnforcerRuleException.class, () -> rule.execute());
     }
 
     @Test
-    public void testNoSpecifiedPrerequisite() throws Exception {
+    void testNoSpecifiedPrerequisite() throws Exception {
+        when(project.getPrerequisites()).thenReturn(new Prerequisites());
+        rule.execute();
+    }
+
+    @Test
+    void testLowerMavenPrerequisite() {
         when(project.getPrerequisites()).thenReturn(new Prerequisites());
 
-        RequirePrerequisite rule = new RequirePrerequisite();
-        rule.execute(helper);
-    }
-
-    @Test
-    public void testLowerMavenPrerequisite() {
         assertThrows(EnforcerRuleException.class, () -> {
-            when(project.getPrerequisites()).thenReturn(new Prerequisites());
-
-            RequirePrerequisite rule = new RequirePrerequisite();
             rule.setMavenVersion("3.0");
-            rule.execute(helper);
+            rule.execute();
         });
     }
 
     @Test
-    public void testLowerMavenRangePrerequisite() {
+    void testLowerMavenRangePrerequisite() {
+        when(project.getPrerequisites()).thenReturn(new Prerequisites());
+
         assertThrows(EnforcerRuleException.class, () -> {
-            when(project.getPrerequisites()).thenReturn(new Prerequisites());
-
-            RequirePrerequisite rule = new RequirePrerequisite();
             rule.setMavenVersion("[3.0,)");
-
-            rule.execute(helper);
+            rule.execute();
         });
     }
 
     @Test
-    public void testMavenRangesPrerequisite() {
+    void testMavenRangesPrerequisite() {
         assertThrows(EnforcerRuleException.class, () -> {
             Prerequisites prerequisites = new Prerequisites();
             prerequisites.setMaven("2.2.0");
             when(project.getPrerequisites()).thenReturn(prerequisites);
 
-            RequirePrerequisite rule = new RequirePrerequisite();
             rule.setMavenVersion("[2.0.6,2.1.0),(2.1.0,2.2.0),(2.2.0,)");
-
-            rule.execute(helper);
+            rule.execute();
         });
     }
 
     @Test
-    public void testValidPrerequisite() throws Exception {
+    void testValidPrerequisite() throws Exception {
         Prerequisites prerequisites = new Prerequisites();
         prerequisites.setMaven("3.0");
         when(project.getPrerequisites()).thenReturn(prerequisites);
 
-        RequirePrerequisite rule = new RequirePrerequisite();
         rule.setMavenVersion("2.2.1");
-
-        rule.execute(helper);
+        rule.execute();
     }
 
     @Test
-    public void testPomPackaging() throws Exception {
+    void testPomPackaging() throws Exception {
         when(project.getPackaging()).thenReturn("pom");
 
-        Log log = mock(Log.class);
-        when(helper.getLog()).thenReturn(log);
-
-        RequirePrerequisite rule = new RequirePrerequisite();
-        rule.execute(helper);
+        rule.execute();
 
         verify(log).debug("Packaging is pom, skipping requirePrerequisite rule");
     }
 
     @Test
-    public void testMatchingPackagings() {
+    void testMatchingPackagings() {
         assertThrows(EnforcerRuleException.class, () -> {
             when(project.getPackaging()).thenReturn("maven-plugin");
 
-            RequirePrerequisite rule = new RequirePrerequisite();
             rule.setPackagings(Collections.singletonList("maven-plugin"));
-            rule.execute(helper);
+            rule.execute();
         });
     }
 
     @Test
-    public void testNotMatchingPackagings() throws Exception {
+    void testNotMatchingPackagings() throws Exception {
         when(project.getPackaging()).thenReturn("jar");
 
-        Log log = mock(Log.class);
-        when(helper.getLog()).thenReturn(log);
-
-        RequirePrerequisite rule = new RequirePrerequisite();
         rule.setPackagings(Collections.singletonList("maven-plugin"));
-        rule.execute(helper);
+        rule.execute();
 
         verify(log).debug("Packaging is jar, skipping requirePrerequisite rule");
     }

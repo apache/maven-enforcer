@@ -18,9 +18,12 @@
  */
 package org.apache.maven.enforcer.rules.utils;
 
-import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import java.util.List;
+import java.util.Objects;
+
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.ReportPlugin;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
@@ -30,23 +33,25 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
+@Named
 public class EnforcerRuleUtils {
-    private EnforcerRuleHelper helper;
 
+    private final ExpressionEvaluator evaluator;
     /**
      * Instantiates a new enforcer rule utils.
      *
-     * @param helper the helper
+     * @param evaluator the expression evaluator
      */
-    public EnforcerRuleUtils(EnforcerRuleHelper helper) {
-        this.helper = helper;
+    @Inject
+    public EnforcerRuleUtils(ExpressionEvaluator evaluator) {
+        this.evaluator = Objects.requireNonNull(evaluator);
     }
 
     private void resolve(Plugin plugin) {
         try {
-            plugin.setGroupId((String) helper.evaluate(plugin.getGroupId()));
-            plugin.setArtifactId((String) helper.evaluate(plugin.getArtifactId()));
-            plugin.setVersion((String) helper.evaluate(plugin.getVersion()));
+            plugin.setGroupId((String) evaluator.evaluate(plugin.getGroupId()));
+            plugin.setArtifactId((String) evaluator.evaluate(plugin.getArtifactId()));
+            plugin.setVersion((String) evaluator.evaluate(plugin.getVersion()));
         } catch (ExpressionEvaluationException e) {
             // this should have gone already before
         }
@@ -54,9 +59,9 @@ public class EnforcerRuleUtils {
 
     private void resolve(ReportPlugin plugin) {
         try {
-            plugin.setGroupId((String) helper.evaluate(plugin.getGroupId()));
-            plugin.setArtifactId((String) helper.evaluate(plugin.getArtifactId()));
-            plugin.setVersion((String) helper.evaluate(plugin.getVersion()));
+            plugin.setGroupId((String) evaluator.evaluate(plugin.getGroupId()));
+            plugin.setArtifactId((String) evaluator.evaluate(plugin.getArtifactId()));
+            plugin.setVersion((String) evaluator.evaluate(plugin.getVersion()));
         } catch (ExpressionEvaluationException e) {
             // this should have gone already before
         }

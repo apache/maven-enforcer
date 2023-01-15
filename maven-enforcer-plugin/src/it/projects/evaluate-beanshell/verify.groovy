@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( '[INFO] BUILD FAILURE' )
-assert buildLog.text.contains( '[ERROR] Rule 0: org.apache.maven.enforcer.rules.BanDistributionManagement failed with message:' )
-assert buildLog.text.contains( 'You have defined a repository in distributionManagement.' )
+
+File buildLog = new File(basedir, 'build.log')
+assert buildLog.text.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.EvaluateBeanshell executed')
+assert buildLog.text.contains('[INFO] Rule 1: org.apache.maven.enforcer.rules.EvaluateBeanshell executed')

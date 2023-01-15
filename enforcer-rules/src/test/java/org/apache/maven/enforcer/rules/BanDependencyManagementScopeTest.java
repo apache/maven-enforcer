@@ -16,21 +16,24 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
 
 import java.util.Collections;
 
+import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.apache.maven.project.MavenProject;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
+import static org.mockito.Mockito.mock;
+
 class BanDependencyManagementScopeTest {
     @Test
     void testGetViolatingDependencies() {
-        BanDependencyManagementScope rule = new BanDependencyManagementScope();
+        BanDependencyManagementScope rule = new BanDependencyManagementScope(new MavenProject());
         DependencyManagement depMgmt = new DependencyManagement();
         Dependency depWithoutScope = createDependency("myGroup", "artifact1", null);
         Dependency depWithScope = createDependency("myGroup", "artifact2", "1.1.0", "provided");
@@ -41,8 +44,8 @@ class BanDependencyManagementScopeTest {
         depMgmt.addDependency(depWithImportScope);
         depMgmt.addDependency(excludedDepWithScope);
         rule.setExcludes(Collections.singletonList("*:artifact4"));
-        MatcherAssert.assertThat(
-                rule.getViolatingDependencies(new SystemStreamLog(), depMgmt), Matchers.contains(depWithScope));
+        rule.setLog(mock(EnforcerLogger.class));
+        MatcherAssert.assertThat(rule.getViolatingDependencies(depMgmt), Matchers.contains(depWithScope));
     }
 
     static Dependency createDependency(String groupId, String artifactId, String version) {

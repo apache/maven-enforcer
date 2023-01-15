@@ -146,11 +146,13 @@ public class EnforcerRuleManager {
         // component name should always start at lowercase character
         String ruleName = Character.toLowerCase(name.charAt(0)) + name.substring(1);
 
-        try {
-            return new EnforcerRuleDesc(ruleName, plexusContainer.lookup(EnforcerRuleBase.class, ruleName), ruleLevel);
-        } catch (ComponentLookupException e) {
-            // no component for rule
-            // process old way, by  class name
+        if (plexusContainer.hasComponent(EnforcerRuleBase.class, ruleName)) {
+            try {
+                return new EnforcerRuleDesc(
+                        ruleName, plexusContainer.lookup(EnforcerRuleBase.class, ruleName), ruleLevel);
+            } catch (ComponentLookupException e) {
+                throw new EnforcerRuleManagerException(e);
+            }
         }
 
         String ruleClass;

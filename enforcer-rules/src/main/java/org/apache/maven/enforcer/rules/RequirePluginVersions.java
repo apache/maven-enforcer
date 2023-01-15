@@ -16,7 +16,10 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.maven.BuildFailureException;
@@ -36,8 +40,8 @@ import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.enforcer.rules.utils.EnforcerRuleUtils;
+import org.apache.maven.enforcer.rules.utils.ExpressionEvaluator;
 import org.apache.maven.enforcer.rules.utils.PluginWrapper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.DefaultLifecycles;
@@ -55,12 +59,12 @@ import org.apache.maven.plugin.PluginManager;
 import org.apache.maven.plugin.PluginManagerException;
 import org.apache.maven.plugin.PluginNotFoundException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.version.PluginVersionNotFoundException;
 import org.apache.maven.plugin.version.PluginVersionResolutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.rtinfo.RuntimeInformation;
 import org.apache.maven.settings.Settings;
+import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.util.StringUtils;
@@ -73,39 +77,26 @@ import org.eclipse.aether.resolution.ArtifactResolutionException;
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
-
-    private EnforcerRuleHelper helper;
+@Named("requirePluginVersions")
+public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
 
     /**
      * Don't allow the LATEST identifier.
-     *
-     * @see {@link #setBanLatest(boolean)}
-     * @see {@link #isBanLatest()}
      */
     private boolean banLatest = true;
 
     /**
      * Don't allow the RELEASE identifier.
-     *
-     * @see {@link #setBanRelease(boolean)}
-     * @see {@link #isBanRelease()}
      */
     private boolean banRelease = true;
 
     /**
      * Don't allow snapshot plugins.
-     *
-     * @see {@link #setBanSnapshots(boolean)}
-     * @see {@link #isBanSnapshots()}
      */
     private boolean banSnapshots = true;
 
     /**
      * Don't allow timestamp snapshot plugins.
-     *
-     * @see {@link #setBanTimestamps(boolean)}
-     * @see {@link #isBanTimestamps()}
      */
     private boolean banTimestamps = true;
 
@@ -117,9 +108,6 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
     /**
      * The comma separated list of phases that should be used to find lifecycle plugin bindings. The default value is
      * "clean,deploy,site".
-     *
-     * @see {@link #setPhases(String)}
-     * @see {@link #getPhases()}
      */
     private String phases = "clean,deploy,site";
 
@@ -127,33 +115,21 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
      * Additional plugins to enforce have versions. These are plugins that may not be in the poms but are used anyway,
      * like help, eclipse etc. <br>
      * The plugins should be specified in the form: <code>group:artifactId</code>.
-     *
-     * @see {@link #setAdditionalPlugins(List)}
-     * @see {@link #getAdditionalPlugins()}
      */
     private List<String> additionalPlugins;
 
     /**
      * Plugins to skip for version enforcement. The plugins should be specified in the form:
      * <code>group:artifactId</code>. NOTE: This is deprecated, use unCheckedPluginList instead.
-     *
-     * @see {@link #setUnCheckedPlugins(List)}
-     * @see {@link #getUnCheckedPlugins()}
      */
     private List<String> unCheckedPlugins;
 
     /**
      * Same as unCheckedPlugins but as a comma list to better support properties. Sample form:
      * <code>group:artifactId,group2:artifactId2</code>
-     *
      * @since 1.0-beta-1
-     * @see {@link #setUnCheckedPlugins(List)}
-     * @see {@link #getUnCheckedPlugins()}
      */
     private String unCheckedPluginList;
-
-    /** The plugin manager. */
-    private PluginManager pluginManager;
 
     /** The phase to lifecycle map. */
     private Map<String, Lifecycle> phaseToLifecycleMap;
@@ -161,48 +137,65 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
     /** The lifecycles. */
     private Collection<Lifecycle> lifecycles;
 
-    /** The factory. */
-    private ArtifactFactory factory;
+    /** The plugin manager. */
+    private final PluginManager pluginManager;
 
-    private RepositorySystem repositorySystem;
+    /** The factory. */
+    private final ArtifactFactory factory;
+
+    private final RepositorySystem repositorySystem;
 
     /** The local. */
     private ArtifactRepository local;
 
-    /** The log. */
-    private Log log;
-
     /** The session. */
-    private MavenSession session;
+    private final MavenSession session;
 
     /** The utils. */
-    private EnforcerRuleUtils utils;
+    private final EnforcerRuleUtils utils;
 
-    private RuntimeInformation runtimeInformation;
+    private final RuntimeInformation runtimeInformation;
+
+    private final DefaultLifecycles defaultLifeCycles;
+
+    private final MavenProject project;
+
+    private final ExpressionEvaluator evaluator;
+
+    private final PlexusContainer container;
+
+    @Inject
+    public RequirePluginVersions(
+            PluginManager pluginManager,
+            ArtifactFactory factory,
+            RepositorySystem repositorySystem,
+            MavenSession session,
+            EnforcerRuleUtils utils,
+            RuntimeInformation runtimeInformation,
+            DefaultLifecycles defaultLifeCycles,
+            MavenProject project,
+            ExpressionEvaluator evaluator,
+            PlexusContainer container) {
+        this.pluginManager = Objects.requireNonNull(pluginManager);
+        this.factory = Objects.requireNonNull(factory);
+        this.repositorySystem = Objects.requireNonNull(repositorySystem);
+        this.session = Objects.requireNonNull(session);
+        this.utils = Objects.requireNonNull(utils);
+        this.runtimeInformation = Objects.requireNonNull(runtimeInformation);
+        this.defaultLifeCycles = Objects.requireNonNull(defaultLifeCycles);
+        this.project = Objects.requireNonNull(project);
+        this.evaluator = Objects.requireNonNull(evaluator);
+        this.container = Objects.requireNonNull(container);
+    }
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        this.log = helper.getLog();
-        this.helper = helper;
+    public void execute() throws EnforcerRuleException {
 
-        MavenProject project;
         try {
             // get the various expressions out of the helper.
 
-            project = (MavenProject) helper.evaluate("${project}");
-
-            runtimeInformation = helper.getComponent(RuntimeInformation.class);
-
-            DefaultLifecycles defaultLifeCycles = helper.getComponent(DefaultLifecycles.class);
             lifecycles = defaultLifeCycles.getLifeCycles();
-
-            session = (MavenSession) helper.evaluate("${session}");
-            pluginManager = helper.getComponent(PluginManager.class);
-            factory = helper.getComponent(ArtifactFactory.class);
-            repositorySystem = helper.getComponent(RepositorySystem.class);
-            local = (ArtifactRepository) helper.evaluate("${localRepository}");
-
-            utils = new EnforcerRuleUtils(helper);
+            local = session.getLocalRepository();
 
             // get all the plugins that are bound to the specified lifecycles
             Set<Plugin> allPlugins = getBoundPlugins(project, phases);
@@ -217,24 +210,24 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
 
             // there's nothing to do here
             if (allPlugins.isEmpty()) {
-                log.info("No plugin bindings found.");
+                getLog().info("No plugin bindings found.");
                 return;
             } else {
-                log.debug("All Plugins in use: " + allPlugins);
+                getLog().debug("All Plugins in use: " + allPlugins);
             }
 
             // get all the plugins that are mentioned in the pom (and parents)
             List<PluginWrapper> pluginWrappers = getAllPluginEntries(project);
 
             for (PluginWrapper pluginWrapper : pluginWrappers) {
-                log.debug("pluginWrappers: " + pluginWrapper.getGroupId() + ":" + pluginWrapper.getArtifactId() + ":"
-                        + pluginWrapper.getVersion() + " source: " + pluginWrapper.getSource());
+                getLog().debug("pluginWrappers: " + pluginWrapper.getGroupId() + ":" + pluginWrapper.getArtifactId()
+                        + ":" + pluginWrapper.getVersion() + " source: " + pluginWrapper.getSource());
             }
             // now look for the versions that aren't valid and add to a list.
             List<Plugin> failures = new ArrayList<>();
 
             for (Plugin plugin : allPlugins) {
-                if (!hasValidVersionSpecified(helper, plugin, pluginWrappers)) {
+                if (!hasValidVersionSpecified(plugin, pluginWrappers)) {
                     failures.add(plugin);
                 }
             }
@@ -243,10 +236,6 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
             if (!failures.isEmpty()) {
                 handleMessagesToTheUser(project, failures);
             }
-        } catch (ExpressionEvaluationException e) {
-            throw new EnforcerRuleException("Unable to Evaluate an Expression:" + e.getLocalizedMessage());
-        } catch (ComponentLookupException e) {
-            throw new EnforcerRuleException("Unable to lookup a component:" + e.getLocalizedMessage());
         } catch (Exception e) {
             throw new EnforcerRuleException(e.getLocalizedMessage(), e);
         }
@@ -288,7 +277,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
             } catch (Exception e) {
                 // lots can go wrong here. Don't allow any issues trying to
                 // determine the issue stop me
-                log.debug("Exception while determining plugin Version.", e);
+                getLog().debug("Exception while determining plugin Version " + e.getMessage());
                 newMsg.append(". Unable to determine the plugin version.");
             }
             newMsg.append("\n");
@@ -322,8 +311,8 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
      *
      * @param uncheckedPlugins
      * @param plugins
-     * @throws MojoExecutionException
      * @return The plugins which have been removed.
+     * @throws MojoExecutionException
      */
     public Set<Plugin> removeUncheckedPlugins(Collection<String> uncheckedPlugins, Set<Plugin> plugins)
             throws MojoExecutionException {
@@ -343,17 +332,15 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
      * @param uncheckedPluginsList
      * @return List of unchecked plugins.
      */
-    // CHECKSTYLE_OFF: LineLength
-    public Collection<String> combineUncheckedPlugins(Collection<String> uncheckedPlugins, String uncheckedPluginsList)
-                // CHECKSTYLE_ON: LineLength
-            {
+    public Collection<String> combineUncheckedPlugins(
+            Collection<String> uncheckedPlugins, String uncheckedPluginsList) {
         // if the comma list is empty, then there's nothing to do here.
         if (StringUtils.isNotEmpty(uncheckedPluginsList)) {
             // make sure there is a collection to add to.
             if (uncheckedPlugins == null) {
                 uncheckedPlugins = new HashSet<>();
-            } else if (!uncheckedPlugins.isEmpty() && log != null) {
-                log.warn("The parameter 'unCheckedPlugins' is deprecated. Use 'unCheckedPluginList' instead");
+            } else if (!uncheckedPlugins.isEmpty()) {
+                getLog().warn("The parameter 'unCheckedPlugins' is deprecated. Use 'unCheckedPluginList' instead");
             }
 
             uncheckedPlugins.addAll(Arrays.asList(uncheckedPluginsList.split(",")));
@@ -364,7 +351,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
     /**
      * Add the additional plugins if they don't exist yet.
      *
-     * @param existing the existing
+     * @param existing   the existing
      * @param additional the additional
      * @return the sets the
      * @throws MojoExecutionException the mojo execution exception
@@ -391,8 +378,8 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
      *
      * @param pluginString
      * @param field
-     * @throws MojoExecutionException
      * @return the plugin
+     * @throws MojoExecutionException
      */
     protected Plugin parsePluginString(String pluginString, String field) throws MojoExecutionException {
         if (pluginString != null) {
@@ -437,11 +424,11 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
     /**
      * Given a plugin, this will retrieve the matching plugin artifact from the model.
      *
-     * @param plugin plugin to lookup
+     * @param plugin  plugin to lookup
      * @param project project to search
      * @return matching plugin, <code>null</code> if not found.
      */
-    protected Plugin findCurrentPlugin(Plugin plugin, MavenProject project) throws EnforcerRuleException {
+    private Plugin findCurrentPlugin(Plugin plugin, MavenProject project) throws EnforcerRuleException {
         Plugin found = null;
         try {
             Model model = project.getModel();
@@ -477,13 +464,13 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
      * Gets the plugins that are bound to the defined phases. This does not find plugins bound in the pom to a phase
      * later than the plugin is executing.
      *
-     * @param project the project
+     * @param project   the project
      * @param thePhases the phases
      * @return the bound plugins
-     * @throws PluginNotFoundException the plugin not found exception
+     * @throws PluginNotFoundException     the plugin not found exception
      * @throws LifecycleExecutionException the lifecycle execution exception
      */
-    protected Set<Plugin> getBoundPlugins(MavenProject project, String thePhases)
+    private Set<Plugin> getBoundPlugins(MavenProject project, String thePhases)
             throws PluginNotFoundException, LifecycleExecutionException {
 
         Set<Plugin> allPlugins = new HashSet<>();
@@ -495,7 +482,8 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
             if (StringUtils.isNotEmpty(lifecyclePhase)) {
                 try {
                     Lifecycle lifecycle = getLifecycleForPhase(lifecyclePhase);
-                    log.debug("getBoundPlugins(): " + project.getId() + " " + lifecyclePhase + " " + lifecycle.getId());
+                    getLog().debug("getBoundPlugins(): " + project.getId() + " " + lifecyclePhase + " "
+                            + lifecycle.getId());
                     allPlugins.addAll(getAllPlugins(project, lifecycle));
                 } catch (BuildFailureException e) {
                     // i'm going to swallow this because the
@@ -511,13 +499,11 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
      * Checks for valid version specified. Checks to see if the version is specified for the plugin. Can optionally ban
      * "RELEASE" or "LATEST" even if specified.
      *
-     * @param helper the helper
-     * @param source the source
+     * @param source         the source
      * @param pluginWrappers the plugins
      * @return true, if successful
      */
-    protected boolean hasValidVersionSpecified(
-            EnforcerRuleHelper helper, Plugin source, List<PluginWrapper> pluginWrappers) {
+    public boolean hasValidVersionSpecified(Plugin source, List<PluginWrapper> pluginWrappers) {
         boolean found = false;
         boolean status = false;
         for (PluginWrapper plugin : pluginWrappers) {
@@ -527,13 +513,13 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
                 // found the entry. now see if the version is specified
                 String version = plugin.getVersion();
                 try {
-                    version = (String) helper.evaluate(version);
+                    version = (String) evaluator.evaluate(version);
                 } catch (ExpressionEvaluationException e) {
                     return false;
                 }
 
                 if (isValidVersion(version)) {
-                    helper.getLog().debug("checking for notEmpty and notIsWhitespace(): " + version);
+                    getLog().debug("checking for notEmpty and notIsWhitespace(): " + version);
                     if (banRelease && version.equals("RELEASE")) {
                         return false;
                     }
@@ -559,7 +545,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
             }
         }
         if (!found) {
-            helper.getLog().debug("plugin " + source.getGroupId() + ":" + source.getArtifactId() + " not found");
+            getLog().debug("plugin " + source.getGroupId() + ":" + source.getArtifactId() + " not found");
         }
         return status;
     }
@@ -579,7 +565,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
      * @param baseVersion the base version
      * @return true, if is snapshot
      */
-    protected boolean isSnapshot(String baseVersion) {
+    private boolean isSnapshot(String baseVersion) {
         if (banTimestamps) {
             return Artifact.VERSION_FILE_PATTERN.matcher(baseVersion).matches()
                     || baseVersion.endsWith(Artifact.SNAPSHOT_VERSION);
@@ -591,35 +577,36 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
     /*
      * Uses borrowed lifecycle code to get a list of all plugins bound to the lifecycle.
      */
+
     /**
      * Gets the all plugins.
      *
-     * @param project the project
+     * @param project   the project
      * @param lifecycle the lifecycle
      * @return the all plugins
-     * @throws PluginNotFoundException the plugin not found exception
+     * @throws PluginNotFoundException     the plugin not found exception
      * @throws LifecycleExecutionException the lifecycle execution exception
      */
     private Set<Plugin> getAllPlugins(MavenProject project, Lifecycle lifecycle)
             throws PluginNotFoundException, LifecycleExecutionException {
 
-        log.debug("RequirePluginVersions.getAllPlugins:");
+        getLog().debug("RequirePluginVersions.getAllPlugins:");
 
         Set<Plugin> plugins = new HashSet<>();
         // first, bind those associated with the packaging
         Map<String, String> mappings = findMappingsForLifecycle(project, lifecycle);
 
         for (Map.Entry<String, String> entry : mappings.entrySet()) {
-            log.debug("  lifecycleMapping = " + entry.getKey());
+            getLog().debug("  lifecycleMapping = " + entry.getKey());
             String pluginsForLifecycle = (String) entry.getValue();
-            log.debug("  plugins = " + pluginsForLifecycle);
+            getLog().debug("  plugins = " + pluginsForLifecycle);
             if (StringUtils.isNotEmpty(pluginsForLifecycle)) {
                 String pluginList[] = pluginsForLifecycle.split(",");
                 for (String plugin : pluginList) {
                     plugin = StringUtils.strip(plugin);
-                    log.debug("    plugin = " + plugin);
+                    getLog().debug("    plugin = " + plugin);
                     String tokens[] = plugin.split(":");
-                    log.debug("    GAV = " + Arrays.asList(tokens));
+                    getLog().debug("    GAV = " + Arrays.asList(tokens));
 
                     Plugin p = new Plugin();
                     p.setGroupId(tokens[0]);
@@ -638,6 +625,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
      * NOTE: All the code following this point was scooped from the DefaultLifecycleExecutor. There must be a better way
      * but for now it should work.
      */
+
     /**
      * Gets the phase to lifecycle map.
      *
@@ -651,7 +639,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
             for (Lifecycle lifecycle : lifecycles) {
                 List<String> phases = lifecycle.getPhases();
                 for (String phase : phases) {
-                    log.debug("getPhaseToLifecycleMap(): phase: " + phase);
+                    getLog().debug("getPhaseToLifecycleMap(): phase: " + phase);
                     if (phaseToLifecycleMap.containsKey(phase)) {
                         Lifecycle prevLifecycle = (Lifecycle) phaseToLifecycleMap.get(phase);
                         throw new LifecycleExecutionException("Phase '" + phase
@@ -671,7 +659,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
      *
      * @param phase the phase
      * @return the lifecycle for phase
-     * @throws BuildFailureException the build failure exception
+     * @throws BuildFailureException       the build failure exception
      * @throws LifecycleExecutionException the lifecycle execution exception
      */
     private Lifecycle getLifecycleForPhase(String phase) throws BuildFailureException, LifecycleExecutionException {
@@ -686,11 +674,11 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
     /**
      * Find mappings for lifecycle.
      *
-     * @param project the project
+     * @param project   the project
      * @param lifecycle the lifecycle
      * @return the map
      * @throws LifecycleExecutionException the lifecycle execution exception
-     * @throws PluginNotFoundException the plugin not found exception
+     * @throws PluginNotFoundException     the plugin not found exception
      */
     private Map<String, String> findMappingsForLifecycle(MavenProject project, Lifecycle lifecycle)
             throws LifecycleExecutionException, PluginNotFoundException {
@@ -707,7 +695,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
 
         if (mappings == null) {
             try {
-                m = helper.getComponent(LifecycleMapping.class, packaging);
+                m = container.lookup(LifecycleMapping.class, packaging);
                 mappings = m.getPhases(lifecycle.getId());
             } catch (ComponentLookupException e) {
                 if (defaultMappings == null) {
@@ -732,14 +720,14 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
     /**
      * Find extension.
      *
-     * @param project the project
-     * @param role the role
-     * @param roleHint the role hint
-     * @param settings the settings
+     * @param project         the project
+     * @param role            the role
+     * @param roleHint        the role hint
+     * @param settings        the settings
      * @param localRepository the local repository
      * @return the object
      * @throws LifecycleExecutionException the lifecycle execution exception
-     * @throws PluginNotFoundException the plugin not found exception
+     * @throws PluginNotFoundException     the plugin not found exception
      */
     private Object findExtension(
             MavenProject project, String role, String roleHint, Settings settings, ArtifactRepository localRepository)
@@ -762,7 +750,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
                         break;
                     }
                 } catch (ComponentLookupException e) {
-                    log.debug("Unable to find the lifecycle component in the extension", e);
+                    getLog().debug("Unable to find the lifecycle component in the extension " + e.getMessage());
                 } catch (PluginManagerException e) {
                     throw new LifecycleExecutionException(
                             "Error getting extensions from the plugin '" + plugin.getKey() + "': " + e.getMessage(), e);
@@ -775,13 +763,13 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
     /**
      * Verify plugin.
      *
-     * @param plugin the plugin
-     * @param project the project
-     * @param settings the settings
+     * @param plugin          the plugin
+     * @param project         the project
+     * @param settings        the settings
      * @param localRepository the local repository
      * @return the plugin descriptor
      * @throws LifecycleExecutionException the lifecycle execution exception
-     * @throws PluginNotFoundException the plugin not found exception
+     * @throws PluginNotFoundException     the plugin not found exception
      */
     private PluginDescriptor verifyPlugin(
             Plugin plugin, MavenProject project, Settings settings, ArtifactRepository localRepository)
@@ -811,7 +799,7 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
      * @param project the project
      * @return the all plugin entries wrapped in a PluginWrapper Object
      */
-    protected List<PluginWrapper> getAllPluginEntries(MavenProject project) {
+    private List<PluginWrapper> getAllPluginEntries(MavenProject project) {
         List<PluginWrapper> plugins = new ArrayList<>();
         // now find all the plugin entries, either in
         // build.plugins or build.pluginManagement.plugins, profiles.plugins and reporting
@@ -866,30 +854,12 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
     }
 
     /**
-     * Checks if is ban latest.
-     *
-     * @return the banLatest
-     */
-    protected boolean isBanLatest() {
-        return this.banLatest;
-    }
-
-    /**
      * Sets the ban latest.
      *
      * @param theBanLatest the banLatest to set
      */
-    protected void setBanLatest(boolean theBanLatest) {
+    public void setBanLatest(boolean theBanLatest) {
         this.banLatest = theBanLatest;
-    }
-
-    /**
-     * Checks if is ban release.
-     *
-     * @return the banRelease
-     */
-    protected boolean isBanRelease() {
-        return this.banRelease;
     }
 
     /**
@@ -897,26 +867,8 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
      *
      * @param theBanRelease the banRelease to set
      */
-    protected void setBanRelease(boolean theBanRelease) {
+    public void setBanRelease(boolean theBanRelease) {
         this.banRelease = theBanRelease;
-    }
-
-    /**
-     * Gets the utils.
-     *
-     * @return the utils
-     */
-    protected EnforcerRuleUtils getUtils() {
-        return this.utils;
-    }
-
-    /**
-     * Sets the utils.
-     *
-     * @param theUtils the utils to set
-     */
-    protected void setUtils(EnforcerRuleUtils theUtils) {
-        this.utils = theUtils;
     }
 
     /**
@@ -938,15 +890,6 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
     }
 
     /**
-     * Checks if is ban timestamps.
-     *
-     * @return the banTimestamps
-     */
-    public boolean isBanTimestamps() {
-        return this.banTimestamps;
-    }
-
-    /**
      * Sets the ban timestamps.
      *
      * @param theBanTimestamps the banTimestamps to set
@@ -955,27 +898,18 @@ public class RequirePluginVersions extends AbstractNonCacheableEnforcerRule {
         this.banTimestamps = theBanTimestamps;
     }
 
-    public List<String> getUnCheckedPlugins() {
-        return unCheckedPlugins;
-    }
-
-    public void setUnCheckedPlugins(List<String> unCheckedPlugins) {
-        this.unCheckedPlugins = unCheckedPlugins;
-    }
-
-    public final void setPhases(String phases) {
-        this.phases = phases;
-    }
-
-    public final String getPhases() {
-        return phases;
-    }
-
-    public final void setAdditionalPlugins(List<String> additionalPlugins) {
-        this.additionalPlugins = additionalPlugins;
-    }
-
-    public final List<String> getAdditionalPlugins() {
-        return additionalPlugins;
+    @Override
+    public String toString() {
+        return String.format(
+                "RequirePluginVersions[message=%s, banLatest=%b, banRelease=%b, banSnapshots=%b, banTimestamps=%b, phases=%s, additionalPlugins=%s, unCheckedPluginList=%s, unCheckedPlugins=%s]",
+                getMessage(),
+                banLatest,
+                banRelease,
+                banSnapshots,
+                banTimestamps,
+                phases,
+                additionalPlugins,
+                unCheckedPluginList,
+                unCheckedPlugins);
     }
 }

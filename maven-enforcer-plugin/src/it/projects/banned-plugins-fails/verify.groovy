@@ -17,5 +17,5 @@
  * under the License.
  */
 def buildLog = new File( basedir, 'build.log' ).text
-assert buildLog.contains( '[ERROR] Rule 0: org.apache.maven.plugins.enforcer.BannedPlugins failed with message:' )
+assert buildLog.contains( '[ERROR] Rule 0: org.apache.maven.enforcer.rules.BannedPlugins failed with message:' )
 assert buildLog =~ /org.codehaus.mojo:build-helper-maven-plugin:maven-plugin:.* <--- banned plugin/

@@ -16,21 +16,22 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -39,23 +40,21 @@ import org.codehaus.plexus.util.StringUtils;
  * @author Karl-Heinz Marbaise
  * @since 1.4
  */
-public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
+@Named("reactorModuleConvergence")
+public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule {
     private static final String MODULE_TEXT = " module: ";
 
     private boolean ignoreModuleDependencies = false;
 
-    private Log logger;
+    private final MavenSession session;
+
+    @Inject
+    public ReactorModuleConvergence(MavenSession session) {
+        this.session = Objects.requireNonNull(session);
+    }
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        logger = helper.getLog();
-
-        MavenSession session;
-        try {
-            session = (MavenSession) helper.evaluate("${session}");
-        } catch (ExpressionEvaluationException eee) {
-            throw new EnforcerRuleException("Unable to retrieve the MavenSession: ", eee);
-        }
+    public void execute() throws EnforcerRuleException {
 
         List<MavenProject> sortedProjects = session.getProjectDependencyGraph().getSortedProjects();
         if (sortedProjects != null && !sortedProjects.isEmpty()) {
@@ -182,12 +181,12 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
         List<MavenProject> result = new ArrayList<>();
 
         for (MavenProject mavenProject : sortedProjects) {
-            logger.debug("Project: " + mavenProject.getId());
+            getLog().debug("Project: " + mavenProject.getId());
             if (hasParent(mavenProject)) {
                 if (!mavenProject.isExecutionRoot()) {
                     MavenProject parent = mavenProject.getParent();
                     if (!reactorVersion.equals(parent.getVersion())) {
-                        logger.debug("The project: " + mavenProject.getId()
+                        getLog().debug("The project: " + mavenProject.getId()
                                 + " has a parent which version does not match the other elements in reactor");
                         result.add(mavenProject);
                     }
@@ -204,7 +203,7 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
         List<MavenProject> result = new ArrayList<>();
 
         for (MavenProject mavenProject : sortedProjects) {
-            logger.debug("Project: " + mavenProject.getId());
+            getLog().debug("Project: " + mavenProject.getId());
             if (hasParent(mavenProject)) {
                 if (!mavenProject.isExecutionRoot()) {
                     MavenProject parent = mavenProject.getParent();
@@ -222,7 +221,7 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
      * This will check of the groupId/artifactId can be found in any reactor project. The version will be ignored cause
      * versions are checked before.
      *
-     * @param project The project which should be checked if it is contained in the sortedProjects.
+     * @param project        The project which should be checked if it is contained in the sortedProjects.
      * @param sortedProjects The list of existing projects.
      * @return true if the project has been found within the list false otherwise.
      */
@@ -237,8 +236,8 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
     /**
      * This will check if the given <code>groupId/artifactId</code> is part of the current reactor.
      *
-     * @param groupId The groupId
-     * @param artifactId The artifactId
+     * @param groupId        The groupId
+     * @param artifactId     The artifactId
      * @param sortedProjects The list of projects within the reactor.
      * @return true if the groupId/artifactId is part of the reactor false otherwise.
      */
@@ -266,13 +265,13 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
         List<MavenProject> result = new ArrayList<>();
 
         for (MavenProject mavenProject : sortedProjects) {
-            logger.debug("Project: " + mavenProject.getId());
+            getLog().debug("Project: " + mavenProject.getId());
             if (!hasParent(mavenProject)) {
                 // TODO: Should add an option to force having a parent?
                 if (mavenProject.isExecutionRoot()) {
-                    logger.debug("The root does not need having a parent.");
+                    getLog().debug("The root does not need having a parent.");
                 } else {
-                    logger.debug("The module: " + mavenProject.getId() + " has no parent.");
+                    getLog().debug("The module: " + mavenProject.getId() + " has no parent.");
                     result.add(mavenProject);
                 }
             }
@@ -284,8 +283,8 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
     /**
      * Convenience method to handle adding a dependency to the Map of List.
      *
-     * @param result The result List which should be handled.
-     * @param project The MavenProject which will be added.
+     * @param result     The result List which should be handled.
+     * @param project    The MavenProject which will be added.
      * @param dependency The dependency which will be added.
      */
     private void addDep(Map<MavenProject, List<Dependency>> result, MavenProject project, Dependency dependency) {
@@ -319,12 +318,12 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
             {
         Map<MavenProject, List<Dependency>> result = new HashMap<>();
         for (MavenProject mavenProject : sortedProjects) {
-            logger.debug("Project: " + mavenProject.getId());
+            getLog().debug("Project: " + mavenProject.getId());
 
             List<Dependency> dependencies = mavenProject.getDependencies();
             if (hasDependencies(dependencies)) {
                 for (Dependency dependency : dependencies) {
-                    logger.debug(" -> Dep:" + dependency.getGroupId() + ":" + dependency.getArtifactId() + ":"
+                    getLog().debug(" -> Dep:" + dependency.getGroupId() + ":" + dependency.getArtifactId() + ":"
                             + dependency.getVersion());
                     if (isDependencyPartOfTheReactor(dependency, sortedProjects)) {
                         if (!dependency.getVersion().equals(reactorVersion)) {
@@ -340,14 +339,12 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
 
     /**
      * This method will check the following situation within a multi-module build.
-     *
      * <pre>
      *  &lt;parent&gt;
      *    &lt;groupId&gt;...&lt;/groupId&gt;
      *    &lt;artifactId&gt;...&lt;/artifactId&gt;
      *    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
      *  &lt;/parent&gt;
-     *
      *  &lt;version&gt;1.1-SNAPSHOT&lt;/version&gt;
      * </pre>
      *
@@ -360,9 +357,9 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
 
         if (projectList != null && !projectList.isEmpty()) {
             String version = projectList.get(0).getVersion();
-            logger.debug("First version:" + version);
+            getLog().debug("First version:" + version);
             for (MavenProject mavenProject : projectList) {
-                logger.debug(" -> checking " + mavenProject.getId());
+                getLog().debug(" -> checking " + mavenProject.getId());
                 if (!version.equals(mavenProject.getVersion())) {
                     result.add(mavenProject);
                 }
@@ -383,10 +380,6 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
         return ignoreModuleDependencies;
     }
 
-    public void setIgnoreModuleDependencies(boolean ignoreModuleDependencies) {
-        this.ignoreModuleDependencies = ignoreModuleDependencies;
-    }
-
     /**
      * This will add the given user message to the output.
      *
@@ -397,5 +390,12 @@ public class ReactorModuleConvergence extends AbstractNonCacheableEnforcerRule {
             sb.append(getMessage());
             sb.append(System.lineSeparator());
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "ReactorModuleConvergence[message=%s, ignoreModuleDependencies=%b]",
+                getMessage(), ignoreModuleDependencies);
     }
 }

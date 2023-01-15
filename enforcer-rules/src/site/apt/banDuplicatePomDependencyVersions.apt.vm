@@ -28,13 +28,6 @@ Ban Duplicate Pom Dependency Versions
   This rule checks that there are no duplicate dependencies declared in the POM of the project.
   Duplicate dependencies are dependencies which have the same group id, artifact id, type and classifier.
 
-  The following parameters are supported by this rule:
-   
-  * message - an optional supplemental message to the user if the rule fails.
-
-   []
-
-   
   Sample Plugin Configuration:
   
 +------+

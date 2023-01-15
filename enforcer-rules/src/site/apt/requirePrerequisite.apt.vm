@@ -31,7 +31,7 @@
 
    The following parameters are supported by this rule:
    
-   * mavenVersion - an optional value contain a versionrange or the version at least required.
+   * <<mavenVersion>> - an optional value contain a versionrange or the version at least required.
    
    []
 

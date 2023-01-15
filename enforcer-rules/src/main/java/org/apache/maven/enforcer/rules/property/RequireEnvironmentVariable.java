@@ -33,18 +33,8 @@ public final class RequireEnvironmentVariable extends AbstractPropertyEnforcerRu
      */
     private String variableName = null;
 
-    /**
-     * @param variableName the variable name
-     *
-     * @see #setVariableName(String)
-     * @see #getVariableName()
-     */
     public void setVariableName(String variableName) {
         this.variableName = variableName;
-    }
-
-    public String getVariableName() {
-        return variableName;
     }
 
     @Override
@@ -70,7 +60,7 @@ public final class RequireEnvironmentVariable extends AbstractPropertyEnforcerRu
     @Override
     public String toString() {
         return String.format(
-                "RequireEnvironmentVariable[variableName=%s, message=%s, regex=%s, regexMessage=%s]",
-                variableName, getMessage(), getRegex(), getRegexMessage());
+                "RequireEnvironmentVariable[message=%s, variableName=%s, regex=%s, regexMessage=%s]",
+                getMessage(), variableName, getRegex(), getRegexMessage());
     }
 }

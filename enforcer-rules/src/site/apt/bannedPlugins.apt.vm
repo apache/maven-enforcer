@@ -29,7 +29,7 @@ Banned Plugins
 
    The following parameters are supported by this rule:
    
-   * excludes - a list of plugin artifacts to ban. The format is groupId[:artifactId][:version] where artifactId and version are optional. Wildcards may be used to replace an entire section.
+   * <<excludes>> - a list of plugin artifacts to ban. The format is groupId[:artifactId][:version] where artifactId and version are optional. Wildcards may be used to replace an entire section.
       Examples:
        
         * org.apache.maven
@@ -42,14 +42,11 @@ Banned Plugins
                 
         []
 
-   * includes - a list of plugin artifacts to include. These are exceptions to the excludes. It is meant to allow wide exclusion rules with wildcards and fine tune using includes. 
+   * <<includes>> - a list of plugin artifacts to include. These are exceptions to the excludes. It is meant to allow wide exclusion rules with wildcards and fine tune using includes.
      If nothing has been excluded, then the includes have no effect. In other words, includes only subtract from artifacts that matched an exclude rule.
-      
-   * message - an optional message to the user if the rule fails.
-   
+
    []
 
-   
   Sample Plugin Configuration:
   
 +---+

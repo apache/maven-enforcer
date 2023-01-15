@@ -134,7 +134,7 @@ abstract class AbstractRequireFiles extends AbstractStandardEnforcerRule {
     @Override
     public String toString() {
         return String.format(
-                "%s[message=%s, files=%s, allowNulls=%b, satisfyAny=%b, level=%s]",
-                getClass().getSimpleName(), getMessage(), files, allowNulls, satisfyAny, getLevel());
+                "%s[message=%s, files=%s, allowNulls=%b, satisfyAny=%b]",
+                getClass().getSimpleName(), getMessage(), files, allowNulls, satisfyAny);
     }
 }

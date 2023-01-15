@@ -50,6 +50,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -82,6 +83,10 @@ class EnforcerRuleManagerTest {
     }
 
     void setupMocks() throws Exception {
+        setupMocks(false);
+    }
+
+    void setupMocks(Boolean hasComponent) {
         MojoExecution mojoExecution = mock(MojoExecution.class);
         when(mojoExecutionProvider.get()).thenReturn(mojoExecution);
 
@@ -92,11 +97,11 @@ class EnforcerRuleManagerTest {
 
         when(sessionProvider.get()).thenReturn(mock(MavenSession.class));
 
-        doThrow(ComponentLookupException.class).when(plexusContainer).lookup(any(Class.class), anyString());
+        when(plexusContainer.hasComponent(any(Class.class), anyString())).thenReturn(hasComponent);
     }
 
     @Test
-    void nullConfigReturnEmptyRules() throws Exception {
+    void nullConfigReturnEmptyRules() {
 
         List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(null, mojoLog);
 
@@ -104,7 +109,7 @@ class EnforcerRuleManagerTest {
     }
 
     @Test
-    void emptyConfigReturnEmptyRules() throws Exception {
+    void emptyConfigReturnEmptyRules() {
 
         List<EnforcerRuleDesc> rules =
                 enforcerRuleManager.createRules(new DefaultPlexusConfiguration("rules"), mojoLog);
@@ -169,6 +174,7 @@ class EnforcerRuleManagerTest {
 
         setupMocks();
 
+        when(plexusContainer.hasComponent(any(Class.class), eq("testRule1"))).thenReturn(true);
         Mockito.doReturn(new TestRule1()).when(plexusContainer).lookup(EnforcerRuleBase.class, "testRule1");
 
         PlexusConfiguration configuration = new DefaultPlexusConfiguration("rules")
@@ -183,6 +189,20 @@ class EnforcerRuleManagerTest {
                 .hasExactlyElementsOfTypes(TestRule1.class, TestRule2.class);
 
         assertThat(rules).hasSize(2).map(EnforcerRuleDesc::getName).containsExactly("testRule1", "testRule2");
+    }
+
+    @Test
+    void shouldThrowExceptionFormComponentCreation() throws Exception {
+
+        setupMocks(true);
+
+        doThrow(ComponentLookupException.class).when(plexusContainer).lookup(any(Class.class), anyString());
+
+        PlexusConfiguration configuration = new DefaultPlexusConfiguration("rules").addChild("TestRule1", null);
+
+        assertThatCode(() -> enforcerRuleManager.createRules(configuration, mojoLog))
+                .isInstanceOf(EnforcerRuleManagerException.class)
+                .hasCauseInstanceOf(ComponentLookupException.class);
     }
 
     @Test

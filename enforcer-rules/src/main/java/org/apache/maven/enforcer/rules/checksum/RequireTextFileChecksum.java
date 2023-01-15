@@ -42,7 +42,7 @@ import org.apache.maven.project.MavenProject;
  * @see RequireFileChecksum
  */
 @Named("requireTextFileChecksum")
-public class RequireTextFileChecksum extends RequireFileChecksum {
+public final class RequireTextFileChecksum extends RequireFileChecksum {
 
     private NormalizeLineSeparatorReader.LineSeparator normalizeLineSeparatorTo = LineSeparator.UNIX;
 
@@ -97,7 +97,8 @@ public class RequireTextFileChecksum extends RequireFileChecksum {
     @Override
     public String toString() {
         return String.format(
-                "RequireFileChecksum[file=%s, checksum=%s, type=%s, encoding=%s, normalizeLineSeparatorTo=%s, nonexistentFileMessage=%s, level=%s]",
+                "RequireFileChecksum[message=%s, file=%s, checksum=%s, type=%s, encoding=%s, normalizeLineSeparatorTo=%s, nonexistentFileMessage=%s, level=%s]",
+                getMessage(),
                 getFile(),
                 getChecksum(),
                 getType(),

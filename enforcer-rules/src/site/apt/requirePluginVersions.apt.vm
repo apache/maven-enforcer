@@ -29,24 +29,24 @@ Require Plugin Versions
 
    The following parameters are supported by this rule:
 
-   * message - an optional message to the user if the rule fails.
+   * <<message>> - an optional message to the user if the rule fails.
 
-   * banLatest - disallow any use of "LATEST" as a version for any plugin. Default = true.
+   * <<banLatest>> - disallow any use of "LATEST" as a version for any plugin. Default = true.
 
-   * banRelease - disallow any use of "RELEASE" as a version for any plugin. Default = true.
+   * <<banRelease>> - disallow any use of "RELEASE" as a version for any plugin. Default = true.
 
-   * banSnapshots - disallow any use of SNAPSHOT plugins. Default = true.
+   * <<banSnapshots>> - disallow any use of SNAPSHOT plugins. Default = true.
 
-   * banTimestamps - disallow any use of snapshot plugins with timestamp version (only enabled when banSnapshots is true). Default = true.
+   * <<banTimestamps>> - disallow any use of snapshot plugins with timestamp version (only enabled when banSnapshots is true). Default = true.
 
-   * phases - The comma separated list of phases that should be used to find 
+   * <<phases>> - The comma separated list of phases that should be used to find
      lifecycle plugin bindings. The default value is "clean,deploy,site".
 
-   * additionalPlugins - A list of additional plugins to enforce have versions. These
+   * <<additionalPlugins>> - A list of additional plugins to enforce have versions. These
      are plugins that may not be in the poms but are used anyway, like help, eclipse etc.
      The plugins should be specified in the form: group:artifactId.
 
-   * unCheckedPluginList - A comma separated list of plugins to skip version checking. Ie allow no version, or snapshots, etc. The plugins should be specified in the form: group:artifactId.
+   * <<unCheckedPluginList>> - A comma separated list of plugins to skip version checking. Ie allow no version, or snapshots, etc. The plugins should be specified in the form: group:artifactId.
 
 
    []

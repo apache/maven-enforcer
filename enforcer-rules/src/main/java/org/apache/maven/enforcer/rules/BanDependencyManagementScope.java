@@ -16,27 +16,28 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRule2;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.enforcer.rules.utils.ArtifactMatcher;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 
 /**
  * This rule bans all scope values except for {@code import} from dependencies within the dependency management.
  * There is a configuration option to ignore certain dependencies in this check.
  */
-public class BanDependencyManagementScope extends AbstractNonCacheableEnforcerRule implements EnforcerRule2 {
+@Named("banDependencyManagementScope")
+public final class BanDependencyManagementScope extends AbstractStandardEnforcerRule {
 
     /**
      * Specify the dependencies that will be ignored. This can be a list of artifacts in the format
@@ -54,40 +55,37 @@ public class BanDependencyManagementScope extends AbstractNonCacheableEnforcerRu
      */
     private boolean checkEffectivePom = false;
 
+    private final MavenProject project;
+
+    @Inject
+    public BanDependencyManagementScope(MavenProject project) {
+        this.project = Objects.requireNonNull(project);
+    }
+
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        Log logger = helper.getLog();
-        MavenProject project;
-        try {
-            project = (MavenProject) helper.evaluate("${project}");
-            if (project == null) {
-                throw new EnforcerRuleException("${project} is null");
-            }
-            // only evaluate local depMgmt, without taking into account inheritance and interpolation
-            DependencyManagement depMgmt = checkEffectivePom
-                    ? project.getModel().getDependencyManagement()
-                    : project.getOriginalModel().getDependencyManagement();
-            if (depMgmt != null && depMgmt.getDependencies() != null) {
-                List<Dependency> violatingDependencies = getViolatingDependencies(logger, depMgmt);
-                if (!violatingDependencies.isEmpty()) {
-                    String message = getMessage();
-                    StringBuilder buf = new StringBuilder();
-                    if (message == null) {
-                        message = "Scope other than 'import' is not allowed in 'dependencyManagement'";
-                    }
-                    buf.append(message + System.lineSeparator());
-                    for (Dependency violatingDependency : violatingDependencies) {
-                        buf.append(getErrorMessage(project, violatingDependency));
-                    }
-                    throw new EnforcerRuleException(buf.toString());
+    public void execute() throws EnforcerRuleException {
+        // only evaluate local depMgmt, without taking into account inheritance and interpolation
+        DependencyManagement depMgmt = checkEffectivePom
+                ? project.getModel().getDependencyManagement()
+                : project.getOriginalModel().getDependencyManagement();
+        if (depMgmt != null && depMgmt.getDependencies() != null) {
+            List<Dependency> violatingDependencies = getViolatingDependencies(depMgmt);
+            if (!violatingDependencies.isEmpty()) {
+                String message = getMessage();
+                StringBuilder buf = new StringBuilder();
+                if (message == null) {
+                    message = "Scope other than 'import' is not allowed in 'dependencyManagement'";
                 }
+                buf.append(message + System.lineSeparator());
+                for (Dependency violatingDependency : violatingDependencies) {
+                    buf.append(getErrorMessage(project, violatingDependency));
+                }
+                throw new EnforcerRuleException(buf.toString());
             }
-        } catch (ExpressionEvaluationException e) {
-            throw new EnforcerRuleException("Cannot resolve expression: " + e.getCause(), e);
         }
     }
 
-    protected List<Dependency> getViolatingDependencies(Log logger, DependencyManagement depMgmt) {
+    protected List<Dependency> getViolatingDependencies(DependencyManagement depMgmt) {
         final ArtifactMatcher excludesMatcher;
         if (excludes != null) {
             excludesMatcher = new ArtifactMatcher(excludes, Collections.emptyList());
@@ -98,7 +96,8 @@ public class BanDependencyManagementScope extends AbstractNonCacheableEnforcerRu
         for (Dependency dependency : depMgmt.getDependencies()) {
             if (dependency.getScope() != null && !"import".equals(dependency.getScope())) {
                 if (excludesMatcher != null && excludesMatcher.match(dependency)) {
-                    logger.debug("Skipping excluded dependency " + dependency + " with scope " + dependency.getScope());
+                    getLog().debug("Skipping excluded dependency " + dependency + " with scope "
+                            + dependency.getScope());
                     continue;
                 }
                 violatingDependencies.add(dependency);
@@ -118,7 +117,10 @@ public class BanDependencyManagementScope extends AbstractNonCacheableEnforcerRu
         this.excludes = theExcludes;
     }
 
-    public void setCheckEffectivePom(boolean checkEffectivePom) {
-        this.checkEffectivePom = checkEffectivePom;
+    @Override
+    public String toString() {
+        return String.format(
+                "BanDependencyManagementScope[message=%s, excludes=%s, checkEffectivePom=%b]",
+                getMessage(), excludes, checkEffectivePom);
     }
 }

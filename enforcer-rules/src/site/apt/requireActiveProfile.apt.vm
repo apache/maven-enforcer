@@ -30,11 +30,11 @@ Require Active Profile
 
    The following parameters are supported by this rule:
    
-   * message - an optional message to the user if the rule fails.
+   * <<message>> - an optional message to the user if the rule fails.
    
-   * profiles - A comma separated list of profile to check.
+   * <<profiles>> - A comma separated list of profile to check.
    
-   * all - Checks if all given profiles are active. Default is true.
+   * <<all>> - Checks if all given profiles are active. Default is true.
    
    []
 

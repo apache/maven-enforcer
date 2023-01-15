@@ -30,9 +30,9 @@ Require Snapshot Version
 
    The following parameters are supported by this rule:
    
-   * message - an optional message to the user if the rule fails.
+   * <<message>> - an optional message to the user if the rule fails.
     
-   * failWhenParentIsRelease - if the parent should be checked. Default: true 
+   * <<failWhenParentIsRelease>> - if the parent should be checked. Default: true
 
    []
 

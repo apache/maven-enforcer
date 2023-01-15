@@ -171,7 +171,7 @@ public class RequireFileChecksum extends AbstractStandardEnforcerRule {
     @Override
     public String toString() {
         return String.format(
-                "RequireFileChecksum[file=%s, checksum=%s, type=%s, nonexistentFileMessage=%s, level=%s]",
-                file, checksum, type, nonexistentFileMessage, getLevel());
+                "RequireFileChecksum[message=%s, file=%s, checksum=%s, type=%s, nonexistentFileMessage=%s]",
+                getMessage(), file, checksum, type, nonexistentFileMessage);
     }
 }
