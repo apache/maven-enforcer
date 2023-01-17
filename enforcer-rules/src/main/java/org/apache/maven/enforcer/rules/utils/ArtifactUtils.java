@@ -19,7 +19,6 @@
 package org.apache.maven.enforcer.rules.utils;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,22 +27,7 @@ import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.DependencyManagement;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
-import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.artifact.ArtifactTypeRegistry;
-import org.eclipse.aether.collection.CollectRequest;
-import org.eclipse.aether.collection.DependencyCollectionException;
-import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.DependencyNode;
-import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
-import org.eclipse.aether.util.graph.selector.AndDependencySelector;
-import org.eclipse.aether.util.graph.transformer.ConflictResolver;
 
 import static java.util.Optional.ofNullable;
 
@@ -70,75 +54,6 @@ public final class ArtifactUtils {
             artifact.setOptional(dependency.isOptional());
         });
         return artifact;
-    }
-
-    /**
-     * Retrieves the {@link DependencyNode} instance containing the result of the transitive dependency
-     * for the current {@link MavenProject}.
-     *
-     * @param helper (may not be null) an instance of the {@link EnforcerRuleHelper} class
-     * @param selectors zero or more {@link DependencySelector} instances
-     * @return a Dependency Node which is the root of the project's dependency tree
-     * @throws EnforcerRuleException thrown if the lookup fails
-     */
-    public static DependencyNode resolveTransitiveDependencies(
-            EnforcerRuleHelper helper, DependencySelector... selectors) throws EnforcerRuleException {
-        try {
-            RepositorySystem repositorySystem = helper.getComponent(RepositorySystem.class);
-            MavenSession session = (MavenSession) helper.evaluate("${session}");
-            MavenProject project = session.getCurrentProject();
-            ArtifactTypeRegistry artifactTypeRegistry =
-                    session.getRepositorySession().getArtifactTypeRegistry();
-
-            DefaultRepositorySystemSession repositorySystemSession =
-                    new DefaultRepositorySystemSession(session.getRepositorySession());
-            repositorySystemSession.setConfigProperty(ConflictResolver.CONFIG_PROP_VERBOSE, true);
-            repositorySystemSession.setConfigProperty(DependencyManagerUtils.CONFIG_PROP_VERBOSE, true);
-            if (selectors.length > 0) {
-                repositorySystemSession.setDependencySelector(new AndDependencySelector(selectors));
-            }
-
-            CollectRequest collectRequest = new CollectRequest(
-                    project.getDependencies().stream()
-                            .map(d -> RepositoryUtils.toDependency(d, artifactTypeRegistry))
-                            .collect(Collectors.toList()),
-                    ofNullable(project.getDependencyManagement())
-                            .map(DependencyManagement::getDependencies)
-                            .map(list -> list.stream()
-                                    .map(d -> RepositoryUtils.toDependency(d, artifactTypeRegistry))
-                                    .collect(Collectors.toList()))
-                            .orElse(null),
-                    project.getRemoteProjectRepositories());
-            Artifact artifact = project.getArtifact();
-            collectRequest.setRootArtifact(RepositoryUtils.toArtifact(artifact));
-
-            return repositorySystem
-                    .collectDependencies(repositorySystemSession, collectRequest)
-                    .getRoot();
-        } catch (ExpressionEvaluationException | ComponentLookupException e) {
-            throw new EnforcerRuleException("Unable to lookup a component " + e.getLocalizedMessage(), e);
-        } catch (DependencyCollectionException e) {
-            throw new EnforcerRuleException("Could not build dependency tree " + e.getLocalizedMessage(), e);
-        }
-    }
-
-    /**
-     * <p>Retrieves all <em>child</em> dependency artifacts from the given {@link DependencyNode} and returns them
-     * as a set of {@link Artifact}.</p>
-     * <p><u>Note:</u>&nbsp;Thus, the result will not contain the root artifact.</p>
-     * @param node root node
-     * @return set of all <em>child</em> dependency artifacts
-     */
-    public static Set<Artifact> getDependencyArtifacts(DependencyNode node) {
-        return getDependencyArtifacts(node, new HashSet<>());
-    }
-
-    private static Set<Artifact> getDependencyArtifacts(DependencyNode node, Set<Artifact> set) {
-        node.getChildren().forEach(child -> {
-            set.add(toArtifact(child));
-            getDependencyArtifacts(child, set);
-        });
-        return set;
     }
 
     /**
@@ -201,7 +116,7 @@ public final class ArtifactUtils {
      * @param artifact the artifact
      * @return <code>true</code> if the artifact matches one of the patterns
      */
-    static boolean compareDependency(String pattern, Artifact artifact) {
+    public static boolean compareDependency(String pattern, Artifact artifact) {
         return new ArtifactMatcher.Pattern(pattern).match(artifact);
     }
 }

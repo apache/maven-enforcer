@@ -16,17 +16,18 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.dependency;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
+import org.apache.maven.execution.MavenSession;
 
 import static java.util.Optional.ofNullable;
 import static org.apache.maven.enforcer.rules.utils.ArtifactUtils.matchDependencyArtifact;
@@ -36,48 +37,40 @@ import static org.apache.maven.enforcer.rules.utils.ArtifactUtils.matchDependenc
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class RequireReleaseDeps extends BannedDependenciesBase {
+@Named("requireReleaseDeps")
+public final class RequireReleaseDeps extends BannedDependenciesBase {
 
     /**
      * Allows this rule to execute only when this project is a release.
-     *
-     * @see {@link #setOnlyWhenRelease(boolean)}
-     * @see {@link #isOnlyWhenRelease()}
-     *
      */
     private boolean onlyWhenRelease = false;
 
     /**
      * Allows this rule to fail when the parent is defined as a snapshot.
-     *
-     * @see {@link #setFailWhenParentIsSnapshot(boolean)}
-     * @see {@link #isFailWhenParentIsSnapshot()}
      */
     private boolean failWhenParentIsSnapshot = true;
 
+    @Inject
+    public RequireReleaseDeps(MavenSession session, ResolveUtil resolveUtil) {
+        super(session, resolveUtil);
+    }
+
     // Override parent to allow optional ignore of this rule.
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
+    public void execute() throws EnforcerRuleException {
         boolean callSuper;
-        MavenProject project = null;
         if (onlyWhenRelease) {
-            // get the project
-            project = getProject(helper);
-
             // only call super if this project is a release
-            callSuper = !project.getArtifact().isSnapshot();
+            callSuper = !getSession().getCurrentProject().getArtifact().isSnapshot();
         } else {
             callSuper = true;
         }
 
         if (callSuper) {
-            super.execute(helper);
+            super.execute();
             if (failWhenParentIsSnapshot) {
-                if (project == null) {
-                    project = getProject(helper);
-                }
 
-                Artifact parentArtifact = project.getParentArtifact();
+                Artifact parentArtifact = getSession().getCurrentProject().getParentArtifact();
 
                 if (parentArtifact != null) {
                     Set<Artifact> singletonArtifact = new HashSet<>();
@@ -100,60 +93,51 @@ public class RequireReleaseDeps extends BannedDependenciesBase {
         return "is not a release dependency";
     }
 
-    /**
-     * @param helper
-     * @return The evaluated {@link MavenProject}.
-     * @throws EnforcerRuleException
-     */
-    private MavenProject getProject(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        try {
-            return (MavenProject) helper.evaluate("${project}");
-        } catch (ExpressionEvaluationException eee) {
-            throw new EnforcerRuleException("Unable to retrieve the MavenProject: ", eee);
-        }
-    }
-
     @Override
     protected boolean validate(Artifact artifact) {
         // only check isSnapshot() if the artifact does not match (excludes minus includes)
         // otherwise true
-        return (matchDependencyArtifact(artifact, excludes) && !matchDependencyArtifact(artifact, includes))
+        return (matchDependencyArtifact(artifact, getExcludes()) && !matchDependencyArtifact(artifact, getIncludes()))
                 || !artifact.isSnapshot();
     }
 
-    /*
+    /**
      * Filter the dependency artifacts according to the includes and excludes
      * If includes and excludes are both null, the original set is returned.
      *
      * @param dependencies the list of dependencies to filter
      * @return the resulting set of dependencies
      */
-    protected Set<Artifact> filterArtifacts(Set<Artifact> dependencies) throws EnforcerRuleException {
-        if (includes != null) {
-            dependencies = ArtifactUtils.filterDependencyArtifacts(dependencies, includes);
+    private Set<Artifact> filterArtifacts(Set<Artifact> dependencies) throws EnforcerRuleException {
+        if (getIncludes() != null) {
+            dependencies = ArtifactUtils.filterDependencyArtifacts(dependencies, getIncludes());
         }
 
-        if (dependencies != null && excludes != null) {
-            ofNullable(ArtifactUtils.filterDependencyArtifacts(dependencies, excludes))
+        if (dependencies != null && getExcludes() != null) {
+            ofNullable(ArtifactUtils.filterDependencyArtifacts(dependencies, getExcludes()))
                     .ifPresent(dependencies::removeAll);
         }
 
         return dependencies;
     }
 
-    public final boolean isOnlyWhenRelease() {
-        return onlyWhenRelease;
-    }
-
-    public final void setOnlyWhenRelease(boolean onlyWhenRelease) {
+    public void setOnlyWhenRelease(boolean onlyWhenRelease) {
         this.onlyWhenRelease = onlyWhenRelease;
     }
 
-    public final boolean isFailWhenParentIsSnapshot() {
-        return failWhenParentIsSnapshot;
+    public void setFailWhenParentIsSnapshot(boolean failWhenParentIsSnapshot) {
+        this.failWhenParentIsSnapshot = failWhenParentIsSnapshot;
     }
 
-    public final void setFailWhenParentIsSnapshot(boolean failWhenParentIsSnapshot) {
-        this.failWhenParentIsSnapshot = failWhenParentIsSnapshot;
+    @Override
+    public String toString() {
+        return String.format(
+                "RequireReleaseDeps[message=%s, excludes=%s, includes=%s, searchTransitive=%b, onlyWhenRelease=%b, failWhenParentIsSnapshot=%b]",
+                getMessage(),
+                getExcludes(),
+                getIncludes(),
+                isSearchTransitive(),
+                onlyWhenRelease,
+                failWhenParentIsSnapshot);
     }
 }

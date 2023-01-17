@@ -23,8 +23,8 @@ assert buildLog.contains( '[WARNING] The POM for org.example:test-not-existing:j
 
 // rule executed
 assert buildLog.contains( '[INFO] Rule 0: org.apache.maven.enforcer.rules.AlwaysPass executed' )
-assert buildLog.contains( '[INFO] Rule 1: org.apache.maven.plugins.enforcer.BanTransitiveDependencies executed' )
-assert buildLog.contains( '[INFO] Rule 2: org.apache.maven.plugins.enforcer.BannedDependencies executed' )
-assert buildLog.contains( '[INFO] Rule 3: org.apache.maven.plugins.enforcer.DependencyConvergence executed')
-assert buildLog.contains( '[INFO] Rule 4: org.apache.maven.plugins.enforcer.RequireReleaseDeps executed')
-assert buildLog.contains( '[INFO] Rule 5: org.apache.maven.plugins.enforcer.RequireUpperBoundDeps executed')
+assert buildLog.contains( '[INFO] Rule 1: org.apache.maven.enforcer.rules.dependency.BanTransitiveDependencies executed' )
+assert buildLog.contains( '[INFO] Rule 2: org.apache.maven.enforcer.rules.dependency.BannedDependencies executed' )
+assert buildLog.contains( '[INFO] Rule 3: org.apache.maven.enforcer.rules.dependency.DependencyConvergence executed')
+assert buildLog.contains( '[INFO] Rule 4: org.apache.maven.enforcer.rules.dependency.RequireReleaseDeps executed')
+assert buildLog.contains( '[INFO] Rule 5: org.apache.maven.enforcer.rules.dependency.RequireUpperBoundDeps executed')

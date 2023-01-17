@@ -18,7 +18,7 @@
  */
 def LS = System.getProperty( "line.separator" )
 File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( 'Rule 0: org.apache.maven.plugins.enforcer.RequireUpperBoundDeps failed with message:' )
+assert buildLog.text.contains( 'Rule 0: org.apache.maven.enforcer.rules.dependency.RequireUpperBoundDeps failed with message:' )
 
 def message = 'Failed while enforcing RequireUpperBoundDeps. The error(s) are [' + LS+
 'Require upper bound dependencies error for org.apache.maven.plugins.enforcer.its:menforcer146-x:1.1 paths to dependency are:' + LS+

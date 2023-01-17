@@ -16,24 +16,27 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.dependency;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.enforcer.rules.utils.ParentNodeProvider;
 import org.apache.maven.enforcer.rules.utils.ParentsVisitor;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
@@ -45,8 +48,8 @@ import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
  * @author Geoffrey De Smet
  * @since 1.1
  */
-public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
-    private static Log log;
+@Named("requireUpperBoundDeps")
+public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
     /**
      * @since 1.3
@@ -68,6 +71,13 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
     private List<String> includes = null;
 
     private RequireUpperBoundDepsVisitor upperBoundDepsVisitor;
+
+    private final ResolveUtil resolveUtil;
+
+    @Inject
+    public RequireUpperBoundDeps(ResolveUtil resolveUtil) {
+        this.resolveUtil = Objects.requireNonNull(resolveUtil);
+    }
 
     /**
      * Set to {@code true} if timestamped snapshots should be used.
@@ -97,11 +107,8 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
     }
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        if (log == null) {
-            log = helper.getLog();
-        }
-        DependencyNode node = ArtifactUtils.resolveTransitiveDependencies(helper);
+    public void execute() throws EnforcerRuleException {
+        DependencyNode node = resolveUtil.resolveTransitiveDependencies();
         upperBoundDepsVisitor = new RequireUpperBoundDepsVisitor()
                 .setUniqueVersions(uniqueVersions)
                 .setIncludes(includes);
@@ -119,7 +126,7 @@ public class RequireUpperBoundDeps extends AbstractNonCacheableEnforcerRule {
             org.eclipse.aether.artifact.Artifact artifact = conflict.get(0).getArtifact();
             String groupArt = artifact.getGroupId() + ":" + artifact.getArtifactId();
             if (excludes != null && excludes.contains(groupArt)) {
-                log.info("Ignoring requireUpperBoundDeps in " + groupArt);
+                getLog().info("Ignoring requireUpperBoundDeps in " + groupArt);
             } else {
                 errorMessages.add(buildErrorMessage(conflict));
             }

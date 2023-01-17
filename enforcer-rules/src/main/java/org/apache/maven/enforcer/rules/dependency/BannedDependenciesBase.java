@@ -16,17 +16,17 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.dependency;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.execution.MavenSession;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.eclipse.aether.graph.DependencyNode;
 
 /**
@@ -34,7 +34,7 @@ import org.eclipse.aether.graph.DependencyNode;
  * dependency tree by traversing all children and validating every
  * dependency artifact.
  */
-abstract class BannedDependenciesBase extends AbstractNonCacheableEnforcerRule {
+abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
 
     /**
      * Specify the banned dependencies. This can be a list of artifacts in the format
@@ -46,7 +46,7 @@ abstract class BannedDependenciesBase extends AbstractNonCacheableEnforcerRule {
      * @see #setExcludes(List)
      * @see #getExcludes()
      */
-    protected List<String> excludes = null;
+    private List<String> excludes = null;
 
     /**
      * Specify the allowed dependencies. This can be a list of artifacts in the format
@@ -60,19 +60,26 @@ abstract class BannedDependenciesBase extends AbstractNonCacheableEnforcerRule {
      * @see #setIncludes(List)
      * @see #getIncludes()
      */
-    protected List<String> includes = null;
+    private List<String> includes = null;
 
     /** Specify if transitive dependencies should be searched (default) or only look at direct dependencies. */
     private boolean searchTransitive = true;
 
+    private final MavenSession session;
+
+    private final ResolveUtil resolveUtil;
+
+    BannedDependenciesBase(MavenSession session, ResolveUtil resolveUtil) {
+        this.session = Objects.requireNonNull(session);
+        this.resolveUtil = Objects.requireNonNull(resolveUtil);
+    }
+
+    protected MavenSession getSession() {
+        return session;
+    }
+
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        MavenSession session;
-        try {
-            session = (MavenSession) helper.evaluate("${session}");
-        } catch (ExpressionEvaluationException e) {
-            throw new EnforcerRuleException("Cannot resolve MavenSession", e);
-        }
+    public void execute() throws EnforcerRuleException {
 
         if (!searchTransitive) {
             String result = session.getCurrentProject().getDependencyArtifacts().stream()
@@ -80,19 +87,28 @@ abstract class BannedDependenciesBase extends AbstractNonCacheableEnforcerRule {
                     .collect(
                             StringBuilder::new,
                             (messageBuilder, node) -> messageBuilder
+                                    .append(System.lineSeparator())
                                     .append(node.getId())
                                     .append(" <--- ")
                                     .append(getErrorMessage()),
                             (m1, m2) -> m1.append(m2.toString()))
                     .toString();
             if (!result.isEmpty()) {
-                throw new EnforcerRuleException(result);
+                String message = "";
+                if (getMessage() != null) {
+                    message = getMessage() + System.lineSeparator();
+                }
+                throw new EnforcerRuleException(message + result);
             }
         } else {
             StringBuilder messageBuilder = new StringBuilder();
-            DependencyNode rootNode = ArtifactUtils.resolveTransitiveDependencies(helper);
+            DependencyNode rootNode = resolveUtil.resolveTransitiveDependencies();
             if (!validate(rootNode, 0, messageBuilder)) {
-                throw new EnforcerRuleException(messageBuilder.toString());
+                String message = "";
+                if (getMessage() != null) {
+                    message = getMessage() + System.lineSeparator();
+                }
+                throw new EnforcerRuleException(message + messageBuilder);
             }
         }
     }
@@ -126,15 +142,6 @@ abstract class BannedDependenciesBase extends AbstractNonCacheableEnforcerRule {
      * triggers a validation error
      */
     protected abstract boolean validate(Artifact dependency);
-
-    /**
-     * Checks if is search transitive.
-     *
-     * @return the searchTransitive
-     */
-    public boolean isSearchTransitive() {
-        return this.searchTransitive;
-    }
 
     /**
      * Sets the search transitive.
@@ -192,5 +199,9 @@ abstract class BannedDependenciesBase extends AbstractNonCacheableEnforcerRule {
      */
     public void setIncludes(List<String> theIncludes) {
         this.includes = theIncludes;
+    }
+
+    public boolean isSearchTransitive() {
+        return searchTransitive;
     }
 }

@@ -16,21 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.dependency;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.RepositoryUtils;
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
 import org.apache.maven.enforcer.rules.utils.ArtifactMatcher;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.execution.MavenSession;
-import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.eclipse.aether.artifact.ArtifactTypeRegistry;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
@@ -43,7 +45,8 @@ import static java.util.Optional.ofNullable;
  *
  * @author Jakub Senko
  */
-public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule implements EnforcerRule {
+@Named("banTransitiveDependencies")
+public final class BanTransitiveDependencies extends AbstractStandardEnforcerRule {
 
     /**
      * Specify the dependencies that will be ignored. This can be a list of artifacts in the format
@@ -62,6 +65,16 @@ public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule 
      * Version is a string representing standard maven version range. Empty patterns will be ignored.
      */
     private List<String> includes;
+
+    private final MavenSession session;
+
+    private final ResolveUtil resolveUtil;
+
+    @Inject
+    public BanTransitiveDependencies(MavenSession session, ResolveUtil resolveUtil) {
+        this.session = Objects.requireNonNull(session);
+        this.resolveUtil = Objects.requireNonNull(resolveUtil);
+    }
 
     /**
      * Searches dependency tree recursively for transitive dependencies that are not excluded, while generating nice
@@ -126,13 +139,7 @@ public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule 
     }
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        MavenSession session;
-        try {
-            session = (MavenSession) helper.evaluate("${session}");
-        } catch (ExpressionEvaluationException e) {
-            throw new RuntimeException(e);
-        }
+    public void execute() throws EnforcerRuleException {
         ArtifactTypeRegistry artifactTypeRegistry =
                 session.getRepositorySession().getArtifactTypeRegistry();
         ArtifactMatcher exclusions = new ArtifactMatcher(excludes, includes);
@@ -140,10 +147,15 @@ public class BanTransitiveDependencies extends AbstractNonCacheableEnforcerRule 
                 .map(d -> RepositoryUtils.toDependency(d, artifactTypeRegistry))
                 .collect(Collectors.toSet());
 
-        DependencyNode rootNode = ArtifactUtils.resolveTransitiveDependencies(helper);
+        DependencyNode rootNode = resolveUtil.resolveTransitiveDependencies();
         StringBuilder generatedMessage = new StringBuilder();
         if (searchTree(rootNode, 0, exclusions, directDependencies, generatedMessage)) {
             throw new EnforcerRuleException(ofNullable(getMessage()).orElse(generatedMessage.toString()));
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("BanTransitiveDependencies[message=%s, excludes=%s]", getMessage(), excludes);
     }
 }

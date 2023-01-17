@@ -37,7 +37,6 @@ import static java.util.Optional.ofNullable;
  * This class is used for matching Artifacts against a list of patterns.
  *
  * @author Jakub Senko
- * @see org.apache.maven.plugins.enforcer.BanTransitiveDependencies
  */
 public final class ArtifactMatcher {
 
