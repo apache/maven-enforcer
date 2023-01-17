@@ -16,18 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.dependency;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
-import org.apache.maven.enforcer.rules.utils.DependencyVersionMap;
-import org.apache.maven.plugin.logging.Log;
 import org.eclipse.aether.collection.DependencyCollectionContext;
 import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.Dependency;
@@ -40,8 +41,8 @@ import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 /**
  * @author <a href="mailto:rex@e-hoffman.org">Rex Hoffman</a>
  */
-public class DependencyConvergence implements EnforcerRule {
-    private static Log log;
+@Named("dependencyConvergence")
+public final class DependencyConvergence extends AbstractStandardEnforcerRule {
 
     private boolean uniqueVersions;
 
@@ -51,51 +52,47 @@ public class DependencyConvergence implements EnforcerRule {
 
     private DependencyVersionMap dependencyVersionMap;
 
-    public void setUniqueVersions(boolean uniqueVersions) {
-        this.uniqueVersions = uniqueVersions;
+    private final ResolveUtil resolveUtil;
+
+    @Inject
+    public DependencyConvergence(ResolveUtil resolveUtil) {
+        this.resolveUtil = Objects.requireNonNull(resolveUtil);
     }
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
-        if (log == null) {
-            log = helper.getLog();
+    public void execute() throws EnforcerRuleException {
+
+        DependencyNode node = resolveUtil.resolveTransitiveDependencies(
+                // TODO: use a modified version of ExclusionDependencySelector to process excludes and includes
+                new DependencySelector() {
+                    @Override
+                    public boolean selectDependency(Dependency dependency) {
+                        // regular OptionalDependencySelector only discriminates optional dependencies at level 2+
+                        return !dependency.isOptional()
+                                // regular scope selectors only discard transitive dependencies
+                                // and always allow direct dependencies
+                                && !dependency.getScope().equals(SCOPE_TEST)
+                                && !dependency.getScope().equals(SCOPE_PROVIDED);
+                    }
+
+                    @Override
+                    public DependencySelector deriveChildSelector(DependencyCollectionContext context) {
+                        return this;
+                    }
+                },
+                // process dependency exclusions
+                new ExclusionDependencySelector());
+        dependencyVersionMap = new DependencyVersionMap().setUniqueVersions(uniqueVersions);
+        node.accept(dependencyVersionMap);
+
+        List<CharSequence> errorMsgs = new ArrayList<>(
+                getConvergenceErrorMsgs(dependencyVersionMap.getConflictedVersionNumbers(includes, excludes)));
+        for (CharSequence errorMsg : errorMsgs) {
+            getLog().warnOrError(errorMsg);
         }
-        try {
-            DependencyNode node = ArtifactUtils.resolveTransitiveDependencies(
-                    helper,
-                    // TODO: use a modified version of ExclusionDependencySelector to process excludes and includes
-                    new DependencySelector() {
-                        @Override
-                        public boolean selectDependency(Dependency dependency) {
-                            // regular OptionalDependencySelector only discriminates optional dependencies at level 2+
-                            return !dependency.isOptional()
-                                    // regular scope selectors only discard transitive dependencies
-                                    // and always allow direct dependencies
-                                    && !dependency.getScope().equals(SCOPE_TEST)
-                                    && !dependency.getScope().equals(SCOPE_PROVIDED);
-                        }
-
-                        @Override
-                        public DependencySelector deriveChildSelector(DependencyCollectionContext context) {
-                            return this;
-                        }
-                    },
-                    // process dependency exclusions
-                    new ExclusionDependencySelector());
-            dependencyVersionMap = new DependencyVersionMap(log).setUniqueVersions(uniqueVersions);
-            node.accept(dependencyVersionMap);
-
-            List<CharSequence> errorMsgs = new ArrayList<>(
-                    getConvergenceErrorMsgs(dependencyVersionMap.getConflictedVersionNumbers(includes, excludes)));
-            for (CharSequence errorMsg : errorMsgs) {
-                log.warn(errorMsg);
-            }
-            if (errorMsgs.size() > 0) {
-                throw new EnforcerRuleException(
-                        "Failed while enforcing releasability. " + "See above detailed error message.");
-            }
-        } catch (Exception e) {
-            throw new EnforcerRuleException(e.getLocalizedMessage(), e);
+        if (errorMsgs.size() > 0) {
+            throw new EnforcerRuleException(
+                    "Failed while enforcing releasability. " + "See above detailed error message.");
         }
     }
 
@@ -143,17 +140,9 @@ public class DependencyConvergence implements EnforcerRule {
     }
 
     @Override
-    public String getCacheId() {
-        return "";
-    }
-
-    @Override
-    public boolean isCacheable() {
-        return false;
-    }
-
-    @Override
-    public boolean isResultValid(EnforcerRule ignored) {
-        return false;
+    public String toString() {
+        return String.format(
+                "DependencyConvergence[includes=%s, excludes=%s, uniqueVersions=%b]",
+                includes, excludes, uniqueVersions);
     }
 }

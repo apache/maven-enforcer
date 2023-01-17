@@ -18,7 +18,7 @@
  */
 
 def buildLog = new File(basedir, 'build.log').text
-assert buildLog.contains('[ERROR] Rule 0: org.apache.maven.plugins.enforcer.BannedDependencies failed with message:')
+assert buildLog.contains('[ERROR] Rule 0: org.apache.maven.enforcer.rules.dependency.BannedDependencies failed with message:')
 
 assert buildLog.contains('   org.apache.logging.log4j:log4j-core:jar:2.19.0')
 assert buildLog.contains('      org.apache.logging.log4j:log4j-api:jar:2.19.0 <--- banned via the exclude/include list')

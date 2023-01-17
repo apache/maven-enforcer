@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.enforcer.rules.utils;
+package org.apache.maven.enforcer.rules.dependency;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
+import org.apache.maven.enforcer.rules.utils.ParentNodeProvider;
+import org.apache.maven.enforcer.rules.utils.ParentsVisitor;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
@@ -32,12 +34,12 @@ import org.eclipse.aether.graph.DependencyVisitor;
 /**
  * @author Brian Fox
  */
-public class DependencyVersionMap implements DependencyVisitor, ParentNodeProvider {
+class DependencyVersionMap implements DependencyVisitor, ParentNodeProvider {
     private ParentsVisitor parentsVisitor;
     private boolean uniqueVersions;
     private final Map<String, List<DependencyNode>> idsToNode = new HashMap<>();
 
-    public DependencyVersionMap(Log log) {
+    DependencyVersionMap() {
         this.parentsVisitor = new ParentsVisitor();
     }
 

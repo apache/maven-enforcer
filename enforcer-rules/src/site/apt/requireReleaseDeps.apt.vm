@@ -30,17 +30,17 @@ Require Release Dependencies
 
    The following parameters are supported by this rule:
    
-   * searchTransitive - if transitive dependencies should be checked. Default: true
+   * <<searchTransitive>> - if transitive dependencies should be checked. Default: true
    
-   * message - an optional message to the user if the rule fails.
+   * <<message>> - an optional message to the user if the rule fails.
    
-   * onlyWhenRelease - if this rule should only be executed when the version is a non-SNAPSHOT version. Default: false
+   * <<onlyWhenRelease>> - if this rule should only be executed when the version is a non-SNAPSHOT version. Default: false
    
-   * failWhenParentIsSnapshot - if the parent should be checked. Default: true 
+   * <<failWhenParentIsSnapshot>> - if the parent should be checked. Default: true
    
-   * includes - List of dependency patterns to include when checking for snapshot versions.
+   * <<includes>> - List of dependency patterns to include when checking for snapshot versions.
    
-   * excludes - List of dependency patterns to exclude when checking for snapshot versions
+   * <<excludes>> - List of dependency patterns to exclude when checking for snapshot versions
 
    []
    

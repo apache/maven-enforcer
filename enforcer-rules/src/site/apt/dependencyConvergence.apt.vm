@@ -133,10 +133,10 @@ and
   By default, all dependency convergence errors are reported, and any single error will fail the build. If you want
   to tune which dependency errors are reported and fail the build, you can add the following optional parameters:
 
-    * includes - A list of artifacts for which dependency convergence should be enforced. Not specifying any includes
+    * <<includes>> - A list of artifacts for which dependency convergence should be enforced. Not specifying any includes
       is interpreted the same as including all artifacts.
 
-    * excludes - A list of artifacts for which dependency convergence should not be enforced. These are exceptions
+    * <<excludes>> - A list of artifacts for which dependency convergence should not be enforced. These are exceptions
       to the includes.
 
     []

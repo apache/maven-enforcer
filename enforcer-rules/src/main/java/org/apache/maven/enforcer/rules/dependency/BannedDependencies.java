@@ -16,25 +16,43 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.enforcer.rules.dependency;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
+import org.apache.maven.execution.MavenSession;
 
 /**
  * This rule checks that lists of dependencies are not included.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
-public class BannedDependencies extends BannedDependenciesBase {
+@Named("bannedDependencies")
+public final class BannedDependencies extends BannedDependenciesBase {
+
+    @Inject
+    BannedDependencies(MavenSession session, ResolveUtil resolveUtil) {
+        super(session, resolveUtil);
+    }
+
     @Override
     protected boolean validate(Artifact artifact) {
-        return !ArtifactUtils.matchDependencyArtifact(artifact, excludes)
-                || ArtifactUtils.matchDependencyArtifact(artifact, includes);
+        return !ArtifactUtils.matchDependencyArtifact(artifact, getExcludes())
+                || ArtifactUtils.matchDependencyArtifact(artifact, getIncludes());
     }
 
     @Override
     protected String getErrorMessage() {
         return "banned via the exclude/include list";
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "BannedDependencies[message=%s, excludes=%s, includes=%s, searchTransitive=%b]",
+                getMessage(), getExcludes(), getIncludes(), isSearchTransitive());
     }
 }

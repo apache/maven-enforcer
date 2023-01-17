@@ -18,5 +18,5 @@
  */
 File buildLog = new File( basedir, 'build.log' )
 
-assert buildLog.text.contains( 'Rule 0: org.apache.maven.plugins.enforcer.RequireReleaseDeps failed with message:' )
+assert buildLog.text.contains( 'Rule 0: org.apache.maven.enforcer.rules.dependency.RequireReleaseDeps failed with message:' )
 assert buildLog.text.contains( 'Parent Cannot be a snapshot: org.apache.maven.its.enforcer:multimodule:pom:1.0-SNAPSHOT' )

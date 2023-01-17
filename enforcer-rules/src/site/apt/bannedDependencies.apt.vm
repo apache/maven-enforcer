@@ -30,9 +30,9 @@ Banned Dependencies
 
    The following parameters are supported by this rule:
    
-   * searchTransitive - if transitive dependencies should be checked. Default is true.
+   * <<searchTransitive>> - if transitive dependencies should be checked. Default is true.
    
-   * excludes - a list of artifacts to ban. The format is groupId[:artifactId][:version][:type][:scope][:classifier] where artifactId, version, type, scope and classifier are optional. Wildcards may be used to replace an entire or just parts of a section.
+   * <<excludes>> - a list of artifacts to ban. The format is groupId[:artifactId][:version][:type][:scope][:classifier] where artifactId, version, type, scope and classifier are optional. Wildcards may be used to replace an entire or just parts of a section.
       Examples:
        
         * org.apache.maven
@@ -53,11 +53,11 @@ Banned Dependencies
         
         []
 
-   * includes - a list of artifacts to include. These are exceptions to the excludes. It is meant to allow wide exclusion rules with wildcards and fine tune using includes. If nothing has been excluded, then the includes have no effect. In otherwords, includes only subtract from artifacts that matched an exclude rule.
+   * <<includes>> - a list of artifacts to include. These are exceptions to the excludes. It is meant to allow wide exclusion rules with wildcards and fine tune using includes. If nothing has been excluded, then the includes have no effect. In otherwords, includes only subtract from artifacts that matched an exclude rule.
    
    For example, to ban all xerces except xerces-api you would exclude "xerces" (groupId) and include "xerces:xerces-api"   
    
-   * message - an optional message to the user if the rule fails.
+   * <<message>> - an optional message to the user if the rule fails.
    
    []
 
