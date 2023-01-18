@@ -29,7 +29,9 @@ import org.apache.maven.plugins.annotations.Parameter;
  * This goal displays the current platform information.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
+ * @deprecated please use {@code mvn --version}
  */
+@Deprecated
 @Mojo(name = "display-info", threadSafe = true)
 public class DisplayInfoMojo extends AbstractMojo {
 

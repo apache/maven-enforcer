@@ -33,6 +33,9 @@ Require Java Version
    
    * <<version>> - {{{./versionRanges.html}range}} of allowed JDKs.
 
+   * <<display>> -  flag to display the normalized JDK version.
+
+
    For JDK 1.8 you can also use simple <<<8>>> as <version> - it will be internally changed to <<<1.8>>>
    
    []
@@ -49,18 +52,10 @@ Require Java Version
   
   []
    
-   This preprocessing normalizes various JDK version strings into a standard x.y.z-b version number. Your required range should therefore use the x.y.z-b format for comparison. 
-   There is an easy way to see how your current JDK string will be normalized:
-     
-+---+
-mvn enforcer:display-info
-...
-[INFO] Maven Version: 3.8.7
-[INFO] JDK Version: 1.8.0_352 normalized as: 1.8.0-352
-[INFO] Java Vendor: Homebrew
-[INFO] OS Info - Arch: x86_64, Family: mac, Name: mac os x, Version: 12.6.1
-+---+
- 
+   This preprocessing normalizes various JDK version strings into a standard x.y.z-b version number.
+   Your required range should therefore use the x.y.z-b format for comparison.
+   There is an easy way to see how your current JDK string will be normalized, you can enable <<display>> option.
+
    Sample Plugin Configuration:
    
 +---+

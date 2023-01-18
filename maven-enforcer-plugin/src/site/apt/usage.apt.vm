@@ -105,17 +105,4 @@ Usage
   [...]
 </project>
 +---+
-  
-* The <<<enforcer:display-info>>> mojo
 
-   This goal is used to determine the current information as detected by the standard rules:
-     
-+---+
-   mvn enforcer:display-info
-   ...
-   [enforcer:display-info]
-       Maven Version: 2.0.6
-       JDK Version: 1.5.0_11 normalized as: 1.5.0-11
-       OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
-+---+
-  

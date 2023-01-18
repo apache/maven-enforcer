@@ -89,12 +89,13 @@ Require OS Version
    information for the current system:
    
 +---+
-mvn enforcer:display-info
-...
-[INFO] Maven Version: 3.8.7
-[INFO] JDK Version: 1.8.0_352 normalized as: 1.8.0-352
-[INFO] Java Vendor: Homebrew
-[INFO] OS Info - Arch: x86_64, Family: mac, Name: mac os x, Version: 12.6.1
+mvn --version
+
+Apache Maven 3.8.7 (b89d5959fcde851dcb1c8946a785a163f14e1e29)
+Maven home: /usr/local/Cellar/maven/3.8.7/libexec
+Java version: 1.8.0_352, vendor: Homebrew, runtime: /usr/local/Cellar/openjdk@8/1.8.0+352/libexec/openjdk.jdk/Contents/Home/jre
+Default locale: en_GB, platform encoding: UTF-8
+OS name: "mac os x", version: "12.6.1", arch: "x86_64", family: "mac"
 +---+
   
   Sample Plugin Configuration:

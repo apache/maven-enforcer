@@ -97,7 +97,7 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
         if (allParamsEmpty()) {
             throw new EnforcerRuleError("All parameters can not be empty. "
                     + "You must pick at least one of (family, name, version, arch), "
-                    + "you can use mvn enforcer:display-info to see the current OS information.");
+                    + "you can use mvn --version to see the current OS information.");
         }
 
         if (isValidFamily(this.family)) {
