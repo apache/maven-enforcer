@@ -44,6 +44,11 @@ public final class RequireJavaVersion extends AbstractVersionEnforcer {
 
     private static final Pattern JDK8_VERSION_PATTERN = Pattern.compile("([\\[(,]?)(1\\.8|8)([]),]?)");
 
+    /**
+     * Display the normalized JDK version.
+     */
+    private boolean display = false;
+
     @Override
     public void setVersion(String theVersion) {
 
@@ -66,12 +71,16 @@ public final class RequireJavaVersion extends AbstractVersionEnforcer {
     @Override
     public void execute() throws EnforcerRuleException {
         String javaVersion = SystemUtils.JAVA_VERSION;
+        String javaVersionNormalized = normalizeJDKVersion(javaVersion);
+        if (display) {
+            getLog().info("Detected Java Version: '" + javaVersion + "'");
+            getLog().info("Normalized Java Version: '" + javaVersionNormalized + "'");
+        } else {
+            getLog().debug("Detected Java Version: '" + javaVersion + "'");
+            getLog().debug("Normalized Java Version: '" + javaVersionNormalized + "'");
+        }
 
-        getLog().debug("Detected Java String: '" + javaVersion + "'");
-        javaVersion = normalizeJDKVersion(javaVersion);
-        getLog().debug("Normalized Java String: '" + javaVersion + "'");
-
-        ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion(javaVersion);
+        ArtifactVersion detectedJdkVersion = new DefaultArtifactVersion(javaVersionNormalized);
 
         getLog().debug("Parsed Version: Major: " + detectedJdkVersion.getMajorVersion() + " Minor: "
                 + detectedJdkVersion.getMinorVersion() + " Incremental: " + detectedJdkVersion.getIncrementalVersion()
@@ -132,5 +141,12 @@ public final class RequireJavaVersion extends AbstractVersionEnforcer {
                     detectedJdkVersion, SystemUtils.JAVA_HOME, version);
             super.setMessage(message);
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "%s[message=%s, version=%s, display=%b]",
+                getClass().getSimpleName(), getMessage(), getVersion(), display);
     }
 }

@@ -52,4 +52,9 @@ public final class RequireMavenVersion extends AbstractVersionEnforcer {
         DefaultArtifactVersion detectedVersion = new DefaultArtifactVersion(mavenVersion);
         enforceVersion("Maven", getVersion(), detectedVersion);
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s[message=%s, version=%s]", getClass().getSimpleName(), getMessage(), getVersion());
+    }
 }

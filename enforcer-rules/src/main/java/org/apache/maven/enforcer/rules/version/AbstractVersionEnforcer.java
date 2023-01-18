@@ -138,9 +138,4 @@ abstract class AbstractVersionEnforcer extends AbstractStandardEnforcerRule {
     public void setVersion(String theVersion) {
         this.version = theVersion;
     }
-
-    @Override
-    public String toString() {
-        return String.format("%s[message=%s, version=%s]", getClass().getSimpleName(), getMessage(), version);
-    }
 }
