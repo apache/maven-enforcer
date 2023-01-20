@@ -39,6 +39,7 @@ public abstract class AbstractEnforcerRule extends AbstractEnforcerRuleBase {
      *
      * @return an Enforcer execution level
      */
+    @Override
     public EnforcerLevel getLevel() {
         return level;
     }

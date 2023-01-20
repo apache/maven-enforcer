@@ -20,7 +20,7 @@
   ------
   Tim Sijstermans
   ------
-  July 2020
+  2020-07-31
   ------
 
 Require Java Vendor
@@ -29,11 +29,11 @@ Require Java Vendor
 
    The following parameters are supported by this rule:
    
-   * message - an optional message to the user if the rule fails.
+   * <<message>> - an optional message to the user if the rule fails.
 
-   * includes - a list of allowed JDK vendors to include, by default all is included.
+   * <<includes>> - a list of allowed JDK vendors to include, by default all is included.
 
-   * excludes - a list of banned JDK vendors. These are exceptions to the includes.
+   * <<excludes>> - a list of banned JDK vendors. These are exceptions to the includes.
 
  
    Sample Plugin Configuration:

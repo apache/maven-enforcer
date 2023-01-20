@@ -23,7 +23,6 @@ import javax.inject.Provider;
 import java.util.List;
 
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
-import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleBase;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecution;
@@ -82,7 +81,7 @@ class EnforcerRuleManagerTest {
                 new EnforcerRuleManager(sessionProvider, mojoExecutionProvider, componentConfigurator, plexusContainer);
     }
 
-    void setupMocks() throws Exception {
+    void setupMocks() {
         setupMocks(false);
     }
 
@@ -236,7 +235,7 @@ class EnforcerRuleManagerTest {
         List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(configuration, mock(Log.class));
         assertThat(rules).hasSize(1);
 
-        ArgumentCaptor<EnforcerRule> ruleCaptor = ArgumentCaptor.forClass(EnforcerRule.class);
+        ArgumentCaptor<EnforcerRuleBase> ruleCaptor = ArgumentCaptor.forClass(EnforcerRuleBase.class);
         ArgumentCaptor<PlexusConfiguration> configurationCaptor = ArgumentCaptor.forClass(PlexusConfiguration.class);
 
         verify(componentConfigurator)
@@ -257,6 +256,6 @@ class EnforcerRuleManagerTest {
 
         List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(configuration, mock(Log.class));
         assertThat(rules).hasSize(1);
-        assertThat(rules.get(0).getLevel()).isEqualTo(EnforcerLevel.WARN);
+        assertThat(rules.get(0).getLevel()).isEqualTo(EnforcerLevel.ERROR);
     }
 }

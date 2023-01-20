@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.apache.maven.enforcer.rule.api.AbstractEnforcerRuleBase;
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleBase;
@@ -105,13 +104,12 @@ public class EnforcerRuleManager {
         EnforcerLogger enforcerLoggerWarn = new EnforcerLoggerWarn(log);
 
         for (PlexusConfiguration ruleConfig : rules.getChildren()) {
-            // we need rule level before configuration in order to proper set logger and RuleDesc
+            // we need rule level before configuration in order to proper set logger
             EnforcerLevel ruleLevel = getRuleLevelFromConfig(ruleConfig);
 
-            EnforcerRuleDesc ruleDesc =
-                    createRuleDesc(ruleConfig.getName(), ruleConfig.getAttribute("implementation"), ruleLevel);
+            EnforcerRuleDesc ruleDesc = createRuleDesc(ruleConfig.getName(), ruleConfig.getAttribute("implementation"));
             // setup logger before rule configuration
-            setupLoggerForRule(ruleDesc, ruleLevel == EnforcerLevel.ERROR ? enforcerLoggerError : enforcerLoggerWarn);
+            ruleDesc.getRule().setLog(ruleLevel == EnforcerLevel.ERROR ? enforcerLoggerError : enforcerLoggerWarn);
             if (ruleConfig.getChildCount() > 0) {
                 try {
                     componentConfigurator.configureComponent(ruleDesc.getRule(), ruleConfig, evaluator, classRealm);
@@ -132,24 +130,14 @@ public class EnforcerRuleManager {
         return EnforcerLevel.valueOf(level);
     }
 
-    private void setupLoggerForRule(EnforcerRuleDesc ruleDesc, EnforcerLogger logger) {
-        EnforcerRuleBase rule = ruleDesc.getRule();
-        if (rule instanceof AbstractEnforcerRuleBase) {
-            AbstractEnforcerRuleBase ruleBase = (AbstractEnforcerRuleBase) rule;
-            ruleBase.setLog(logger);
-        }
-    }
-
-    private EnforcerRuleDesc createRuleDesc(String name, String implementation, EnforcerLevel ruleLevel)
-            throws EnforcerRuleManagerException {
+    private EnforcerRuleDesc createRuleDesc(String name, String implementation) throws EnforcerRuleManagerException {
 
         // component name should always start at lowercase character
         String ruleName = Character.toLowerCase(name.charAt(0)) + name.substring(1);
 
         if (plexusContainer.hasComponent(EnforcerRuleBase.class, ruleName)) {
             try {
-                return new EnforcerRuleDesc(
-                        ruleName, plexusContainer.lookup(EnforcerRuleBase.class, ruleName), ruleLevel);
+                return new EnforcerRuleDesc(ruleName, plexusContainer.lookup(EnforcerRuleBase.class, ruleName));
             } catch (ComponentLookupException e) {
                 throw new EnforcerRuleManagerException(e);
             }
@@ -169,7 +157,7 @@ public class EnforcerRuleManager {
 
         try {
             return new EnforcerRuleDesc(
-                    ruleName, (EnforcerRuleBase) Class.forName(ruleClass).newInstance(), ruleLevel);
+                    ruleName, (EnforcerRuleBase) Class.forName(ruleClass).newInstance());
         } catch (Exception e) {
             throw new EnforcerRuleManagerException(
                     "Failed to create enforcer rules with name: " + ruleName + " or for class: " + ruleClass, e);

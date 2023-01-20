@@ -29,8 +29,6 @@ import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.utils.logging.MessageBuilder;
-import org.apache.maven.shared.utils.logging.MessageUtils;
 
 /**
  * Checks that all dependencies have an explicitly declared scope in the non-effective pom (i.e. without taking
@@ -57,19 +55,12 @@ public final class RequireExplicitDependencyScope extends AbstractStandardEnforc
         for (Dependency dependency : dependencies) {
             getLog().debug("Found dependency " + dependency);
             if (dependency.getScope() == null) {
-                MessageBuilder msgBuilder = MessageUtils.buffer();
-                msgBuilder
-                        .a("Dependency ")
-                        .strong(dependency.getManagementKey())
-                        .a(" @ ")
-                        .strong(formatLocation(project, dependency.getLocation("")))
-                        .a(" does not have an explicit scope defined!")
-                        .toString();
-                if (getLevel() == EnforcerLevel.ERROR) {
-                    getLog().error(msgBuilder.toString());
-                } else {
-                    getLog().warn(msgBuilder.toString());
-                }
+                getLog().warnOrError(() -> new StringBuilder()
+                        .append("Dependency ")
+                        .append(dependency.getManagementKey())
+                        .append(" @ ")
+                        .append(formatLocation(project, dependency.getLocation("")))
+                        .append(" does not have an explicit scope defined!"));
                 numMissingDependencyScopes++;
             }
         }

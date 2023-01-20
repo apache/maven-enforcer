@@ -26,7 +26,7 @@ package org.apache.maven.enforcer.rule.api;
  * @author Slawomir Jaranowski
  * @since 3.2.0
  */
-public abstract class AbstractEnforcerRuleBase implements EnforcerRuleBase {
+abstract class AbstractEnforcerRuleBase implements EnforcerRuleBase {
 
     /**
      * EnforcerLogger instance
@@ -38,12 +38,15 @@ public abstract class AbstractEnforcerRuleBase implements EnforcerRuleBase {
      *
      * @param log an {@link EnforcerLogger} instance
      */
+    @Override
     public void setLog(EnforcerLogger log) {
         this.log = log;
     }
 
     /**
      * Provide an {@link  EnforcerLogger} instance for Rule
+     * <p>
+     * <b>NOTICE</b> A logger is not available in constructors.
      *
      * @return an {@link EnforcerLogger} instance
      */

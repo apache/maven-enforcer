@@ -64,7 +64,7 @@ External Rules
                                 <externalRules>
                                     <!-- You can add multiple <ExternalRules> elements if you need to enforce -->
                                     <!-- rules from multiple resources. -->
-                                    <!-- src/build/rules.xml is a local file path relative to ${project.basedir} -->
+                                    <!-- src/build/rules.xml is a local file path relative to \${project.basedir} -->
                                     <location>src/build/rules.xml</location>
                                 </externalRules>
                             </rules>

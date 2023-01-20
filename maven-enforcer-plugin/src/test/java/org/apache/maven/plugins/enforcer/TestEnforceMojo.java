@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -299,6 +300,7 @@ class TestEnforceMojo {
         EnforcerRuleException ruleException = new EnforcerRuleException("testMessage");
 
         EnforcerRule ruleMock = Mockito.mock(EnforcerRule.class);
+        when(ruleMock.getLevel()).thenReturn(EnforcerLevel.ERROR);
         Mockito.doThrow(ruleException).when(ruleMock).execute(any(EnforcerRuleHelper.class));
         when(ruleManager.createRules(any(), any()))
                 .thenReturn(Collections.singletonList(new EnforcerRuleDesc("mock", ruleMock)));
@@ -323,6 +325,7 @@ class TestEnforceMojo {
         EnforcerRuleException enforcerRuleException = new EnforcerRuleException(npe.getLocalizedMessage(), npe);
 
         EnforcerRule ruleMock = Mockito.mock(EnforcerRule.class);
+        when(ruleMock.getLevel()).thenReturn(EnforcerLevel.ERROR);
         Mockito.doThrow(enforcerRuleException).when(ruleMock).execute(any(EnforcerRuleHelper.class));
 
         when(ruleManager.createRules(any(), any()))

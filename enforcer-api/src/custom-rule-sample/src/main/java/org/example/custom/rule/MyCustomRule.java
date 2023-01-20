@@ -97,7 +97,7 @@ public class MyCustomRule extends AbstractEnforcerRule {
      */
     @Override
     public String toString() {
-        return String.format("MyCustomRule[level=%s, shouldIfail=%b]", getLevel(), shouldIfail);
+        return String.format("MyCustomRule[shouldIfail=%b]", shouldIfail);
     }
 }
 // END SNIPPET: rule-implementation

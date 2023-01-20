@@ -119,7 +119,8 @@ abstract class AbstractPropertyEnforcerRule extends AbstractStandardEnforcerRule
     /**
      * Resolves the property value
      *
-     * @throws EnforcerRuleException
+     * @return a resolve value
+     * @throws EnforcerRuleException in case of problems
      */
     protected abstract Object resolveValue() throws EnforcerRuleException;
 }

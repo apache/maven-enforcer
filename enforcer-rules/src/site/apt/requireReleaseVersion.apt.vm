@@ -20,7 +20,7 @@
   ------
   Brian Fox
   ------
-  August 2008
+  2008-08-06
   ------
 
 Require Release Version
@@ -30,9 +30,9 @@ Require Release Version
 
    The following parameters are supported by this rule:
    
-   * message - an optional message to the user if the rule fails.
+   * <<message>> - an optional message to the user if the rule fails.
     
-   * failWhenParentIsSnapshot - if the parent should be checked. Default: true 
+   * <<failWhenParentIsSnapshot>> - if the parent should be checked. Default: true
 
    []
 

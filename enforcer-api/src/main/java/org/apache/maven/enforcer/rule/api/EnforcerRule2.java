@@ -18,8 +18,6 @@
  */
 package org.apache.maven.enforcer.rule.api;
 
-import javax.annotation.Nonnull;
-
 /**
  * Interface to be implemented by any rules as of version 2.0 executed by the enforcer.
  *
@@ -29,12 +27,4 @@ import javax.annotation.Nonnull;
  *         <a href="https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html">Writing a custom rule</a>
  */
 @Deprecated
-public interface EnforcerRule2 extends EnforcerRule {
-    /**
-     * Returns the level of enforcement.
-     *
-     * @return level
-     */
-    @Nonnull
-    EnforcerLevel getLevel();
-}
+public interface EnforcerRule2 extends EnforcerRule {}
