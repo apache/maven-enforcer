@@ -53,6 +53,7 @@ public interface EnforcerRuleHelper extends ExpressionEvaluator {
      * Gets the component.
      *
      * @param clazz the clazz
+     * @param <T> a class type
      * @return the component
      * @throws ComponentLookupException the component lookup exception
      */
@@ -84,6 +85,7 @@ public interface EnforcerRuleHelper extends ExpressionEvaluator {
      *
      * @param clazz    the clazz
      * @param roleHint the role hint
+     * @param <T> a class type
      * @return the component
      * @throws ComponentLookupException the component lookup exception
      */

@@ -18,11 +18,10 @@
  */
 package org.apache.maven.plugins.enforcer;
 
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
+import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
 
-public class TestRule2 extends AbstractNonCacheableEnforcerRule {
+public class TestRule2 extends AbstractEnforcerRule {
 
     @Override
-    public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {}
+    public void execute() {}
 }

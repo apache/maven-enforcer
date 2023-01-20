@@ -26,4 +26,21 @@ package org.apache.maven.enforcer.rule.api;
  * @author Slawomir Jaranowski
  * @since 3.2.0
  */
-public interface EnforcerRuleBase {}
+public interface EnforcerRuleBase {
+
+    /**
+     * Current Enforcer execution level
+     *
+     * @return an Enforcer execution level
+     */
+    default EnforcerLevel getLevel() {
+        return EnforcerLevel.ERROR;
+    }
+
+    /**
+     * Used by {@code EnforcerMojo} to inject logger instance
+     *
+     * @param log an {@link EnforcerLogger} instance
+     */
+    default void setLog(EnforcerLogger log) {}
+}

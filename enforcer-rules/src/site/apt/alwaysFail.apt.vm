@@ -20,7 +20,7 @@
   ------
   Brian Fox
   ------
-  August 2008
+  2008-08-06
   ------
 
 Always Fail
@@ -47,7 +47,7 @@ Always Fail
             </goals>
             <configuration>
               <rules>
-                <AlwaysFail/>
+                <alwaysFail/>
               </rules>
               <fail>true</fail>
             </configuration>

@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.plugins.enforcer;
+package org.apache.maven.plugins.enforcer.internal;
 
 import java.io.File;
 import java.util.HashMap;

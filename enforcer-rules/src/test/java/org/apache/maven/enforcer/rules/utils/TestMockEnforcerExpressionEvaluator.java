@@ -18,9 +18,9 @@
  */
 package org.apache.maven.enforcer.rules.utils;
 
+import org.apache.maven.enforcer.rules.EnforcerTestUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
-import org.apache.maven.plugins.enforcer.EnforcerTestUtils;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.junit.jupiter.api.Test;
 

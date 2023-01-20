@@ -314,7 +314,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
      * @return The plugins which have been removed.
      * @throws MojoExecutionException
      */
-    public Set<Plugin> removeUncheckedPlugins(Collection<String> uncheckedPlugins, Set<Plugin> plugins)
+    Set<Plugin> removeUncheckedPlugins(Collection<String> uncheckedPlugins, Set<Plugin> plugins)
             throws MojoExecutionException {
         if (uncheckedPlugins != null && !uncheckedPlugins.isEmpty()) {
             for (String pluginKey : uncheckedPlugins) {
@@ -328,8 +328,8 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
     /**
      * Combines the old Collection with the new comma separated list.
      *
-     * @param uncheckedPlugins
-     * @param uncheckedPluginsList
+     * @param uncheckedPlugins a new collections
+     * @param uncheckedPluginsList a list to merge
      * @return List of unchecked plugins.
      */
     public Collection<String> combineUncheckedPlugins(
@@ -376,12 +376,12 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
     /**
      * Helper method to parse and inject a Plugin.
      *
-     * @param pluginString
-     * @param field
-     * @return the plugin
-     * @throws MojoExecutionException
+     * @param pluginString a plugin description to parse
+     * @param field a source of pluginString
+     * @return the prepared plugin
+     * @throws MojoExecutionException in case of problems
      */
-    protected Plugin parsePluginString(String pluginString, String field) throws MojoExecutionException {
+    private Plugin parsePluginString(String pluginString, String field) throws MojoExecutionException {
         if (pluginString != null) {
             String[] pluginStrings = pluginString.split(":");
             if (pluginStrings.length == 2) {

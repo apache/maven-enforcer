@@ -25,32 +25,34 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.MavenArtifactRepository;
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.plugins.enforcer.MockProject;
+import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Test the "banned repositories" rule.
  *
  * @author <a href="mailto:wangyf2010@gmail.com">Simon Wang</a>
  */
+@ExtendWith(MockitoExtension.class)
 class TestBannedRepositories {
 
-    private BannedRepositories rule;
+    @Mock
+    private MavenProject project;
 
-    private MockProject project;
+    @InjectMocks
+    private BannedRepositories rule;
 
     @BeforeEach
     public void setUp() {
-        project = new MockProject();
-        project.setGroupId("org.apache.maven.plugins.enforcer.test");
-        project.setVersion("1.0-SNAPSHOT");
-
-        rule = new BannedRepositories(project);
-        rule.setMessage("my message");
         rule.setLog(mock(EnforcerLogger.class));
     }
 
@@ -60,8 +62,8 @@ class TestBannedRepositories {
         List<ArtifactRepository> repos = new ArrayList<>();
         repos.add(repo1);
 
-        project.setRemoteArtifactRepositories(repos);
-        project.setPluginArtifactRepositories(repos);
+        when(project.getRemoteArtifactRepositories()).thenReturn(repos);
+        when(project.getPluginArtifactRepositories()).thenReturn(repos);
 
         rule.execute();
     }
@@ -76,8 +78,8 @@ class TestBannedRepositories {
         repos.add(repo2);
         repos.add(repo3);
 
-        project.setRemoteArtifactRepositories(repos);
-        project.setPluginArtifactRepositories(repos);
+        when(project.getRemoteArtifactRepositories()).thenReturn(repos);
+        when(project.getPluginArtifactRepositories()).thenReturn(repos);
 
         List<String> bannedRepositories = new ArrayList<>();
         String pattern1 = "http://repo1/*";
@@ -102,8 +104,8 @@ class TestBannedRepositories {
         repos.add(repo1);
         repos.add(repo2);
 
-        project.setRemoteArtifactRepositories(repos);
-        project.setPluginArtifactRepositories(repos);
+        when(project.getRemoteArtifactRepositories()).thenReturn(repos);
+        when(project.getPluginArtifactRepositories()).thenReturn(repos);
 
         List<String> bannedRepositories = new ArrayList<>();
         String pattern1 = "http://repo1/*";
@@ -126,8 +128,8 @@ class TestBannedRepositories {
         repos.add(repo2);
         repos.add(repo3);
 
-        project.setRemoteArtifactRepositories(repos);
-        project.setPluginArtifactRepositories(repos);
+        when(project.getRemoteArtifactRepositories()).thenReturn(repos);
+        when(project.getPluginArtifactRepositories()).thenReturn(repos);
 
         List<String> patterns = new ArrayList<>();
         String pattern1 = "http://repo1/*";

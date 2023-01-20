@@ -38,8 +38,6 @@ import org.apache.maven.enforcer.rules.utils.ArtifactMatcher;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.utils.logging.MessageBuilder;
-import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -185,13 +183,12 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
             } else {
                 getLog().debug("Found node " + node + " with version constraint " + node.getVersionConstraint());
                 if (predicate.test(node) && isBannedDynamicVersion(node.getVersionConstraint())) {
-                    MessageBuilder msgBuilder = MessageUtils.buffer();
-                    getLog().warn(msgBuilder
-                            .a("Dependency ")
-                            .strong(node.getDependency())
-                            .mojo(dumpIntermediatePath(nodeStack))
-                            .a(" is referenced with a banned dynamic version " + node.getVersionConstraint())
-                            .toString());
+                    getLog().warnOrError(() -> new StringBuilder()
+                            .append("Dependency ")
+                            .append(node.getDependency())
+                            .append(dumpIntermediatePath(nodeStack))
+                            .append(" is referenced with a banned dynamic version ")
+                            .append(node.getVersionConstraint()));
                     numViolations++;
                     return false;
                 }

@@ -45,6 +45,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.enforcer.internal.DefaultEnforcementRuleHelper;
 import org.apache.maven.plugins.enforcer.internal.EnforcerRuleCache;
 import org.apache.maven.plugins.enforcer.internal.EnforcerRuleDesc;
 import org.apache.maven.plugins.enforcer.internal.EnforcerRuleManager;
@@ -54,6 +55,7 @@ import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.configuration.DefaultPlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This goal executes the defined enforcer-rules once per module.
@@ -164,6 +166,8 @@ public class EnforceMojo extends AbstractMojo {
     /**
      * List of strings that matches the EnforcerRules to execute. Replacement for the <code>rules</code> property.
      *
+     * @param rulesToExecute a rules to execute
+     * @throws MojoExecutionException when values are incorrect
      * @since 3.2.0
      */
     @Parameter(required = false, property = "enforcer.rules")
@@ -180,6 +184,8 @@ public class EnforceMojo extends AbstractMojo {
     /**
      * List of strings that matches the EnforcerRules to execute.
      *
+     * @param rulesToExecute a rules to execute
+     * @throws MojoExecutionException when values are incorrect
      * @deprecated Use <code>enforcer.rules</code> property instead
      */
     @Parameter(required = false, property = "rules")
@@ -196,7 +202,7 @@ public class EnforceMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         Log log = this.getLog();
 
-        if (isSkip()) {
+        if (skip) {
             log.info("Skipping Rule Enforcement.");
             return;
         }
@@ -213,7 +219,7 @@ public class EnforceMojo extends AbstractMojo {
         rulesList.addAll(additionalRules);
 
         if (rulesList.isEmpty()) {
-            if (isFailIfNoRules()) {
+            if (failIfNoRules) {
                 throw new MojoExecutionException(
                         "No rules are configured. Use the skip flag if you want to disable execution.");
             } else {
@@ -417,10 +423,19 @@ public class EnforceMojo extends AbstractMojo {
     }
 
     /**
-     * @return the fail
+     * Set rule list to skip.
+     *
+     * @param rulesToSkip a rule list
      */
-    public boolean isFail() {
-        return this.fail;
+    public void setRulesToSkip(List<String> rulesToSkip) {
+        if (rulesToSkip == null) {
+            return;
+        }
+        // internally all rules begin from lowercase letter
+        this.rulesToSkip = rulesToSkip.stream()
+                .filter(Objects::nonNull)
+                .map(StringUtils::lowercaseFirstLetter)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -435,10 +450,6 @@ public class EnforceMojo extends AbstractMojo {
      */
     public void setFailFast(boolean theFailFast) {
         this.failFast = theFailFast;
-    }
-
-    public boolean isFailFast() {
-        return failFast;
     }
 
     private String createRuleMessage(
@@ -476,58 +487,9 @@ public class EnforceMojo extends AbstractMojo {
     }
 
     /**
-     * @return the skip
-     */
-    public boolean isSkip() {
-        return this.skip;
-    }
-
-    /**
-     * @param theSkip the skip to set
-     */
-    public void setSkip(boolean theSkip) {
-        this.skip = theSkip;
-    }
-
-    /**
-     * @return the failIfNoRules
-     */
-    public boolean isFailIfNoRules() {
-        return this.failIfNoRules;
-    }
-
-    /**
      * @param thefailIfNoRules the failIfNoRules to set
      */
     public void setFailIfNoRules(boolean thefailIfNoRules) {
         this.failIfNoRules = thefailIfNoRules;
-    }
-
-    /**
-     * @return the project
-     */
-    public MavenProject getProject() {
-        return this.project;
-    }
-
-    /**
-     * @param theProject the project to set
-     */
-    public void setProject(MavenProject theProject) {
-        this.project = theProject;
-    }
-
-    /**
-     * @return the session
-     */
-    public MavenSession getSession() {
-        return this.session;
-    }
-
-    /**
-     * @param theSession the session to set
-     */
-    public void setSession(MavenSession theSession) {
-        this.session = theSession;
     }
 }

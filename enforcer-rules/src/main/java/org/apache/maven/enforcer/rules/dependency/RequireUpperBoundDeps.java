@@ -37,7 +37,6 @@ import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.enforcer.rules.utils.ParentNodeProvider;
 import org.apache.maven.enforcer.rules.utils.ParentsVisitor;
-import org.apache.maven.shared.utils.logging.MessageUtils;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
 import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
@@ -77,16 +76,6 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
     @Inject
     public RequireUpperBoundDeps(ResolveUtil resolveUtil) {
         this.resolveUtil = Objects.requireNonNull(resolveUtil);
-    }
-
-    /**
-     * Set to {@code true} if timestamped snapshots should be used.
-     *
-     * @param uniqueVersions
-     * @since 1.3
-     */
-    public void setUniqueVersions(boolean uniqueVersions) {
-        this.uniqueVersions = uniqueVersions;
     }
 
     /**
@@ -193,9 +182,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
         }
 
         String scope = artifact.getScope();
-        if ("compile".equals(scope)) {
-            result = MessageUtils.buffer().strong(result).toString();
-        } else if (scope != null) {
+        if (scope != null && !"compile".equals(scope)) {
             result += " [" + scope + ']';
         }
 

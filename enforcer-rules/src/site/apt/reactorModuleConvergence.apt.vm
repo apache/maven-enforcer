@@ -20,7 +20,7 @@
   ------
   Karl-Heinz Marbaise
   ------
-  March 2014
+  2014-03-14
   ------
 
 Reactor Module Convergence
@@ -37,7 +37,7 @@ Reactor Module Convergence
   * <<ignoreModuleDependencies>> - Ignore module dependencies which references modules within the
     the reactor (default: false). 
 
-  Note: The current state does not correctly handle a situation like this {{mvn -pl subproject validate}}.
+  Note: The current state does not correctly handle a situation like this <<<mvn -pl subproject validate>>>.
         This will be handled correctly with the next major release (2.X) of enforcer.
 
    []

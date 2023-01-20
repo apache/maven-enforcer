@@ -27,13 +27,11 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleBase;
  * @author Slawomir Jaranowski
  * @since 3.2.0
  */
-public class EnforcerRuleDesc {
+public final class EnforcerRuleDesc {
 
     private final String name;
 
     private final EnforcerRuleBase rule;
-
-    private final EnforcerLevel level;
 
     /**
      * Create a new Rule Description
@@ -44,20 +42,6 @@ public class EnforcerRuleDesc {
     public EnforcerRuleDesc(String name, EnforcerRuleBase rule) {
         this.name = name;
         this.rule = rule;
-        this.level = EnforcerLevel.ERROR;
-    }
-
-    /**
-     * Create a new Rule Description
-     *
-     * @param name  a rule name
-     * @param rule  a rule instance
-     * @param level a rule level
-     */
-    public EnforcerRuleDesc(String name, EnforcerRuleBase rule, EnforcerLevel level) {
-        this.name = name;
-        this.rule = rule;
-        this.level = level;
     }
 
     public String getName() {
@@ -69,11 +53,11 @@ public class EnforcerRuleDesc {
     }
 
     public EnforcerLevel getLevel() {
-        return level;
+        return rule.getLevel();
     }
 
     @Override
     public String toString() {
-        return String.format("EnforcerRuleDesc[name=%s, rule=%s, level=%s]", name, rule, level);
+        return String.format("EnforcerRuleDesc[name=%s, rule=%s, level=%s]", name, rule, getLevel());
     }
 }
