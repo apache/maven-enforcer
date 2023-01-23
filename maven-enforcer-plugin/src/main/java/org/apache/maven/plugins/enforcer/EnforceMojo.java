@@ -18,10 +18,9 @@
  */
 package org.apache.maven.plugins.enforcer;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -228,9 +227,6 @@ public class EnforceMojo extends AbstractMojo {
             }
         }
 
-        // messages with warn/error flag
-        Map<String, Boolean> messages = new LinkedHashMap<>();
-
         // create my helper
         PluginParameterExpressionEvaluator evaluator = new PluginParameterExpressionEvaluator(session, mojoExecution);
         EnforcerRuleHelper helper = new DefaultEnforcementRuleHelper(session, evaluator, log, container);
@@ -241,7 +237,7 @@ public class EnforceMojo extends AbstractMojo {
             failFast = false;
         }
 
-        boolean hasErrors = false;
+        List<String> errorMessages = new ArrayList<>();
 
         // go through each rule
         for (int ruleIndex = 0; ruleIndex < rulesList.size(); ruleIndex++) {
@@ -252,36 +248,30 @@ public class EnforceMojo extends AbstractMojo {
                 executeRule(ruleIndex, ruleDesc, helper);
             } catch (EnforcerRuleError e) {
                 String ruleMessage = createRuleMessage(ruleIndex, ruleDesc, EnforcerLevel.ERROR, e);
-                throw new MojoExecutionException(ruleMessage, e);
+                throw new MojoExecutionException(System.lineSeparator() + ruleMessage, e);
             } catch (EnforcerRuleException e) {
 
                 String ruleMessage = createRuleMessage(ruleIndex, ruleDesc, level, e);
 
                 if (failFast && level == EnforcerLevel.ERROR) {
-                    throw new MojoExecutionException(ruleMessage, e);
+                    throw new MojoExecutionException(System.lineSeparator() + ruleMessage, e);
                 }
 
                 if (level == EnforcerLevel.ERROR) {
-                    hasErrors = true;
-                    messages.put(ruleMessage, true);
+                    errorMessages.add(ruleMessage);
                 } else {
-                    messages.put(ruleMessage, false);
+                    log.warn(ruleMessage);
                 }
             }
         }
 
-        // log any messages
-        messages.forEach((message, error) -> {
-            if (fail && error) {
-                log.error(message);
+        if (!errorMessages.isEmpty()) {
+            if (fail) {
+                throw new MojoExecutionException(
+                        System.lineSeparator() + String.join(System.lineSeparator(), errorMessages));
             } else {
-                log.warn(message);
+                errorMessages.forEach(log::warn);
             }
-        });
-
-        if (fail && hasErrors) {
-            throw new MojoExecutionException(
-                    "Some Enforcer rules have failed. Look above for specific messages explaining why the rule failed.");
         }
     }
 
