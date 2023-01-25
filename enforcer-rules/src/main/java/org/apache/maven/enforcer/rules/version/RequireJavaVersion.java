@@ -42,7 +42,7 @@ import org.codehaus.plexus.util.StringUtils;
 @Named("requireJavaVersion")
 public final class RequireJavaVersion extends AbstractVersionEnforcer {
 
-    private static final Pattern JDK8_VERSION_PATTERN = Pattern.compile("([\\[(,]?)(1\\.8|8)([]),]?)");
+    private static final Pattern JDK8_VERSION_PATTERN = Pattern.compile("([\\d.]+)");
 
     /**
      * Display the normalized JDK version.
@@ -57,11 +57,20 @@ public final class RequireJavaVersion extends AbstractVersionEnforcer {
             return;
         }
 
+        if (!theVersion.contains("8")) {
+            super.setVersion(theVersion);
+            return;
+        }
+
         Matcher matcher = JDK8_VERSION_PATTERN.matcher(theVersion);
 
         StringBuffer result = new StringBuffer();
         while (matcher.find()) {
-            matcher.appendReplacement(result, "$11.8$3");
+            if ("8".equals(matcher.group(1))) {
+                matcher.appendReplacement(result, "1.8");
+            } else {
+                matcher.appendReplacement(result, "$1");
+            }
         }
         matcher.appendTail(result);
 

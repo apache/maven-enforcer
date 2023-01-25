@@ -140,14 +140,24 @@ class TestRequireJavaVersion {
         return Stream.of(
                 Arguments.of("1.8", "1.8"),
                 Arguments.of("8", "1.8"),
+                Arguments.of(".8", ".8"),
+                Arguments.of("8.", "8."),
                 Arguments.of("8,)", "1.8,)"),
                 Arguments.of("[8,)", "[1.8,)"),
                 Arguments.of("(1.7,8]", "(1.7,1.8]"),
                 Arguments.of("[1.8,)", "[1.8,)"),
                 Arguments.of("(1.8,8]", "(1.8,1.8]"),
+                Arguments.of("(8,8]", "(1.8,1.8]"),
                 Arguments.of("(8,)", "(1.8,)"),
                 Arguments.of("[8]", "[1.8]"),
-                Arguments.of("(9,11],[8]", "(9,11],[1.8]"));
+                Arguments.of("(9,11],[8]", "(9,11],[1.8]"),
+                Arguments.of("(11.0.18", "(11.0.18"),
+                Arguments.of("(15.1.8", "(15.1.8"),
+                Arguments.of("(15.1.2", "(15.1.2"),
+                Arguments.of("18", "18"),
+                Arguments.of("18.", "18."),
+                Arguments.of(".18", ".18"),
+                Arguments.of("38", "38"));
     }
 
     @ParameterizedTest
