@@ -24,6 +24,7 @@ import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -39,6 +40,7 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.utils.EnforcerRuleUtils;
 import org.apache.maven.enforcer.rules.utils.ExpressionEvaluator;
@@ -50,11 +52,14 @@ import org.apache.maven.lifecycle.LifecycleExecutionException;
 import org.apache.maven.lifecycle.mapping.LifecycleMapping;
 import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.ModelBase;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginConfiguration;
+import org.apache.maven.model.PluginContainer;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.ReportPlugin;
+import org.apache.maven.model.Reporting;
 import org.apache.maven.plugin.InvalidPluginException;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.PluginManager;
 import org.apache.maven.plugin.PluginManagerException;
 import org.apache.maven.plugin.PluginNotFoundException;
@@ -71,6 +76,8 @@ import org.codehaus.plexus.util.StringUtils;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * This rule will enforce that all plugins specified in the poms have a version declared.
@@ -127,6 +134,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
     /**
      * Same as unCheckedPlugins but as a comma list to better support properties. Sample form:
      * <code>group:artifactId,group2:artifactId2</code>
+     *
      * @since 1.0-beta-1
      */
     private String unCheckedPluginList;
@@ -144,9 +152,6 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
     private final ArtifactFactory factory;
 
     private final RepositorySystem repositorySystem;
-
-    /** The local. */
-    private ArtifactRepository local;
 
     /** The session. */
     private final MavenSession session;
@@ -195,7 +200,6 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
             // get the various expressions out of the helper.
 
             lifecycles = defaultLifeCycles.getLifeCycles();
-            local = session.getLocalRepository();
 
             // get all the plugins that are bound to the specified lifecycles
             Set<Plugin> allPlugins = getBoundPlugins(project, phases);
@@ -236,18 +240,20 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
             if (!failures.isEmpty()) {
                 handleMessagesToTheUser(project, failures);
             }
-        } catch (Exception e) {
+        } catch (PluginNotFoundException | LifecycleExecutionException e) {
             throw new EnforcerRuleException(e.getLocalizedMessage(), e);
         }
     }
 
     private void handleMessagesToTheUser(MavenProject project, List<Plugin> failures) throws EnforcerRuleException {
         StringBuilder newMsg = new StringBuilder();
-        newMsg.append("Some plugins are missing valid versions or depend on Maven "
-                + runtimeInformation.getMavenVersion() + " defaults:");
+        newMsg.append("Some plugins are missing valid versions or depend on Maven ");
+        newMsg.append(runtimeInformation.getMavenVersion());
+        newMsg.append(" defaults");
         handleBanMessages(newMsg);
-        newMsg.append("\n");
+        newMsg.append(System.lineSeparator());
         for (Plugin plugin : failures) {
+            newMsg.append("   ");
             newMsg.append(plugin.getGroupId());
             newMsg.append(":");
             newMsg.append(plugin.getArtifactId());
@@ -280,7 +286,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
                 getLog().debug("Exception while determining plugin Version " + e.getMessage());
                 newMsg.append(". Unable to determine the plugin version.");
             }
-            newMsg.append("\n");
+            newMsg.append(System.lineSeparator());
         }
         String message = getMessage();
         if (StringUtils.isNotEmpty(message)) {
@@ -292,17 +298,24 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
 
     private void handleBanMessages(StringBuilder newMsg) {
         if (banLatest || banRelease || banSnapshots || banTimestamps) {
-            newMsg.append(" (");
+            List<String> banList = new ArrayList<>();
             if (banLatest) {
-                newMsg.append("LATEST ");
+                banList.add("LATEST");
             }
             if (banRelease) {
-                newMsg.append("RELEASE ");
+                banList.add("RELEASE");
             }
-            if (banSnapshots || banTimestamps) {
-                newMsg.append("SNAPSHOT ");
+            if (banSnapshots) {
+                banList.add("SNAPSHOT");
+                if (banTimestamps) {
+                    banList.add("TIMESTAMP SNAPSHOT");
+                }
             }
-            newMsg.append("are not allowed)");
+            if (!banList.isEmpty()) {
+                newMsg.append(" (");
+                newMsg.append(String.join(", ", banList));
+                newMsg.append(" as plugin version are not allowed)");
+            }
         }
     }
 
@@ -312,10 +325,9 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
      * @param uncheckedPlugins
      * @param plugins
      * @return The plugins which have been removed.
-     * @throws MojoExecutionException
      */
     Set<Plugin> removeUncheckedPlugins(Collection<String> uncheckedPlugins, Set<Plugin> plugins)
-            throws MojoExecutionException {
+            throws EnforcerRuleError {
         if (uncheckedPlugins != null && !uncheckedPlugins.isEmpty()) {
             for (String pluginKey : uncheckedPlugins) {
                 Plugin plugin = parsePluginString(pluginKey, "UncheckedPlugins");
@@ -328,7 +340,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
     /**
      * Combines the old Collection with the new comma separated list.
      *
-     * @param uncheckedPlugins a new collections
+     * @param uncheckedPlugins     a new collections
      * @param uncheckedPluginsList a list to merge
      * @return List of unchecked plugins.
      */
@@ -354,10 +366,9 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
      * @param existing   the existing
      * @param additional the additional
      * @return the sets the
-     * @throws MojoExecutionException the mojo execution exception
+     * @throws EnforcerRuleError the enforcer error
      */
-    public Set<Plugin> addAdditionalPlugins(Set<Plugin> existing, List<String> additional)
-            throws MojoExecutionException {
+    public Set<Plugin> addAdditionalPlugins(Set<Plugin> existing, List<String> additional) throws EnforcerRuleError {
         if (additional != null) {
             for (String pluginString : additional) {
                 Plugin plugin = parsePluginString(pluginString, "AdditionalPlugins");
@@ -377,11 +388,10 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
      * Helper method to parse and inject a Plugin.
      *
      * @param pluginString a plugin description to parse
-     * @param field a source of pluginString
+     * @param field        a source of pluginString
      * @return the prepared plugin
-     * @throws MojoExecutionException in case of problems
      */
-    private Plugin parsePluginString(String pluginString, String field) throws MojoExecutionException {
+    private Plugin parsePluginString(String pluginString, String field) throws EnforcerRuleError {
         if (pluginString != null) {
             String[] pluginStrings = pluginString.split(":");
             if (pluginStrings.length == 2) {
@@ -391,10 +401,10 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
 
                 return plugin;
             } else {
-                throw new MojoExecutionException("Invalid " + field + " string: " + pluginString);
+                throw new EnforcerRuleError("Invalid " + field + " string: " + pluginString);
             }
         } else {
-            throw new MojoExecutionException("Invalid " + field + " string: " + pluginString);
+            throw new EnforcerRuleError("Invalid " + field + " string: " + pluginString);
         }
     }
 
@@ -813,42 +823,62 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
     }
 
     private void addPluginsInProfiles(List<PluginWrapper> plugins, Model model) {
-        List<Profile> profiles = model.getProfiles();
+        List<Profile> profiles = ofNullable(model).map(Model::getProfiles).orElseGet(Collections::emptyList);
         for (Profile profile : profiles) {
-            getProfilePlugins(plugins, model, profile);
-            getProfileReportingPlugins(plugins, model, profile);
-            getProfilePluginManagementPlugins(plugins, model, profile);
+            getProfilePlugins(plugins, profile);
+            getProfileReportingPlugins(plugins, profile);
+            getProfilePluginManagementPlugins(plugins, profile);
         }
     }
 
-    private void getProfilePluginManagementPlugins(List<PluginWrapper> plugins, Model model, Profile profile) {
-        List<Plugin> modelPlugins = profile.getBuild().getPluginManagement().getPlugins();
+    private void getProfilePluginManagementPlugins(List<PluginWrapper> plugins, Profile profile) {
+        List<Plugin> modelPlugins = ofNullable(profile)
+                .map(Profile::getBuild)
+                .map(PluginConfiguration::getPluginManagement)
+                .map(PluginContainer::getPlugins)
+                .orElseGet(Collections::emptyList);
         plugins.addAll(PluginWrapper.addAll(utils.resolvePlugins(modelPlugins), banMavenDefaults));
     }
 
-    private void getProfileReportingPlugins(List<PluginWrapper> plugins, Model model, Profile profile) {
-        List<ReportPlugin> modelReportPlugins = profile.getReporting().getPlugins();
+    private void getProfileReportingPlugins(List<PluginWrapper> plugins, Profile profile) {
+        List<ReportPlugin> modelReportPlugins = ofNullable(profile)
+                .map(ModelBase::getReporting)
+                .map(Reporting::getPlugins)
+                .orElseGet(Collections::emptyList);
         // add the reporting plugins
         plugins.addAll(PluginWrapper.addAll(utils.resolveReportPlugins(modelReportPlugins), banMavenDefaults));
     }
 
-    private void getProfilePlugins(List<PluginWrapper> plugins, Model model, Profile profile) {
-        List<Plugin> modelPlugins = profile.getBuild().getPlugins();
+    private void getProfilePlugins(List<PluginWrapper> plugins, Profile profile) {
+        List<Plugin> modelPlugins = ofNullable(profile)
+                .map(Profile::getBuild)
+                .map(PluginContainer::getPlugins)
+                .orElseGet(Collections::emptyList);
         plugins.addAll(PluginWrapper.addAll(utils.resolvePlugins(modelPlugins), banMavenDefaults));
     }
 
     private void getPlugins(List<PluginWrapper> plugins, Model model) {
-        List<Plugin> modelPlugins = model.getBuild().getPlugins();
+        List<Plugin> modelPlugins = ofNullable(model)
+                .map(Model::getBuild)
+                .map(PluginContainer::getPlugins)
+                .orElseGet(Collections::emptyList);
         plugins.addAll(PluginWrapper.addAll(utils.resolvePlugins(modelPlugins), banMavenDefaults));
     }
 
     private void getPluginManagementPlugins(List<PluginWrapper> plugins, Model model) {
-        List<Plugin> modelPlugins = model.getBuild().getPluginManagement().getPlugins();
+        List<Plugin> modelPlugins = ofNullable(model)
+                .map(Model::getBuild)
+                .map(PluginConfiguration::getPluginManagement)
+                .map(PluginContainer::getPlugins)
+                .orElseGet(Collections::emptyList);
         plugins.addAll(PluginWrapper.addAll(utils.resolvePlugins(modelPlugins), banMavenDefaults));
     }
 
     private void getReportingPlugins(List<PluginWrapper> plugins, Model model) {
-        List<ReportPlugin> modelReportPlugins = model.getReporting().getPlugins();
+        List<ReportPlugin> modelReportPlugins = ofNullable(model)
+                .map(ModelBase::getReporting)
+                .map(Reporting::getPlugins)
+                .orElseGet(Collections::emptyList);
         // add the reporting plugins
         plugins.addAll(PluginWrapper.addAll(utils.resolveReportPlugins(modelReportPlugins), banMavenDefaults));
     }

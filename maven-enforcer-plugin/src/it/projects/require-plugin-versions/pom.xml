@@ -30,6 +30,12 @@ under the License.
   <description>
   </description>
 
+  <profiles>
+    <profile>
+      <id>test</id>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <plugin>
