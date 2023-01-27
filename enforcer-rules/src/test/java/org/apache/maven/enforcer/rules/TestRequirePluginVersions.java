@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
 import org.apache.maven.enforcer.rules.utils.EnforcerRuleUtils;
 import org.apache.maven.enforcer.rules.utils.ExpressionEvaluator;
 import org.apache.maven.enforcer.rules.utils.PluginWrapper;
@@ -249,7 +250,7 @@ class TestRequirePluginVersions {
      * @throws MojoExecutionException the mojo execution exception
      */
     @Test
-    void testGetAdditionalPluginsNull() throws MojoExecutionException {
+    void testGetAdditionalPluginsNull() throws Exception {
         rule.addAdditionalPlugins(null, null);
     }
 
@@ -268,7 +269,7 @@ class TestRequirePluginVersions {
         try {
             rule.addAdditionalPlugins(plugins, additional);
             fail("Expected Exception because the format is invalid");
-        } catch (MojoExecutionException e) {
+        } catch (EnforcerRuleError e) {
         }
 
         // invalid format (too many sections)
@@ -277,7 +278,7 @@ class TestRequirePluginVersions {
         try {
             rule.addAdditionalPlugins(plugins, additional);
             fail("Expected Exception because the format is invalid");
-        } catch (MojoExecutionException e) {
+        } catch (EnforcerRuleError e) {
         }
     }
 
@@ -287,7 +288,7 @@ class TestRequirePluginVersions {
      * @throws MojoExecutionException the mojo execution exception
      */
     @Test
-    void testGetAdditionalPluginsEmptySet() throws MojoExecutionException {
+    void testGetAdditionalPluginsEmptySet() throws Exception {
 
         Set<Plugin> plugins = new HashSet<>();
         plugins.add(EnforcerTestUtils.newPlugin("group", "a-artifact", "1.0"));
@@ -312,7 +313,7 @@ class TestRequirePluginVersions {
      * @throws MojoExecutionException the mojo execution exception
      */
     @Test
-    void testGetAdditionalPlugins() throws MojoExecutionException {
+    void testGetAdditionalPlugins() throws Exception {
 
         Set<Plugin> plugins = new HashSet<>();
         plugins.add(EnforcerTestUtils.newPlugin("group", "a-artifact", "1.0"));
@@ -338,7 +339,7 @@ class TestRequirePluginVersions {
      * @throws MojoExecutionException the mojo execution exception
      */
     @Test
-    void testGetUncheckedPlugins() throws MojoExecutionException {
+    void testGetUncheckedPlugins() throws Exception {
 
         Set<Plugin> plugins = new HashSet<>();
         plugins.add(EnforcerTestUtils.newPlugin("group", "a-artifact", "1.0"));
