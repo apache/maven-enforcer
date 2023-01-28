@@ -28,7 +28,7 @@ Check specific rule via CLI
   The <<<enforce>>> goal can be used via cli to check specific enforcer rule that isn't defined in the POM.
 
 +---+
-mvn enforcer:enforce -Drules=alwaysPass,alwaysFail
+mvn enforcer:enforce -Denforcer.rules=alwaysPass,alwaysFail
 +---+
 
   A full list of built-in rules can be found {{{../../../enforcer/enforcer-rules/index.html}here}}.
