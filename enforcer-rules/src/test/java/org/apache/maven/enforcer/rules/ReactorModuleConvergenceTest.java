@@ -32,6 +32,7 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluatio
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -219,6 +220,11 @@ class ReactorModuleConvergenceTest {
         });
 
         // intentionally no assertTrue() cause we expect getting an exception.
+    }
+
+    @Test
+    void cacheIdShouldBeSet() {
+        assertThat(rule.getCacheId()).isNotEmpty();
     }
 
     /**

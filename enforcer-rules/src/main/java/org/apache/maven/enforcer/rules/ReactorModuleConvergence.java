@@ -393,6 +393,11 @@ public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule
     }
 
     @Override
+    public String getCacheId() {
+        return String.valueOf(toString().hashCode());
+    }
+
+    @Override
     public String toString() {
         return String.format(
                 "ReactorModuleConvergence[message=%s, ignoreModuleDependencies=%b]",
