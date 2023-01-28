@@ -22,9 +22,9 @@ def buildLog = new File( basedir, 'build.log' ).text
 assert buildLog.contains( '[WARNING] The POM for org.example:test-not-existing:jar:1.0 is missing, no dependency information available' )
 
 // rule executed
-assert buildLog.contains( '[INFO] Rule 0: org.apache.maven.enforcer.rules.AlwaysPass executed' )
-assert buildLog.contains( '[INFO] Rule 1: org.apache.maven.enforcer.rules.dependency.BanTransitiveDependencies executed' )
-assert buildLog.contains( '[INFO] Rule 2: org.apache.maven.enforcer.rules.dependency.BannedDependencies executed' )
-assert buildLog.contains( '[INFO] Rule 3: org.apache.maven.enforcer.rules.dependency.DependencyConvergence executed')
-assert buildLog.contains( '[INFO] Rule 4: org.apache.maven.enforcer.rules.dependency.RequireReleaseDeps executed')
-assert buildLog.contains( '[INFO] Rule 5: org.apache.maven.enforcer.rules.dependency.RequireUpperBoundDeps executed')
+assert buildLog.contains( '[INFO] Rule 0: org.apache.maven.enforcer.rules.AlwaysPass passed' )
+assert buildLog.contains( '[INFO] Rule 1: org.apache.maven.enforcer.rules.dependency.BanTransitiveDependencies passed' )
+assert buildLog.contains( '[INFO] Rule 2: org.apache.maven.enforcer.rules.dependency.BannedDependencies passed' )
+assert buildLog.contains( '[INFO] Rule 3: org.apache.maven.enforcer.rules.dependency.DependencyConvergence passed')
+assert buildLog.contains( '[INFO] Rule 4: org.apache.maven.enforcer.rules.dependency.RequireReleaseDeps passed')
+assert buildLog.contains( '[INFO] Rule 5: org.apache.maven.enforcer.rules.dependency.RequireUpperBoundDeps passed')

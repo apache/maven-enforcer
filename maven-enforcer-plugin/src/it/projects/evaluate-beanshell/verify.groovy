@@ -18,5 +18,5 @@
  */
 
 File buildLog = new File(basedir, 'build.log')
-assert buildLog.text.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.EvaluateBeanshell executed')
-assert buildLog.text.contains('[INFO] Rule 1: org.apache.maven.enforcer.rules.EvaluateBeanshell executed')
+assert buildLog.text.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.EvaluateBeanshell passed')
+assert buildLog.text.contains('[INFO] Rule 1: org.apache.maven.enforcer.rules.EvaluateBeanshell passed')

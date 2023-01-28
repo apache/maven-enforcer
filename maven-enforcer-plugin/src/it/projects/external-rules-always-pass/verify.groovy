@@ -19,5 +19,5 @@
 
 File buildLog = new File(basedir, 'build.log')
 assert buildLog.text.contains('[INFO] Rule Config Provider org.apache.maven.enforcer.rules.ExternalRules executed')
-assert buildLog.text.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.AlwaysPass executed')
-assert buildLog.text.contains('[INFO] Rule 1: org.apache.maven.enforcer.rules.AlwaysPass executed')
+assert buildLog.text.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.AlwaysPass passed')
+assert buildLog.text.contains('[INFO] Rule 1: org.apache.maven.enforcer.rules.AlwaysPass passed')

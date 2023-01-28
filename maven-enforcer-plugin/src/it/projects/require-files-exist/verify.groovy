@@ -19,4 +19,4 @@
 def buildLog = new File(basedir, 'build.log').text
 
 // rule executed
-assert buildLog.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.files.RequireFilesExist executed')
+assert buildLog.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.files.RequireFilesExist passed')
