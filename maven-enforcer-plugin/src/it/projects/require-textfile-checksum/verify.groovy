@@ -19,8 +19,8 @@
 def buildLog = new File(basedir, 'build.log').text
 
 // rule executed
-assert buildLog.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum executed')
-assert buildLog.contains('[INFO] Rule 1: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum executed')
-assert buildLog.contains('[INFO] Rule 2: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum executed')
-assert buildLog.contains('[INFO] Rule 3: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum executed')
-assert buildLog.contains('[INFO] Rule 4: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum executed')
+assert buildLog.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum passed')
+assert buildLog.contains('[INFO] Rule 1: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum passed')
+assert buildLog.contains('[INFO] Rule 2: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum passed')
+assert buildLog.contains('[INFO] Rule 3: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum passed')
+assert buildLog.contains('[INFO] Rule 4: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum passed')

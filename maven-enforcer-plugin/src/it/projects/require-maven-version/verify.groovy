@@ -19,5 +19,5 @@
 def buildLog = new File(basedir, 'build.log').text
 
 // rule executed
-assert buildLog.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireMavenVersion executed')
-assert buildLog.contains('[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion executed')
+assert buildLog.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed')
+assert buildLog.contains('[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed')

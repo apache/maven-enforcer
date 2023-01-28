@@ -18,4 +18,4 @@
  */
 File buildLog = new File(basedir, 'build.log')
 assert buildLog.text.contains('OS Info - Arch')
-assert buildLog.text.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.RequireOS executed')
+assert buildLog.text.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.RequireOS passed')

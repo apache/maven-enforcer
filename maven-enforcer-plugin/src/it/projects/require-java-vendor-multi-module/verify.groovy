@@ -20,6 +20,6 @@
 File buildLog = new File(basedir, 'build.log')
 
 rulesExecuted = buildLog.readLines()
-        .findAll {it == '[INFO] Rule 0: org.apache.maven.enforcer.rules.RequireJavaVendor executed'}
+        .findAll {it == '[INFO] Rule 0: org.apache.maven.enforcer.rules.RequireJavaVendor passed'}
 
 assert rulesExecuted.size() == 1

@@ -328,7 +328,7 @@ public class EnforceMojo extends AbstractMojo {
             if (getLog().isDebugEnabled()) {
                 long workTime = System.currentTimeMillis() - startTime;
                 getLog().debug(String.format(
-                        "Finish Rule %d: %s take %d ms", ruleIndex, getRuleName(ruleDesc), workTime));
+                        "Finish Rule %d: %s takes %d ms", ruleIndex, getRuleName(ruleDesc), workTime));
             }
         }
     }
@@ -340,7 +340,7 @@ public class EnforceMojo extends AbstractMojo {
 
         if (ignoreCache || shouldExecute(rule)) {
             rule.execute(helper);
-            getLog().info(String.format("Rule %d: %s executed", ruleIndex, getRuleName(ruleDesc)));
+            getLog().info(String.format("Rule %d: %s passed", ruleIndex, getRuleName(ruleDesc)));
         }
     }
 
@@ -349,7 +349,7 @@ public class EnforceMojo extends AbstractMojo {
         AbstractEnforcerRule rule = (AbstractEnforcerRule) ruleDesc.getRule();
         if (ignoreCache || !ruleCache.isCached(rule)) {
             rule.execute();
-            getLog().info(String.format("Rule %d: %s executed", ruleIndex, getRuleName(ruleDesc)));
+            getLog().info(String.format("Rule %d: %s passed", ruleIndex, getRuleName(ruleDesc)));
         }
     }
 

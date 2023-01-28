@@ -127,7 +127,7 @@ class TestEnforceMojo {
         assertTrue(((MockEnforcerRule) rules[0].getRule()).executed, "Expected this rule to be executed.");
         assertFalse(((MockEnforcerRule) rules[2].getRule()).executed, "Expected this rule to be not executed.");
 
-        verify(logSpy).info(Mockito.contains("Rule 0: org.apache.maven.plugins.enforcer.MockEnforcerRule executed"));
+        verify(logSpy).info(Mockito.contains("Rule 0: org.apache.maven.plugins.enforcer.MockEnforcerRule passed"));
     }
 
     @Test

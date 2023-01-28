@@ -20,7 +20,7 @@
 File buildLog = new File(basedir, 'build.log')
 
 rulesExecuted = buildLog.readLines()
-        .findAll {it == '[INFO] Rule 0: org.apache.maven.enforcer.rules.dependency.DependencyConvergence executed'}
+        .findAll {it == '[INFO] Rule 0: org.apache.maven.enforcer.rules.dependency.DependencyConvergence passed'}
 
 // Rule should be executed in each module
 assert rulesExecuted.size() == 3
