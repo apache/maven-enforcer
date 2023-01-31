@@ -80,7 +80,7 @@
     <maven.version>3.2.5</maven.version>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
     <javaVersion>8</javaVersion>
-    <mockito.version>4.11.0</mockito.version>
+    <mockito.version>5.1.1</mockito.version>
     <project.build.outputTimestamp>2023-01-28T21:26:06Z</project.build.outputTimestamp>
     <!-- the same as Maven 3.2.5 -->
     <aether.version>1.0.0.v20140518</aether.version>
