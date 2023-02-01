@@ -22,10 +22,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
@@ -34,9 +36,6 @@ import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
-
-import static org.apache.maven.artifact.Artifact.SCOPE_PROVIDED;
-import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 
 /**
  * @author <a href="mailto:rex@e-hoffman.org">Rex Hoffman</a>
@@ -49,6 +48,8 @@ public final class DependencyConvergence extends AbstractStandardEnforcerRule {
     private List<String> includes;
 
     private List<String> excludes;
+
+    private List<String> scopes = Arrays.asList(Artifact.SCOPE_COMPILE, Artifact.SCOPE_RUNTIME, Artifact.SCOPE_SYSTEM);
 
     private DependencyVersionMap dependencyVersionMap;
 
@@ -71,8 +72,7 @@ public final class DependencyConvergence extends AbstractStandardEnforcerRule {
                         return !dependency.isOptional()
                                 // regular scope selectors only discard transitive dependencies
                                 // and always allow direct dependencies
-                                && !dependency.getScope().equals(SCOPE_TEST)
-                                && !dependency.getScope().equals(SCOPE_PROVIDED);
+                                && scopes.contains(dependency.getScope());
                     }
 
                     @Override
@@ -142,7 +142,7 @@ public final class DependencyConvergence extends AbstractStandardEnforcerRule {
     @Override
     public String toString() {
         return String.format(
-                "DependencyConvergence[includes=%s, excludes=%s, uniqueVersions=%b]",
-                includes, excludes, uniqueVersions);
+                "DependencyConvergence[includes=%s, excludes=%s, uniqueVersions=%b, scopes=%s]",
+                includes, excludes, uniqueVersions, String.join(",", scopes));
     }
 }
