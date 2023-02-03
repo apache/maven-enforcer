@@ -93,7 +93,7 @@ Ban Dynamic Versions
                 <banDynamicVersions>
                   <ignores>
                     <ignore>org.apache.maven</ignore>
-                  </ignore>
+                  </ignores>
                   <allowSnapshots>true</allowSnapshots>
                 </banDynamicVersions>
               </rules>
