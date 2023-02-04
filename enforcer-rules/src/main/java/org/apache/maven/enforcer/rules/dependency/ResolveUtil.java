@@ -39,9 +39,14 @@ import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
+import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
+import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
+import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver;
 
 import static java.util.Optional.ofNullable;
+import static org.apache.maven.artifact.Artifact.SCOPE_PROVIDED;
+import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 
 /**
  * Resolver helper class.
@@ -70,6 +75,13 @@ class ResolveUtil {
      * @throws EnforcerRuleException thrown if the lookup fails
      */
     DependencyNode resolveTransitiveDependencies(DependencySelector... selectors) throws EnforcerRuleException {
+        if (selectors.length == 0) {
+            selectors = new DependencySelector[] {
+                new ScopeDependencySelector(SCOPE_TEST, SCOPE_PROVIDED),
+                new OptionalDependencySelector(),
+                new ExclusionDependencySelector()
+            };
+        }
         try {
             MavenProject project = session.getCurrentProject();
             ArtifactTypeRegistry artifactTypeRegistry =
@@ -79,9 +91,7 @@ class ResolveUtil {
                     new DefaultRepositorySystemSession(session.getRepositorySession());
             repositorySystemSession.setConfigProperty(ConflictResolver.CONFIG_PROP_VERBOSE, true);
             repositorySystemSession.setConfigProperty(DependencyManagerUtils.CONFIG_PROP_VERBOSE, true);
-            if (selectors.length > 0) {
-                repositorySystemSession.setDependencySelector(new AndDependencySelector(selectors));
-            }
+            repositorySystemSession.setDependencySelector(new AndDependencySelector(selectors));
 
             CollectRequest collectRequest = new CollectRequest(
                     project.getDependencies().stream()
