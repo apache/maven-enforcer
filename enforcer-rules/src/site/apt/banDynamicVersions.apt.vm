@@ -25,8 +25,8 @@
 
 Ban Dynamic Versions
 
-  This rule bans dependencies having versions which require resolving (i.e. dynamic versions which might change with each build and require 
-  lookup of {{{https://maven.apache.org/ref/3-LATEST/maven-repository-metadata/repository-metadata.html}repositoy metadata}}). Dynamic versions are either 
+  This rule bans dependencies having versions that require resolving (i.e. dynamic versions which might change with each build and require
+  lookup of {{{https://maven.apache.org/ref/3-LATEST/maven-repository-metadata/repository-metadata.html}repository metadata}}). Dynamic versions are either
   
   * {{{https://maven.apache.org/pom.html#Dependency_Version_Requirement_Specification}version ranges}}, i.e. all version strings starting with either <<<[>>> or <<<(>>>,
   
