@@ -97,7 +97,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
     @Override
     public void execute() throws EnforcerRuleException {
-        DependencyNode node = resolveUtil.resolveTransitiveDependencies();
+        DependencyNode node = resolveUtil.resolveTransitiveDependenciesVerbose();
         upperBoundDepsVisitor = new RequireUpperBoundDepsVisitor()
                 .setUniqueVersions(uniqueVersions)
                 .setIncludes(includes);

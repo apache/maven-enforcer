@@ -80,7 +80,7 @@ class RequireReleaseDepsTest {
 
     @Test
     void testSearchTransitiveMultipleFailures() throws Exception {
-        when(resolveUtil.resolveTransitiveDependencies()).thenReturn(getDependencyNodeWithMultipleSnapshots());
+        when(resolveUtil.resolveTransitiveDependenciesVerbose()).thenReturn(getDependencyNodeWithMultipleSnapshots());
         rule.setSearchTransitive(true);
 
         assertThatCode(rule::execute)
@@ -94,7 +94,7 @@ class RequireReleaseDepsTest {
     @Test
     void testSearchTransitiveNoFailures() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
-        when(resolveUtil.resolveTransitiveDependencies()).thenReturn(new DependencyNodeBuilder().build());
+        when(resolveUtil.resolveTransitiveDependenciesVerbose()).thenReturn(new DependencyNodeBuilder().build());
 
         rule.setSearchTransitive(true);
         assertThatCode(rule::execute).doesNotThrowAnyException();
@@ -114,7 +114,8 @@ class RequireReleaseDepsTest {
     @Test
     void testWildcardExcludeTests() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
-        when(resolveUtil.resolveTransitiveDependencies()).thenReturn(getDependencyNodeWithMultipleTestSnapshots());
+        when(resolveUtil.resolveTransitiveDependenciesVerbose())
+                .thenReturn(getDependencyNodeWithMultipleTestSnapshots());
 
         rule.setExcludes(Collections.singletonList("*:*:*:*:test"));
         rule.setSearchTransitive(true);
@@ -125,7 +126,8 @@ class RequireReleaseDepsTest {
     @Test
     void testWildcardExcludeAll() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
-        when(resolveUtil.resolveTransitiveDependencies()).thenReturn(getDependencyNodeWithMultipleTestSnapshots());
+        when(resolveUtil.resolveTransitiveDependenciesVerbose())
+                .thenReturn(getDependencyNodeWithMultipleTestSnapshots());
 
         rule.setExcludes(Collections.singletonList("*"));
         rule.setSearchTransitive(true);
@@ -135,7 +137,8 @@ class RequireReleaseDepsTest {
 
     @Test
     void testExcludesAndIncludes() throws Exception {
-        when(resolveUtil.resolveTransitiveDependencies()).thenReturn(getDependencyNodeWithMultipleTestSnapshots());
+        when(resolveUtil.resolveTransitiveDependenciesVerbose())
+                .thenReturn(getDependencyNodeWithMultipleTestSnapshots());
 
         rule.setExcludes(Collections.singletonList("*"));
         rule.setIncludes(Collections.singletonList("*:*:*:*:test"));
@@ -161,7 +164,7 @@ class RequireReleaseDepsTest {
     void testFailWhenParentIsSnapshot() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
         when(project.getParentArtifact()).thenReturn(ARTIFACT_STUB_FACTORY.getSnapshotArtifact());
-        when(resolveUtil.resolveTransitiveDependencies()).thenReturn(new DependencyNodeBuilder().build());
+        when(resolveUtil.resolveTransitiveDependenciesVerbose()).thenReturn(new DependencyNodeBuilder().build());
 
         rule.setFailWhenParentIsSnapshot(true);
 
@@ -174,7 +177,7 @@ class RequireReleaseDepsTest {
     void parentShouldBeExcluded() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
         when(project.getParentArtifact()).thenReturn(ARTIFACT_STUB_FACTORY.getSnapshotArtifact());
-        when(resolveUtil.resolveTransitiveDependencies()).thenReturn(new DependencyNodeBuilder().build());
+        when(resolveUtil.resolveTransitiveDependenciesVerbose()).thenReturn(new DependencyNodeBuilder().build());
 
         rule.setFailWhenParentIsSnapshot(true);
         rule.setExcludes(Collections.singletonList("testGroupId:*"));

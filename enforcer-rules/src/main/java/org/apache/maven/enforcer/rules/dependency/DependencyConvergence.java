@@ -62,7 +62,7 @@ public final class DependencyConvergence extends AbstractStandardEnforcerRule {
     @Override
     public void execute() throws EnforcerRuleException {
 
-        DependencyNode node = resolveUtil.resolveTransitiveDependencies(
+        DependencyNode node = resolveUtil.resolveTransitiveDependenciesVerbose(
                 // TODO: use a modified version of ExclusionDependencySelector to process excludes and includes
                 new DependencySelector() {
                     @Override
