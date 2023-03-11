@@ -41,7 +41,7 @@ class RequireUpperBoundDepsTest {
     @Test
     void testRule() throws Exception {
 
-        when(resolveUtil.resolveTransitiveDependencies())
+        when(resolveUtil.resolveTransitiveDependenciesVerbose())
                 .thenReturn(new DependencyNodeBuilder()
                         .withType(DependencyNodeBuilder.Type.POM)
                         .withChildNode(new DependencyNodeBuilder()
