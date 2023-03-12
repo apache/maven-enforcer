@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +42,7 @@ class RequireUpperBoundDepsTest {
     @Test
     void testRule() throws Exception {
 
-        when(resolveUtil.resolveTransitiveDependenciesVerbose())
+        when(resolveUtil.resolveTransitiveDependenciesVerbose(any(), any(), any()))
                 .thenReturn(new DependencyNodeBuilder()
                         .withType(DependencyNodeBuilder.Type.POM)
                         .withChildNode(new DependencyNodeBuilder()

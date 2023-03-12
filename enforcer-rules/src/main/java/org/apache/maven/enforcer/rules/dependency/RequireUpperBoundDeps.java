@@ -34,12 +34,18 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
+import org.apache.maven.enforcer.rules.dependency.selector.AllLevelsOptionalDependencySelector;
+import org.apache.maven.enforcer.rules.dependency.selector.AllLevelsScopeDependencySelector;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.enforcer.rules.utils.ParentNodeProvider;
 import org.apache.maven.enforcer.rules.utils.ParentsVisitor;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
 import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
+import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
+
+import static org.apache.maven.artifact.Artifact.SCOPE_PROVIDED;
+import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 
 /**
  * Rule to enforce that the resolved dependency is also the most recent one of all transitive dependencies.
@@ -97,7 +103,10 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
     @Override
     public void execute() throws EnforcerRuleException {
-        DependencyNode node = resolveUtil.resolveTransitiveDependenciesVerbose();
+        DependencyNode node = resolveUtil.resolveTransitiveDependenciesVerbose(
+                new AllLevelsOptionalDependencySelector(),
+                new AllLevelsScopeDependencySelector(SCOPE_TEST, SCOPE_PROVIDED),
+                new ExclusionDependencySelector());
         upperBoundDepsVisitor = new RequireUpperBoundDepsVisitor()
                 .setUniqueVersions(uniqueVersions)
                 .setIncludes(includes);
