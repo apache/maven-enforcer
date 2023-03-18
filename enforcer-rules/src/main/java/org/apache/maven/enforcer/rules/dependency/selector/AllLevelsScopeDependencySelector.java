@@ -21,6 +21,7 @@ package org.apache.maven.enforcer.rules.dependency.selector;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.aether.collection.DependencyCollectionContext;
 import org.eclipse.aether.collection.DependencySelector;
@@ -34,8 +35,20 @@ import org.eclipse.aether.graph.Dependency;
 public class AllLevelsScopeDependencySelector implements DependencySelector {
     private final Collection<String> excluded;
 
+    /**
+     * A constructor for selector
+     * @param excluded list of excluded scopes
+     */
     public AllLevelsScopeDependencySelector(String... excluded) {
         this.excluded = excluded != null ? Arrays.asList(excluded) : Collections.emptyList();
+    }
+
+    /**
+     * A constructor for selector
+     * @param excluded list of excluded scopes
+     */
+    public AllLevelsScopeDependencySelector(List<String> excluded) {
+        this.excluded = excluded;
     }
 
     @Override

@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -43,11 +44,17 @@ import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 @Named("dependencyConvergence")
 public final class DependencyConvergence extends AbstractStandardEnforcerRule {
 
+    // parameters
+
     private boolean uniqueVersions;
 
     private List<String> includes;
 
     private List<String> excludes;
+
+    private List<String> excludedScopes = Arrays.asList(SCOPE_TEST, SCOPE_PROVIDED);
+
+    // parameters - end
 
     private DependencyVersionMap dependencyVersionMap;
 
@@ -63,19 +70,17 @@ public final class DependencyConvergence extends AbstractStandardEnforcerRule {
 
         DependencyNode node = resolveUtil.resolveTransitiveDependenciesVerbose(
                 new AllLevelsOptionalDependencySelector(),
-                new AllLevelsScopeDependencySelector(SCOPE_TEST, SCOPE_PROVIDED),
+                new AllLevelsScopeDependencySelector(excludedScopes),
                 new ExclusionDependencySelector());
         dependencyVersionMap = new DependencyVersionMap().setUniqueVersions(uniqueVersions);
         node.accept(dependencyVersionMap);
 
-        List<CharSequence> errorMsgs = new ArrayList<>(
-                getConvergenceErrorMsgs(dependencyVersionMap.getConflictedVersionNumbers(includes, excludes)));
-        for (CharSequence errorMsg : errorMsgs) {
-            getLog().warnOrError(errorMsg);
-        }
-        if (errorMsgs.size() > 0) {
-            throw new EnforcerRuleException(
-                    "Failed while enforcing releasability. " + "See above detailed error message.");
+        List<String> errorMsgs =
+                getConvergenceErrorMsgs(dependencyVersionMap.getConflictedVersionNumbers(includes, excludes));
+
+        if (!errorMsgs.isEmpty()) {
+            throw new EnforcerRuleException("Failed while enforcing releasability." + System.lineSeparator()
+                    + String.join(System.lineSeparator(), errorMsgs));
         }
     }
 
