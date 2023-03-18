@@ -139,8 +139,8 @@ and
     * <<excludes>> - A list of artifacts for which dependency convergence should not be enforced. These are exceptions
       to the includes.
 
-    * <<scopes>> - A list of scopes of artifacts for which dependency convergence should be enforced. Not specifying
-      any scopes is interpreted as having the following scopes activated: compile, runtime, system.
+    * <<excludedScopes>> - A list of scopes of artifacts for which dependency convergence should not be enforced.
+    Not specifying any scopes is interpreted as having the following scopes excluded: <<<provided>>>, <<<test>>>.
 
     []
 
@@ -150,10 +150,10 @@ and
 
 +---------------------------------------------
       <dependencyConvergence>
-        <scopes>
+        <excludedScopes>
           <scope>compile</scope>
           <scope>runtime</scope>
-        </scopes>
+        </excludedScopes>
         <includes>
           <include>org.slf4j</include>
           <include>org.apache.commons</include>
