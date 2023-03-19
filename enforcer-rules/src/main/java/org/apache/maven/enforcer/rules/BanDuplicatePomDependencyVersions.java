@@ -154,9 +154,9 @@ public final class BanDuplicatePomDependencyVersions extends AbstractStandardEnf
                         .append(prefix)
                         .append('[')
                         .append(entry.getKey())
-                        .append("] ( ")
+                        .append("] (")
                         .append(entry.getValue())
-                        .append(" times )" + System.lineSeparator());
+                        .append(" times)" + System.lineSeparator());
             }
         }
     }
