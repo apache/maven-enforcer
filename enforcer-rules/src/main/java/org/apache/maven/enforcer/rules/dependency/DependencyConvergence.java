@@ -29,11 +29,8 @@ import java.util.Objects;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
-import org.apache.maven.enforcer.rules.dependency.selector.AllLevelsOptionalDependencySelector;
-import org.apache.maven.enforcer.rules.dependency.selector.AllLevelsScopeDependencySelector;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.eclipse.aether.graph.DependencyNode;
-import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
 
 import static org.apache.maven.artifact.Artifact.SCOPE_PROVIDED;
 import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
@@ -68,10 +65,7 @@ public final class DependencyConvergence extends AbstractStandardEnforcerRule {
     @Override
     public void execute() throws EnforcerRuleException {
 
-        DependencyNode node = resolveUtil.resolveTransitiveDependenciesVerbose(
-                new AllLevelsOptionalDependencySelector(),
-                new AllLevelsScopeDependencySelector(excludedScopes),
-                new ExclusionDependencySelector());
+        DependencyNode node = resolveUtil.resolveTransitiveDependenciesVerbose(excludedScopes);
         dependencyVersionMap = new DependencyVersionMap().setUniqueVersions(uniqueVersions);
         node.accept(dependencyVersionMap);
 

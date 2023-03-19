@@ -18,6 +18,7 @@
  */
 package org.apache.maven.enforcer.rules.dependency;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -102,7 +103,7 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
             }
         } else {
             StringBuilder messageBuilder = new StringBuilder();
-            DependencyNode rootNode = resolveUtil.resolveTransitiveDependenciesVerbose();
+            DependencyNode rootNode = resolveUtil.resolveTransitiveDependenciesVerbose(Collections.emptyList());
             if (!validate(rootNode, 0, messageBuilder)) {
                 String message = "";
                 if (getMessage() != null) {

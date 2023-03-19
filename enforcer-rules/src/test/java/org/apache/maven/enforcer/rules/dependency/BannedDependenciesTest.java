@@ -32,6 +32,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 /**
@@ -94,7 +95,7 @@ class BannedDependenciesTest {
     @Test
     void excludesUseTransitiveDependencies() throws Exception {
 
-        when(resolveUtil.resolveTransitiveDependenciesVerbose())
+        when(resolveUtil.resolveTransitiveDependenciesVerbose(anyList()))
                 .thenReturn(new DependencyNodeBuilder()
                         .withType(DependencyNodeBuilder.Type.POM)
                         .withChildNode(new DependencyNodeBuilder()
@@ -127,7 +128,7 @@ class BannedDependenciesTest {
     @Test
     void excludesAndIncludesUseTransitiveDependencies() throws Exception {
 
-        when(resolveUtil.resolveTransitiveDependenciesVerbose())
+        when(resolveUtil.resolveTransitiveDependenciesVerbose(anyList()))
                 .thenReturn(new DependencyNodeBuilder()
                         .withType(DependencyNodeBuilder.Type.POM)
                         .withChildNode(new DependencyNodeBuilder()

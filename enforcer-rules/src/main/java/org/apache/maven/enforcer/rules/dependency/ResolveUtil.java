@@ -21,27 +21,30 @@ package org.apache.maven.enforcer.rules.dependency;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.maven.RepositoryUtils;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.ArtifactTypeRegistry;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.collection.DependencyCollectionException;
-import org.eclipse.aether.collection.DependencySelector;
+import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
-import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver;
 
 import static java.util.Optional.ofNullable;
+import static org.apache.maven.artifact.Artifact.SCOPE_PROVIDED;
+import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 
 /**
  * Resolver helper class.
@@ -72,59 +75,59 @@ class ResolveUtil {
      * Please consult {@link ConflictResolver} and {@link DependencyManagerUtils}>
      * </p>
      *
-     * @param selectors zero or more {@link DependencySelector} instances
+     * @param excludedScopes a project dependency scope to excluded
      * @return a Dependency Node which is the root of the project's dependency tree
      * @throws EnforcerRuleException thrown if the lookup fails
      */
-    DependencyNode resolveTransitiveDependenciesVerbose(DependencySelector... selectors) throws EnforcerRuleException {
-        return resolveTransitiveDependencies(true, selectors);
+    DependencyNode resolveTransitiveDependenciesVerbose(List<String> excludedScopes) throws EnforcerRuleException {
+        return resolveTransitiveDependencies(true, true, excludedScopes);
     }
 
     /**
      * Retrieves the {@link DependencyNode} instance containing the result of the transitive dependency
      * for the current {@link MavenProject}.
      *
-     * @param selectors zero or more {@link DependencySelector} instances
      * @return a Dependency Node which is the root of the project's dependency tree
      * @throws EnforcerRuleException thrown if the lookup fails
      */
-    DependencyNode resolveTransitiveDependencies(DependencySelector... selectors) throws EnforcerRuleException {
-        return resolveTransitiveDependencies(false, selectors);
+    DependencyNode resolveTransitiveDependencies() throws EnforcerRuleException {
+        return resolveTransitiveDependencies(false, true, Arrays.asList(SCOPE_TEST, SCOPE_PROVIDED));
     }
 
-    private DependencyNode resolveTransitiveDependencies(boolean verbose, DependencySelector... selectors)
-            throws EnforcerRuleException {
+    private DependencyNode resolveTransitiveDependencies(
+            boolean verbose, boolean excludeOptional, List<String> excludedScopes) throws EnforcerRuleException {
 
         try {
+            RepositorySystemSession repositorySystemSession = session.getRepositorySession();
+
+            if (verbose) {
+                DefaultRepositorySystemSession defaultRepositorySystemSession =
+                        new DefaultRepositorySystemSession(repositorySystemSession);
+                defaultRepositorySystemSession.setConfigProperty(ConflictResolver.CONFIG_PROP_VERBOSE, true);
+                defaultRepositorySystemSession.setConfigProperty(DependencyManagerUtils.CONFIG_PROP_VERBOSE, true);
+                repositorySystemSession = defaultRepositorySystemSession;
+            }
+
             MavenProject project = session.getCurrentProject();
             ArtifactTypeRegistry artifactTypeRegistry =
                     session.getRepositorySession().getArtifactTypeRegistry();
 
-            DefaultRepositorySystemSession repositorySystemSession =
-                    new DefaultRepositorySystemSession(session.getRepositorySession());
+            List<Dependency> dependencies = project.getDependencies().stream()
+                    .filter(d -> !(excludeOptional && d.isOptional()))
+                    .filter(d -> !excludedScopes.contains(d.getScope()))
+                    .map(d -> RepositoryUtils.toDependency(d, artifactTypeRegistry))
+                    .collect(Collectors.toList());
 
-            if (selectors.length > 0) {
-                repositorySystemSession.setDependencySelector(new AndDependencySelector(selectors));
-            }
-
-            if (verbose) {
-                repositorySystemSession.setConfigProperty(ConflictResolver.CONFIG_PROP_VERBOSE, true);
-                repositorySystemSession.setConfigProperty(DependencyManagerUtils.CONFIG_PROP_VERBOSE, true);
-            }
-
-            CollectRequest collectRequest = new CollectRequest(
-                    project.getDependencies().stream()
+            List<Dependency> managedDependencies = ofNullable(project.getDependencyManagement())
+                    .map(DependencyManagement::getDependencies)
+                    .map(list -> list.stream()
                             .map(d -> RepositoryUtils.toDependency(d, artifactTypeRegistry))
-                            .collect(Collectors.toList()),
-                    ofNullable(project.getDependencyManagement())
-                            .map(DependencyManagement::getDependencies)
-                            .map(list -> list.stream()
-                                    .map(d -> RepositoryUtils.toDependency(d, artifactTypeRegistry))
-                                    .collect(Collectors.toList()))
-                            .orElse(null),
-                    project.getRemoteProjectRepositories());
-            Artifact artifact = project.getArtifact();
-            collectRequest.setRootArtifact(RepositoryUtils.toArtifact(artifact));
+                            .collect(Collectors.toList()))
+                    .orElse(null);
+
+            CollectRequest collectRequest =
+                    new CollectRequest(dependencies, managedDependencies, project.getRemoteProjectRepositories());
+            collectRequest.setRootArtifact(RepositoryUtils.toArtifact(project.getArtifact()));
 
             return repositorySystem
                     .collectDependencies(repositorySystemSession, collectRequest)
