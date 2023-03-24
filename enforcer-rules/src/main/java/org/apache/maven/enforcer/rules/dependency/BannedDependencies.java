@@ -34,8 +34,8 @@ import org.apache.maven.execution.MavenSession;
 public final class BannedDependencies extends BannedDependenciesBase {
 
     @Inject
-    BannedDependencies(MavenSession session, ResolveUtil resolveUtil) {
-        super(session, resolveUtil);
+    BannedDependencies(MavenSession session, ResolverUtil resolverUtil) {
+        super(session, resolverUtil);
     }
 
     @Override

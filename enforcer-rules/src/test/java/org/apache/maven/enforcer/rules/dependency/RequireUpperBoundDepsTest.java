@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 class RequireUpperBoundDepsTest {
 
     @Mock
-    private ResolveUtil resolveUtil;
+    private ResolverUtil resolverUtil;
 
     @InjectMocks
     private RequireUpperBoundDeps rule;
@@ -42,7 +42,7 @@ class RequireUpperBoundDepsTest {
     @Test
     void testRule() throws Exception {
 
-        when(resolveUtil.resolveTransitiveDependenciesVerbose(anyList()))
+        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
                 .thenReturn(new DependencyNodeBuilder()
                         .withType(DependencyNodeBuilder.Type.POM)
                         .withChildNode(new DependencyNodeBuilder()

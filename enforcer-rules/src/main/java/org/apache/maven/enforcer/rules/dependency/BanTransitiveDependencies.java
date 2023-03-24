@@ -68,12 +68,12 @@ public final class BanTransitiveDependencies extends AbstractStandardEnforcerRul
 
     private final MavenSession session;
 
-    private final ResolveUtil resolveUtil;
+    private final ResolverUtil resolverUtil;
 
     @Inject
-    public BanTransitiveDependencies(MavenSession session, ResolveUtil resolveUtil) {
+    public BanTransitiveDependencies(MavenSession session, ResolverUtil resolverUtil) {
         this.session = Objects.requireNonNull(session);
-        this.resolveUtil = Objects.requireNonNull(resolveUtil);
+        this.resolverUtil = Objects.requireNonNull(resolverUtil);
     }
 
     /**
@@ -147,7 +147,7 @@ public final class BanTransitiveDependencies extends AbstractStandardEnforcerRul
                 .map(d -> RepositoryUtils.toDependency(d, artifactTypeRegistry))
                 .collect(Collectors.toSet());
 
-        DependencyNode rootNode = resolveUtil.resolveTransitiveDependencies();
+        DependencyNode rootNode = resolverUtil.resolveTransitiveDependencies();
         StringBuilder generatedMessage = new StringBuilder();
         if (searchTree(rootNode, 0, exclusions, directDependencies, generatedMessage)) {
             throw new EnforcerRuleException(ofNullable(getMessage()).orElse(generatedMessage.toString()));
