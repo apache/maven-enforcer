@@ -29,6 +29,18 @@
   information about Maven dependency resolution, see 
   {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html}the Maven site}}.
 
+  The following parameters are supported by this rule:
+
+  * <<uniqueVersions>> - if SNAPSHOTs should be compared by their timestamped version or not. Default: <<<false>>>
+
+  * <<excludes>> - specify the dependencies that will be ignored. The format is <<<groupId[:artifactId]>>>
+
+  * <<includes>> - specify the dependencies that will be checked. If not empty only these will be checked. The format is <<<groupId[:artifactId]>>>
+
+  * <<excludedScopes>> - a list of dependency scope which will be excluded. Default: <<<test>>>, <<<provided>>>
+
+  []
+
   Here is a concrete example. This will cause a build to fail:
   
 -----------------------------------------------------------------------------------
@@ -113,6 +125,11 @@ and
                   <includes>
                     <include>com.google.guava:guava</include>
                   </includes>
+                  -->
+                  <!-- only artifacts with provided scope will be excluded
+                  <excludedScopes>
+                    <excludedScope>provided</excludedScopes>
+                  </excludedScopes>
                   -->
                 </requireUpperBoundDeps>
               </rules>

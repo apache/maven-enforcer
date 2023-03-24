@@ -73,6 +73,11 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
      */
     private List<String> includes = null;
 
+    /**
+     * Scope to exclude.
+     */
+    private List<String> excludedScopes = Arrays.asList(SCOPE_TEST, SCOPE_PROVIDED);
+
     private RequireUpperBoundDepsVisitor upperBoundDepsVisitor;
 
     private final ResolverUtil resolverUtil;
@@ -101,14 +106,14 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
     @Override
     public void execute() throws EnforcerRuleException {
-        DependencyNode node =
-                resolverUtil.resolveTransitiveDependenciesVerbose(Arrays.asList(SCOPE_TEST, SCOPE_PROVIDED));
+        DependencyNode node = resolverUtil.resolveTransitiveDependenciesVerbose(excludedScopes);
         upperBoundDepsVisitor = new RequireUpperBoundDepsVisitor()
                 .setUniqueVersions(uniqueVersions)
                 .setIncludes(includes);
+        getLog().debug(() -> resolverUtil.dumpTree(node));
         node.accept(upperBoundDepsVisitor);
         List<String> errorMessages = buildErrorMessages(upperBoundDepsVisitor.getConflicts());
-        if (errorMessages.size() > 0) {
+        if (!errorMessages.isEmpty()) {
             throw new EnforcerRuleException(
                     "Failed while enforcing RequireUpperBoundDeps. The error(s) are " + errorMessages);
         }
