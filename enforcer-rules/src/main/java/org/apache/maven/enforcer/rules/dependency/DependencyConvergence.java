@@ -55,17 +55,17 @@ public final class DependencyConvergence extends AbstractStandardEnforcerRule {
 
     private DependencyVersionMap dependencyVersionMap;
 
-    private final ResolveUtil resolveUtil;
+    private final ResolverUtil resolverUtil;
 
     @Inject
-    public DependencyConvergence(ResolveUtil resolveUtil) {
-        this.resolveUtil = Objects.requireNonNull(resolveUtil);
+    public DependencyConvergence(ResolverUtil resolverUtil) {
+        this.resolverUtil = Objects.requireNonNull(resolverUtil);
     }
 
     @Override
     public void execute() throws EnforcerRuleException {
 
-        DependencyNode node = resolveUtil.resolveTransitiveDependenciesVerbose(excludedScopes);
+        DependencyNode node = resolverUtil.resolveTransitiveDependenciesVerbose(excludedScopes);
         dependencyVersionMap = new DependencyVersionMap().setUniqueVersions(uniqueVersions);
         node.accept(dependencyVersionMap);
 

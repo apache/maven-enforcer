@@ -68,11 +68,11 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
 
     private final MavenSession session;
 
-    private final ResolveUtil resolveUtil;
+    private final ResolverUtil resolverUtil;
 
-    BannedDependenciesBase(MavenSession session, ResolveUtil resolveUtil) {
+    BannedDependenciesBase(MavenSession session, ResolverUtil resolverUtil) {
         this.session = Objects.requireNonNull(session);
-        this.resolveUtil = Objects.requireNonNull(resolveUtil);
+        this.resolverUtil = Objects.requireNonNull(resolverUtil);
     }
 
     protected MavenSession getSession() {
@@ -103,7 +103,7 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
             }
         } else {
             StringBuilder messageBuilder = new StringBuilder();
-            DependencyNode rootNode = resolveUtil.resolveTransitiveDependenciesVerbose(Collections.emptyList());
+            DependencyNode rootNode = resolverUtil.resolveTransitiveDependenciesVerbose(Collections.emptyList());
             if (!validate(rootNode, 0, messageBuilder)) {
                 String message = "";
                 if (getMessage() != null) {

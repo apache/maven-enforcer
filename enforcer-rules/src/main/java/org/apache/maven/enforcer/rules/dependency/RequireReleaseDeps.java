@@ -51,8 +51,8 @@ public final class RequireReleaseDeps extends BannedDependenciesBase {
     private boolean failWhenParentIsSnapshot = true;
 
     @Inject
-    public RequireReleaseDeps(MavenSession session, ResolveUtil resolveUtil) {
-        super(session, resolveUtil);
+    public RequireReleaseDeps(MavenSession session, ResolverUtil resolverUtil) {
+        super(session, resolverUtil);
     }
 
     // Override parent to allow optional ignore of this rule.

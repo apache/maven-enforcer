@@ -75,11 +75,11 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
     private RequireUpperBoundDepsVisitor upperBoundDepsVisitor;
 
-    private final ResolveUtil resolveUtil;
+    private final ResolverUtil resolverUtil;
 
     @Inject
-    public RequireUpperBoundDeps(ResolveUtil resolveUtil) {
-        this.resolveUtil = Objects.requireNonNull(resolveUtil);
+    public RequireUpperBoundDeps(ResolverUtil resolverUtil) {
+        this.resolverUtil = Objects.requireNonNull(resolverUtil);
     }
 
     /**
@@ -102,7 +102,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
     @Override
     public void execute() throws EnforcerRuleException {
         DependencyNode node =
-                resolveUtil.resolveTransitiveDependenciesVerbose(Arrays.asList(SCOPE_TEST, SCOPE_PROVIDED));
+                resolverUtil.resolveTransitiveDependenciesVerbose(Arrays.asList(SCOPE_TEST, SCOPE_PROVIDED));
         upperBoundDepsVisitor = new RequireUpperBoundDepsVisitor()
                 .setUniqueVersions(uniqueVersions)
                 .setIncludes(includes);

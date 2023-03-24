@@ -52,7 +52,7 @@ class BannedDependenciesTest {
     private MavenSession session;
 
     @Mock
-    private ResolveUtil resolveUtil;
+    private ResolverUtil resolverUtil;
 
     @InjectMocks
     private BannedDependencies rule;
@@ -95,7 +95,7 @@ class BannedDependenciesTest {
     @Test
     void excludesUseTransitiveDependencies() throws Exception {
 
-        when(resolveUtil.resolveTransitiveDependenciesVerbose(anyList()))
+        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
                 .thenReturn(new DependencyNodeBuilder()
                         .withType(DependencyNodeBuilder.Type.POM)
                         .withChildNode(new DependencyNodeBuilder()
@@ -128,7 +128,7 @@ class BannedDependenciesTest {
     @Test
     void excludesAndIncludesUseTransitiveDependencies() throws Exception {
 
-        when(resolveUtil.resolveTransitiveDependenciesVerbose(anyList()))
+        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
                 .thenReturn(new DependencyNodeBuilder()
                         .withType(DependencyNodeBuilder.Type.POM)
                         .withChildNode(new DependencyNodeBuilder()
