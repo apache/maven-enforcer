@@ -27,7 +27,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.maven.plugins.enforcer.its</groupId>
-      <artifactId>menforcer1308_utils</artifactId>
+      <artifactId>menforcer138_utils</artifactId>
       <version>1.0.4</version>
     </dependency>
     <dependency>

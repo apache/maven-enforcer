@@ -18,6 +18,7 @@
  */
 package org.apache.maven.enforcer.rules.dependency;
 
+import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.utils.DependencyNodeBuilder;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,6 +43,8 @@ class RequireUpperBoundDepsTest {
 
     @Test
     void testRule() throws Exception {
+
+        rule.setLog(mock(EnforcerLogger.class));
 
         when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
                 .thenReturn(new DependencyNodeBuilder()
