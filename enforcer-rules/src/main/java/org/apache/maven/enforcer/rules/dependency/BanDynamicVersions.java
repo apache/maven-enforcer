@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.enforcer.rules;
+package org.apache.maven.enforcer.rules.dependency;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,25 +32,16 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.apache.maven.RepositoryUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
 import org.apache.maven.enforcer.rules.utils.ArtifactMatcher;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
-import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.collection.CollectRequest;
-import org.eclipse.aether.collection.CollectResult;
 import org.eclipse.aether.collection.DependencyCollectionException;
-import org.eclipse.aether.collection.DependencySelector;
-import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
-import org.eclipse.aether.util.graph.selector.AndDependencySelector;
-import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
-import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.eclipse.aether.util.graph.visitor.TreeDependencyVisitor;
 import org.eclipse.aether.version.VersionConstraint;
 
@@ -108,7 +99,7 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
     /**
      * the scopes of dependencies which should be excluded from this rule
      */
-    private String[] excludedScopes;
+    private List<String> excludedScopes;
 
     /**
      * Specify the ignored dependencies. This can be a list of artifacts in the format
@@ -119,17 +110,12 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
      */
     private List<String> ignores = null;
 
-    private final MavenProject project;
-
-    private final RepositorySystem repoSystem;
-
-    private final MavenSession mavenSession;
+    private final ResolverUtil resolverUtil;
 
     @Inject
-    public BanDynamicVersions(MavenProject project, RepositorySystem repoSystem, MavenSession mavenSession) {
-        this.project = Objects.requireNonNull(project);
-        this.repoSystem = Objects.requireNonNull(repoSystem);
-        this.mavenSession = Objects.requireNonNull(mavenSession);
+    public BanDynamicVersions(
+            MavenProject project, RepositorySystem repoSystem, MavenSession mavenSession, ResolverUtil resolverUtil) {
+        this.resolverUtil = Objects.requireNonNull(resolverUtil);
     }
 
     private final class BannedDynamicVersionCollector implements DependencyVisitor {
@@ -138,19 +124,19 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
 
         private boolean isRoot = true;
 
-        private int numViolations;
+        private List<String> violations;
 
         private final Predicate<DependencyNode> predicate;
 
-        public int getNumViolations() {
-            return numViolations;
+        public List<String> getNumViolations() {
+            return violations;
         }
 
         BannedDynamicVersionCollector(Predicate<DependencyNode> predicate) {
-            nodeStack = new ArrayDeque<>();
+            this.nodeStack = new ArrayDeque<>();
             this.predicate = predicate;
             this.isRoot = true;
-            numViolations = 0;
+            this.violations = new ArrayList<>();
         }
 
         private boolean isBannedDynamicVersion(VersionConstraint versionConstraint) {
@@ -183,13 +169,11 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
             } else {
                 getLog().debug("Found node " + node + " with version constraint " + node.getVersionConstraint());
                 if (predicate.test(node) && isBannedDynamicVersion(node.getVersionConstraint())) {
-                    getLog().warnOrError(() -> new StringBuilder()
-                            .append("Dependency ")
-                            .append(node.getDependency())
-                            .append(dumpIntermediatePath(nodeStack))
-                            .append(" is referenced with a banned dynamic version ")
-                            .append(node.getVersionConstraint()));
-                    numViolations++;
+                    violations.add("Dependency "
+                            + node.getDependency()
+                            + dumpIntermediatePath(nodeStack)
+                            + " is referenced with a banned dynamic version "
+                            + node.getVersionConstraint());
                     return false;
                 }
                 nodeStack.addLast(node);
@@ -209,26 +193,17 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
     @Override
     public void execute() throws EnforcerRuleException {
 
-        // get a new session to be able to tweak the dependency selector
-        DefaultRepositorySystemSession newRepoSession =
-                new DefaultRepositorySystemSession(mavenSession.getRepositorySession());
-
-        Collection<DependencySelector> depSelectors = new ArrayList<>();
-        depSelectors.add(new ScopeDependencySelector(excludedScopes));
-        if (excludeOptionals) {
-            depSelectors.add(new OptionalDependencySelector());
-        }
-        newRepoSession.setDependencySelector(new AndDependencySelector(depSelectors));
-
-        Dependency rootDependency = RepositoryUtils.toDependency(project.getArtifact(), null);
         try {
-            // use root dependency with unresolved direct dependencies
-            int numViolations = emitDependenciesWithBannedDynamicVersions(rootDependency, newRepoSession);
-            if (numViolations > 0) {
+            DependencyNode rootDependency =
+                    resolverUtil.resolveTransitiveDependencies(excludeOptionals, excludedScopes);
+
+            List<String> violations = emitDependenciesWithBannedDynamicVersions(rootDependency);
+            if (!violations.isEmpty()) {
                 ChoiceFormat dependenciesFormat = new ChoiceFormat("1#dependency|1<dependencies");
-                throw new EnforcerRuleException("Found " + numViolations + " "
-                        + dependenciesFormat.format(numViolations)
-                        + " with dynamic versions. Look at the warnings emitted above for the details.");
+                throw new EnforcerRuleException("Found " + violations.size() + " "
+                        + dependenciesFormat.format(violations.size())
+                        + " with dynamic versions." + System.lineSeparator()
+                        + String.join(System.lineSeparator(), violations));
             }
         } catch (DependencyCollectionException e) {
             throw new EnforcerRuleException("Could not retrieve dependency metadata for project", e);
@@ -256,10 +231,8 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
         }
     }
 
-    private int emitDependenciesWithBannedDynamicVersions(
-            Dependency rootDependency, RepositorySystemSession repoSession) throws DependencyCollectionException {
-        CollectRequest collectRequest = new CollectRequest(rootDependency, project.getRemoteProjectRepositories());
-        CollectResult collectResult = repoSystem.collectDependencies(repoSession, collectRequest);
+    private List<String> emitDependenciesWithBannedDynamicVersions(DependencyNode rootDependency)
+            throws DependencyCollectionException {
         Predicate<DependencyNode> predicate;
         if (ignores != null && !ignores.isEmpty()) {
             predicate = new ExcludeArtifactPatternsPredicate(ignores);
@@ -268,7 +241,7 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
         }
         BannedDynamicVersionCollector bannedDynamicVersionCollector = new BannedDynamicVersionCollector(predicate);
         DependencyVisitor depVisitor = new TreeDependencyVisitor(bannedDynamicVersionCollector);
-        collectResult.getRoot().accept(depVisitor);
+        rootDependency.accept(depVisitor);
         return bannedDynamicVersionCollector.getNumViolations();
     }
 

@@ -96,6 +96,19 @@ class ResolverUtil {
         return resolveTransitiveDependencies(false, true, Arrays.asList(SCOPE_TEST, SCOPE_PROVIDED));
     }
 
+    /**
+     * Retrieves the {@link DependencyNode} instance containing the result of the transitive dependency
+     * for the current {@link MavenProject}.
+     *
+     * @param excludedScopes a project dependency scope to excluded
+     * @return a Dependency Node which is the root of the project's dependency tree
+     * @throws EnforcerRuleException thrown if the lookup fails
+     */
+    DependencyNode resolveTransitiveDependencies(boolean excludeOptional, List<String> excludedScopes)
+            throws EnforcerRuleException {
+        return resolveTransitiveDependencies(false, excludeOptional, excludedScopes);
+    }
+
     private DependencyNode resolveTransitiveDependencies(
             boolean verbose, boolean excludeOptional, List<String> excludedScopes) throws EnforcerRuleException {
 
@@ -134,6 +147,7 @@ class ResolverUtil {
             return repositorySystem
                     .collectDependencies(repositorySystemSession, collectRequest)
                     .getRoot();
+
         } catch (DependencyCollectionException e) {
             throw new EnforcerRuleException("Could not build dependency tree " + e.getLocalizedMessage(), e);
         }
