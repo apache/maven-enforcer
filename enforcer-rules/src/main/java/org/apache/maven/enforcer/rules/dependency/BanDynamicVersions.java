@@ -231,7 +231,7 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
         }
     }
 
-    private List<String> emitDependenciesWithBannedDynamicVersions(DependencyNode rootDependency)
+    private List<String> collectDependenciesWithBannedDynamicVersions(DependencyNode rootDependency)
             throws DependencyCollectionException {
         Predicate<DependencyNode> predicate;
         if (ignores != null && !ignores.isEmpty()) {
