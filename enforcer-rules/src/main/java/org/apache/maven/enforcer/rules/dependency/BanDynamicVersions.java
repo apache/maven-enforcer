@@ -128,7 +128,7 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
 
         private final Predicate<DependencyNode> predicate;
 
-        public List<String> getNumViolations() {
+        public List<String> getViolations() {
             return violations;
         }
 
