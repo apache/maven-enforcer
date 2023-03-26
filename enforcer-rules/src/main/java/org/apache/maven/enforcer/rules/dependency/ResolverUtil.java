@@ -77,7 +77,7 @@ class ResolverUtil {
      * Please consult {@link ConflictResolver} and {@link DependencyManagerUtils}>
      * </p>
      *
-     * @param excludedScopes a project dependency scope to excluded
+     * @param excludedScopes the scopes of direct dependencies to ignore
      * @return a Dependency Node which is the root of the project's dependency tree
      * @throws EnforcerRuleException thrown if the lookup fails
      */
@@ -100,6 +100,7 @@ class ResolverUtil {
      * Retrieves the {@link DependencyNode} instance containing the result of the transitive dependency
      * for the current {@link MavenProject}.
      *
+     * @param excludeOptional ignore optional project artifacts
      * @param excludedScopes the scopes of direct dependencies to ignore
      * @return a Dependency Node which is the root of the project's dependency tree
      * @throws EnforcerRuleException thrown if the lookup fails

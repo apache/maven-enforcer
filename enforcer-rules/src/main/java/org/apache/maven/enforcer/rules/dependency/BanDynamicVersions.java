@@ -197,7 +197,7 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
             DependencyNode rootDependency =
                     resolverUtil.resolveTransitiveDependencies(excludeOptionals, excludedScopes);
 
-            List<String> violations = emitDependenciesWithBannedDynamicVersions(rootDependency);
+            List<String> violations = collectDependenciesWithBannedDynamicVersions(rootDependency);
             if (!violations.isEmpty()) {
                 ChoiceFormat dependenciesFormat = new ChoiceFormat("1#dependency|1<dependencies");
                 throw new EnforcerRuleException("Found " + violations.size() + " "
@@ -242,7 +242,7 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
         BannedDynamicVersionCollector bannedDynamicVersionCollector = new BannedDynamicVersionCollector(predicate);
         DependencyVisitor depVisitor = new TreeDependencyVisitor(bannedDynamicVersionCollector);
         rootDependency.accept(depVisitor);
-        return bannedDynamicVersionCollector.getNumViolations();
+        return bannedDynamicVersionCollector.getViolations();
     }
 
     @Override
