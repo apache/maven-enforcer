@@ -25,10 +25,10 @@ import java.util.Objects;
 
 import bsh.EvalError;
 import bsh.Interpreter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Rule for Maven Enforcer using Beanshell to evaluate a conditional expression.

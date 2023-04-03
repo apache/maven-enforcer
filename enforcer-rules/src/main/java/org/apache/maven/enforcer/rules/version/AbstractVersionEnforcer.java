@@ -18,12 +18,12 @@
  */
 package org.apache.maven.enforcer.rules.version;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
-import org.codehaus.plexus.util.StringUtils;
 
 import static org.apache.maven.enforcer.rules.utils.ArtifactMatcher.containsVersion;
 

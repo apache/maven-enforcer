@@ -23,6 +23,7 @@ import javax.inject.Named;
 
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.utils.OSUtil;
@@ -31,7 +32,6 @@ import org.apache.maven.model.ActivationOS;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.profile.activation.ProfileActivator;
 import org.codehaus.plexus.util.Os;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This rule checks that the OS is allowed by combinations of family, name, version and cpu architecture. The behavior
