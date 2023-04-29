@@ -99,7 +99,7 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
     /**
      * the scopes of dependencies which should be excluded from this rule
      */
-    private List<String> excludedScopes;
+    private List<String> excludedScopes = Collections.emptyList();
 
     /**
      * Specify the ignored dependencies. This can be a list of artifacts in the format
