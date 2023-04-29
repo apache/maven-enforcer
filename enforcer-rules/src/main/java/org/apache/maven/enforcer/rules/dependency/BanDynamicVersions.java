@@ -227,7 +227,7 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
 
         @Override
         public boolean test(DependencyNode depNode) {
-            return artifactMatcher.match(ArtifactUtils.toArtifact(depNode));
+            return !artifactMatcher.match(ArtifactUtils.toArtifact(depNode));
         }
     }
 
