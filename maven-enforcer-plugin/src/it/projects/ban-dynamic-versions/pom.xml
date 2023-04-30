@@ -46,7 +46,7 @@
                   </excludedScopes>
                   <allowRangesWithIdenticalBounds>true</allowRangesWithIdenticalBounds>
                   <ignores>
-                    <ignore>*:menforcer480</ignore>
+                    <ignore>*:menforcer134_project</ignore>
                   </ignores>
                 </banDynamicVersions>
               </rules>
@@ -113,10 +113,10 @@
       <version>[1.0]</version>
     </dependency>
     <dependency>
-      <!-- banned transitive version range, but ignored -->
+      <!-- banned SNAPSHOT, but ignored (though it's transitive dependency on menforcer134_modelbuilder is not) -->
       <groupId>org.apache.maven.plugins.enforcer.its</groupId>
-      <artifactId>menforcer480</artifactId>
-      <version>1.0</version>
+      <artifactId>menforcer134_project</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
