@@ -45,6 +45,9 @@
                     <excludedScope>test</excludedScope>
                   </excludedScopes>
                   <allowRangesWithIdenticalBounds>true</allowRangesWithIdenticalBounds>
+                  <ignores>
+                    <ignore>*:menforcer134_project</ignore>
+                  </ignores>
                 </banDynamicVersions>
               </rules>
             </configuration>
@@ -108,6 +111,12 @@
       <artifactId>menforcer192-a</artifactId>
       <!--  version range syntax with equal upper and lower bounds -->
       <version>[1.0]</version>
+    </dependency>
+    <dependency>
+      <!-- banned SNAPSHOT, but ignored (though it's transitive dependency on menforcer134_modelbuilder is not) -->
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer134_project</artifactId>
+      <version>1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
