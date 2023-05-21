@@ -41,6 +41,13 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <!-- artifact contains repository with not standard protocol, like mavengem: -->
+      <!-- https://issues.apache.org/jira/browse/MENFORCER-393 -->
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-stdlib</artifactId>
+      <version>9.2.13.0</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -53,7 +60,7 @@
             <id>enforce</id>
             <configuration>
               <rules>
-                <DependencyConvergence/>
+                <dependencyConvergence/>
               </rules>
             </configuration>
             <goals>
