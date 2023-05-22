@@ -28,7 +28,6 @@ import bsh.Interpreter;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Rule for Maven Enforcer using Beanshell to evaluate a conditional expression.
@@ -70,7 +69,7 @@ public final class EvaluateBeanshell extends AbstractStandardEnforcerRule {
             getLog().debug("Echo script : " + script);
             if (!evaluateCondition(script)) {
                 String message = getMessage();
-                if (StringUtils.isEmpty(message)) {
+                if (message == null || message.isEmpty()) {
                     message = "The expression \"" + condition + "\" is not true.";
                 }
                 throw new EnforcerRuleException(message);

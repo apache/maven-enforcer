@@ -103,16 +103,16 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
         if (isValidFamily(this.family)) {
             if (!isAllowed()) {
                 String message = getMessage();
-                if (StringUtils.isEmpty(message)) {
+                if (message == null || message.isEmpty()) {
                     // @formatter:off
-                    message = ("OS Arch: "
+                    message = "OS Arch: "
                             + Os.OS_ARCH + " Family: "
                             + Os.OS_FAMILY + " Name: "
                             + Os.OS_NAME + " Version: "
                             + Os.OS_VERSION + " is not allowed by" + (arch != null ? " Arch=" + arch : "")
                             + (family != null ? " Family=" + family : "")
                             + (name != null ? " Name=" + name : "")
-                            + (version != null ? " Version=" + version : ""));
+                            + (version != null ? " Version=" + version : "");
                     // @formatter:on
                 }
                 throw new EnforcerRuleException(message);
@@ -152,10 +152,10 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
      * @return true if all parameters are empty.
      */
     public boolean allParamsEmpty() {
-        return (StringUtils.isEmpty(family)
-                && StringUtils.isEmpty(arch)
-                && StringUtils.isEmpty(name)
-                && StringUtils.isEmpty(version));
+        return (family == null || family.isEmpty())
+                && (arch == null || arch.isEmpty())
+                && (name == null || name.isEmpty())
+                && (version == null || version.isEmpty());
     }
 
     /**
@@ -221,7 +221,8 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
         // in case they are checking !family
         theFamily = StringUtils.stripStart(theFamily, "!");
 
-        return (StringUtils.isEmpty(theFamily) || Os.getValidFamilies().contains(theFamily));
+        return (theFamily == null || theFamily.isEmpty())
+                || Os.getValidFamilies().contains(theFamily);
     }
 
     /**
@@ -271,16 +272,16 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
     public String getCacheId() {
         // return the hashcodes of all the parameters
         StringBuilder b = new StringBuilder();
-        if (StringUtils.isNotEmpty(version)) {
+        if (version != null && !version.isEmpty()) {
             b.append(version.hashCode());
         }
-        if (StringUtils.isNotEmpty(name)) {
+        if (name != null && !name.isEmpty()) {
             b.append(name.hashCode());
         }
-        if (StringUtils.isNotEmpty(arch)) {
+        if (arch != null && !arch.isEmpty()) {
             b.append(arch.hashCode());
         }
-        if (StringUtils.isNotEmpty(family)) {
+        if (family != null && !family.isEmpty()) {
             b.append(family.hashCode());
         }
         return b.toString();

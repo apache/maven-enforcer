@@ -23,7 +23,6 @@ import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
-import org.codehaus.plexus.util.StringUtils;
 
 import static org.apache.maven.enforcer.rules.utils.ArtifactMatcher.containsVersion;
 
@@ -62,7 +61,7 @@ abstract class AbstractVersionEnforcer extends AbstractStandardEnforcerRule {
             throws EnforcerRuleException
                 // CHECKSTYLE_ON: LineLength
             {
-        if (StringUtils.isEmpty(requiredVersionRange)) {
+        if (requiredVersionRange == null || requiredVersionRange.isEmpty()) {
             throw new EnforcerRuleException(variableName + " version can't be empty.");
         } else {
 
@@ -81,7 +80,7 @@ abstract class AbstractVersionEnforcer extends AbstractStandardEnforcerRule {
                     } else {
                         String message = getMessage();
 
-                        if (StringUtils.isEmpty(message)) {
+                        if (message == null || message.isEmpty()) {
                             message = msg + " is not in the allowed range " + toString(vr) + ".";
                         }
 
@@ -106,7 +105,7 @@ abstract class AbstractVersionEnforcer extends AbstractStandardEnforcerRule {
 
     @Override
     public String getCacheId() {
-        if (StringUtils.isNotEmpty(version)) {
+        if (version != null && !version.isEmpty()) {
             // return the hashcodes of the parameter that matters
             return "" + version.hashCode();
         } else {

@@ -29,7 +29,6 @@ import java.util.Objects;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This rule checks that this project's maven session whether have banned repositories.
@@ -91,7 +90,7 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
 
         String errMsg = repoErrMsg + pluginRepoErrMsg;
 
-        if (errMsg != null && !StringUtils.isEmpty(errMsg)) {
+        if (errMsg != null && !errMsg.isEmpty()) {
             throw new EnforcerRuleException(errMsg);
         }
     }
