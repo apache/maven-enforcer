@@ -90,7 +90,7 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
 
         String errMsg = repoErrMsg + pluginRepoErrMsg;
 
-        if (errMsg != null && !(errMsg == null || errMsg.isEmpty())) {
+        if (errMsg != null && !errMsg.isEmpty()) {
             throw new EnforcerRuleException(errMsg);
         }
     }
