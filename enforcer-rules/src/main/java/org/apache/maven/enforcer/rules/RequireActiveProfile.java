@@ -28,7 +28,6 @@ import java.util.Objects;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This rule checks that some profiles are active.
@@ -72,7 +71,7 @@ public final class RequireActiveProfile extends AbstractStandardEnforcerRule {
     @Override
     public void execute() throws EnforcerRuleException {
         List<String> missingProfiles = new ArrayList<>();
-        if (StringUtils.isNotEmpty(profiles)) {
+        if (profiles != null && !profiles.isEmpty()) {
             String[] profileIds = profiles.split(",");
             for (String profileId : profileIds) {
                 if (!isProfileActive(project, profileId)) {

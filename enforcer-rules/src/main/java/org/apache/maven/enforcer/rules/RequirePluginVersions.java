@@ -289,7 +289,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
             newMsg.append(System.lineSeparator());
         }
         String message = getMessage();
-        if (StringUtils.isNotEmpty(message)) {
+        if (message != null && !message.isEmpty()) {
             newMsg.append(message);
         }
 
@@ -347,7 +347,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
     public Collection<String> combineUncheckedPlugins(
             Collection<String> uncheckedPlugins, String uncheckedPluginsList) {
         // if the comma list is empty, then there's nothing to do here.
-        if (StringUtils.isNotEmpty(uncheckedPluginsList)) {
+        if (uncheckedPluginsList != null && !uncheckedPluginsList.isEmpty()) {
             // make sure there is a collection to add to.
             if (uncheckedPlugins == null) {
                 uncheckedPlugins = new HashSet<>();
@@ -489,7 +489,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
         String[] lifecyclePhases = thePhases.split(",");
         for (int i = 0; i < lifecyclePhases.length; i++) {
             String lifecyclePhase = lifecyclePhases[i];
-            if (StringUtils.isNotEmpty(lifecyclePhase)) {
+            if (lifecyclePhase != null && !lifecyclePhase.isEmpty()) {
                 try {
                     Lifecycle lifecycle = getLifecycleForPhase(lifecyclePhase);
                     getLog().debug("getBoundPlugins(): " + project.getId() + " " + lifecyclePhase + " "
@@ -561,7 +561,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
     }
 
     private boolean isValidVersion(String version) {
-        return StringUtils.isNotEmpty(version) && !StringUtils.isWhitespace(version);
+        return (version != null && !version.isEmpty()) && !StringUtils.isWhitespace(version);
     }
 
     private boolean isMatchingPlugin(Plugin source, PluginWrapper plugin) {
@@ -610,7 +610,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
             getLog().debug("  lifecycleMapping = " + entry.getKey());
             String pluginsForLifecycle = (String) entry.getValue();
             getLog().debug("  plugins = " + pluginsForLifecycle);
-            if (StringUtils.isNotEmpty(pluginsForLifecycle)) {
+            if (pluginsForLifecycle != null && !pluginsForLifecycle.isEmpty()) {
                 String pluginList[] = pluginsForLifecycle.split(",");
                 for (String plugin : pluginList) {
                     plugin = StringUtils.strip(plugin);
