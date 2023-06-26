@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>39</version>
+    <version>40</version>
     <relativePath />
   </parent>
   <groupId>org.apache.maven.enforcer</groupId>
@@ -84,6 +84,11 @@
     <project.build.outputTimestamp>2023-04-01T21:03:41Z</project.build.outputTimestamp>
     <!-- the same as Maven 3.2.5 -->
     <aether.version>1.0.0.v20140518</aether.version>
+
+    <!-- plugins used in IT, not defined in parent -->
+    <version.maven-checkstyle-plugin>3.3.0</version.maven-checkstyle-plugin>
+    <version.maven-pmd-plugin>3.21.0</version.maven-pmd-plugin>
+    <version.maven-wrapper-plugin>3.2.0</version.maven-wrapper-plugin>
   </properties>
 
   <dependencyManagement>
@@ -203,12 +208,6 @@
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <!-- remove with future parent upgrade -->
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-invoker-plugin</artifactId>
-          <version>3.5.1</version>
-        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
