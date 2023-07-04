@@ -26,7 +26,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
  * Provided configuration will be added to current rules list by {@code Enforcer Mojo}
  *
  * @author Slawomir Jaranowski
- * @since 3.2.0
+ * @since 3.2.1
  */
 public abstract class AbstractEnforcerRuleConfigProvider extends AbstractEnforcerRuleBase {
 

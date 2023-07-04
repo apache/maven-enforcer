@@ -25,7 +25,7 @@ package org.apache.maven.enforcer.rule.api;
  * <a href="https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html">Writing a custom rule</a>
  *
  * @author Slawomir Jaranowski
- * @since 3.2.0
+ * @since 3.2.1
  */
 public abstract class AbstractEnforcerRule extends AbstractEnforcerRuleBase {
 

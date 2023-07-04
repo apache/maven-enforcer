@@ -24,7 +24,7 @@ package org.apache.maven.enforcer.rule.api;
  * Used for internal purpose.
  *
  * @author Slawomir Jaranowski
- * @since 3.2.0
+ * @since 3.2.1
  */
 abstract class AbstractEnforcerRuleBase implements EnforcerRuleBase {
 

@@ -49,7 +49,7 @@ Writing a custom rule
 
 * Implementation of custom Enforcer Rule
 
-  The rule must extends the {{{./apidocs/index.html}AbstractEnforcerRule}} and implements <<<execute>>> method.
+  The rule must extend {{{./apidocs/org/apache/maven/enforcer/rule/api/AbstractEnforcerRule.html}AbstractEnforcerRule}} (available since API version 3.2.1) and implement its <<<execute>>> method.
 
   Add annotation <<<@Named("yourRuleName")>>> to your Rule class. Your Rule name must start with lowercase character.
 
@@ -58,7 +58,7 @@ Writing a custom rule
   Maven component can be injected into Rule by annotation <<<@Inject>>> on field or constructor.
 
   Entry point for Rule executing is <<<execute>>> method, tf the rule succeeds, it should just simply return.
-  If the rule fails, it should throw an {{{./apidocs/index.html}EnforcerRuleException}} with a descriptive message telling the user why the rule failed.
+  If the rule fails, it should throw an {{{./apidocs/org/apache/maven/enforcer/rule/api/EnforcerRuleException.html}EnforcerRuleException}} with a descriptive message telling the user why the rule failed.
   Enforcer plugin takes decision based on configuration and Enforcer Rule level whether build should pass or fail.
   In case when you want to brake build immediately, <<<execute>>> method can throw an {{{./apidocs/index.html}EnforcerRuleError}}.
 
