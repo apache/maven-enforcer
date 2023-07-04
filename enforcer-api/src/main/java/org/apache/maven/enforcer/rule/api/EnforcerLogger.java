@@ -45,6 +45,14 @@ public interface EnforcerLogger {
     void warnOrError(Supplier<CharSequence> messageSupplier);
 
     /**
+     * Is the logger instance enabled for the DEBUG level?
+     *
+     * @return {@code true} if this Logger is enabled for the DEBUG level, {@code false} otherwise.
+     * @since 3.4.0
+     */
+    boolean isDebugEnabled();
+
+    /**
      * Log message in {@code debug} level.
      *
      * @param message a massage to log

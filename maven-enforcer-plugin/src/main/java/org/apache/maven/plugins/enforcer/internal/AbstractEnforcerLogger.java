@@ -39,6 +39,11 @@ public abstract class AbstractEnforcerLogger implements EnforcerLogger {
     }
 
     @Override
+    public boolean isDebugEnabled() {
+        return log.isDebugEnabled();
+    }
+
+    @Override
     public void debug(CharSequence message) {
         log.debug(message);
     }
