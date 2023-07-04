@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  * Logger used by enforcer rule.
  *
  * @author Slawomir Jaranowski
- * @since 3.2.0
+ * @since 3.2.1
  */
 public interface EnforcerLogger {
 

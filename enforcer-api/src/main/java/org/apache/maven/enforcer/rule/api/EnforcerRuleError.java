@@ -25,7 +25,7 @@ package org.apache.maven.enforcer.rule.api;
  * This exception break a build immediate.
  *
  * @author Slawomir Jaranowski
- * @since 3.2.0
+ * @since 3.2.1
  */
 public class EnforcerRuleError extends EnforcerRuleException {
 
