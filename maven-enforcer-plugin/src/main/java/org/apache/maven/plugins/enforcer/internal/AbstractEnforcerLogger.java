@@ -39,6 +39,11 @@ public abstract class AbstractEnforcerLogger implements EnforcerLogger {
     }
 
     @Override
+    public boolean isDebugEnabled() {
+        return log.isDebugEnabled();
+    }
+
+    @Override
     public void debug(CharSequence message) {
         log.debug(message);
     }
@@ -48,6 +53,11 @@ public abstract class AbstractEnforcerLogger implements EnforcerLogger {
         if (log.isDebugEnabled()) {
             log.debug(messageSupplier.get());
         }
+    }
+
+    @Override
+    public boolean isInfoEnabled() {
+        return log.isInfoEnabled();
     }
 
     @Override
@@ -63,6 +73,11 @@ public abstract class AbstractEnforcerLogger implements EnforcerLogger {
     }
 
     @Override
+    public boolean isWarnEnabled() {
+        return log.isWarnEnabled();
+    }
+
+    @Override
     public void warn(CharSequence message) {
         log.warn(message);
     }
@@ -72,6 +87,11 @@ public abstract class AbstractEnforcerLogger implements EnforcerLogger {
         if (log.isWarnEnabled()) {
             log.warn(messageSupplier.get());
         }
+    }
+
+    @Override
+    public boolean isErrorEnabled() {
+        return log.isErrorEnabled();
     }
 
     @Override
