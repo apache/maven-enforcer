@@ -69,6 +69,14 @@ public interface EnforcerLogger {
     void debug(Supplier<CharSequence> messageSupplier);
 
     /**
+     * Is the logger instance enabled for the INFO level?
+     *
+     * @return {@code true} if this Logger is enabled for the INFO level, {@code false} otherwise.
+     * @since 3.4.0
+     */
+    boolean isInfoEnabled();
+
+    /**
      * Log message in {@code info} level.
      *
      * @param message a massage to log
@@ -85,6 +93,14 @@ public interface EnforcerLogger {
     void info(Supplier<CharSequence> messageSupplier);
 
     /**
+     * Is the logger instance enabled for the WARN level?
+     *
+     * @return {@code true} if this Logger is enabled for the WARN level, {@code false} otherwise.
+     * @since 3.4.0
+     */
+    boolean isWarnEnabled();
+
+    /**
      * Log message in {@code warn} level.
      *
      * @param message a massage to log
@@ -99,6 +115,14 @@ public interface EnforcerLogger {
      * @param messageSupplier a supplier for message to log
      */
     void warn(Supplier<CharSequence> messageSupplier);
+
+    /**
+     * Is the logger instance enabled for the ERROR level?
+     *
+     * @return {@code true} if this Logger is enabled for the ERROR level, {@code false} otherwise.
+     * @since 3.4.0
+     */
+    boolean isErrorEnabled();
 
     /**
      * Log message in {@code error} level.
