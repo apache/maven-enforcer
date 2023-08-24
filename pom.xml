@@ -138,16 +138,17 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.eclipse.sisu</groupId>
-        <artifactId>org.eclipse.sisu.plexus</artifactId>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
         <groupId>org.eclipse.aether</groupId>
         <artifactId>aether-util</artifactId>
         <version>${aether.version}</version>
       </dependency>
-
+      <dependency>
+        <groupId>org.eclipse.sisu</groupId>
+        <artifactId>org.eclipse.sisu.plexus</artifactId>
+        <version>0.9.0.M2</version>
+        <scope>provided</scope>
+      </dependency>
+      
       <!-- other dependencies -->
       <dependency>
         <groupId>commons-codec</groupId>
