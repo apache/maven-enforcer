@@ -35,6 +35,11 @@
       <artifactId>maven-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-model</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
       <version>1</version>
@@ -80,8 +85,8 @@
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
               <settingsFile>src/it/mrm/settings.xml</settingsFile>
               <extraArtifacts>
-                <!-- artifacts in test scope is not installed by default -->
-                <!-- we only need this one not everything from test scope -->
+                <!-- Artifacts in test scope are not installed by default. -->
+                <!-- We only need this one, not everything from test scope. -->
                 <extraArtifact>org.apache.maven.plugins:maven-enforcer-plugin:${project.version}</extraArtifact>
               </extraArtifacts>
               <goals>
