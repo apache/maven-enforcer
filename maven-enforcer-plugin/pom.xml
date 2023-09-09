@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.maven.enforcer</groupId>
     <artifactId>enforcer</artifactId>
-    <version>3.4.1-SNAPSHOT</version>
+    <version>3.4.2-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.maven.plugins</groupId>
@@ -76,6 +76,12 @@
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>javax.annotation-api</artifactId>
+      <version>1.3.2</version>
       <scope>provided</scope>
     </dependency>
 
@@ -162,7 +168,7 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
+        <artifactId>maven-plugin-report-plugin</artifactId>
       </plugin>
     </plugins>
   </reporting>
