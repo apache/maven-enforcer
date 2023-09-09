@@ -138,6 +138,18 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-model-builder</artifactId>
+        <version>${mavenVersion}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.maven</groupId>
+        <artifactId>maven-settings</artifactId>
+        <version>${mavenVersion}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
         <groupId>org.eclipse.aether</groupId>
         <artifactId>aether-api</artifactId>
         <version>${aether.version}</version>
@@ -166,7 +178,13 @@
         <version>1</version>
         <scope>provided</scope>
       </dependency>
-
+      <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>javax.annotation-api</artifactId>
+        <scope>provided</scope>
+        <version>1.3.2</version>
+      </dependency>
+    
       <!-- other dependencies -->
       <dependency>
         <groupId>commons-codec</groupId>
