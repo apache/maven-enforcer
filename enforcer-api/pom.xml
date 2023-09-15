@@ -40,7 +40,7 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
+      <artifactId>plexus-xml</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
