@@ -110,7 +110,7 @@ class ResolverUtil {
         return resolveTransitiveDependencies(false, excludeOptional, excludedScopes);
     }
 
-    private DependencyNode resolveTransitiveDependencies(
+    DependencyNode resolveTransitiveDependencies(
             boolean verbose, boolean excludeOptional, List<String> excludedScopes) throws EnforcerRuleException {
 
         try {
