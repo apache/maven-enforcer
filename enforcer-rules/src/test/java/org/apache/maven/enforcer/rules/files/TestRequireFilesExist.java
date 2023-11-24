@@ -50,15 +50,6 @@ class TestRequireFilesExist {
     }
 
     @Test
-    void testFileOsIndependentExists() {
-        rule.setFilesList(Collections.singletonList(new File("POM.xml")));
-
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> rule.execute());
-
-        assertNotNull(e.getMessage());
-    }
-
-    @Test
     void testEmptyFile() {
         rule.setFilesList(Collections.singletonList(null));
 

@@ -31,35 +31,11 @@ public final class RequireFilesExist extends AbstractRequireFiles {
     @Override
     boolean checkFile(File file) {
         // if we get here and the handle is null, treat it as a success
-        return file == null ? true : file.exists() && osIndependentNameMatch(file, true);
+        return file == null ? true : file.exists();
     }
 
     @Override
     String getErrorMsg() {
         return "Some required files are missing:" + System.lineSeparator();
-    }
-
-    /**
-     * OSes like Windows are case insensitive, so this method will compare the file path with the actual path. A simple
-     * {@link File#exists()} is not enough for such OS.
-     *
-     * @param file the file to verify
-     * @param defaultValue value to return in case an IO exception occurs, should never happen as the file already
-     *            exists
-     * @return
-     */
-    private boolean osIndependentNameMatch(File file, boolean defaultValue) {
-        try {
-            File absFile;
-            if (!file.isAbsolute()) {
-                absFile = new File(new File(".").getCanonicalFile(), file.getPath());
-            } else {
-                absFile = file;
-            }
-
-            return absFile.toURI().equals(absFile.getCanonicalFile().toURI());
-        } catch (IOException e) {
-            return defaultValue;
-        }
     }
 }
