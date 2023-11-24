@@ -46,6 +46,8 @@ under the License.
                 <requireFilesExist>
                   <files>
                     <file>pom.xml</file>
+                    <file>../require-files-exist/pom.xml</file>
+                    <file>${project.basedir}/../require-files-exist/pom.xml</file>
                   </files>
                 </requireFilesExist>
               </rules>
