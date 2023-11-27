@@ -21,7 +21,6 @@ package org.apache.maven.enforcer.rules.files;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,8 +54,10 @@ class TestRequireFilesExist {
     @Test
     void testSymbolicLinkExists() throws Exception {
         File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
-        File linkFile = Files.createSymbolicLink(Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
-                Paths.get(canonicalFile.getAbsolutePath())).toFile();
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
         rule.setFilesList(Collections.singletonList(linkFile));
 
         try {
@@ -70,8 +71,10 @@ class TestRequireFilesExist {
     @Test
     void testSymbolicLinkTargetDoesNotExist() throws Exception {
         File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
-        File linkFile = Files.createSymbolicLink(Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
-                Paths.get(canonicalFile.getAbsolutePath())).toFile();
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
         canonicalFile.delete();
         rule.setFilesList(Collections.singletonList(linkFile));
 

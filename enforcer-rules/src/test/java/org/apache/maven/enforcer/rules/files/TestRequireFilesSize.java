@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -186,8 +185,10 @@ class TestRequireFilesSize {
     @Test
     void testSymbolicLinkTooSmall() throws Exception {
         File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
-        File linkFile = Files.createSymbolicLink(Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
-                Paths.get(canonicalFile.getAbsolutePath())).toFile();
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
 
         rule.setFilesList(Arrays.asList(linkFile));
         rule.setMinsize(10);
@@ -209,8 +210,10 @@ class TestRequireFilesSize {
             out.write("123456789101112131415");
         }
         assertTrue(canonicalFile.length() > 10);
-        File linkFile = Files.createSymbolicLink(Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
-                Paths.get(canonicalFile.getAbsolutePath())).toFile();
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
 
         rule.setFilesList(Arrays.asList(linkFile));
         rule.setMaxsize(10);
