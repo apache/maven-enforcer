@@ -77,13 +77,13 @@
   </distributionManagement>
 
   <properties>
-    <mavenVersion>3.2.5</mavenVersion>
+    <mavenVersion>3.6.3</mavenVersion>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
     <javaVersion>8</javaVersion>
     <mockito.version>4.11.0</mockito.version>
     <project.build.outputTimestamp>2023-09-07T17:27:52Z</project.build.outputTimestamp>
-    <!-- the same as Maven 3.2.5 -->
-    <aether.version>1.0.0.v20140518</aether.version>
+    <!-- the same as Maven 3.6.3 -->
+    <resolver.version>1.4.1</resolver.version>
 
     <!-- plugins used in IT, not defined in parent -->
     <version.maven-checkstyle-plugin>3.3.0</version.maven-checkstyle-plugin>
@@ -150,15 +150,15 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.eclipse.aether</groupId>
-        <artifactId>aether-api</artifactId>
-        <version>${aether.version}</version>
+        <groupId>org.apache.maven.resolver</groupId>
+        <artifactId>maven-resolver-api</artifactId>
+        <version>${resolver.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.eclipse.aether</groupId>
-        <artifactId>aether-util</artifactId>
-        <version>${aether.version}</version>
+        <groupId>org.apache.maven.resolver</groupId>
+        <artifactId>maven-resolver-util</artifactId>
+        <version>${resolver.version}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.sisu</groupId>
