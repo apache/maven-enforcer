@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer.internal;
 import javax.inject.Provider;
 
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleBase;
@@ -94,7 +95,10 @@ class EnforcerRuleManagerTest {
 
         when(mojoDescriptor.getPluginDescriptor()).thenReturn(mock(PluginDescriptor.class));
 
-        when(sessionProvider.get()).thenReturn(mock(MavenSession.class));
+        MavenSession mavenSession = mock(MavenSession.class);
+        when(mavenSession.getSystemProperties()).thenReturn(new Properties());
+        when(mavenSession.getUserProperties()).thenReturn(new Properties());
+        when(sessionProvider.get()).thenReturn(mavenSession);
 
         when(plexusContainer.hasComponent(any(Class.class), anyString())).thenReturn(hasComponent);
     }

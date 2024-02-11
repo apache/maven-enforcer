@@ -77,13 +77,13 @@
   </distributionManagement>
 
   <properties>
-    <mavenVersion>3.2.5</mavenVersion>
+    <mavenVersion>3.6.3</mavenVersion>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
     <javaVersion>8</javaVersion>
     <mockito.version>4.11.0</mockito.version>
-    <project.build.outputTimestamp>2024-05-26T08:52:43Z</project.build.outputTimestamp>
-    <!-- the same as Maven 3.2.5 -->
-    <aether.version>1.0.0.v20140518</aether.version>
+    <project.build.outputTimestamp>2023-09-07T17:27:52Z</project.build.outputTimestamp>
+    <!-- the same as Maven 3.6.3 -->
+    <resolver.version>1.4.1</resolver.version>
 
     <!-- plugins used in IT, not defined in parent -->
     <version.maven-pmd-plugin>3.21.0</version.maven-pmd-plugin>
@@ -149,15 +149,15 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.eclipse.aether</groupId>
-        <artifactId>aether-api</artifactId>
-        <version>${aether.version}</version>
+        <groupId>org.apache.maven.resolver</groupId>
+        <artifactId>maven-resolver-api</artifactId>
+        <version>${resolver.version}</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.eclipse.aether</groupId>
-        <artifactId>aether-util</artifactId>
-        <version>${aether.version}</version>
+        <groupId>org.apache.maven.resolver</groupId>
+        <artifactId>maven-resolver-util</artifactId>
+        <version>${resolver.version}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.sisu</groupId>
@@ -202,13 +202,6 @@
       </dependency>
 
       <!-- test dependencies -->
-      <dependency>
-        <groupId>org.junit</groupId>
-        <artifactId>junit-bom</artifactId>
-        <version>5.10.2</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>

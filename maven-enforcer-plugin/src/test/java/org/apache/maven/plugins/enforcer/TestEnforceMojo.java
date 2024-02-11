@@ -21,6 +21,7 @@ package org.apache.maven.plugins.enforcer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
@@ -33,14 +34,13 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.enforcer.internal.EnforcerRuleDesc;
 import org.apache.maven.plugins.enforcer.internal.EnforcerRuleManager;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -48,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -57,7 +58,6 @@ import static org.mockito.Mockito.when;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
 class TestEnforceMojo {
 
     @Mock
@@ -68,6 +68,12 @@ class TestEnforceMojo {
 
     @InjectMocks
     private EnforceMojo mojo;
+
+    @BeforeEach
+    void setup() {
+        lenient().when(session.getSystemProperties()).thenReturn(new Properties());
+        lenient().when(session.getUserProperties()).thenReturn(new Properties());
+    }
 
     @Test
     void emptyRuleListShouldThrowException() {
