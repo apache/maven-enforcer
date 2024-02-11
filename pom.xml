@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>40</version>
+    <version>41</version>
     <relativePath />
   </parent>
   <groupId>org.apache.maven.enforcer</groupId>
@@ -86,7 +86,6 @@
     <aether.version>1.0.0.v20140518</aether.version>
 
     <!-- plugins used in IT, not defined in parent -->
-    <version.maven-checkstyle-plugin>3.3.0</version.maven-checkstyle-plugin>
     <version.maven-pmd-plugin>3.21.0</version.maven-pmd-plugin>
     <version.maven-wrapper-plugin>3.2.0</version.maven-wrapper-plugin>
   </properties>
@@ -200,16 +199,6 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>3.13.0</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-utils</artifactId>
-        <version>4.0.0</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-xml</artifactId>
-        <version>3.0.0</version>
       </dependency>
 
       <!-- test dependencies -->
