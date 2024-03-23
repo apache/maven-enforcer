@@ -73,6 +73,8 @@ Built-In Rules
 
   * {{{./requireJavaVersion.html}requireJavaVersion}} - enforces the JDK version.
 
+  * {{{./requireMatchingCoordinates.html}requireMatchingCoordinates}} - enforces specific group ID and/or artifact ID patterns.
+
   * {{{./requireMavenVersion.html}requireMavenVersion}} - enforces the Maven version.
 
   * {{{./requireNoRepositories.html}requireNoRepositories}} - enforces to not include repositories.
