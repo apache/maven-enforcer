@@ -22,15 +22,20 @@ import java.util.Iterator;
 
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.profile.activation.OperatingSystemProfileActivator;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.Os;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Exhaustively check the OS mojo.
@@ -39,14 +44,23 @@ import static org.assertj.core.api.Assertions.assertThatCode;
  */
 class TestRequireOS {
 
+    private MavenSession mavenSession;
+
+    @BeforeEach
+    void setup() {
+        mavenSession = mock(MavenSession.class);
+        when(mavenSession.getRequest()).thenReturn(mock(MavenExecutionRequest.class));
+        when(mavenSession.getCurrentProject()).thenReturn(mock(MavenProject.class));
+    }
+
     /**
      * Test os.
      */
     @Test
-    public void testOS() {
+    void testOS() {
         Log log = new SystemStreamLog();
 
-        RequireOS rule = new RequireOS(new OperatingSystemProfileActivator());
+        RequireOS rule = new RequireOS(new OperatingSystemProfileActivator(), mavenSession);
 
         Iterator<String> iter = Os.getValidFamilies().iterator();
         String validFamily;
@@ -107,8 +121,8 @@ class TestRequireOS {
 
     @Test
     void testInvalidFamily() {
-        RequireOS rule = new RequireOS(new OperatingSystemProfileActivator());
-        rule.setLog(Mockito.mock(EnforcerLogger.class));
+        RequireOS rule = new RequireOS(new OperatingSystemProfileActivator(), mavenSession);
+        rule.setLog(mock(EnforcerLogger.class));
 
         rule.setFamily("junk");
         assertThatCode(rule::execute)
@@ -118,7 +132,7 @@ class TestRequireOS {
 
     @Test
     void testId() {
-        RequireOS rule = new RequireOS(new OperatingSystemProfileActivator());
+        RequireOS rule = new RequireOS(new OperatingSystemProfileActivator(), mavenSession);
         rule.setVersion("1.2");
         assertThat(rule.getCacheId()).isNotEmpty();
     }
