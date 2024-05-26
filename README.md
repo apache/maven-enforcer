@@ -35,20 +35,9 @@ More information can be found on [Apache Maven Enforcer Plugin Homepage][enforce
 Question related to the usage of the Maven Enforcer Plugin should be posted on
 the [Maven User List][users-list].
 
-
 Where can I get the latest release?
 -----------------------------------
 You can download release source from our [download page][enforcer-download].
-
-You can get the Maven Enforcer plugin via the following coordinates from central:
-
-```xml
-<plugin>
-  <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-enforcer-plugin</artifactId>
-  <version>3.2.1</version>
-</plugin>
-```
 
 Contributing
 ------------
@@ -74,16 +63,13 @@ This code is under the [Apache Licence v2][license]
 
 See the `NOTICE` file for required notices and attributions.
 
-
 Donations
 ---------
 You like Apache Maven? Then [donate back to the ASF](https://www.apache.org/foundation/contributing.html) to support the development.
 
-
 License
 -------
 [Apache License, Version 2.0, January 2004][license]
-
 
 [home]: https://maven.apache.org/enforcer/maven-enforcer-plugin
 [jira]: https://issues.apache.org/jira/projects/MENFORCER/
