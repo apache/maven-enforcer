@@ -69,6 +69,8 @@ Ban Dynamic Versions
         
         []
 
+  * <<verbose>> - if <<<true>>> the dependency tree is checked before Maven computes the final dependency tree. Setting this property will make the rule check dependencies before any conflicts are resolved. This is similar to the <<<verbose>>> parameter for the <<<tree>>> goal for <<<maven-dependency-plugin>>>. Default is <<<false>>>.
+  
   []
 
   Sample Plugin Configuration:

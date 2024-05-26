@@ -22,11 +22,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import java.text.ChoiceFormat;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -40,9 +38,12 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.collection.DependencyCollectionException;
+import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.graph.DependencyNode;
-import org.eclipse.aether.graph.DependencyVisitor;
-import org.eclipse.aether.util.graph.visitor.TreeDependencyVisitor;
+import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
+import org.eclipse.aether.util.graph.visitor.PathRecordingDependencyVisitor;
+import org.eclipse.aether.util.version.GenericVersionScheme;
+import org.eclipse.aether.version.InvalidVersionSpecificationException;
 import org.eclipse.aether.version.VersionConstraint;
 
 /**
@@ -110,6 +111,14 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
      */
     private List<String> ignores = null;
 
+    /**
+     * {@code true} if dependencies should be checked before Maven computes the final
+     * dependency tree. Setting this property will make the rule check dependencies
+     * before any conflicts are resolved. This is similar to the {@code verbose}
+     * parameter for the {@code tree} goal for {@code maven-dependency-plugin}.
+     */
+    private boolean verbose;
+
     private final ResolverUtil resolverUtil;
 
     @Inject
@@ -118,9 +127,7 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
         this.resolverUtil = Objects.requireNonNull(resolverUtil);
     }
 
-    private final class BannedDynamicVersionCollector implements DependencyVisitor {
-
-        private final Deque<DependencyNode> nodeStack; // all intermediate nodes (without the root node)
+    private final class BannedDynamicVersionCollector implements DependencyFilter {
 
         private boolean isRoot = true;
 
@@ -128,15 +135,16 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
 
         private final Predicate<DependencyNode> predicate;
 
+        private GenericVersionScheme versionScheme;
+
         public List<String> getViolations() {
             return violations;
         }
 
         BannedDynamicVersionCollector(Predicate<DependencyNode> predicate) {
-            this.nodeStack = new ArrayDeque<>();
             this.predicate = predicate;
-            this.isRoot = true;
             this.violations = new ArrayList<>();
+            this.versionScheme = new GenericVersionScheme();
         }
 
         private boolean isBannedDynamicVersion(VersionConstraint versionConstraint) {
@@ -163,30 +171,51 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
         }
 
         @Override
-        public boolean visitEnter(DependencyNode node) {
+        public boolean accept(DependencyNode node, List<DependencyNode> parents) {
             if (isRoot) {
                 isRoot = false;
-            } else {
-                getLog().debug("Found node " + node + " with version constraint " + node.getVersionConstraint());
-                if (predicate.test(node) && isBannedDynamicVersion(node.getVersionConstraint())) {
-                    violations.add("Dependency "
-                            + node.getDependency()
-                            + dumpIntermediatePath(nodeStack)
-                            + " is referenced with a banned dynamic version "
-                            + node.getVersionConstraint());
-                    return false;
-                }
-                nodeStack.addLast(node);
+                return false;
             }
-            return true;
+            getLog().debug("Found node " + node + " with version constraint " + node.getVersionConstraint());
+            if (!predicate.test(node)) {
+                return false;
+            }
+            VersionConstraint versionConstraint = node.getVersionConstraint();
+            if (isBannedDynamicVersion(versionConstraint)) {
+                addViolation(versionConstraint, node, parents);
+                return true;
+            }
+            try {
+                if (verbose) {
+                    String premanagedVersion = DependencyManagerUtils.getPremanagedVersion(node);
+                    if (premanagedVersion != null) {
+                        VersionConstraint premanagedContraint = versionScheme.parseVersionConstraint(premanagedVersion);
+                        if (isBannedDynamicVersion(premanagedContraint)) {
+                            addViolation(premanagedContraint, node, parents);
+                            return true;
+                        }
+                    }
+                }
+            } catch (InvalidVersionSpecificationException ex) {
+                // This should never happen.
+                throw new RuntimeException("Failed to parse version for " + node, ex);
+            }
+            return false;
         }
 
-        @Override
-        public boolean visitLeave(DependencyNode node) {
-            if (!nodeStack.isEmpty()) {
-                nodeStack.removeLast();
+        private void addViolation(
+                VersionConstraint versionContraint, DependencyNode node, List<DependencyNode> parents) {
+            List<DependencyNode> intermediatePath = new ArrayList<>(parents);
+            if (!intermediatePath.isEmpty()) {
+                // This project is also included in the path, but we do
+                // not want that in the report.
+                intermediatePath.remove(intermediatePath.size() - 1);
             }
-            return true;
+            violations.add("Dependency "
+                    + node.getDependency()
+                    + dumpIntermediatePath(intermediatePath)
+                    + " is referenced with a banned dynamic version "
+                    + versionContraint);
         }
     }
 
@@ -195,7 +224,7 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
 
         try {
             DependencyNode rootDependency =
-                    resolverUtil.resolveTransitiveDependencies(excludeOptionals, excludedScopes);
+                    resolverUtil.resolveTransitiveDependencies(verbose, excludeOptionals, excludedScopes);
 
             List<String> violations = collectDependenciesWithBannedDynamicVersions(rootDependency);
             if (!violations.isEmpty()) {
@@ -239,16 +268,19 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
         } else {
             predicate = d -> true;
         }
-        BannedDynamicVersionCollector bannedDynamicVersionCollector = new BannedDynamicVersionCollector(predicate);
-        DependencyVisitor depVisitor = new TreeDependencyVisitor(bannedDynamicVersionCollector);
-        rootDependency.accept(depVisitor);
-        return bannedDynamicVersionCollector.getViolations();
+        BannedDynamicVersionCollector collector = new BannedDynamicVersionCollector(predicate);
+        rootDependency.accept(new PathRecordingDependencyVisitor(collector));
+        return collector.getViolations();
+    }
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     @Override
     public String toString() {
         return String.format(
-                "BanDynamicVersions[allowSnapshots=%b, allowLatest=%b, allowRelease=%b, allowRanges=%b, allowRangesWithIdenticalBounds=%b, excludeOptionals=%b, excludedScopes=%s, ignores=%s]",
+                "BanDynamicVersions[allowSnapshots=%b, allowLatest=%b, allowRelease=%b, allowRanges=%b, allowRangesWithIdenticalBounds=%b, excludeOptionals=%b, excludedScopes=%s, ignores=%s, verbose=%b]",
                 allowSnapshots,
                 allowLatest,
                 allowRelease,
@@ -256,6 +288,7 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
                 allowRangesWithIdenticalBounds,
                 excludeOptionals,
                 excludedScopes,
-                ignores);
+                ignores,
+                verbose);
     }
 }
