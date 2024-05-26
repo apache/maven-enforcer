@@ -26,9 +26,12 @@ import java.util.Objects;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.utils.OSUtil;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Activation;
 import org.apache.maven.model.ActivationOS;
 import org.apache.maven.model.Profile;
+import org.apache.maven.model.profile.DefaultProfileActivationContext;
+import org.apache.maven.model.profile.ProfileActivationContext;
 import org.apache.maven.model.profile.activation.ProfileActivator;
 import org.codehaus.plexus.util.Os;
 import org.codehaus.plexus.util.StringUtils;
@@ -42,6 +45,8 @@ import org.codehaus.plexus.util.StringUtils;
 @Named("requireOS")
 public final class RequireOS extends AbstractStandardEnforcerRule {
     private final ProfileActivator activator;
+
+    private final ProfileActivationContext profileActivationContext;
 
     /**
      * The OS family type desired<br />
@@ -85,8 +90,20 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
      * Instantiates a new RequireOS.
      */
     @Inject
-    RequireOS(@Named("os") ProfileActivator activator) {
+    RequireOS(@Named("os") ProfileActivator activator, MavenSession session) {
         this.activator = Objects.requireNonNull(activator);
+        this.profileActivationContext = createProfileActivationContext(session);
+    }
+
+    private ProfileActivationContext createProfileActivationContext(MavenSession session) {
+        DefaultProfileActivationContext context = new DefaultProfileActivationContext();
+        context.setActiveProfileIds(session.getRequest().getActiveProfiles());
+        context.setInactiveProfileIds(session.getRequest().getInactiveProfiles());
+        context.setProjectDirectory(session.getCurrentProject().getBasedir());
+        context.setProjectProperties(session.getCurrentProject().getProperties());
+        context.setSystemProperties(System.getProperties());
+        context.setUserProperties(session.getUserProperties());
+        return context;
     }
 
     @Override
@@ -143,7 +160,8 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
      * @return true if the version is allowed.
      */
     public boolean isAllowed() {
-        return activator.isActive(createProfile(), null, null);
+        // empty lambda as problems collector
+        return activator.isActive(createProfile(), profileActivationContext, (req -> {}));
     }
 
     /**
