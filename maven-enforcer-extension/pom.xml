@@ -49,13 +49,6 @@
       <artifactId>plexus-xml</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <!-- needed for IT tests -->
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-enforcer-plugin</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>
