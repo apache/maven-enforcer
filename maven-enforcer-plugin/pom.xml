@@ -164,6 +164,10 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.eclipse.sisu</groupId>
+        <artifactId>sisu-maven-plugin</artifactId>
+      </plugin>
     </plugins>
   </build>
 
