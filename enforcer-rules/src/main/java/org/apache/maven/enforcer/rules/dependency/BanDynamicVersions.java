@@ -22,11 +22,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import java.text.ChoiceFormat;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -131,7 +129,6 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
 
     private final class BannedDynamicVersionCollector implements DependencyFilter {
 
-
         private boolean isRoot = true;
 
         private List<String> violations;
@@ -206,7 +203,8 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
             return false;
         }
 
-        private void addViolation(VersionConstraint versionContraint, DependencyNode node, List<DependencyNode> parents) {
+        private void addViolation(
+                VersionConstraint versionContraint, DependencyNode node, List<DependencyNode> parents) {
             List<DependencyNode> intermediatePath = new ArrayList<>(parents);
             if (!intermediatePath.isEmpty()) {
                 // This project is also included in the path, but we do

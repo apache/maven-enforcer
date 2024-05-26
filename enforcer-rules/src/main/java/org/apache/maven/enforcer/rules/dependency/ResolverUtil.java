@@ -110,8 +110,8 @@ class ResolverUtil {
         return resolveTransitiveDependencies(false, excludeOptional, excludedScopes);
     }
 
-    DependencyNode resolveTransitiveDependencies(
-            boolean verbose, boolean excludeOptional, List<String> excludedScopes) throws EnforcerRuleException {
+    DependencyNode resolveTransitiveDependencies(boolean verbose, boolean excludeOptional, List<String> excludedScopes)
+            throws EnforcerRuleException {
 
         try {
             RepositorySystemSession repositorySystemSession = session.getRepositorySession();
