@@ -61,8 +61,8 @@ Require Matching Coordinates
             <configuration>
               <rules>
                 <requireMatchingCoordinates>
-                  <groupIdPattern>com\.example.\namespace\..*</groupIdPattern>
-                </requireTextFileChecksum>
+                  <groupIdPattern>com\.example\.namespace\..*</groupIdPattern>
+                </requireMatchingCoordinates>
               </rules>
             </configuration>
           </execution>
