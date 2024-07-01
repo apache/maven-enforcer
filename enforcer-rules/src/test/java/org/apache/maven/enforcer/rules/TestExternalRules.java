@@ -98,4 +98,25 @@ class TestExternalRules {
         assertNotNull(rulesConfig);
         assertEquals(2, rulesConfig.getChildCount());
     }
+
+    @Test
+    void shouldFilterRules() throws EnforcerRuleException {
+        MojoDescriptor mojoDescriptor = new MojoDescriptor();
+        mojoDescriptor.setRealm(EnforcerTestUtils.getTestClassRealm());
+        when(mojoExecution.getMojoDescriptor()).thenReturn(mojoDescriptor);
+        rule.setLocation("classpath:enforcer-rules/banned-dependencies.xml");
+        rule.setXsltLocation("classpath:enforcer-rules/allow-findbugs.xsl");
+
+        Xpp3Dom rulesConfig = rule.getRulesConfig();
+        assertNotNull(rulesConfig);
+        assertEquals(1, rulesConfig.getChildCount());
+        assertEquals("bannedDependencies", rulesConfig.getChild(0).getName());
+        assertEquals(1, rulesConfig.getChild(0).getChildCount());
+        assertEquals("excludes", rulesConfig.getChild(0).getChild(0).getName());
+        assertEquals(1, rulesConfig.getChild(0).getChild(0).getChildCount());
+        assertEquals("exclude", rulesConfig.getChild(0).getChild(0).getChild(0).getName());
+        assertEquals(
+                "com.google.guava:listenablefuture",
+                rulesConfig.getChild(0).getChild(0).getChild(0).getValue());
+    }
 }
