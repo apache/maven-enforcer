@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -51,11 +52,16 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
 
     private Set<String> reportPlugins = new HashSet<>();
 
+    private boolean sameModuleVersions;
+
     private final MavenProject project;
 
+    private final MavenSession session;
+
     @Inject
-    public RequireSameVersions(MavenProject project) {
+    public RequireSameVersions(MavenProject project, MavenSession session) {
         this.project = Objects.requireNonNull(project);
+        this.session = Objects.requireNonNull(session);
     }
 
     @Override
@@ -84,6 +90,14 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
                 }
             }
             throw new EnforcerRuleException(builder.toString());
+        }
+
+        if (sameModuleVersions) {
+            MavenProject topLevelProject = session.getTopLevelProject();
+            if (!Objects.equals(topLevelProject.getVersion(), project.getVersion())) {
+                throw new EnforcerRuleException("Top level project has version " + topLevelProject.getVersion()
+                        + " but current module has different version " + project.getVersion());
+            }
         }
     }
 
@@ -119,7 +133,7 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
     @Override
     public String toString() {
         return String.format(
-                "RequireSameVersions[dependencies=%s, buildPlugins=%s, reportPlugins=%s, plugins=%s, uniqueVersions=%b]",
-                dependencies, buildPlugins, reportPlugins, plugins, uniqueVersions);
+                "RequireSameVersions[dependencies=%s, buildPlugins=%s, reportPlugins=%s, plugins=%s, uniqueVersions=%b, sameModuleVersions=%b]",
+                dependencies, buildPlugins, reportPlugins, plugins, uniqueVersions, sameModuleVersions);
     }
 }
