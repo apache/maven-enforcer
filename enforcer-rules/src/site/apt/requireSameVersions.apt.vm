@@ -37,8 +37,10 @@
    * <<reportPlugins>> - an optional list of report plugin patterns
    
    * <<plugins>> - an optional list of both build and report plugin patterns
-    
+   
    * <<uniqueVersions>> - if SNAPSHOTs should be compared by their timestamped version or not. Default: false
+   
+   * <<sameModuleVersions>> - if set to true enforces that the current module has the same version as the top level aggregator project. Default: false. Supported since version 3.6.0
 
    []
 
