@@ -20,6 +20,8 @@ package org.apache.maven.enforcer.rules.files;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -50,12 +52,40 @@ class TestRequireFilesExist {
     }
 
     @Test
-    void testFileOsIndependentExists() {
-        rule.setFilesList(Collections.singletonList(new File("POM.xml")));
+    void testSymbolicLinkExists() throws Exception {
+        File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
+        rule.setFilesList(Collections.singletonList(linkFile));
 
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> rule.execute());
+        try {
+            rule.execute();
+        } finally {
+            linkFile.delete();
+            canonicalFile.delete();
+        }
+    }
 
-        assertNotNull(e.getMessage());
+    @Test
+    void testSymbolicLinkTargetDoesNotExist() throws Exception {
+        File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
+        canonicalFile.delete();
+        rule.setFilesList(Collections.singletonList(linkFile));
+
+        try {
+            rule.execute();
+            fail("Should get an exception");
+        } catch (Exception e) {
+            assertNotNull(e.getMessage());
+        } finally {
+            linkFile.delete();
+        }
     }
 
     @Test
