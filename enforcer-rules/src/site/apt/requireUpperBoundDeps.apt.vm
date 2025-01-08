@@ -22,8 +22,8 @@
  2012-02-08
  -----
 
-  This rule requires that the version for each dependency resolved during a build, is equal
-  to or higher than all transitive dependency declarations.  The version of each dependency
+  This rule requires that the version for each dependency resolved during a build is equal
+  to or higher than all transitive dependency declarations. The version of each dependency
   resolved during the build will normally be the version specified in the POM or the 
   version with the least transitive steps (the "nearest" definition).  For more 
   information about Maven dependency resolution, see 
@@ -78,7 +78,7 @@ and
 
 -----------------------------------------------------------------------------------
 
-  And this will succeed.
+  And this will succeed:
   
 -----------------------------------------------------------------------------------
   <dependencies>
@@ -96,7 +96,7 @@ and
   </dependencies>
 -----------------------------------------------------------------------------------
 
-  Here is how a project should be setup to use this rule
+  Here is how a project should be setup to use this rule:
 
 -----------------------------------------------------------------------------------
 <project>
@@ -128,7 +128,7 @@ and
                   -->
                   <!-- only artifacts with provided scope will be excluded
                   <excludedScopes>
-                    <excludedScope>provided</excludedScopes>
+                    <excludedScope>provided</excludedScope>
                   </excludedScopes>
                   -->
                 </requireUpperBoundDeps>
