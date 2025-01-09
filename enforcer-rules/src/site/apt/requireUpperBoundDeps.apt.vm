@@ -96,7 +96,7 @@ and
   </dependencies>
 -----------------------------------------------------------------------------------
 
-  Here is how a project should be setup to use this rule:
+  Here is how a project should be set up to use this rule:
 
 -----------------------------------------------------------------------------------
 <project>

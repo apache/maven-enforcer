@@ -25,7 +25,7 @@
   When running Maven with one or more unknown profile ids, Maven will give you a warning.
   This rule will actually break the build for that reason.
 
-  Here is how a project should be setup to use this rule
+  Here is how a project should be set up to use this rule:
 
 -----------------------------------------------------------------------------------
 <project>
