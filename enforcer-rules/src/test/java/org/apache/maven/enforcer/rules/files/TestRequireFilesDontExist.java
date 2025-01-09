@@ -29,7 +29,11 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test the "require files don't exist" rule.
@@ -108,6 +112,7 @@ class TestRequireFilesDontExist {
         File f = File.createTempFile("junit", null, temporaryFolder);
         rule.setFilesList(Collections.singletonList(f));
 
+        // Check the file is detected as being present
         EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
         assertNotNull(e.getMessage());
 
@@ -115,6 +120,7 @@ class TestRequireFilesDontExist {
 
         assertFalse(f.exists());
 
+        // Rule should now pass as the file was deleted
         rule.execute();
     }
 
@@ -128,10 +134,13 @@ class TestRequireFilesDontExist {
 
         try {
             rule.setFilesList(Collections.singletonList(linkFile));
+            // Check the link is detected as being present
             EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
             assertNotNull(e.getMessage());
 
             linkFile.delete();
+
+            // Rule should now pass as the link was deleted
             rule.execute();
         } finally {
             if (linkFile.exists()) {
@@ -148,10 +157,16 @@ class TestRequireFilesDontExist {
                         Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
                         Paths.get(canonicalFile.getAbsolutePath()))
                 .toFile();
+
+        // Check the target is detected as being present
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertNotNull(e.getMessage());
+
         canonicalFile.delete();
         rule.setFilesList(Collections.singletonList(linkFile));
 
         try {
+            // Rule should now pass as the target was deleted
             rule.execute();
         } finally {
             linkFile.delete();
