@@ -93,15 +93,15 @@ abstract class AbstractRequireFiles extends AbstractStandardEnforcerRule {
 
         StringBuilder buf = new StringBuilder();
         if (message != null) {
-            buf.append(message + System.lineSeparator());
+            buf.append(message + '\n');
         }
         buf.append(getErrorMsg());
 
         for (File file : failures) {
             if (file != null) {
-                buf.append(file.getAbsolutePath() + System.lineSeparator());
+                buf.append(file.getAbsolutePath() + '\n');
             } else {
-                buf.append("(an empty filename was given and allowNulls is false)" + System.lineSeparator());
+                buf.append("(an empty filename was given and allowNulls is false)\n");
             }
         }
 

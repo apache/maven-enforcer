@@ -36,17 +36,16 @@ public final class RequireFilesExist extends AbstractRequireFiles {
 
     @Override
     String getErrorMsg() {
-        return "Some required files are missing:" + System.lineSeparator();
+        return "Some required files are missing:\n";
     }
 
     /**
-     * OSes like Windows are case insensitive, so this method will compare the file path with the actual path. A simple
+     * OSes like Windows are case-insensitive, so this method will compare the file path with the actual path. A simple
      * {@link File#exists()} is not enough for such OS.
      *
      * @param file the file to verify
-     * @param defaultValue value to return in case an IO exception occurs, should never happen as the file already
-     *            exists
-     * @return
+     * @param defaultValue value to return in case an IO exception occurs. Should never happen as the file already
+     *            exists.
      */
     private boolean osIndependentNameMatch(File file, boolean defaultValue) {
         try {

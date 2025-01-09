@@ -98,7 +98,7 @@ public final class RequireFilesSize extends AbstractRequireFiles {
                         + (minsize == maxsize || minsize == 0
                                 ? ("max. " + maxsize)
                                 : ("between " + minsize + " and " + maxsize))
-                        + " byte).");
+                        + " bytes).");
 
                 return true;
             }
