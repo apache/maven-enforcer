@@ -169,6 +169,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
 
     private final PlexusContainer container;
 
+    @SuppressWarnings("checkstyle:ParameterNumber")
     @Inject
     public RequirePluginVersions(
             PluginManager pluginManager,

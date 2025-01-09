@@ -99,3 +99,63 @@ The External Enforcer Rule Descriptor
     </rules>
 </enforcer>
 +---+
+
+<<<xsltLocation>>>: Rule Descriptor Transformation (since Enforcer 3.6.0)
+
+    In addition to <<<location>>> parameter, <<<externalRules>>> accepts another optional parameter <<<xsltLocation>>>.
+
+    It is useful, when you want to consume rules defined in an external project, but you need to
+    remove or adapt some of those for the local circumstances.
+
+    <<<xsltLocation>>> specifies the location of an XSLT file used to transform the rule document available via
+    <<<location>>> before it is applied. If it starts with <<<classpath:>>> the resource is read from the classpath.
+    Otherwise, it is handled as a filesystem path, either absolute, or relative to <<<$\{project.basedir\}>>>.
+
+    Here is an example: If <<<location>>> points at the following rule set:
+
++---+
+<enforcer>
+  <rules>
+    <bannedDependencies>
+       <excludes>
+         <exclude>com.google.code.findbugs:jsr305</exclude>
+         <exclude>com.google.guava:listenablefuture</exclude>
+       </excludes>
+    </bannedDependencies>
+  </rules>
+</enforcer>
++---+
+
+    and if <<<xsltLocation>>> points at the following transformation
+
++---+
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:output omit-xml-declaration="yes"/>
+
+  <!-- Copy everything unless there is a template with a more specific matcher -->
+  <xsl:template match="node()|@*">
+    <xsl:copy>
+      <xsl:apply-templates select="node()|@*"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- An empty template will effectively remove the matching nodes -->
+  <xsl:template match=
+"//bannedDependencies/excludes/exclude[contains(text(), 'com.google.code.findbugs:jsr305')]"/>
+</xsl:stylesheet>
++---+
+
+    Then the effective rule set will look like to following:
+
++---+
+<enforcer>
+  <rules>
+    <bannedDependencies>
+       <excludes>
+         <exclude>com.google.guava:listenablefuture</exclude>
+       </excludes>
+    </bannedDependencies>
+  </rules>
+</enforcer>
++---+
+

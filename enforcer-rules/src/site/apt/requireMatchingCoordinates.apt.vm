@@ -1,0 +1,75 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+  ------
+  Require Matching Coordinates
+  ------
+  Konrad Windszus
+  ------
+  2024-03-22
+  ------
+
+Require Matching Coordinates
+
+  This rule checks that the Maven coordinates (i.e. the project's <<<groupId>>> and <<<artifactId>>>) each match a given pattern. 
+  Optionally one can also enforce that in a multi-module build the module directory name is always equal to the module's <<<artifactId>>>.
+
+   The following parameters are supported by this rule:
+
+   * <<message>> - an optional message to the user if the rule fails. If not set a default message will be used.
+
+   * <<groupIdPattern>> - an optional {{{https://docs.oracle.com/javase/tutorial/essential/regex/}regular expression}}, which must match the project's <<<groupId>>>. If not set there is no check on the <<<groupId>>>.
+
+   * <<artifactIdPattern>> - an optional {{{https://docs.oracle.com/javase/tutorial/essential/regex/}regular expression}}, which must match the project's <<<artifactId>>>. If not set there is no check on the <<<artifactId>>>.
+
+   * <<moduleNameMustMatchArtifactId>> - boolean flag to enforce that the the module's directory name is always equal to the module's <<<artifactId>>>. By default <<<false>>>.
+
+   []
+
+
+  Sample Plugin Configuration:
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-group-id</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMatchingCoordinates>
+                  <groupIdPattern>com\.example\.namespace\..*</groupIdPattern>
+                </requireMatchingCoordinates>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+

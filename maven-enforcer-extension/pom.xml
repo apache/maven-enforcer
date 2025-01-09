@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.maven.enforcer</groupId>
     <artifactId>enforcer</artifactId>
-    <version>3.4.2-SNAPSHOT</version>
+    <version>3.6.0-SNAPSHOT</version>
   </parent>
   <groupId>org.apache.maven.extensions</groupId>
   <artifactId>maven-enforcer-extension</artifactId>
@@ -48,13 +48,6 @@
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-xml</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <!-- needed for IT tests -->
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-enforcer-plugin</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -107,7 +100,7 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>mrm-maven-plugin</artifactId>
-            <version>1.5.0</version>
+            <version>1.6.0</version>
             <configuration>
               <propertyName>repository.proxy.url</propertyName>
               <repositories>

@@ -20,7 +20,7 @@ Maven Enforcer Plugin - The Loving Iron Fist of Maven™
 [![ASF Jira](https://img.shields.io/endpoint?url=https%3A%2F%2Fmaven.apache.org%2Fbadges%2Fasf_jira-MENFORCER.json)][jira]
 [![Apache License, Version 2.0, January 2004](https://img.shields.io/github/license/apache/maven-enforcer.svg?label=License)][license]
 [![Maven Central](https://img.shields.io/maven-central/v/org.apache.maven.plugins/maven-enforcer-plugin.svg?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.maven.plugins/maven-enforcer-plugin)
-[![Reproducible Builds](https://img.shields.io/badge/Reproducible_Builds-ok-green?labelColor=blue)](https://github.com/jvm-repo-rebuild/reproducible-central/blob/master/content/org/apache/maven/enforcer/README.md)
+[![Reproducible Builds](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/jvm-repo-rebuild/reproducible-central/master/content/org/apache/maven/enforcer/badge.json)](https://github.com/jvm-repo-rebuild/reproducible-central/blob/master/content/org/apache/maven/enforcer/README.md)
 [![Jenkins Status](https://img.shields.io/jenkins/s/https/ci-maven.apache.org/job/Maven/job/maven-box/job/maven-enforcer/job/master.svg?)][build]
 [![Jenkins tests](https://img.shields.io/jenkins/t/https/ci-maven.apache.org/job/Maven/job/maven-box/job/maven-enforcer/job/master.svg?)][test-results]
 
@@ -35,20 +35,9 @@ More information can be found on [Apache Maven Enforcer Plugin Homepage][enforce
 Question related to the usage of the Maven Enforcer Plugin should be posted on
 the [Maven User List][users-list].
 
-
 Where can I get the latest release?
 -----------------------------------
 You can download release source from our [download page][enforcer-download].
-
-You can get the Maven Enforcer plugin via the following coordinates from central:
-
-```xml
-<plugin>
-  <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-enforcer-plugin</artifactId>
-  <version>3.2.1</version>
-</plugin>
-```
 
 Contributing
 ------------
@@ -74,16 +63,13 @@ This code is under the [Apache Licence v2][license]
 
 See the `NOTICE` file for required notices and attributions.
 
-
 Donations
 ---------
 You like Apache Maven? Then [donate back to the ASF](https://www.apache.org/foundation/contributing.html) to support the development.
 
-
 License
 -------
 [Apache License, Version 2.0, January 2004][license]
-
 
 [home]: https://maven.apache.org/enforcer/maven-enforcer-plugin
 [jira]: https://issues.apache.org/jira/projects/MENFORCER/
