@@ -57,8 +57,7 @@ public final class RequireFilesSize extends AbstractRequireFiles {
 
     @Override
     public void execute() throws EnforcerRuleException {
-
-        // if the file is already defined, use that. Otherwise get the main artifact.
+        // if the file is already defined, use that. Otherwise, get the main artifact.
         if (getFiles().isEmpty()) {
             setFilesList(Collections.singletonList(project.getArtifact().getFile()));
             super.execute();
@@ -74,6 +73,11 @@ public final class RequireFilesSize extends AbstractRequireFiles {
     }
 
     @Override
+    String perFileMessage(File file) {
+        return "";
+    }
+
+    @Override
     boolean checkFile(File file) {
         if (file == null) {
             // if we get here and it's null, treat it as a success.
@@ -84,10 +88,10 @@ public final class RequireFilesSize extends AbstractRequireFiles {
         if (file.exists()) {
             long length = file.length();
             if (length < minsize) {
-                this.errorMsg = (file + " size (" + length + ") too small. Min. is " + minsize);
+                this.errorMsg = (file + " size (" + length + ") too small. Minimum is " + minsize + ".");
                 return false;
             } else if (length > maxsize) {
-                this.errorMsg = (file + " size (" + length + ") too large. Max. is " + maxsize);
+                this.errorMsg = (file + " size (" + length + ") too large. Maximum is " + maxsize + ".");
                 return false;
             } else {
 
@@ -96,14 +100,14 @@ public final class RequireFilesSize extends AbstractRequireFiles {
                         + length
                         + ") is OK ("
                         + (minsize == maxsize || minsize == 0
-                                ? ("max. " + maxsize)
+                                ? ("maximum " + maxsize)
                                 : ("between " + minsize + " and " + maxsize))
                         + " bytes).");
 
                 return true;
             }
         } else {
-            this.errorMsg = (file + " does not exist!");
+            this.errorMsg = (file + " does not exist.");
             return false;
         }
     }

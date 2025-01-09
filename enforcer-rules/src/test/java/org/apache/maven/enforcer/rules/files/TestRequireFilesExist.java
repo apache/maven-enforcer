@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 /**
  * Test the "require files exist" rule.
@@ -59,16 +60,16 @@ class TestRequireFilesExist {
     }
 
     @Test
-    void testEmptyFile() {
+    void testNullFile() {
         rule.setFilesList(Collections.singletonList(null));
 
         EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> rule.execute());
 
-        assertNotNull(e.getMessage());
+        assertEquals("A null filename was given and allowNulls is false.", e.getMessage());
     }
 
     @Test
-    void testEmptyFileAllowNull() throws Exception {
+    void testNullFileAllowNull() throws Exception {
         rule.setFilesList(Collections.singletonList(null));
         rule.setAllowNulls(true);
         rule.execute();
@@ -81,7 +82,7 @@ class TestRequireFilesExist {
 
         EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> rule.execute());
 
-        assertNotNull(e.getMessage());
+        assertEquals("The file list is empty, and null files are disabled.", e.getMessage());
     }
 
     @Test
@@ -97,12 +98,12 @@ class TestRequireFilesExist {
         File f = File.createTempFile("junit", null, temporaryFolder);
         f.delete();
 
-        assertFalse(f.exists());
+        assumeFalse(f.exists());
         rule.setFilesList(Collections.singletonList(f));
 
         EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> rule.execute());
 
-        assertNotNull(e.getMessage());
+        assertEquals("Some required files are missing:\n" + f.getPath() + "\n", e.getMessage());
     }
 
     @Test
@@ -110,7 +111,7 @@ class TestRequireFilesExist {
         File f = File.createTempFile("junit", null, temporaryFolder);
         f.delete();
 
-        assertFalse(f.exists());
+        assumeFalse(f.exists());
 
         File g = File.createTempFile("junit", null, temporaryFolder);
 

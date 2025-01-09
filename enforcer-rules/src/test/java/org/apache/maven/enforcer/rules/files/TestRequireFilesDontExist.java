@@ -27,10 +27,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test the "require files don't exist" rule.
@@ -53,24 +50,25 @@ class TestRequireFilesDontExist {
             rule.execute();
             fail("Expected an Exception.");
         } catch (EnforcerRuleException e) {
-            assertNotNull(e.getMessage());
+            assertEquals("Some files should not exist:\n" + f.getPath() + "\n", e.getMessage());
+        } finally {
+            f.delete();
         }
-        f.delete();
     }
 
     @Test
-    void testEmptyFile() {
+    void testNullFile() {
         rule.setFilesList(Collections.singletonList(null));
         try {
             rule.execute();
             fail("Should get exception");
         } catch (EnforcerRuleException e) {
-            assertNotNull(e.getMessage());
+            assertEquals("A null filename was given and allowNulls is false.", e.getMessage());
         }
     }
 
     @Test
-    void testEmptyFileAllowNull() {
+    void testNullFileAllowed() {
         rule.setFilesList(Collections.singletonList(null));
         rule.setAllowNulls(true);
         try {
@@ -88,7 +86,7 @@ class TestRequireFilesDontExist {
             rule.execute();
             fail("Should get exception");
         } catch (EnforcerRuleException e) {
-            assertNotNull(e.getMessage());
+            assertEquals("The file list is empty, and null files are disabled.", e.getMessage());
         }
     }
 
