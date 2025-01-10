@@ -62,14 +62,10 @@ class TestRequireFilesExist {
                         Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
                         Paths.get(canonicalFile.getAbsolutePath()))
                 .toFile();
+
         rule.setFilesList(Collections.singletonList(linkFile));
 
-        try {
-            rule.execute();
-        } finally {
-            linkFile.delete();
-            canonicalFile.delete();
-        }
+        rule.execute();
     }
 
     @Test
@@ -84,11 +80,9 @@ class TestRequireFilesExist {
 
         try {
             rule.execute();
-            fail("Should get an exception");
+            fail("Should have received an exception");
         } catch (Exception e) {
             assertNotNull(e.getMessage());
-        } finally {
-            linkFile.delete();
         }
     }
 

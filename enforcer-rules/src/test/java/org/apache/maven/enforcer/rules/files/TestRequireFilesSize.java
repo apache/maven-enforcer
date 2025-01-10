@@ -197,9 +197,6 @@ class TestRequireFilesSize {
             fail("Should get exception");
         } catch (EnforcerRuleException e) {
             assertNotNull(e.getMessage());
-        } finally {
-            linkFile.delete();
-            canonicalFile.delete();
         }
     }
 
@@ -222,9 +219,6 @@ class TestRequireFilesSize {
             fail("Should get exception");
         } catch (EnforcerRuleException e) {
             assertNotNull(e.getMessage());
-        } finally {
-            linkFile.delete();
-            canonicalFile.delete();
         }
     }
 

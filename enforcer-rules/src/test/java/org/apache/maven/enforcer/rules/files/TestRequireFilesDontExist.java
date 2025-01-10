@@ -132,22 +132,15 @@ class TestRequireFilesDontExist {
                         Paths.get(canonicalFile.getAbsolutePath()))
                 .toFile();
 
-        try {
-            rule.setFilesList(Collections.singletonList(linkFile));
-            // Check the link is detected as being present
-            EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
-            assertNotNull(e.getMessage());
+        rule.setFilesList(Collections.singletonList(linkFile));
+        // Check the link is detected as being present
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertNotNull(e.getMessage());
 
-            linkFile.delete();
+        linkFile.delete();
 
-            // Rule should now pass as the link was deleted
-            rule.execute();
-        } finally {
-            if (linkFile.exists()) {
-                linkFile.delete();
-            }
-            canonicalFile.delete();
-        }
+        // Rule should now pass as the link was deleted
+        rule.execute();
     }
 
     @Test
@@ -165,12 +158,8 @@ class TestRequireFilesDontExist {
         canonicalFile.delete();
         rule.setFilesList(Collections.singletonList(linkFile));
 
-        try {
-            // Rule should now pass as the target was deleted
-            rule.execute();
-        } finally {
-            linkFile.delete();
-        }
+        // Rule should now pass as the target was deleted
+        rule.execute();
     }
 
     @Test
