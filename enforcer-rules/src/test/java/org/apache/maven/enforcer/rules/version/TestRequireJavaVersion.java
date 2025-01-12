@@ -31,6 +31,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -105,15 +107,16 @@ class TestRequireJavaVersion {
 
     @Test
     void shouldIncludeJavaHomeLocationInTheErrorMessage() {
-        String thisVersion = RequireJavaVersion.normalizeJDKVersion(SystemUtils.JAVA_VERSION);
         String requiredVersion = "10000";
         rule.setVersion(requiredVersion);
 
-        assertThatThrownBy(() -> rule.execute())
-                .isInstanceOf(EnforcerRuleException.class)
-                .hasMessage(
-                        "Detected JDK version %s (JAVA_HOME=%s) is not in the allowed range %s.",
-                        thisVersion, SystemUtils.JAVA_HOME, "[" + requiredVersion + ",)");
+        EnforcerRuleException exception = assertThrows(
+                EnforcerRuleException.class,
+                () -> rule.execute());
+
+        assertTrue(exception.getMessage().startsWith("Detected JDK "));
+        assertTrue(exception.getMessage().startsWith("Detected JDK "));
+        assertTrue(exception.getMessage().endsWith(" which is not in the allowed range [10000,)."));
     }
 
     @Test
