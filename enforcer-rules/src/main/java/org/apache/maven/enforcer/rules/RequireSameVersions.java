@@ -44,6 +44,8 @@ import org.apache.maven.project.MavenProject;
 public final class RequireSameVersions extends AbstractStandardEnforcerRule {
     private boolean uniqueVersions;
 
+    private Set<String> ignores = new HashSet<>();
+
     private Set<String> dependencies = new HashSet<>();
 
     private Set<String> plugins = new HashSet<>();
@@ -105,6 +107,34 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
             Set<Artifact> artifacts, Collection<String> patterns, String source) {
         Map<String, List<String>> versionMembers = new LinkedHashMap<>();
 
+        List<Pattern> regExs = convertToPatterns(patterns);
+        List<Pattern> ignorePatterns = convertToPatterns(ignores);
+
+        for (Artifact artifact : artifacts) {
+            for (Pattern regEx : regExs) {
+                if (regEx.matcher(artifact.getDependencyConflictId()).matches()) {
+                    boolean ignored = false;
+                    for (Pattern ignorePattern : ignorePatterns) {
+                        if(ignorePattern.matcher(artifact.getDependencyConflictId()).matches()) {
+                            ignored = true;
+                            break;
+                        }
+                    }
+                    if(ignored) {
+                        continue;
+                    }
+                    String version = uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
+                    if (!versionMembers.containsKey(version)) {
+                        versionMembers.put(version, new ArrayList<>());
+                    }
+                    versionMembers.get(version).add(artifact.getDependencyConflictId() + source);
+                }
+            }
+        }
+        return versionMembers;
+    }
+
+    private List<Pattern> convertToPatterns(Collection<String> patterns) {
         List<Pattern> regExs = new ArrayList<>();
         for (String pattern : patterns) {
             String regex = pattern.replace(".", "\\.")
@@ -115,19 +145,7 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
             // pattern is groupId[:artifactId[:type[:classifier]]]
             regExs.add(Pattern.compile(regex + "(\\:.+)?"));
         }
-
-        for (Artifact artifact : artifacts) {
-            for (Pattern regEx : regExs) {
-                if (regEx.matcher(artifact.getDependencyConflictId()).matches()) {
-                    String version = uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
-                    if (!versionMembers.containsKey(version)) {
-                        versionMembers.put(version, new ArrayList<>());
-                    }
-                    versionMembers.get(version).add(artifact.getDependencyConflictId() + source);
-                }
-            }
-        }
-        return versionMembers;
+        return regExs;
     }
 
     @Override
