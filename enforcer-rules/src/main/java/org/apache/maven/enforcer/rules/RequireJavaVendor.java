@@ -76,7 +76,7 @@ public final class RequireJavaVendor extends AbstractStandardEnforcerRule {
             String message = getMessage();
             if (message == null) {
                 message = String.format(
-                        "%s is an excluded Required Java Vendor (JAVA_HOME=%s)",
+                        "%s is an excluded Required Java Vendor (Detected JDK %s)",
                         SystemUtils.JAVA_VENDOR, SystemUtils.JAVA_HOME);
             }
             throw new EnforcerRuleException(message);
@@ -84,7 +84,7 @@ public final class RequireJavaVendor extends AbstractStandardEnforcerRule {
             String message = getMessage();
             if (message == null) {
                 message = String.format(
-                        "%s is not an included Required Java Vendor (JAVA_HOME=%s)",
+                        "%s is not an included Required Java Vendor (Detected JDK %s)",
                         SystemUtils.JAVA_VENDOR, SystemUtils.JAVA_HOME);
             }
             throw new EnforcerRuleException(message);
@@ -96,7 +96,7 @@ public final class RequireJavaVendor extends AbstractStandardEnforcerRule {
      * java.vendor, which you can also see with mvn --version. <br>
      * Excludes override the include rules.
      *
-     * @param theExcludes the vendor to to exclude from the include list.
+     * @param theExcludes the vendors to exclude from the include list
      */
     public void setExcludes(List<String> theExcludes) {
         this.excludes = theExcludes;
@@ -114,7 +114,7 @@ public final class RequireJavaVendor extends AbstractStandardEnforcerRule {
      * <li><code>Amazon</code> prohibits vendor name Amazon </li>
      * </ul>
      *
-     * @param theIncludes the list of required vendors.
+     * @param theIncludes the list of required vendors
      *
      * @see #setExcludes(List)
      */

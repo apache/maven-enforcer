@@ -110,12 +110,9 @@ class TestRequireJavaVersion {
         String requiredVersion = "10000";
         rule.setVersion(requiredVersion);
 
-        EnforcerRuleException exception = assertThrows(
-                EnforcerRuleException.class,
-                () -> rule.execute());
+        EnforcerRuleException exception = assertThrows(EnforcerRuleException.class, () -> rule.execute());
 
-        assertTrue(exception.getMessage().startsWith("Detected JDK "));
-        assertTrue(exception.getMessage().startsWith("Detected JDK "));
+        assertTrue(exception.getMessage().startsWith("Detected JDK " + SystemUtils.JAVA_HOME + " is version "));
         assertTrue(exception.getMessage().endsWith(" which is not in the allowed range [10000,)."));
     }
 
