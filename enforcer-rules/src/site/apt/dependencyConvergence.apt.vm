@@ -24,14 +24,16 @@
 
 Dependency Convergence
 
-  This rule requires that dependency version numbers converge.
+  This rule requires that dependency versions are the same everywhere in the tree.
   If a project has two dependencies, A and B, both depending on the same
   artifact, C, this rule will fail the build if A depends on a different
   version of C than the version of C depended on by B.
 
   Here is a concrete example.
 
-  This will cause the rule to fail the build:
+  A project containing these two dependencies does not converge
+  because org.jdom:jdom:1.1.3 dependns on Jaxen 1.1.3 and
+  org.org.jenkins-ci.main:jenkins-core:2.492 depends on Jaxen 2.0.0:
   
 +-----------------------------------------------------------------------------------
 
@@ -49,13 +51,12 @@ Dependency Convergence
   </dependencies>  
 +-----------------------------------------------------------------------------------
 
-  with this being logged during compilation:
+  This is not obvious from the dependencies themselves. However, if the dependencyConvergence
+  rule is activated in the project, this message will be logged during compilation:
 
 +-----------------------------------------------------------------------------------
-Dependency convergence error for org.slf4j:slf4j-api1.6.1 paths to dependency are:
-
 [ERROR]
-Dependency convergence error for org.slf4j:slf4j-api:1.6.1 paths to dependency are:
+Dependency convergence error for jaxen:jaxen. Paths to dependency are:
 +-org.myorg:my-project:1.0.0-SNAPSHOT
   +-org.jdom:jdom:1.1.3
     +-jaxen:jaxen:1.1.3
