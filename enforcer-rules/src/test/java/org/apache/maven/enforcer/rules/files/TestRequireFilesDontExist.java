@@ -74,7 +74,7 @@ class TestRequireFilesDontExist {
         try {
             rule.execute();
         } catch (EnforcerRuleException e) {
-            fail("Unexpected Exception:" + e.getLocalizedMessage());
+            fail("Unexpected Exception:" + e.getLocalizedMessage(), e);
         }
     }
 
