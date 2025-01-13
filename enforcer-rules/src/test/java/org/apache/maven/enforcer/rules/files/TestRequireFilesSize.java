@@ -38,12 +38,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 /**
@@ -80,18 +75,18 @@ class TestRequireFilesSize {
     }
 
     @Test
-    void testEmptyFile() {
+    void testNullFile() {
         rule.setFilesList(Collections.singletonList(null));
         try {
             rule.execute();
             fail("Should get exception");
         } catch (EnforcerRuleException e) {
-            assertNotNull(e.getMessage());
+            assertEquals("A null filename was given and allowNulls is false.", e.getMessage());
         }
     }
 
     @Test
-    void testEmptyFileAllowNull() throws EnforcerRuleException {
+    void testNullFileAllowNull() throws EnforcerRuleException {
         rule.setFilesList(Collections.singletonList(null));
         rule.setAllowNulls(true);
         rule.execute();
@@ -128,7 +123,7 @@ class TestRequireFilesSize {
             rule.execute();
             fail("Should get exception");
         } catch (EnforcerRuleException e) {
-            assertNotNull(e.getMessage());
+            assertEquals(f.getPath() + " does not exist.", e.getMessage());
         }
     }
 
@@ -141,7 +136,7 @@ class TestRequireFilesSize {
             rule.execute();
             fail("Should get exception");
         } catch (EnforcerRuleException e) {
-            assertNotNull(e.getMessage());
+            assertEquals(e.getMessage(), f.getPath() + " size (0) too small. Minimum is 10.");
         }
     }
 
@@ -159,7 +154,7 @@ class TestRequireFilesSize {
             rule.execute();
             fail("Should get exception");
         } catch (EnforcerRuleException e) {
-            assertNotNull(e.getMessage());
+            assertEquals(f.getPath() + " size (21) too large. Maximum is 10.", e.getMessage());
         }
     }
 
