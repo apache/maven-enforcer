@@ -27,8 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The Class TestRequireJavaVendor.
@@ -62,7 +61,7 @@ class TestRequireJavaVendor {
 
         assertTrue(exception
                 .getMessage()
-                .endsWith(" is not an included Required Java Vendor (Detected JDK " + SystemUtils.JAVA_HOME + ")"));
+                .endsWith(" is not an included Required Java Vendor (detected JDK: " + SystemUtils.JAVA_HOME + ")"));
     }
 
     @Test
@@ -74,7 +73,7 @@ class TestRequireJavaVendor {
 
         assertTrue(exception
                 .getMessage()
-                .endsWith(" is an excluded Required Java Vendor (Detected JDK " + SystemUtils.JAVA_HOME + ")"));
+                .endsWith(" is an excluded Required Java Vendor (detected JDK: " + SystemUtils.JAVA_HOME + ")"));
     }
 
     @Test
@@ -92,7 +91,7 @@ class TestRequireJavaVendor {
 
         EnforcerRuleException exception = assertThrows(EnforcerRuleException.class, () -> underTest.execute());
 
-        assertTrue(exception.getMessage().contains(" is an excluded Required Java Vendor (Detected JDK "));
+        assertTrue(exception.getMessage().contains(" is an excluded Required Java Vendor (detected JDK: "));
         assertTrue(exception.getMessage().contains(SystemUtils.JAVA_HOME));
     }
 
@@ -103,9 +102,10 @@ class TestRequireJavaVendor {
 
         EnforcerRuleException exception = assertThrows(EnforcerRuleException.class, () -> underTest.execute());
 
-        assertTrue(exception.getMessage().contains(" is an excluded Required Java Vendor (Detected JDK "));
-        assertTrue(exception.getMessage().contains(SystemUtils.JAVA_HOME));
-        assertTrue(exception.getMessage().contains(SystemUtils.JAVA_VENDOR));
+        assertEquals(
+                SystemUtils.JAVA_VENDOR + " is an excluded Required Java Vendor (detected JDK: " + SystemUtils.JAVA_HOME
+                        + ")",
+                exception.getMessage());
     }
 
     @Test

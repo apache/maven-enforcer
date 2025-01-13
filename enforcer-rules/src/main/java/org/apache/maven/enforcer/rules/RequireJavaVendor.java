@@ -76,7 +76,7 @@ public final class RequireJavaVendor extends AbstractStandardEnforcerRule {
             String message = getMessage();
             if (message == null) {
                 message = String.format(
-                        "%s is an excluded Required Java Vendor (Detected JDK %s)",
+                        "%s is an excluded Required Java Vendor (detected JDK: %s)",
                         SystemUtils.JAVA_VENDOR, SystemUtils.JAVA_HOME);
             }
             throw new EnforcerRuleException(message);
@@ -84,7 +84,7 @@ public final class RequireJavaVendor extends AbstractStandardEnforcerRule {
             String message = getMessage();
             if (message == null) {
                 message = String.format(
-                        "%s is not an included Required Java Vendor (Detected JDK %s)",
+                        "%s is not an included Required Java Vendor (detected JDK: %s)",
                         SystemUtils.JAVA_VENDOR, SystemUtils.JAVA_HOME);
             }
             throw new EnforcerRuleException(message);
