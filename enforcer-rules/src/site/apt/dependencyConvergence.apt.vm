@@ -24,7 +24,10 @@
 
 Dependency Convergence
 
-  This rule requires that dependency version numbers converge.  If a project has two dependencies, A and B, both depending on the same artifact, C, this rule will fail the build if A depends on a different version of C than the version of C depended on by B.
+  This rule requires that dependency version numbers converge.
+  If a project has two dependencies, A and B, both depending on the same
+  artifact, C, this rule will fail the build if A depends on a different
+  version of C than the version of C depended on by B.
 
   Here is a concrete example.
 
@@ -34,14 +37,14 @@ Dependency Convergence
 
   <dependencies>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>1.6.1</version>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.1.3</version>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-nop</artifactId>
-      <version>1.6.0</version>
+      <groupId>org.org.jenkins-ci.main</groupId>
+      <artifactId>jenkins-core</artifactId>
+      <version>2.492</groupId>
     </dependency>
   </dependencies>  
 +-----------------------------------------------------------------------------------
@@ -54,35 +57,36 @@ Dependency convergence error for org.slf4j:slf4j-api1.6.1 paths to dependency ar
 [ERROR]
 Dependency convergence error for org.slf4j:slf4j-api:1.6.1 paths to dependency are:
 +-org.myorg:my-project:1.0.0-SNAPSHOT
-  +-org.slf4j:slf4j-jdk14:1.6.1
-    +-org.slf4j:slf4j-api:1.6.1
+  +-org.jdom:jdom:1.1.3
+    +-jaxen:jaxen:1.1.3
 and
 +-org.myorg:my-project:1.0.0-SNAPSHOT
-  +-org.slf4j:slf4j-nop:1.6.0
-    +-org.slf4j:slf4j-api:1.6.0
+  +-org.org.jenkins-ci.main:jenkins-core:2.492
+    +-jaxen:jaxen:2.0.0
 +-----------------------------------------------------------------------------------
 
-  And this will succeed:
+  However, if you exclude JDOM's dependency on Jaxen in your own pom, then only
+  one version of Jaxen is added to the classpath and the rule
+  passes:
   
 +-----------------------------------------------------------------------------------
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>1.6.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-nop</artifactId>
-      <version>1.6.0</version>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.1.3</version>
       <exclusions>
         <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
+          <groupId>jaxen</groupId>
+          <artifactId>jaxen</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.org.jenkins-ci.main</groupId>
+      <artifactId>jenkins-core</artifactId>
+      <version>2.492</groupId>
+    </dependency>
 +-----------------------------------------------------------------------------------
-
 
   Here is how a project should be set up to use this rule:
 
