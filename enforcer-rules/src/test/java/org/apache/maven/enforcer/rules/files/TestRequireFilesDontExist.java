@@ -20,6 +20,8 @@ package org.apache.maven.enforcer.rules.files;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -29,6 +31,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -107,12 +110,55 @@ class TestRequireFilesDontExist {
     @Test
     void testFileDoesNotExist() throws EnforcerRuleException, IOException {
         File f = File.createTempFile("junit", null, temporaryFolder);
+        rule.setFilesList(Collections.singletonList(f));
+
+        // Check the file is detected as being present
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertNotNull(e.getMessage());
+
         f.delete();
 
         assertFalse(f.exists());
 
-        rule.setFilesList(Collections.singletonList(f));
+        // Rule should now pass as the file was deleted
+        rule.execute();
+    }
 
+    @Test
+    void testSymbolicLinkDoesNotExist() throws Exception {
+        File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
+
+        rule.setFilesList(Collections.singletonList(linkFile));
+        // Check the link is detected as being present
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertNotNull(e.getMessage());
+
+        linkFile.delete();
+
+        // Rule should now pass as the link was deleted
+        rule.execute();
+    }
+
+    @Test
+    void testSymbolicLinkTargetDoesNotExist() throws Exception {
+        File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
+
+        // Check the target is detected as being present
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertNotNull(e.getMessage());
+
+        canonicalFile.delete();
+        rule.setFilesList(Collections.singletonList(linkFile));
+
+        // Rule should now pass as the target was deleted
         rule.execute();
     }
 
