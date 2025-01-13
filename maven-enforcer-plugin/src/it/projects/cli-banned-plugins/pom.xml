@@ -32,40 +32,24 @@ under the License.
   <build>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.6.0</version>
-        <executions>
-          <execution>
-            <id>local-ip</id>
-            <goals>
-              <goal>local-ip</goal>
-            </goals>
-          </execution>
-        </executions>
+        <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+        <artifactId>menforcer126_maven-plugin</artifactId>
+        <version>1.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>@project.version@</version>
-        <executions>
-          <execution>
-            <id>test</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <bannedPlugins>
-                  <excludes>
-                    <exclude>org.codehaus.mojo:build-helper-maven-plugin</exclude>
-                  </excludes>
-                </bannedPlugins>
-              </rules>
-              <fail>true</fail>
-            </configuration>
-          </execution>
-        </executions>
+        <configuration>
+          <rules>
+            <bannedPlugins>
+              <excludes>
+                <exclude>org.apache.maven.plugins.enforcer.its:menforcer126_maven-plugin</exclude>
+              </excludes>
+            </bannedPlugins>
+          </rules>
+          <fail>true</fail>
+        </configuration>
       </plugin>
     </plugins>
   </build>

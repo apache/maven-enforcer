@@ -17,4 +17,4 @@
  * under the License.
  */
 def buildLog = new File(basedir, 'build.log').text
-assert buildLog.contains('org.codehaus.mojo:build-helper-maven-plugin:maven-plugin:3.6.0 <--- banned plugin')
+assert buildLog.contains('org.apache.maven.plugins.enforcer.its:menforcer126_maven-plugin:maven-plugin:1.0 <--- banned plugin')
