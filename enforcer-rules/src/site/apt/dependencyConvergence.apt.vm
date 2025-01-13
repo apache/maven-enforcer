@@ -89,6 +89,10 @@ and
     </dependency>
 +-----------------------------------------------------------------------------------
 
+  You can also use the dependencyManagement element or a "bill of materials" (BOM)
+  to uniquely specify a single version for all transitive dependencies with the
+  same group ID, artifact ID, and classifier.
+
   Here is how a project should be set up to use this rule:
 
 +-----------------------------------------------------------------------------------
