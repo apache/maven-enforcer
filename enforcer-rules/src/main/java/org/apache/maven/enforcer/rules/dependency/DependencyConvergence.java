@@ -110,7 +110,7 @@ public final class DependencyConvergence extends AbstractStandardEnforcerRule {
         builder.append(System.lineSeparator())
                 .append("Dependency convergence error for ")
                 .append(nodeList.get(0).getArtifact().toString())
-                .append(" paths to dependency are:")
+                .append(". Paths to dependency are:")
                 .append(System.lineSeparator());
         if (nodeList.size() > 0) {
             builder.append(buildTreeString(nodeList.get(0)));
