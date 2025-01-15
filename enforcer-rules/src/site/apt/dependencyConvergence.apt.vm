@@ -90,7 +90,19 @@ and
 
   You can also use the dependencyManagement element or a "bill of materials" (BOM)
   to uniquely specify a single version for all transitive dependencies with the
-  same group ID, artifact ID, and classifier.
+  same group ID, artifact ID, and classifier. For example, this dependencyManagement
+  element pins the project's Jaxen version to 2.0.0, regardless of which versions
+  may appear in transitive dependencies:
+
++-----------------------------------------------------------------------------------
+  <dependencyManagement>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <version>2.0.0</groupId>
+    </dependency>
+  </dependencyManagement>
++-----------------------------------------------------------------------------------
 
   Here is how a project should be set up to use this rule:
 
