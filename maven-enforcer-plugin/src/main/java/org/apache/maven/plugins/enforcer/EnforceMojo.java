@@ -366,7 +366,23 @@ public class EnforceMojo extends AbstractMojo {
 
         PlexusConfiguration configuration = new DefaultPlexusConfiguration("rules");
         for (String rule : rulesToExecute) {
-            configuration.addChild(new DefaultPlexusConfiguration(rule));
+            PlexusConfiguration configuredRule = null;
+            // Check if there's configuration in the project for this rule and use it if so
+            if (rules != null) {
+                // rule names haven't been normalized yet, so check both with first character upper and lower
+                String ruleLower = Character.toLowerCase(rule.charAt(0)) + rule.substring(1);
+                String ruleUpper = Character.toUpperCase(rule.charAt(0)) + rule.substring(1);
+                configuredRule = rules.getChild(ruleLower, false);
+                if (configuredRule == null) {
+                    configuredRule = rules.getChild(ruleUpper, false);
+                }
+            }
+
+            if (configuredRule != null) {
+                configuration.addChild(configuredRule);
+            } else {
+                configuration.addChild(new DefaultPlexusConfiguration(rule));
+            }
         }
         return Optional.of(configuration);
     }

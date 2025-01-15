@@ -31,4 +31,80 @@ Check specific rule via CLI
 mvn enforcer:enforce -Denforcer.rules=alwaysPass,alwaysFail
 +---+
 
+  Many rules require configuration to be meaningful.  If configuration for a rule is defined in the POM, it will be used.
+
+  Note that if configuration for a rule is defined within an execution, the execution ID must be specified on the command line.
+
+  For example, given the following plugin configuration:
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <rules>
+            <requireMavenVersion>
+              <version>3.0</version>
+            </requireMavenVersion>
+          </rules>    
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+
+  You can run this rule with the defined configuration:
+
++---+
+mvn enforcer:enforce -Denforcer.rules=requireMavenVersion
++---+
+
+
+  However, if your plugin configuration is within an execution context:
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.0</version>
+                </requireMavenVersion>
+              </rules>    
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
+
+  You must name the execution ID on the command line for the configuration to apply:
+
++---+
+mvn enforcer:enforce@enforce-maven -Denforcer.rules=requireMavenVersion
++---+
+
+
   A full list of built-in rules can be found {{{../../../enforcer/enforcer-rules/index.html}here}}.
