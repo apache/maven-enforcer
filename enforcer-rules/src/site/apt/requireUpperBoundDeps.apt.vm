@@ -23,11 +23,11 @@
  -----
 
   This rule requires that the version for each dependency resolved during a build is equal
-  to or higher than all transitive dependency declarations. The version of each dependency
+  to or higher than highest version found in the  transitive dependencies. The version of each dependency
   resolved during the build will normally be the version specified in the POM or the 
   version with the least transitive steps (the "nearest" definition).  For more 
   information about Maven dependency resolution, see 
-  {{{http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html}the Maven site}}.
+  {{{https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html}Introduction to the Dependency Mechanism}}.
 
   The following parameters are supported by this rule:
 
@@ -59,8 +59,8 @@
   </dependencies>
 -----------------------------------------------------------------------------------
 
-  Because the project will run logback-classic 0.9.9 with slf4j-api 1.4.0
-  and slf4j-api 1.4.0 is probably not forwards compatible with slf4j-api 1.5.0.
+  Here the build fails because slf4j-api 1.4.0 is added to the classpath,
+  but logback-classic depends on the higher 1.5.0 version of slf4j-api.
 
   This is the log message:
 
@@ -78,7 +78,7 @@ and
 
 -----------------------------------------------------------------------------------
 
-  And this will succeed:
+  This will succeed because the highest version, 1.6.0, is selected:
   
 -----------------------------------------------------------------------------------
   <dependencies>
