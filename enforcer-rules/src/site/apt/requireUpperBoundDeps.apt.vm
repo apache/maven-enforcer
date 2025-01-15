@@ -67,7 +67,7 @@
 -----------------------------------------------------------------------------------
 
 Failed while enforcing RequireUpperBoundDeps. The error(s) are [
-RequireUpperBoundDeps error for org.slf4j:slf4j-api:1.4.0 paths to dependency are:
+RequireUpperBoundDeps error for org.slf4j:slf4j-api:1.4.0. Paths to dependency are:
 +-test:TestParent:1.0-SNAPSHOT
   +-org.slf4j:slf4j-api:1.4.0
 and
