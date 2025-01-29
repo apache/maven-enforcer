@@ -145,9 +145,9 @@ public final class RequireJavaVersion extends AbstractVersionEnforcer {
                 getLog().debug("Could not parse allowed version range " + allowedVersionRange + " " + e.getMessage());
                 version = allowedVersionRange;
             }
-            String message = String.format(
-                    "Detected JDK version %s (JAVA_HOME=%s) is not in the allowed range %s.",
-                    detectedJdkVersion, SystemUtils.JAVA_HOME, version);
+            String message = "Detected JDK " + SystemUtils.JAVA_HOME
+                    + " is version " + detectedJdkVersion
+                    + " which is not in the allowed range " + version + ".";
             super.setMessage(message);
         }
     }

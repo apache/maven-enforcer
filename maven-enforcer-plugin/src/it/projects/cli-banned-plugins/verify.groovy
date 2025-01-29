@@ -16,11 +16,5 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-def buildLog = new File( basedir, 'build.log' ).text
-
-assert buildLog.contains( 'Rule 0: org.apache.maven.enforcer.rules.dependency.RequireUpperBoundDeps failed with message:' )
-
-assert buildLog.contains('[ERROR] Require upper bound dependencies error for org.apache.maven.plugins.enforcer.its:menforcer128_api:1.4.0 [provided]. Paths to dependency are:')
-
-assert !buildLog.contains('[ERROR] Require upper bound dependencies error for org.apache.maven.plugins.enforcer.its:menforcer138_utils:1.0.4')
+def buildLog = new File(basedir, 'build.log').text
+assert buildLog.contains('org.apache.maven.plugins.enforcer.its:menforcer126_maven-plugin:maven-plugin:1.0 <--- banned plugin')

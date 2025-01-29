@@ -24,65 +24,85 @@
 
 Dependency Convergence
 
-  This rule requires that dependency version numbers converge.  If a project has two dependencies, A and B, both depending on the same artifact, C, this rule will fail the build if A depends on a different version of C than the version of C depended on by B.
+  This rule requires that dependency versions are the same everywhere in the tree.
+  If a project has two dependencies, A and B, both depending on the same
+  artifact, C, this rule will fail the build if A depends on one
+  version of C and B depends on a different version of C.
 
   Here is a concrete example.
 
-  This will cause a build to fail.
+  A project containing these two dependencies does not converge
+  because org.jdom:jdom:1.1.3 depends on Jaxen 1.1.3 and
+  org.org.jenkins-ci.main:jenkins-core:2.492 depends on Jaxen 2.0.0:
   
 +-----------------------------------------------------------------------------------
-
   <dependencies>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>1.6.1</version>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.1.3</version>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-nop</artifactId>
-      <version>1.6.0</version>
+      <groupId>org.org.jenkins-ci.main</groupId>
+      <artifactId>jenkins-core</artifactId>
+      <version>2.492</groupId>
     </dependency>
   </dependencies>  
 +-----------------------------------------------------------------------------------
 
-  With this being logged during compilation
+  This is not obvious from the dependencies themselves. However, if the dependencyConvergence
+  rule is activated in the project, this message will be logged during compilation:
 
 +-----------------------------------------------------------------------------------
-Dependency convergence error for org.slf4j:slf4j-api1.6.1 paths to dependency are:
-
 [ERROR]
-Dependency convergence error for org.slf4j:slf4j-api:1.6.1 paths to dependency are:
+Dependency convergence error for jaxen:jaxen. Paths to dependency are:
 +-org.myorg:my-project:1.0.0-SNAPSHOT
-  +-org.slf4j:slf4j-jdk14:1.6.1
-    +-org.slf4j:slf4j-api:1.6.1
+  +-org.jdom:jdom:1.1.3
+    +-jaxen:jaxen:1.1.3
 and
 +-org.myorg:my-project:1.0.0-SNAPSHOT
-  +-org.slf4j:slf4j-nop:1.6.0
-    +-org.slf4j:slf4j-api:1.6.0
+  +-org.org.jenkins-ci.main:jenkins-core:2.492
+    +-jaxen:jaxen:2.0.0
 +-----------------------------------------------------------------------------------
 
-  And this will succeed:
+  However, if you exclude JDOM's dependency on Jaxen in your own pom, then only
+  one version of Jaxen is added to the classpath and the rule
+  passes:
   
 +-----------------------------------------------------------------------------------
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-jdk14</artifactId>
-      <version>1.6.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-nop</artifactId>
-      <version>1.6.0</version>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.1.3</version>
       <exclusions>
         <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
+          <groupId>jaxen</groupId>
+          <artifactId>jaxen</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.org.jenkins-ci.main</groupId>
+      <artifactId>jenkins-core</artifactId>
+      <version>2.492</groupId>
+    </dependency>
 +-----------------------------------------------------------------------------------
 
+  You can also use the dependencyManagement element or a "bill of materials" (BOM)
+  to uniquely specify a single version for all transitive dependencies with the
+  same group ID, artifact ID, and classifier. For example, this dependencyManagement
+  element pins the project's Jaxen version to 2.0.0, regardless of which versions
+  may appear in transitive dependencies:
+
++-----------------------------------------------------------------------------------
+  <dependencyManagement>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+      <version>2.0.0</groupId>
+    </dependency>
+  </dependencyManagement>
++-----------------------------------------------------------------------------------
 
   Here is how a project should be set up to use this rule:
 
@@ -119,8 +139,8 @@ and
 
 * Timestamped Version
 	
-	By default the non-unique versions are matched, which means the <<<X.Y-SNAPSHOT>>> instead of the timestamped versions.
-	If you want to use the unique versions of the dependencies, you can set its property to <<<true>>>.
+By default, the non-unique versions are matched, which means the <<<X.Y-SNAPSHOT>>> instead of the timestamped versions.
+If you want to use the unique versions of the dependencies, set the uniqueVersions property to <<<true>>>:
 
 +---------------------------------------------
       <dependencyConvergence>
@@ -145,7 +165,7 @@ and
     []
 
   The format for artifacts is groupId[:artifactId][:version][:type][:scope][:classifier] where artifactId, version,
-  type, scope and classifier are optional. Wildcards may be used to replace an entire section or just parts of a
+  type, scope, and classifier are optional. Wildcards may replace an entire section or just parts of a
   section. This rule uses the {{{./versionRanges.html}Enforcer version range syntax}} to define allowed versions.
 
 +---------------------------------------------

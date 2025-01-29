@@ -20,7 +20,7 @@
 def buildLog = new File( basedir, 'build.log' ).text
 
 assert buildLog.contains( '[ERROR] Rule 0: org.apache.maven.enforcer.rules.dependency.DependencyConvergence failed with message' )
-assert buildLog.contains( 'Dependency convergence error for org.slf4j:slf4j-api:jar:1.6.2 paths to dependency are:' )
+assert buildLog.contains( 'Dependency convergence error for org.slf4j:slf4j-api:jar:1.6.2. Paths to dependency are:' )
 assert buildLog.contains( '+-org.slf4j:slf4j-api:jar:1.6.2:compile' )
 assert buildLog.contains( '+-org.slf4j:slf4j-api:jar:1.6.1:provided' )
 assert !buildLog.contains( 'org.slf4j:slf4j-api:jar:1.6.0' )
