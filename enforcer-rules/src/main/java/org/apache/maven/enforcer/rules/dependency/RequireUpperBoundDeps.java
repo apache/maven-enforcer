@@ -139,7 +139,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
                 .append(System.lineSeparator())
                 .append("Require upper bound dependencies error for ")
                 .append(getFullArtifactName(conflict.get(0), false))
-                .append(" paths to dependency are:")
+                .append(". Paths to dependency are:")
                 .append(System.lineSeparator());
         if (conflict.size() > 0) {
             errorMessage.append(buildTreeString(conflict.get(0)));
