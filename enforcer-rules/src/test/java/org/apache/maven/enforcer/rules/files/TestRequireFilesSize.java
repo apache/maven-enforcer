@@ -38,7 +38,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.Mockito.when;
 
 /**
@@ -116,7 +122,7 @@ class TestRequireFilesSize {
     void testFileDoesNotExist() throws IOException {
         File f = File.createTempFile("junit", null, temporaryFolder);
         f.delete();
-        assertFalse(f.exists());
+        assumeFalse(f.exists());
         rule.setFilesList(Collections.singletonList(f));
 
         try {
@@ -149,7 +155,7 @@ class TestRequireFilesSize {
 
         rule.setFilesList(Collections.singletonList(f));
         rule.setMaxsize(10);
-        assertTrue(f.length() > 10);
+        assumeTrue(f.length() > 10);
         try {
             rule.execute();
             fail("Should get exception");
@@ -164,7 +170,7 @@ class TestRequireFilesSize {
         try (BufferedWriter out = new BufferedWriter(new FileWriter(f))) {
             out.write("123456789101112131415");
         }
-        assertTrue(f.length() > 10);
+        assumeTrue(f.length() > 10);
 
         File g = File.createTempFile("junit", null, temporaryFolder);
 
