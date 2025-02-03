@@ -13,8 +13,8 @@
 ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 ~~ KIND, either express or implied.  See the License for the
 ~~ specific language governing permissions and limitations
-~~ under the License.    
- 
+~~ under the License.
+
   ------
   Require Files Dont Exist
   ------
@@ -25,27 +25,27 @@
 
 Require Files Don't Exist
 
-  This rule checks that the specified list of files do not exist.
-  
-  The mounted filesystem(s) will dictate the case-sensitivity rules when checking files. If checks are required that
-  filesystem(s) do not support (e.g. a case-sensitive check on a case-insensitive filesystem) consider adding a custom
+  This rule checks that the specified files do not exist.
+
+  The filesystem will dictate the case-sensitivity rules when checking files. If checks are required that
+  filesystem do not support (e.g. a case-sensitive check on a case-insensitive filesystem) consider adding a custom
   plugin that meets the specific needs.
 
    The following parameters are supported by this rule:
-   
+
    * <<message>> - an optional message to the user if the rule fails.
-   
+
    * <<files>> - A list of files to check.
-   
+
    * <<allowNulls>> - If null files should be allowed. If allowed, they will be treated as if they do not exist. Default is false.
 
    * <<satisfyAny>> - Allows that one of files can make the rule pass, instead of all the files. Default is false.
-   
+
    []
 
-   
+
   Sample Plugin Configuration:
-  
+
 +---+
 <project>
   [...]

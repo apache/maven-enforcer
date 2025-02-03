@@ -115,11 +115,11 @@ class TestRequireFilesDontExist {
 
         // Check the file is detected as being present
         EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
-        assumeFalse(e.getMessage() == null);
+        assertNotNull(e.getMessage());
 
         f.delete();
 
-        assertFalse(f.exists());
+        assumeFalse(f.exists());
 
         // Rule should now pass as the file was deleted
         rule.execute();
@@ -136,7 +136,7 @@ class TestRequireFilesDontExist {
         rule.setFilesList(Collections.singletonList(linkFile));
         // Check the link is detected as being present
         EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
-        assumeFalse(e.getMessage() == null);
+        assertNotNull(e.getMessage());
 
         linkFile.delete();
 

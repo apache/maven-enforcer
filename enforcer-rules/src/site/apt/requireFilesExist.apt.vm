@@ -25,10 +25,10 @@
 
 Require Files Exist
 
-  This rule checks that the specified list of files exist.
+  This rule checks that the specified files exist.
 
-  The mounted filesystem(s) will dictate the case-sensitivity rules when checking files. If you require checks that your
-  filesystem(s) do not support (e.g. a case-sensitive check on a case-insensitive filesystem) then you should consider
+  The filesystem will dictate the case-sensitivity rules when checking files. If you require checks that your
+  filesystem do not support (e.g. a case-sensitive check on a case-insensitive filesystem) then you should consider
   adding your own custom plugin that meets your specific needs.
 
    The following parameters are supported by this rule:

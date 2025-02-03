@@ -81,7 +81,7 @@ class TestRequireFilesExist {
         try {
             rule.execute();
             fail("Should have received an exception");
-        } catch (Exception e) {
+        } catch (EnforcerRuleException e) {
             assertNotNull(e.getMessage());
         }
     }
