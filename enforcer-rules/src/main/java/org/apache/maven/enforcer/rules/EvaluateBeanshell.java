@@ -99,6 +99,6 @@ public final class EvaluateBeanshell extends AbstractStandardEnforcerRule {
 
     @Override
     public String toString() {
-        return String.format("EvaluateBeanshell[message=%s, condition=%s]", getMessage(), condition);
+        return "EvaluateBeanshell[message=%s, condition=%s]".formatted(getMessage(), condition);
     }
 }

@@ -304,7 +304,7 @@ public class EnforceMojo extends AbstractMojo {
         } catch (EnforcerRuleException e) {
             throw new EnforcerRuleManagerException("Rules Provider error for: " + getRuleName(ruleDesc), e);
         }
-        getLog().info(String.format("Rule Config Provider %s executed", getRuleName(ruleDesc)));
+        getLog().info("Rule Config Provider %s executed".formatted(getRuleName(ruleDesc)));
 
         return configuration;
     }
@@ -313,7 +313,7 @@ public class EnforceMojo extends AbstractMojo {
             throws EnforcerRuleException {
 
         if (getLog().isDebugEnabled()) {
-            getLog().debug(String.format("Executing Rule %d: %s", ruleIndex, ruleDesc));
+            getLog().debug("Executing Rule %d: %s".formatted(ruleIndex, ruleDesc));
         }
 
         long startTime = System.currentTimeMillis();
@@ -327,8 +327,7 @@ public class EnforceMojo extends AbstractMojo {
         } finally {
             if (getLog().isDebugEnabled()) {
                 long workTime = System.currentTimeMillis() - startTime;
-                getLog().debug(String.format(
-                        "Finish Rule %d: %s takes %d ms", ruleIndex, getRuleName(ruleDesc), workTime));
+                getLog().debug("Finish Rule %d: %s takes %d ms".formatted(ruleIndex, getRuleName(ruleDesc), workTime));
             }
         }
     }
@@ -340,7 +339,7 @@ public class EnforceMojo extends AbstractMojo {
 
         if (ignoreCache || shouldExecute(rule)) {
             rule.execute(helper);
-            getLog().info(String.format("Rule %d: %s passed", ruleIndex, getRuleName(ruleDesc)));
+            getLog().info("Rule %d: %s passed".formatted(ruleIndex, getRuleName(ruleDesc)));
         }
     }
 
@@ -349,7 +348,7 @@ public class EnforceMojo extends AbstractMojo {
         AbstractEnforcerRule rule = (AbstractEnforcerRule) ruleDesc.getRule();
         if (ignoreCache || !ruleCache.isCached(rule)) {
             rule.execute();
-            getLog().info(String.format("Rule %d: %s passed", ruleIndex, getRuleName(ruleDesc)));
+            getLog().info("Rule %d: %s passed".formatted(ruleIndex, getRuleName(ruleDesc)));
         }
     }
 

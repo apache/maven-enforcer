@@ -279,8 +279,7 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
 
     @Override
     public String toString() {
-        return String.format(
-                "BanDynamicVersions[allowSnapshots=%b, allowLatest=%b, allowRelease=%b, allowRanges=%b, allowRangesWithIdenticalBounds=%b, excludeOptionals=%b, excludedScopes=%s, ignores=%s, verbose=%b]",
+        return "BanDynamicVersions[allowSnapshots=%b, allowLatest=%b, allowRelease=%b, allowRanges=%b, allowRangesWithIdenticalBounds=%b, excludeOptionals=%b, excludedScopes=%s, ignores=%s, verbose=%b]".formatted(
                 allowSnapshots,
                 allowLatest,
                 allowRelease,

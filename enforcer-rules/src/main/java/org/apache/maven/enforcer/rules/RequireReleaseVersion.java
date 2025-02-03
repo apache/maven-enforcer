@@ -74,6 +74,6 @@ public final class RequireReleaseVersion extends AbstractStandardEnforcerRule {
 
     @Override
     public String toString() {
-        return String.format("RequireReleaseVersion[failWhenParentIsSnapshot=%b]", failWhenParentIsSnapshot);
+        return "RequireReleaseVersion[failWhenParentIsSnapshot=%b]".formatted(failWhenParentIsSnapshot);
     }
 }

@@ -132,8 +132,7 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
 
     @Override
     public String toString() {
-        return String.format(
-                "RequireSameVersions[dependencies=%s, buildPlugins=%s, reportPlugins=%s, plugins=%s, uniqueVersions=%b, sameModuleVersions=%b]",
+        return "RequireSameVersions[dependencies=%s, buildPlugins=%s, reportPlugins=%s, plugins=%s, uniqueVersions=%b, sameModuleVersions=%b]".formatted(
                 dependencies, buildPlugins, reportPlugins, plugins, uniqueVersions, sameModuleVersions);
     }
 }

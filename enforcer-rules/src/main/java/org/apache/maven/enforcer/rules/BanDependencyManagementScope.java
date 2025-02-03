@@ -119,8 +119,7 @@ public final class BanDependencyManagementScope extends AbstractStandardEnforcer
 
     @Override
     public String toString() {
-        return String.format(
-                "BanDependencyManagementScope[message=%s, excludes=%s, checkEffectivePom=%b]",
+        return "BanDependencyManagementScope[message=%s, excludes=%s, checkEffectivePom=%b]".formatted(
                 getMessage(), excludes, checkEffectivePom);
     }
 }

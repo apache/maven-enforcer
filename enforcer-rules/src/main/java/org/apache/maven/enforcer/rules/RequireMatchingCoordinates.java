@@ -103,8 +103,7 @@ public final class RequireMatchingCoordinates extends AbstractStandardEnforcerRu
 
     @Override
     public String toString() {
-        return String.format(
-                "requireMatchingCoordinates[groupIdPattern=%s, artifactIdPattern=%s, moduleNameMustMatchArtifactId=%b]",
+        return "requireMatchingCoordinates[groupIdPattern=%s, artifactIdPattern=%s, moduleNameMustMatchArtifactId=%b]".formatted(
                 groupIdPattern, artifactIdPattern, moduleNameMustMatchArtifactId);
     }
 }

@@ -121,6 +121,6 @@ public final class RequireActiveProfile extends AbstractStandardEnforcerRule {
 
     @Override
     public String toString() {
-        return String.format("RequireActiveProfile[message=%s, profiles=%s, all=%b]", getMessage(), profiles, all);
+        return "RequireActiveProfile[message=%s, profiles=%s, all=%b]".formatted(getMessage(), profiles, all);
     }
 }

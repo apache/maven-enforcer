@@ -40,6 +40,6 @@ public final class AlwaysPass extends AbstractStandardEnforcerRule {
 
     @Override
     public String toString() {
-        return String.format("AlwaysPass[message=%s]", getMessage());
+        return "AlwaysPass[message=%s]".formatted(getMessage());
     }
 }

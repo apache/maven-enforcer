@@ -187,7 +187,7 @@ public final class ExternalRules extends AbstractEnforcerRuleConfigProvider {
 
     @Override
     public String toString() {
-        return String.format("ExternalRules[location=%s, xsltLocation=%s]", location, xsltLocation);
+        return "ExternalRules[location=%s, xsltLocation=%s]".formatted(location, xsltLocation);
     }
 
     InputStream transform(String sourceLocation, InputStream sourceXml, String xsltLocation) {

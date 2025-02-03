@@ -156,6 +156,6 @@ public final class BanTransitiveDependencies extends AbstractStandardEnforcerRul
 
     @Override
     public String toString() {
-        return String.format("BanTransitiveDependencies[message=%s, excludes=%s]", getMessage(), excludes);
+        return "BanTransitiveDependencies[message=%s, excludes=%s]".formatted(getMessage(), excludes);
     }
 }

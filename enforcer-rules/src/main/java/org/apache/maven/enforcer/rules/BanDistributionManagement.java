@@ -152,8 +152,7 @@ public final class BanDistributionManagement extends AbstractStandardEnforcerRul
 
     @Override
     public String toString() {
-        return String.format(
-                "BanDistributionManagement[allowRepository=%b, allowSnapshotRepository=%b, allowSite=%b]",
+        return "BanDistributionManagement[allowRepository=%b, allowSnapshotRepository=%b, allowSite=%b]".formatted(
                 allowRepository, allowSnapshotRepository, allowSite);
     }
 }

@@ -87,6 +87,6 @@ public final class BannedPlugins extends AbstractStandardEnforcerRule {
 
     @Override
     public String toString() {
-        return String.format("BannedPlugins[excludes=%s, includes=%s]", excludes, includes);
+        return "BannedPlugins[excludes=%s, includes=%s]".formatted(excludes, includes);
     }
 }

@@ -59,8 +59,7 @@ public final class RequireEnvironmentVariable extends AbstractPropertyEnforcerRu
 
     @Override
     public String toString() {
-        return String.format(
-                "RequireEnvironmentVariable[message=%s, variableName=%s, regex=%s, regexMessage=%s]",
+        return "RequireEnvironmentVariable[message=%s, variableName=%s, regex=%s, regexMessage=%s]".formatted(
                 getMessage(), variableName, getRegex(), getRegexMessage());
     }
 }

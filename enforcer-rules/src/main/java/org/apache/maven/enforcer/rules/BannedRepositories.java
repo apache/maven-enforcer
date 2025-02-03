@@ -181,8 +181,7 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
 
     @Override
     public String toString() {
-        return String.format(
-                "BannedRepositories[bannedRepositories=%s, bannedPluginRepositories=%s, allowedRepositories=%s, allowedPluginRepositories=%s",
+        return "BannedRepositories[bannedRepositories=%s, bannedPluginRepositories=%s, allowedRepositories=%s, allowedPluginRepositories=%s".formatted(
                 bannedRepositories, bannedPluginRepositories, allowedRepositories, allowedPluginRepositories);
     }
 }

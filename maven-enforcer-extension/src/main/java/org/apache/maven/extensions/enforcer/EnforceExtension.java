@@ -26,7 +26,6 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -59,7 +58,7 @@ public class EnforceExtension extends AbstractMavenLifecycleParticipant {
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
         Xpp3Dom configuration;
-        Path config = Paths.get(session.getExecutionRootDirectory(), ENFORCER_EXTENSION_XML);
+        Path config = Path.of(session.getExecutionRootDirectory(), ENFORCER_EXTENSION_XML);
         if (Files.isRegularFile(config)) {
             try (Reader reader = Files.newBufferedReader(config, StandardCharsets.UTF_8)) {
                 configuration = Xpp3DomBuilder.build(reader);

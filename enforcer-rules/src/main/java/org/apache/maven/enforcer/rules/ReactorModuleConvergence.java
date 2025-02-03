@@ -399,8 +399,7 @@ public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule
 
     @Override
     public String toString() {
-        return String.format(
-                "ReactorModuleConvergence[message=%s, ignoreModuleDependencies=%b]",
+        return "ReactorModuleConvergence[message=%s, ignoreModuleDependencies=%b]".formatted(
                 getMessage(), ignoreModuleDependencies);
     }
 }

@@ -72,8 +72,7 @@ public final class RequireProperty extends AbstractPropertyEnforcerRule {
 
     @Override
     public String toString() {
-        return String.format(
-                "RequireProperty[message=%s, property=%s, regex=%s, regexMessage=%s]",
+        return "RequireProperty[message=%s, property=%s, regex=%s, regexMessage=%s]".formatted(
                 getMessage(), property, getRegex(), getRegexMessage());
     }
 }

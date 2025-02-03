@@ -51,8 +51,7 @@ public final class BannedDependencies extends BannedDependenciesBase {
 
     @Override
     public String toString() {
-        return String.format(
-                "BannedDependencies[message=%s, excludes=%s, includes=%s, searchTransitive=%b]",
+        return "BannedDependencies[message=%s, excludes=%s, includes=%s, searchTransitive=%b]".formatted(
                 getMessage(), getExcludes(), getIncludes(), isSearchTransitive());
     }
 }

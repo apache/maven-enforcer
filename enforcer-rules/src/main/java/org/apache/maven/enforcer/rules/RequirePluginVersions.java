@@ -931,8 +931,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
 
     @Override
     public String toString() {
-        return String.format(
-                "RequirePluginVersions[message=%s, banLatest=%b, banRelease=%b, banSnapshots=%b, banTimestamps=%b, phases=%s, additionalPlugins=%s, unCheckedPluginList=%s, unCheckedPlugins=%s]",
+        return "RequirePluginVersions[message=%s, banLatest=%b, banRelease=%b, banSnapshots=%b, banTimestamps=%b, phases=%s, additionalPlugins=%s, unCheckedPluginList=%s, unCheckedPlugins=%s]".formatted(
                 getMessage(),
                 banLatest,
                 banRelease,

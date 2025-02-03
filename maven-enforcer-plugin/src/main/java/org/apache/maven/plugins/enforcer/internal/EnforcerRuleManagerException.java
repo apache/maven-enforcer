@@ -18,11 +18,14 @@
  */
 package org.apache.maven.plugins.enforcer.internal;
 
+import java.io.Serial;
+
 /**
  * Problems reported by EnforcerRuleManager.
  */
 public class EnforcerRuleManagerException extends RuntimeException {
 
+    @Serial
     private static final long serialVersionUID = -7559335919839629986L;
 
     public EnforcerRuleManagerException(Throwable cause) {

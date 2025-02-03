@@ -118,6 +118,6 @@ public final class RequirePrerequisite extends AbstractStandardEnforcerRule {
 
     @Override
     public String toString() {
-        return String.format("RequirePrerequisite[packagings=%s, mavenVersion=%s]", packagings, mavenVersion);
+        return "RequirePrerequisite[packagings=%s, mavenVersion=%s]".formatted(packagings, mavenVersion);
     }
 }

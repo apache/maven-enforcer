@@ -307,8 +307,7 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
 
     @Override
     public String toString() {
-        return String.format(
-                "RequireOS[message=%s, arch=%s, family=%s, name=%s, version=%s, display=%b]",
+        return "RequireOS[message=%s, arch=%s, family=%s, name=%s, version=%s, display=%b]".formatted(
                 getMessage(), arch, family, name, version, display);
     }
 }

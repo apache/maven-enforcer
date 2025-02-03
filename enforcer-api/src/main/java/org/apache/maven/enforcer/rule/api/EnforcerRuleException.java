@@ -18,6 +18,8 @@
  */
 package org.apache.maven.enforcer.rule.api;
 
+import java.io.Serial;
+
 /**
  * An exception occurring during the execution of a rule.
  * <p>
@@ -29,6 +31,7 @@ package org.apache.maven.enforcer.rule.api;
 public class EnforcerRuleException extends Exception {
 
     /** serialVersionUID. */
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /** The source. */

@@ -123,8 +123,7 @@ public final class DependencyConvergence extends AbstractStandardEnforcerRule {
 
     @Override
     public String toString() {
-        return String.format(
-                "DependencyConvergence[includes=%s, excludes=%s, uniqueVersions=%b]",
+        return "DependencyConvergence[includes=%s, excludes=%s, uniqueVersions=%b]".formatted(
                 includes, excludes, uniqueVersions);
     }
 }
