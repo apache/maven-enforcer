@@ -154,7 +154,7 @@ class TestRequireFilesDontExist {
 
         // Check the target is detected as being present
         EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
-        assumeFalse(e.getMessage() == null);
+        assertNotNull(e.getMessage());
 
         canonicalFile.delete();
         rule.setFilesList(Collections.singletonList(linkFile));
