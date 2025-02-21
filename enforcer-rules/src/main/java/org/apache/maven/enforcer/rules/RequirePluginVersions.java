@@ -63,7 +63,6 @@ import org.apache.maven.plugin.InvalidPluginException;
 import org.apache.maven.plugin.PluginManager;
 import org.apache.maven.plugin.PluginManagerException;
 import org.apache.maven.plugin.PluginNotFoundException;
-import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.version.PluginVersionNotFoundException;
 import org.apache.maven.plugin.version.PluginVersionResolutionException;
 import org.apache.maven.project.MavenProject;
@@ -782,12 +781,11 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
      * @throws LifecycleExecutionException the lifecycle execution exception
      * @throws PluginNotFoundException     the plugin not found exception
      */
-    private PluginDescriptor verifyPlugin(
+    private void verifyPlugin(
             Plugin plugin, MavenProject project, Settings settings, ArtifactRepository localRepository)
             throws LifecycleExecutionException, PluginNotFoundException {
-        PluginDescriptor pluginDescriptor;
         try {
-            pluginDescriptor = pluginManager.verifyPlugin(plugin, project, settings, localRepository);
+            pluginManager.verifyPlugin(plugin, project, settings, localRepository);
         } catch (PluginManagerException e) {
             throw new LifecycleExecutionException(
                     "Internal error in the plugin manager getting plugin '" + plugin.getKey() + "': " + e.getMessage(),
@@ -800,7 +798,6 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
                 | ArtifactNotFoundException e) {
             throw new LifecycleExecutionException(e.getMessage(), e);
         }
-        return pluginDescriptor;
     }
 
     /**
