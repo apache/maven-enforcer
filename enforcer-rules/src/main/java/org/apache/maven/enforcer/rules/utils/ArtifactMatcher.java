@@ -107,7 +107,7 @@ public final class ArtifactMatcher {
                         return false;
                     }
                 case 5:
-                    if (scope == null || scope.equals("")) {
+                    if (scope == null || scope.isEmpty()) {
                         scope = Artifact.SCOPE_COMPILE;
                     }
 
@@ -115,7 +115,7 @@ public final class ArtifactMatcher {
                         return false;
                     }
                 case 4:
-                    if (type == null || type.equals("")) {
+                    if (type == null || type.isEmpty()) {
                         type = "jar";
                     }
 

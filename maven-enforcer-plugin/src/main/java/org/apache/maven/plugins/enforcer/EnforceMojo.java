@@ -298,15 +298,14 @@ public class EnforceMojo extends AbstractMojo {
             getLog().debug(String.format("Executing Rule Config Provider %s", ruleDesc.getRule()));
         }
 
-        XmlPlexusConfiguration configuration = null;
         try {
-            configuration = new XmlPlexusConfiguration(ruleProducer.getRulesConfig());
+            XmlPlexusConfiguration configuration = new XmlPlexusConfiguration(ruleProducer.getRulesConfig());
+            getLog().info(String.format("Rule Config Provider %s executed", getRuleName(ruleDesc)));
+
+            return configuration;
         } catch (EnforcerRuleException e) {
             throw new EnforcerRuleManagerException("Rules Provider error for: " + getRuleName(ruleDesc), e);
         }
-        getLog().info(String.format("Rule Config Provider %s executed", getRuleName(ruleDesc)));
-
-        return configuration;
     }
 
     private void executeRule(int ruleIndex, EnforcerRuleDesc ruleDesc, EnforcerRuleHelper helper)

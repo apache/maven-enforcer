@@ -477,7 +477,7 @@ class TestRequirePluginVersions {
      *
      * @param group    the group
      * @param artifact the artifact
-     * @param theSet   the the set
+     * @param theSet   the set
      */
     private void assertContainsPlugin(String group, String artifact, Collection<Plugin> theSet) {
         Plugin p = new Plugin();

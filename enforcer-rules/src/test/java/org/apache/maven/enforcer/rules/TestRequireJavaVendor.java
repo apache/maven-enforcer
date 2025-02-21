@@ -45,7 +45,7 @@ class TestRequireJavaVendor {
     }
 
     @Test
-    void matchingInclude() throws EnforcerRuleException {
+    void matchingInclude() {
         // Set the required vendor to the current system vendor
         underTest.setIncludes(Collections.singletonList(SystemUtils.JAVA_VENDOR));
 
