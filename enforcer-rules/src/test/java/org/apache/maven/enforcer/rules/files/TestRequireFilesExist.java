@@ -20,6 +20,8 @@ package org.apache.maven.enforcer.rules.files;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -27,7 +29,11 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test the "require files exist" rule.
@@ -50,12 +56,34 @@ class TestRequireFilesExist {
     }
 
     @Test
-    void testFileOsIndependentExists() {
-        rule.setFilesList(Collections.singletonList(new File("POM.xml")));
+    void testSymbolicLinkExists() throws Exception {
+        File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
 
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> rule.execute());
+        rule.setFilesList(Collections.singletonList(linkFile));
 
-        assertNotNull(e.getMessage());
+        rule.execute();
+    }
+
+    @Test
+    void testSymbolicLinkTargetDoesNotExist() throws Exception {
+        File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
+        canonicalFile.delete();
+        rule.setFilesList(Collections.singletonList(linkFile));
+
+        try {
+            rule.execute();
+            fail("Should have received an exception");
+        } catch (EnforcerRuleException e) {
+            assertNotNull(e.getMessage());
+        }
     }
 
     @Test
