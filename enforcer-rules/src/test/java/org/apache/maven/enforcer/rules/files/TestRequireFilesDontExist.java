@@ -124,7 +124,7 @@ class TestRequireFilesDontExist {
         File f = File.createTempFile("junit", null, temporaryFolder);
         f.delete();
 
-        assumeTrue(f.exists());
+        assumeFalse(f.exists());
 
         File g = File.createTempFile("junit", null, temporaryFolder);
 
