@@ -26,7 +26,6 @@ import org.apache.maven.enforcer.rules.utils.DependencyNodeBuilder;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.testing.ArtifactStubFactory;
 import org.apache.maven.project.MavenProject;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -61,12 +60,6 @@ class RequireReleaseDepsTest {
 
     @InjectMocks
     private RequireReleaseDeps rule;
-
-    @BeforeEach
-    void setUp() {
-        // ruleHelper = EnforcerTestUtils.getHelper(project);
-        // rule = new RequireReleaseDeps();
-    }
 
     @Test
     void testSearchNonTransitive() throws IOException {
