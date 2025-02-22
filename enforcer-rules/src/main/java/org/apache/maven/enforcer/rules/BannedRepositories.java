@@ -96,18 +96,18 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
     }
 
     // ----------------------------------------------------------------------
-    // Protected methods
+    // Package methods
     // ----------------------------------------------------------------------
 
-    protected void setBannedRepositories(List<String> bannedRepositories) {
+    void setBannedRepositories(List<String> bannedRepositories) {
         this.bannedRepositories = bannedRepositories;
     }
 
-    protected void setAllowedRepositories(List<String> allowedRepositories) {
+    void setAllowedRepositories(List<String> allowedRepositories) {
         this.allowedRepositories = allowedRepositories;
     }
 
-    protected void setAllowedPluginRepositories(List<String> allowedPluginRepositories) {
+    void setAllowedPluginRepositories(List<String> allowedPluginRepositories) {
         this.allowedPluginRepositories = allowedPluginRepositories;
     }
 

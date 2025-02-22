@@ -23,7 +23,6 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.model.DeploymentRepository;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.Site;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,7 +75,7 @@ class BanDistributionManagementTest {
      */
     @Test
     void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepository() {
-        setupProjectWithDistributionManagement(new DeploymentRepository(), null, null);
+        setupProjectWithDistributionManagement(new DeploymentRepository(), null);
         assertThrows(EnforcerRuleException.class, () -> rule.execute());
     }
 
@@ -91,7 +90,7 @@ class BanDistributionManagementTest {
      */
     @Test
     void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepositorySnapshotRepository() {
-        setupProjectWithDistributionManagement(null, new DeploymentRepository(), null);
+        setupProjectWithDistributionManagement(null, new DeploymentRepository());
 
         assertThrows(EnforcerRuleException.class, () -> rule.execute());
     }
@@ -113,7 +112,7 @@ class BanDistributionManagementTest {
      */
     @Test
     void shouldThrowExceptionIfDistributionManagementIsDefinedWithRepositorySnapshotRepositorySite() {
-        setupProjectWithDistributionManagement(new DeploymentRepository(), null, null);
+        setupProjectWithDistributionManagement(new DeploymentRepository(), null);
 
         assertThrows(EnforcerRuleException.class, () -> rule.execute());
     }
@@ -131,7 +130,7 @@ class BanDistributionManagementTest {
      */
     @Test
     void shouldAllowDistributionManagementHavingRepository() throws Exception {
-        setupProjectWithDistributionManagement(null, null, null);
+        setupProjectWithDistributionManagement(null, null);
         rule.setAllowRepository(true);
         rule.execute();
         // intentionally no assert cause in case of an exception the test will be red.
@@ -153,7 +152,7 @@ class BanDistributionManagementTest {
      */
     @Test
     void shouldAllowDistributionManagementHavingRepositorySnapshotRepository() throws Exception {
-        setupProjectWithDistributionManagement(null, null, null);
+        setupProjectWithDistributionManagement(null, null);
 
         rule.setAllowRepository(true);
         rule.setAllowSnapshotRepository(true);
@@ -180,7 +179,7 @@ class BanDistributionManagementTest {
      */
     @Test
     void shouldAllowDistributionManagementHavingRepositorySnapshotRepositorySite() throws Exception {
-        setupProjectWithDistributionManagement(null, null, null);
+        setupProjectWithDistributionManagement(null, null);
         rule.setAllowRepository(true);
         rule.setAllowSnapshotRepository(true);
         rule.setAllowSite(true);
@@ -193,16 +192,13 @@ class BanDistributionManagementTest {
     }
 
     private void setupProjectWithDistributionManagement(
-            DeploymentRepository repository, DeploymentRepository snapshotRepository, Site site) {
+            DeploymentRepository repository, DeploymentRepository snapshotRepository) {
         DistributionManagement dm = mock(DistributionManagement.class);
         if (repository != null) {
             when(dm.getRepository()).thenReturn(repository);
         }
         if (snapshotRepository != null) {
             when(dm.getSnapshotRepository()).thenReturn(snapshotRepository);
-        }
-        if (site != null) {
-            when(dm.getSite()).thenReturn(site);
         }
         setupProject(dm);
 

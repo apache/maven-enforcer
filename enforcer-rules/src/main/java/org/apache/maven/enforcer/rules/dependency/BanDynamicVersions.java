@@ -37,7 +37,6 @@ import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.collection.DependencyCollectionException;
 import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
@@ -221,21 +220,16 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
 
     @Override
     public void execute() throws EnforcerRuleException {
+        DependencyNode rootDependency =
+                resolverUtil.resolveTransitiveDependencies(verbose, excludeOptionals, excludedScopes);
 
-        try {
-            DependencyNode rootDependency =
-                    resolverUtil.resolveTransitiveDependencies(verbose, excludeOptionals, excludedScopes);
-
-            List<String> violations = collectDependenciesWithBannedDynamicVersions(rootDependency);
-            if (!violations.isEmpty()) {
-                ChoiceFormat dependenciesFormat = new ChoiceFormat("1#dependency|1<dependencies");
-                throw new EnforcerRuleException("Found " + violations.size() + " "
-                        + dependenciesFormat.format(violations.size())
-                        + " with dynamic versions." + System.lineSeparator()
-                        + String.join(System.lineSeparator(), violations));
-            }
-        } catch (DependencyCollectionException e) {
-            throw new EnforcerRuleException("Could not retrieve dependency metadata for project", e);
+        List<String> violations = collectDependenciesWithBannedDynamicVersions(rootDependency);
+        if (!violations.isEmpty()) {
+            ChoiceFormat dependenciesFormat = new ChoiceFormat("1#dependency|1<dependencies");
+            throw new EnforcerRuleException("Found " + violations.size() + " "
+                    + dependenciesFormat.format(violations.size())
+                    + " with dynamic versions." + System.lineSeparator()
+                    + String.join(System.lineSeparator(), violations));
         }
     }
 
@@ -260,8 +254,7 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
         }
     }
 
-    private List<String> collectDependenciesWithBannedDynamicVersions(DependencyNode rootDependency)
-            throws DependencyCollectionException {
+    private List<String> collectDependenciesWithBannedDynamicVersions(DependencyNode rootDependency) {
         Predicate<DependencyNode> predicate;
         if (ignores != null && !ignores.isEmpty()) {
             predicate = new ExcludeArtifactPatternsPredicate(ignores);

@@ -132,8 +132,7 @@ class TestArtifactMatcher {
             final String versionRange,
             final String scope,
             final String type,
-            boolean expectedResult)
-            throws InvalidVersionSpecificationException {
+            boolean expectedResult) {
         executePatternMatch(pattern, groupId, artifactId, versionRange, scope, type, "", expectedResult);
     }
 

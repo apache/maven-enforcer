@@ -200,7 +200,7 @@ public final class ExternalRules extends AbstractEnforcerRuleConfigProvider {
             Transformer transformer = TransformerFactory.newInstance().newTransformer(new StreamSource(in));
             transformer.transform(new StreamSource(sourceXml), new StreamResult(baos));
             final byte[] bytes = baos.toByteArray();
-            getLog().info(() -> (CharSequence) ("Rules transformed by " + xsltLocation + " from " + location + ":\n\n"
+            getLog().info(() -> ("Rules transformed by " + xsltLocation + " from " + location + ":\n\n"
                     + new String(bytes, StandardCharsets.UTF_8)));
             return new ByteArrayInputStream(bytes);
         } catch (IOException

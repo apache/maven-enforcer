@@ -608,7 +608,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
 
         for (Map.Entry<String, String> entry : mappings.entrySet()) {
             getLog().debug("  lifecycleMapping = " + entry.getKey());
-            String pluginsForLifecycle = (String) entry.getValue();
+            String pluginsForLifecycle = entry.getValue();
             getLog().debug("  plugins = " + pluginsForLifecycle);
             if (pluginsForLifecycle != null && !pluginsForLifecycle.isEmpty()) {
                 String pluginList[] = pluginsForLifecycle.split(",");
@@ -651,7 +651,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
                 for (String phase : phases) {
                     getLog().debug("getPhaseToLifecycleMap(): phase: " + phase);
                     if (phaseToLifecycleMap.containsKey(phase)) {
-                        Lifecycle prevLifecycle = (Lifecycle) phaseToLifecycleMap.get(phase);
+                        Lifecycle prevLifecycle = phaseToLifecycleMap.get(phase);
                         throw new LifecycleExecutionException("Phase '" + phase
                                 + "' is defined in more than one lifecycle: '" + lifecycle.getId() + "' and '"
                                 + prevLifecycle.getId() + "'");
@@ -710,7 +710,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
             } catch (ComponentLookupException e) {
                 if (defaultMappings == null) {
                     throw new LifecycleExecutionException(
-                            "Cannot find lifecycle mapping for packaging: \'" + packaging + "\'.", e);
+                            "Cannot find lifecycle mapping for packaging: '" + packaging + "'.", e);
                 }
             }
         }
@@ -718,7 +718,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
         if (mappings == null) {
             if (defaultMappings == null) {
                 throw new LifecycleExecutionException(
-                        "Cannot find lifecycle mapping for packaging: \'" + packaging + "\', and there is no default");
+                        "Cannot find lifecycle mapping for packaging: '" + packaging + "', and there is no default");
             } else {
                 mappings = defaultMappings;
             }

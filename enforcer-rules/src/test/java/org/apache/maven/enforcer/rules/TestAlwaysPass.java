@@ -19,7 +19,6 @@
 package org.apache.maven.enforcer.rules;
 
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -34,7 +33,7 @@ import static org.mockito.Mockito.mock;
 class TestAlwaysPass {
 
     @Test
-    void testExecute() throws EnforcerRuleException {
+    void testExecute() {
 
         AlwaysPass rule = new AlwaysPass();
         rule.setLog(mock(EnforcerLogger.class));

@@ -119,7 +119,7 @@ public final class RequireJavaVersion extends AbstractVersionEnforcer {
             String section = iter.next();
             section = section.replaceAll("[^0-9]", "");
 
-            if (section != null && !section.isEmpty()) {
+            if (!section.isEmpty()) {
                 buffer.append(Integer.parseInt(section));
 
                 if (i != 2) {

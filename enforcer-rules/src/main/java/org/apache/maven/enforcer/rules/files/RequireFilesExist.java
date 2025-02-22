@@ -31,7 +31,7 @@ public final class RequireFilesExist extends AbstractRequireFiles {
     @Override
     boolean checkFile(File file) {
         // if we get here and the handle is null, treat it as a success
-        return file == null ? true : file.exists() && osIndependentNameMatch(file, true);
+        return file == null ? true : file.exists() && osIndependentNameMatch(file);
     }
 
     @Override
@@ -40,15 +40,12 @@ public final class RequireFilesExist extends AbstractRequireFiles {
     }
 
     /**
-     * OSes like Windows are case insensitive, so this method will compare the file path with the actual path. A simple
+     * OSes like Windows are case-insensitive, so this method will compare the file path with the actual path. A simple
      * {@link File#exists()} is not enough for such OS.
      *
      * @param file the file to verify
-     * @param defaultValue value to return in case an IO exception occurs, should never happen as the file already
-     *            exists
-     * @return
      */
-    private boolean osIndependentNameMatch(File file, boolean defaultValue) {
+    private boolean osIndependentNameMatch(File file) {
         try {
             File absFile;
             if (!file.isAbsolute()) {
@@ -59,7 +56,7 @@ public final class RequireFilesExist extends AbstractRequireFiles {
 
             return absFile.toURI().equals(absFile.getCanonicalFile().toURI());
         } catch (IOException e) {
-            return defaultValue;
+            return true;
         }
     }
 }

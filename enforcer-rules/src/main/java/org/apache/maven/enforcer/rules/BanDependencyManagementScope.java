@@ -85,7 +85,7 @@ public final class BanDependencyManagementScope extends AbstractStandardEnforcer
         }
     }
 
-    protected List<Dependency> getViolatingDependencies(DependencyManagement depMgmt) {
+    List<Dependency> getViolatingDependencies(DependencyManagement depMgmt) {
         final ArtifactMatcher excludesMatcher;
         if (excludes != null) {
             excludesMatcher = new ArtifactMatcher(excludes, Collections.emptyList());
