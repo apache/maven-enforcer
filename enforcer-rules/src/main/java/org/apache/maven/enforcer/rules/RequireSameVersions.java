@@ -66,14 +66,8 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
 
     @Override
     public void execute() throws EnforcerRuleException {
-
         // consider including profile based artifacts
         Map<String, List<String>> versionMembers = new LinkedHashMap<>();
-
-        Set<String> buildPluginSet = new HashSet<>(buildPlugins);
-        buildPluginSet.addAll(plugins);
-        Set<String> reportPluginSet = new HashSet<>(reportPlugins);
-        reportPluginSet.addAll(plugins);
 
         // CHECKSTYLE_OFF: LineLength
         versionMembers.putAll(collectVersionMembers(project.getArtifacts(), dependencies, " (dependency)"));
