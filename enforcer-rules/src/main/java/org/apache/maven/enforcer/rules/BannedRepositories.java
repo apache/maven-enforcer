@@ -161,18 +161,17 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
     }
 
     private String populateErrorMessage(List<ArtifactRepository> resultBannedRepos, String errorMessagePrefix) {
-        StringBuffer errMsg = new StringBuffer("");
         if (!resultBannedRepos.isEmpty()) {
-            errMsg.append("Current maven session contains banned" + errorMessagePrefix
+            return "Current maven session contains banned" + errorMessagePrefix
                     + "repository urls, please double check your pom or settings.xml:" + System.lineSeparator()
-                    + getRepositoryUrlString(resultBannedRepos) + System.lineSeparator() + System.lineSeparator());
+                    + getRepositoryUrlString(resultBannedRepos) + System.lineSeparator() + System.lineSeparator();
         }
 
-        return errMsg.toString();
+        return "";
     }
 
     private String getRepositoryUrlString(List<ArtifactRepository> resultBannedRepos) {
-        StringBuilder urls = new StringBuilder("");
+        StringBuilder urls = new StringBuilder();
         for (ArtifactRepository repo : resultBannedRepos) {
             urls.append(repo.getId() + " - " + repo.getUrl() + System.lineSeparator());
         }
