@@ -74,11 +74,13 @@ public final class RequireTextFileChecksum extends RequireFileChecksum {
             // https://maven.apache.org/plugins/maven-resources-plugin/examples/encoding.html
             String projectEncoding = project.getProperties().getProperty("project.build.sourceEncoding", null);
             if (StringUtils.isBlank(projectEncoding)) {
-                projectEncoding = System.getProperty("file.encoding");
-                getLog().warn("File encoding has not been set, using platform encoding " + projectEncoding
-                        + ". Build is platform dependent! - https://maven.apache.org/general.html#encoding-warning");
+                encoding = Charset.defaultCharset();
+                getLog().warn(
+                                "File encoding has not been set, using platform encoding " + encoding.displayName()
+                                        + ". Build is platform dependent! - https://maven.apache.org/general.html#How_do_I_prevent_.E2.80.9C.5BWARNING.5D_Using_platform_encoding_.28Cp1252_actually.29_to_copy_filtered_resources.2C_i.e._build_is_platform_dependent.21.E2.80.9D");
+            } else {
+                encoding = Charset.forName(projectEncoding);
             }
-            encoding = Charset.forName(projectEncoding);
         }
         super.execute();
     }
