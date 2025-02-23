@@ -289,12 +289,6 @@ class TestRequirePluginVersions {
      */
     @Test
     void testGetAdditionalPluginsEmptySet() throws Exception {
-
-        Set<Plugin> plugins = new HashSet<>();
-        plugins.add(EnforcerTestUtils.newPlugin("group", "a-artifact", "1.0"));
-        plugins.add(EnforcerTestUtils.newPlugin("group", "foo", null));
-        plugins.add(EnforcerTestUtils.newPlugin("group", "foo2", ""));
-
         List<String> additional = new ArrayList<>();
         additional.add("group:a-artifact");
         additional.add("group:another-artifact");
