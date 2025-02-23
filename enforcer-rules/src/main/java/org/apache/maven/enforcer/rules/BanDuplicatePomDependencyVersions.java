@@ -62,32 +62,12 @@ public final class BanDuplicatePomDependencyVersions extends AbstractStandardEnf
         // re-read model, because M3 uses optimized model
         MavenXpp3Reader modelReader = new MavenXpp3Reader();
 
-        Model model;
         try (FileInputStream pomInputStream = new FileInputStream(project.getFile())) {
-            model = modelReader.read(pomInputStream, false);
+            Model model = modelReader.read(pomInputStream, false);
+            maven2Validation(model);
         } catch (IOException | XmlPullParserException e) {
             throw new EnforcerRuleError("Unable to retrieve the MavenProject: ", e);
         }
-
-        // @todo reuse ModelValidator when possible
-
-        // Object modelValidator = null;
-        // try
-        // {
-        // modelValidator = helper.getComponent( "org.apache.maven.model.validation.ModelValidator" );
-        // }
-        // catch ( ComponentLookupException e1 )
-        // {
-        // // noop
-        // }
-
-        // if( modelValidator == null )
-        // {
-        maven2Validation(model);
-        // }
-        // else
-        // {
-        // }
     }
 
     private void maven2Validation(Model model) throws EnforcerRuleException {
