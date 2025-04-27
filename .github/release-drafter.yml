@@ -16,4 +16,3 @@
 # under the License.
 
 _extends: maven-gh-actions-shared
-tag-template: enforcer-$RESOLVED_VERSION
