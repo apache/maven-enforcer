@@ -54,7 +54,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TestRequireFilesSize {
     @TempDir
-    public File temporaryFolder;
+    private File temporaryFolder;
 
     @Mock
     private MavenProject project;
