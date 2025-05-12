@@ -27,7 +27,10 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test the "require files exist" rule.
@@ -36,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class TestRequireFilesExist {
     @TempDir
-    public File temporaryFolder;
+    private File temporaryFolder;
 
     private final RequireFilesExist rule = new RequireFilesExist();
 

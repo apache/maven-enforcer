@@ -187,8 +187,8 @@ class ReactorModuleConvergenceTest {
         when(mp2.getDependencies()).thenReturn(depListMP2);
 
         MavenProject mp3 = createProjectChild2(mp1);
-        Dependency dep1_MP3 = createDependency("org.apache.commons", "commons-io", "1.0.4");
-        List<Dependency> depListMP3 = Arrays.asList(dep1_MP3);
+        Dependency dep1Mp3 = createDependency("org.apache.commons", "commons-io", "1.0.4");
+        List<Dependency> depListMP3 = Arrays.asList(dep1Mp3);
         when(mp3.getDependencies()).thenReturn(depListMP3);
 
         List<MavenProject> theList = Arrays.asList(mp1, mp2, mp3);
