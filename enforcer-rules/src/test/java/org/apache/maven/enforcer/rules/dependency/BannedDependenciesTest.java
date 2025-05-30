@@ -160,9 +160,6 @@ class BannedDependenciesTest {
 
     @Test
     void invalidExcludeFormat() throws Exception {
-        when(session.getCurrentProject()).thenReturn(project);
-        when(project.getDependencyArtifacts()).thenReturn(ARTIFACT_STUB_FACTORY.getScopedArtifacts());
-
         rule.setSearchTransitive(false);
         rule.setExcludes(Collections.singletonList("::::::::::"));
 
@@ -171,9 +168,6 @@ class BannedDependenciesTest {
 
     @Test
     void invalidIncludeFormat() throws Exception {
-        when(session.getCurrentProject()).thenReturn(project);
-        when(project.getDependencyArtifacts()).thenReturn(ARTIFACT_STUB_FACTORY.getScopedArtifacts());
-
         rule.setSearchTransitive(false);
         rule.setExcludes(Collections.singletonList("*"));
         rule.setIncludes(Collections.singletonList("*:*:x:x:x:x:x:x:x:x:"));
