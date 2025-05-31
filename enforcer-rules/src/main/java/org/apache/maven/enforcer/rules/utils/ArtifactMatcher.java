@@ -18,6 +18,8 @@
  */
 package org.apache.maven.enforcer.rules.utils;
 
+import static java.util.Optional.ofNullable;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -31,8 +33,6 @@ import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.codehaus.plexus.util.StringUtils;
 
-import static java.util.Optional.ofNullable;
-
 /**
  * This class is used for matching Artifacts against a list of patterns.
  *
@@ -44,9 +44,10 @@ public final class ArtifactMatcher {
      * @author I don't know
      */
     public static class Pattern {
-        private String pattern;
+        private final String pattern;
 
-        private String[] parts;
+        private final String[] parts;
+        private final java.util.regex.Pattern[] partsRegex;
 
         public Pattern(String pattern) {
             if (pattern == null) {
@@ -66,6 +67,7 @@ public final class ArtifactMatcher {
                     throw new IllegalArgumentException("Pattern or its part is empty.");
                 }
             }
+            partsRegex = new java.util.regex.Pattern[parts.length];
         }
 
         public boolean match(Artifact artifact) {
@@ -103,7 +105,7 @@ public final class ArtifactMatcher {
                 throws InvalidVersionSpecificationException {
             switch (parts.length) {
                 case 6:
-                    if (!matches(parts[5], classifier)) {
+                    if (!matches(5, classifier)) {
                         return false;
                     }
                 case 5:
@@ -111,7 +113,7 @@ public final class ArtifactMatcher {
                         scope = Artifact.SCOPE_COMPILE;
                     }
 
-                    if (!matches(parts[4], scope)) {
+                    if (!matches(4, scope)) {
                         return false;
                     }
                 case 4:
@@ -119,12 +121,12 @@ public final class ArtifactMatcher {
                         type = "jar";
                     }
 
-                    if (!matches(parts[3], type)) {
+                    if (!matches(3, type)) {
                         return false;
                     }
 
                 case 3:
-                    if (!matches(parts[2], version)) {
+                    if (!matches(2, version)) {
                         if (!containsVersion(
                                 VersionRange.createFromVersionSpec(parts[2]), new DefaultArtifactVersion(version))) {
                             return false;
@@ -132,33 +134,36 @@ public final class ArtifactMatcher {
                     }
 
                 case 2:
-                    if (!matches(parts[1], artifactId)) {
+                    if (!matches(1, artifactId)) {
                         return false;
                     }
                 case 1:
-                    return matches(parts[0], groupId);
+                    return matches(0, groupId);
                 default:
                     throw new AssertionError();
             }
         }
 
-        private boolean matches(String expression, String input) {
-            String regex = expression
-                    .replace(".", "\\.")
-                    .replace("*", ".*")
-                    .replace(":", "\\:")
-                    .replace('?', '.')
-                    .replace("[", "\\[")
-                    .replace("]", "\\]")
-                    .replace("(", "\\(")
-                    .replace(")", "\\)");
+        private boolean matches(int index, String input) {
+            //          return matches(parts[index], input);
+            if (partsRegex[index] == null) {
+                String regex = parts[index]
+                        .replace(".", "\\.")
+                        .replace("*", ".*")
+                        .replace(":", "\\:")
+                        .replace('?', '.')
+                        .replace("[", "\\[")
+                        .replace("]", "\\]")
+                        .replace("(", "\\(")
+                        .replace(")", "\\)");
 
-            // TODO: Check if this can be done better or prevented earlier.
-            if (input == null) {
-                input = "";
+                // TODO: Check if this can be done better or prevented earlier.
+                if (input == null) {
+                    input = "";
+                }
+                partsRegex[index] = java.util.regex.Pattern.compile(regex);
             }
-
-            return java.util.regex.Pattern.matches(regex, input);
+            return partsRegex[index].matcher(input).matches();
         }
 
         @Override
@@ -232,7 +237,7 @@ public final class ArtifactMatcher {
         } else {
             // only singular versions ever have a recommendedVersion
             int compareTo = recommendedVersion.compareTo(theVersion);
-            return (compareTo <= 0);
+            return compareTo <= 0;
         }
     }
 }

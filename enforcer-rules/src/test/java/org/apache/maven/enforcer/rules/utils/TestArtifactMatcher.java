@@ -125,6 +125,37 @@ class TestArtifactMatcher {
         executeMatch(matcher, "groupId", "anotherArtifact", "1.1", "", "", false);
     }
 
+    @Test
+    void testMatcherPerformance() {
+        patterns.add("groupId:artifactId:1.0");
+        patterns.add("*:anotherArtifact");
+
+        ignorePatterns.add("badGroup:*:*:test");
+        ignorePatterns.add("*:anotherArtifact:1.1");
+
+        ArtifactMatcher matcher = new ArtifactMatcher(patterns, ignorePatterns);
+
+        long startTime = System.nanoTime();
+        Artifact artifactGood1 = createMockArtifact("groupId", "artifactId", "1.0", "", "", "");
+        Artifact artifactGood2 = createMockArtifact("groupId", "anotherArtifact", "1.0", "", "", "");
+        Artifact artifactBad1 = createMockArtifact("badGroup", "artifactId", "1.0", "", "test", "");
+        Artifact artifactGood3 = createMockArtifact("badGroup", "anotherArtifact", "1.0", "", "", "");
+        Artifact artifactBad2 = createMockArtifact("groupId", "anotherArtifact", "1.1", "", "", "");
+        for (int i = 0; i < 10_000; i++) {
+            assertEquals(true, matcher.match(artifactGood1));
+            assertEquals(true, matcher.match(artifactGood2));
+            assertEquals(false, matcher.match(artifactBad1));
+            assertEquals(true, matcher.match(artifactGood3));
+            assertEquals(false, matcher.match(artifactBad2));
+        }
+        long timeTakenNs = System.nanoTime() - startTime;
+        assertTrue(
+                timeTakenNs < 200_000_000,
+                String.format(
+                        "Time taken for repeated tests should be less than 200ms, but was: %dms",
+                        timeTakenNs / 1_000_000));
+    }
+
     private void assertPatternDoesMatch(
             final String pattern,
             final String groupId,
