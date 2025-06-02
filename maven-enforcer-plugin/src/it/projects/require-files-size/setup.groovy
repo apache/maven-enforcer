@@ -16,8 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-def buildLog = new File(basedir, 'build.log').text
+def dir = new File(basedir, "test")
+dir.mkdir()
 
-// rule executed
-assert buildLog.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.files.RequireFilesSize passed')
-assert buildLog.contains('[ERROR] Rule 1: org.apache.maven.enforcer.rules.files.RequireFilesSize failed with message')
+def content = "A" * 4096 // 4KB of 'A'
+
+(1..3).each { i ->
+    def file = new File(dir, "file${i}.txt")
+    file.text = content
+}
+
+println "Successfully created bogus files with 4KB of data."
