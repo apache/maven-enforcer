@@ -18,8 +18,6 @@
  */
 package org.apache.maven.enforcer.rules.utils;
 
-import static java.util.Optional.ofNullable;
-
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -32,6 +30,8 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.eclipse.aether.graph.DependencyNode;
+
+import static java.util.Optional.ofNullable;
 
 /**
  *
@@ -86,7 +86,6 @@ public final class ArtifactUtils {
         }
     }
 
-
     /**
      * Prepares patterns directly into a reusable predicate.
      * This can improve efficiency where there are lots of patterns and/or artifacts to match.
@@ -101,7 +100,6 @@ public final class ArtifactUtils {
                 .reduce(Predicate::or)
                 .orElse(test -> false);
     }
-
 
     /**
      * Checks if the given dependency artifact matches the given collection of patterns
@@ -120,7 +118,6 @@ public final class ArtifactUtils {
             throw e;
         }
     }
-
 
     /**
      * Cleans the patterns provided ready for use in {@link ArtifactMatcher.Pattern}

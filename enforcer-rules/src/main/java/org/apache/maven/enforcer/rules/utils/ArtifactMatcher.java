@@ -18,8 +18,6 @@
  */
 package org.apache.maven.enforcer.rules.utils;
 
-import static java.util.Optional.ofNullable;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -32,6 +30,8 @@ import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.codehaus.plexus.util.StringUtils;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * This class is used for matching Artifacts against a list of patterns.
