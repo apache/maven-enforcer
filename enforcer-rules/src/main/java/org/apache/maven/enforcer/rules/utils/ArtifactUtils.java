@@ -91,7 +91,7 @@ public final class ArtifactUtils {
      * This can improve efficiency where there are lots of patterns and/or artifacts to match.
      *
      * @param patterns the patterns to use for the predicate
-     * @return a re-usable predicate equivalent to that which would be created in {@link #matchDependencyArtifact(Artifact, Collection)}.
+     * @return a re-usable predicate.
      */
     public static Predicate<Artifact> prepareDependencyArtifactMatcher(Collection<String> patterns) {
         return cleansePatterns(patterns)
@@ -99,24 +99,6 @@ public final class ArtifactUtils {
                 .map(pattern -> (Predicate<Artifact>) pattern::match)
                 .reduce(Predicate::or)
                 .orElse(test -> false);
-    }
-
-    /**
-     * Checks if the given dependency artifact matches the given collection of patterns
-     *
-     * @param artifact dependency artifact to match against patterns
-     * @param patterns patterns to match against the artifacts
-     * @return {@code true} if the given artifact matches the set of patterns
-     */
-    public static boolean matchDependencyArtifact(Artifact artifact, Collection<String> patterns) {
-        try {
-            return cleansePatterns(patterns).anyMatch(pattern -> compareDependency(pattern, artifact));
-        } catch (IllegalArgumentException e) {
-            if (e.getCause() instanceof InvalidVersionSpecificationException) {
-                throw new IllegalArgumentException(e.getMessage());
-            }
-            throw e;
-        }
     }
 
     /**

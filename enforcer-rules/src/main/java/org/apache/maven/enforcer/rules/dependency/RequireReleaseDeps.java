@@ -23,6 +23,7 @@ import javax.inject.Named;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -30,7 +31,6 @@ import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.execution.MavenSession;
 
 import static java.util.Optional.ofNullable;
-import static org.apache.maven.enforcer.rules.utils.ArtifactUtils.matchDependencyArtifact;
 
 /**
  * This rule checks that no snapshots are included.
@@ -50,6 +50,9 @@ public final class RequireReleaseDeps extends BannedDependenciesBase {
      */
     private boolean failWhenParentIsSnapshot = true;
 
+    private Predicate<Artifact> shouldExclude;
+    private Predicate<Artifact> shouldInclude;
+
     @Inject
     public RequireReleaseDeps(MavenSession session, ResolverUtil resolverUtil) {
         super(session, resolverUtil);
@@ -67,6 +70,8 @@ public final class RequireReleaseDeps extends BannedDependenciesBase {
         }
 
         if (callSuper) {
+            shouldExclude = ArtifactUtils.prepareDependencyArtifactMatcher(getExcludes());
+            shouldInclude = ArtifactUtils.prepareDependencyArtifactMatcher(getIncludes());
             super.execute();
             if (failWhenParentIsSnapshot) {
 
@@ -97,8 +102,7 @@ public final class RequireReleaseDeps extends BannedDependenciesBase {
     protected boolean validate(Artifact artifact) {
         // only check isSnapshot() if the artifact does not match (excludes minus includes)
         // otherwise true
-        return (matchDependencyArtifact(artifact, getExcludes()) && !matchDependencyArtifact(artifact, getIncludes()))
-                || !artifact.isSnapshot();
+        return shouldExclude.test(artifact) && !shouldInclude.test(artifact) || !artifact.isSnapshot();
     }
 
     /**
