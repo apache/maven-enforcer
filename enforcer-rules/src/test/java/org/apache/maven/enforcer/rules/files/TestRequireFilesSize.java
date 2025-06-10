@@ -185,7 +185,7 @@ class TestRequireFilesSize {
 
     @Test
     void testDirectoryContentOverUpperBound() throws IOException {
-        Path d = Files.createTempDirectory("junit");
+        Path d = Files.createTempDirectory(temporaryFolder.toPath(), "junit");
         long totalSize = d.toFile().length();
         for (int i = 0; i < 3; i++) {
             Path f = Files.createTempFile(d, "file", ".txt");
@@ -205,7 +205,7 @@ class TestRequireFilesSize {
 
     @Test
     void testDirectoryContentUnderLowerBound() throws IOException, EnforcerRuleException {
-        Path d = Files.createTempDirectory("junit");
+        Path d = Files.createTempDirectory(temporaryFolder.toPath(), "junit");
         long totalSize = d.toFile().length();
         for (int i = 0; i < 3; i++) {
             Path f = Files.createTempFile(d, "file", ".txt");
