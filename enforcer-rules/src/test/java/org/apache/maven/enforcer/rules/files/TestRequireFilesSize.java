@@ -22,8 +22,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.UUID;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
@@ -177,6 +180,41 @@ class TestRequireFilesSize {
         rule.setMaxsize(10);
         rule.setSatisfyAny(true);
 
+        rule.execute();
+    }
+
+    @Test
+    void testDirectoryContentOverUpperBound() throws IOException {
+        Path d = Files.createTempDirectory(temporaryFolder.toPath(), "junit");
+        long totalSize = d.toFile().length();
+        for (int i = 0; i < 3; i++) {
+            Path f = Files.createTempFile(d, "file", ".txt");
+            Files.write(f, UUID.randomUUID().toString().getBytes());
+            totalSize += f.toFile().length();
+        }
+        rule.setFilesList(Collections.singletonList(d.toFile()));
+        rule.setMaxsize(totalSize - 1);
+        rule.setRecursive(true);
+        try {
+            rule.execute();
+            fail("Should get exception");
+        } catch (EnforcerRuleException e) {
+            assertNotNull(e.getMessage());
+        }
+    }
+
+    @Test
+    void testDirectoryContentUnderLowerBound() throws IOException, EnforcerRuleException {
+        Path d = Files.createTempDirectory(temporaryFolder.toPath(), "junit");
+        long totalSize = d.toFile().length();
+        for (int i = 0; i < 3; i++) {
+            Path f = Files.createTempFile(d, "file", ".txt");
+            Files.write(f, UUID.randomUUID().toString().getBytes());
+            totalSize += f.toFile().length();
+        }
+        rule.setFilesList(Collections.singletonList(d.toFile()));
+        rule.setMinsize(totalSize);
+        rule.setRecursive(true);
         rule.execute();
     }
 

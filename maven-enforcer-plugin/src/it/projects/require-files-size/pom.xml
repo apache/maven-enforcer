@@ -50,6 +50,13 @@ under the License.
                     <file>pom.xml</file>
                   </files>
                 </requireFilesSize>
+                <requireFilesSize>
+                  <maxsize>12000</maxsize>
+                  <recursive>true</recursive>
+                  <files>
+                    <file>test</file>
+                  </files>
+                </requireFilesSize>
               </rules>
             </configuration>
           </execution>
