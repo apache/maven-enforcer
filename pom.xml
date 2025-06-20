@@ -77,7 +77,7 @@
   </distributionManagement>
 
   <properties>
-    <mavenVersion>3.6.3</mavenVersion>
+    <mavenVersion>3.9.10</mavenVersion>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
     <javaVersion>8</javaVersion>
     <mockito.version>4.11.0</mockito.version>
