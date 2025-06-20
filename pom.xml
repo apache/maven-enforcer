@@ -77,13 +77,13 @@
   </distributionManagement>
 
   <properties>
-    <mavenVersion>3.6.3</mavenVersion>
+    <mavenVersion>3.9.10</mavenVersion>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
     <javaVersion>8</javaVersion>
     <mockito.version>4.11.0</mockito.version>
     <project.build.outputTimestamp>2024-07-30T15:32:39Z</project.build.outputTimestamp>
-    <!-- the same as Maven 3.6.3 -->
-    <resolver.version>1.4.1</resolver.version>
+    <!-- the same as in Maven  -->
+    <resolver.version>1.9.23</resolver.version>
 
     <!-- plugins used in IT, not defined in parent -->
     <version.maven-pmd-plugin>3.21.0</version.maven-pmd-plugin>
