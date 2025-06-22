@@ -118,10 +118,9 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
             for (Pattern regEx : regExs) {
                 if (regEx.matcher(artifact.getDependencyConflictId()).matches()) {
                     String version = uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
-                    if (!versionMembers.containsKey(version)) {
-                        versionMembers.put(version, new ArrayList<>());
-                    }
-                    versionMembers.get(version).add(artifact.getDependencyConflictId() + source);
+                    versionMembers
+                            .computeIfAbsent(version, unused -> new ArrayList<>())
+                            .add(artifact.getDependencyConflictId() + source);
                 }
             }
         }
