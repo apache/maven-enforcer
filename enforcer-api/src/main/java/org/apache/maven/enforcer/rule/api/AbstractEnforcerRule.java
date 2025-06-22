@@ -35,6 +35,11 @@ public abstract class AbstractEnforcerRule extends AbstractEnforcerRuleBase {
     private EnforcerLevel level = EnforcerLevel.ERROR;
 
     /**
+     * Rule name for current rule instance.
+     */
+    private String ruleName;
+
+    /**
      * Current Enforcer execution level
      *
      * @return an Enforcer execution level
@@ -42,6 +47,17 @@ public abstract class AbstractEnforcerRule extends AbstractEnforcerRuleBase {
     @Override
     public EnforcerLevel getLevel() {
         return level;
+    }
+
+    /**
+     * Rule name for current rule instance.
+     *
+     * @return a rule name.
+     * @since 3.6.0
+     */
+    @Override
+    public String getRuleName() {
+        return ruleName;
     }
 
     /**
@@ -64,7 +80,7 @@ public abstract class AbstractEnforcerRule extends AbstractEnforcerRuleBase {
      * message as a warning.
      *
      * @throws EnforcerRuleException the enforcer rule exception
-     * @throws EnforcerRuleError     in order to brake a build immediately
+     * @throws EnforcerRuleError in order to brake a build immediately
      */
     public abstract void execute() throws EnforcerRuleException;
 }

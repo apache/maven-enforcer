@@ -45,7 +45,8 @@ public final class EnforcerRuleDesc {
     }
 
     public String getName() {
-        return name;
+        String ruleName = rule.getRuleName();
+        return ruleName == null || ruleName.isEmpty() ? name : ruleName;
     }
 
     public EnforcerRuleBase getRule() {

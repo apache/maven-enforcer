@@ -43,4 +43,14 @@ public interface EnforcerRuleBase {
      * @param log an {@link EnforcerLogger} instance
      */
     default void setLog(EnforcerLogger log) {}
+
+    /**
+     * Rule name for current rule instance.
+     *
+     * @return a rule name.
+     * @since 3.6.0
+     */
+    default String getRuleName() {
+        return null;
+    }
 }
