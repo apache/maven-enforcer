@@ -128,6 +128,22 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
         return versionMembers;
     }
 
+    void addDependency(String dependency) {
+        dependencies.add(dependency);
+    }
+
+    void addPlugin(String plugin) {
+        plugins.add(plugin);
+    }
+
+    void addBuildPlugin(String buildPlugin) {
+        buildPlugins.add(buildPlugin);
+    }
+
+    void addReportPlugin(String reportPlugin) {
+        reportPlugins.add(reportPlugin);
+    }
+
     @Override
     public String toString() {
         return String.format(
