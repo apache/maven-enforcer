@@ -42,10 +42,25 @@ under the License.
               <goal>enforce</goal>
             </goals>
             <configuration>
+              <rulesToSkip>
+                <rule>fail2</rule>
+              </rulesToSkip>
               <rules>
-                <AlwaysFail>
+                <alwaysFail>
                   <level>WARN</level>
-                </AlwaysFail>
+                </alwaysFail>
+                <alwaysFail>
+                  <ruleName>fail1</ruleName>
+                  <level>WARN</level>
+                </alwaysFail>
+                <alwaysFail>
+                  <ruleName>fail2</ruleName>
+                  <level>WARN</level>
+                </alwaysFail>
+                <alwaysFail>
+                  <ruleName>fail3</ruleName>
+                  <level>WARN</level>
+                </alwaysFail>
               </rules>
             </configuration>
           </execution>
