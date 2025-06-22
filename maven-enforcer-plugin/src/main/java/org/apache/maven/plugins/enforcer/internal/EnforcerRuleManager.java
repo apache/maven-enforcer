@@ -107,7 +107,8 @@ public class EnforcerRuleManager {
             // we need rule level before configuration in order to proper set logger
             EnforcerLevel ruleLevel = getRuleLevelFromConfig(ruleConfig);
 
-            EnforcerRuleDesc ruleDesc = createRuleDesc(ruleConfig.getName(), ruleConfig.getAttribute("implementation"));
+            EnforcerRuleDesc ruleDesc =
+                    createRuleDesc(ruleConfig.getName(), ruleConfig.getAttribute("implementation"), log);
             // setup logger before rule configuration
             ruleDesc.getRule().setLog(ruleLevel == EnforcerLevel.ERROR ? enforcerLoggerError : enforcerLoggerWarn);
             if (ruleConfig.getChildCount() > 0) {
@@ -130,7 +131,8 @@ public class EnforcerRuleManager {
         return EnforcerLevel.valueOf(level);
     }
 
-    private EnforcerRuleDesc createRuleDesc(String name, String implementation) throws EnforcerRuleManagerException {
+    private EnforcerRuleDesc createRuleDesc(String name, String implementation, Log log)
+            throws EnforcerRuleManagerException {
 
         // component name should always start at lowercase character
         String ruleName = Character.toLowerCase(name.charAt(0)) + name.substring(1);
@@ -156,6 +158,8 @@ public class EnforcerRuleManager {
         }
 
         try {
+            log.warn("ruleName " + ruleName + " with implementation " + ruleClass
+                    + "use deprecated enforcer api - contact with rule maintainer to fix it");
             return new EnforcerRuleDesc(
                     ruleName, (EnforcerRuleBase) Class.forName(ruleClass).newInstance());
         } catch (Exception e) {
