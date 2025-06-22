@@ -69,10 +69,14 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
         // consider including profile based artifacts
         Map<String, List<String>> versionMembers = new LinkedHashMap<>();
 
+        Set<String> allBuildPlugins = new HashSet<>(buildPlugins);
+        allBuildPlugins.addAll(plugins);
+        Set<String> allReportPlugins = new HashSet<>(reportPlugins);
+        allReportPlugins.addAll(plugins);
         // CHECKSTYLE_OFF: LineLength
         versionMembers.putAll(collectVersionMembers(project.getArtifacts(), dependencies, " (dependency)"));
-        versionMembers.putAll(collectVersionMembers(project.getPluginArtifacts(), buildPlugins, " (buildPlugin)"));
-        versionMembers.putAll(collectVersionMembers(project.getReportArtifacts(), reportPlugins, " (reportPlugin)"));
+        versionMembers.putAll(collectVersionMembers(project.getPluginArtifacts(), allBuildPlugins, " (buildPlugin)"));
+        versionMembers.putAll(collectVersionMembers(project.getReportArtifacts(), allReportPlugins, " (reportPlugin)"));
         // CHECKSTYLE_ON: LineLength
 
         if (versionMembers.size() > 1) {
@@ -114,14 +118,29 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
             for (Pattern regEx : regExs) {
                 if (regEx.matcher(artifact.getDependencyConflictId()).matches()) {
                     String version = uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
-                    if (!versionMembers.containsKey(version)) {
-                        versionMembers.put(version, new ArrayList<>());
-                    }
-                    versionMembers.get(version).add(artifact.getDependencyConflictId() + source);
+                    versionMembers
+                            .computeIfAbsent(version, unused -> new ArrayList<>())
+                            .add(artifact.getDependencyConflictId() + source);
                 }
             }
         }
         return versionMembers;
+    }
+
+    void addDependency(String dependency) {
+        dependencies.add(dependency);
+    }
+
+    void addPlugin(String plugin) {
+        plugins.add(plugin);
+    }
+
+    void addBuildPlugin(String buildPlugin) {
+        buildPlugins.add(buildPlugin);
+    }
+
+    void addReportPlugin(String reportPlugin) {
+        reportPlugins.add(reportPlugin);
     }
 
     @Override
