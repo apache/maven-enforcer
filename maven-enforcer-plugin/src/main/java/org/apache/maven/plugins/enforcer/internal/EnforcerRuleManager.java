@@ -159,7 +159,7 @@ public class EnforcerRuleManager {
 
         try {
             log.warn("ruleName " + ruleName + " with implementation " + ruleClass
-                    + "use deprecated enforcer api - contact with rule maintainer to fix it");
+                    + "use deprecated enforcer API - contact the rule maintainer to fix it");
             return new EnforcerRuleDesc(
                     ruleName, (EnforcerRuleBase) Class.forName(ruleClass).newInstance());
         } catch (Exception e) {
