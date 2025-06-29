@@ -165,7 +165,7 @@ class TestRequireNoRepositories {
     }
 
     /**
-     * The model contains a single repository which is is not allowed by the default rules.
+     * The model contains a single repository which is not allowed by the default rules.
      */
     @Test
     void testAllBannedWithRepository() {
@@ -179,7 +179,7 @@ class TestRequireNoRepositories {
     }
 
     /**
-     * The model contains a single plugin repository which is is not allowed by the default rules.
+     * The model contains a single plugin repository which is not allowed by the default rules.
      */
     @Test
     void testAllBannedWithPluginRepository() {

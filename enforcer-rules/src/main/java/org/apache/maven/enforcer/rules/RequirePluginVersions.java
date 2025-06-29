@@ -496,7 +496,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
                             + lifecycle.getId());
                     allPlugins.addAll(getAllPlugins(project, lifecycle));
                 } catch (BuildFailureException e) {
-                    // i'm going to swallow this because the
+                    // swallow this because the
                     // user may have declared a phase that
                     // doesn't exist for every module.
                 }
