@@ -26,14 +26,13 @@ things.
 Getting Started
 ---------------
 
-+ Make sure you have a [JIRA account](https://issues.apache.org/jira/).
 + Make sure you have a [GitHub account](https://github.com/signup/free).
-+ If you're planning to implement a new feature it makes sense to discuss your changes 
++ If you're planning to implement a new feature, it makes sense to discuss your changes 
   on the [dev list](https://maven.apache.org/mail-lists.html) first. 
   This way you can make sure you're not wasting your time on something that isn't 
   considered to be in Apache Maven Enforcer's scope.
-+ Submit a ticket for your issue, assuming one does not already exist.
-  + Clearly describe the issue including steps to reproduce when it is a bug.
++ Open a Github issue for the issue, assuming one does not already exist.
+  + Clearly describe the issue. If it is a bug, include steps to reproduce it.
   + Make sure you fill in the earliest version that you know has the issue.
 + Fork the repository on GitHub.
 
@@ -55,8 +54,8 @@ Making Trivial Changes
 ----------------------
 
 For changes of a trivial nature to comments and documentation, it is not always
-necessary to create a new ticket in JIRA.  In this case, it is appropriate to
-start the first line of a commit with '(doc)' instead of a ticket number.
+necessary to create a new issue.  In this case, it is appropriate to
+start the first line of a commit with '(doc)' instead of an issue number.
 
 Submitting Changes
 ------------------
@@ -64,7 +63,9 @@ Submitting Changes
 + Sign the [Contributor License Agreement][cla] if you haven't already.
 + Push your changes to a topic branch in your fork of the repository.
 + Submit a pull request to the repository in the apache organization.
-+ Update your JIRA ticket and include a link to the pull request in the ticket.
++ Include the issue number in the PR description as "#234" if there's more work 
+  to be done on the issue following this PR, or "fixes #234" if the PR completes work
+  on the issue.
 
 Additional Resources
 --------------------
