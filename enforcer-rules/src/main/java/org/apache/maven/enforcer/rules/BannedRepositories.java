@@ -31,7 +31,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.project.MavenProject;
 
 /**
- * This rule checks that this project's maven session whether have banned repositories.
+ * This rule checks whether this project's maven session has banned repositories.
  *
  * @author <a href="mailto:wangyf2010@gmail.com">Simon Wang</a>
  */

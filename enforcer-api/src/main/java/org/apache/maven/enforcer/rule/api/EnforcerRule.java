@@ -38,7 +38,7 @@ public interface EnforcerRule extends EnforcerRuleBase {
      * message as a warning.
      *
      * @param helper The helper provides access to the log, MavenSession and has
-     *               helpers to get common components. It is also able to lookup components
+     *               helpers to get common components. It is also able to look up components
      *               by class name.
      * @throws EnforcerRuleException the enforcer rule exception
      */
@@ -56,14 +56,14 @@ public interface EnforcerRule extends EnforcerRuleBase {
 
     /**
      * If the rule is cacheable and the same id is found in the cache, the stored results are passed to this method to
-     * allow double checking of the results. Most of the time this can be done by generating unique ids, but sometimes
+     * allow double-checking of the results. Most of the time this can be done by generating unique ids, but sometimes
      * the results of objects returned by the helper need to be queried. You may for example, store certain objects in
      * your rule and then query them later.
      *
      * @param cachedRule the last cached instance of the rule. This is to be used by the rule to
      *                   potentially determine if the results are still valid (ie if the configuration has been
      *                   overridden)
-     * @return <code>true</code> if the stored results are valid for the same id.
+     * @return <code>true</code> if the stored results are valid for the same id
      */
     boolean isResultValid(@Nonnull EnforcerRule cachedRule);
 

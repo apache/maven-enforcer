@@ -250,7 +250,7 @@ class EnforcerRuleManagerTest {
     }
 
     @Test
-    void ruleLevelShouldBeDisoveredFromConfigured() throws Exception {
+    void ruleLevelShouldBeDiscoveredFromConfigured() throws Exception {
 
         setupMocks();
 

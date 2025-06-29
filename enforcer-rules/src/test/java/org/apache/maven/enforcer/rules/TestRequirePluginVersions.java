@@ -115,7 +115,7 @@ class TestRequirePluginVersions {
         source.setArtifactId("foo");
         source.setGroupId("group");
 
-        // setup the plugins. I'm setting up the foo group
+        // set up the plugins. I'm setting up the foo group
         // with a few bogus entries and then a real one.
         // to test that the list is exhaustively
         // searched for versions before giving up.
@@ -192,7 +192,7 @@ class TestRequirePluginVersions {
         Plugin source = new Plugin();
         source.setGroupId("group");
 
-        // setup the plugins.
+        // set up the plugins.
         List<Plugin> plugins = new ArrayList<>();
         plugins.add(EnforcerTestUtils.newPlugin("group", "a-artifact", "1.0-${SNAPSHOT}"));
         plugins.add(EnforcerTestUtils.newPlugin("group", "b-artifact", "${1.0}"));
