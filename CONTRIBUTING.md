@@ -31,7 +31,7 @@ Getting Started
   on the [dev list](https://maven.apache.org/mail-lists.html) first. 
   This way you can make sure you're not wasting your time on something that isn't 
   considered to be in Apache Maven Enforcer's scope.
-+ Open a Github issue for the issue, assuming one does not already exist.
++ Open a GitHub issue for the issue, assuming one does not already exist.
   + Clearly describe the issue. If it is a bug, include steps to reproduce it.
   + Make sure you fill in the earliest version that you know has the issue.
 + Fork the repository on GitHub.
