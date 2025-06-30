@@ -363,22 +363,19 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
     /**
      * Add the additional plugins if they don't exist yet.
      *
-     * @param existing   the existing
-     * @param additional the additional
-     * @return the sets the
+     * @param existing   the existing plugins
+     * @param additional the additional plugins
+     * @return the additional and existing plugins
      * @throws EnforcerRuleError the enforcer error
      */
     public Set<Plugin> addAdditionalPlugins(Set<Plugin> existing, List<String> additional) throws EnforcerRuleError {
         if (additional != null) {
+            if (existing == null) {
+                existing = new HashSet<>();
+            }
             for (String pluginString : additional) {
                 Plugin plugin = parsePluginString(pluginString, "AdditionalPlugins");
-
-                if (existing == null) {
-                    existing = new HashSet<>();
-                    existing.add(plugin);
-                } else if (!existing.contains(plugin)) {
-                    existing.add(plugin);
-                }
+                existing.add(plugin);
             }
         }
         return existing;
@@ -496,7 +493,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
                             + lifecycle.getId());
                     allPlugins.addAll(getAllPlugins(project, lifecycle));
                 } catch (BuildFailureException e) {
-                    // i'm going to swallow this because the
+                    // swallow this because the
                     // user may have declared a phase that
                     // doesn't exist for every module.
                 }

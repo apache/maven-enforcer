@@ -209,7 +209,7 @@ public final class ExternalRules extends AbstractEnforcerRuleConfigProvider {
                 | TransformerFactoryConfigurationError e) {
             throw new RuntimeException("Could not open resource " + xsltLocation);
         } catch (TransformerException e) {
-            throw new RuntimeException("Could not transform " + sourceLocation + " usinng XSLT " + xsltLocation);
+            throw new RuntimeException("Could not transform " + sourceLocation + " using XSLT " + xsltLocation);
         }
     }
 }

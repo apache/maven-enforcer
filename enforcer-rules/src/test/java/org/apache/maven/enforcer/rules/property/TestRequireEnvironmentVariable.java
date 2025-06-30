@@ -76,7 +76,7 @@ class TestRequireEnvironmentVariable {
             // expected to catch this.
         }
 
-        // can't really predict what a PATH will looks like, just enforce it ain't empty
+        // can't really predict what a PATH will look like, just enforce it ain't empty
         rule.setRegex(".{1,}");
         try {
             rule.execute();
