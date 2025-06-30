@@ -65,7 +65,6 @@ abstract class AbstractVersionEnforcer extends AbstractStandardEnforcerRule {
             throw new EnforcerRuleException(variableName + " version can't be empty.");
         } else {
 
-            VersionRange vr;
             String msg = "Detected " + variableName + " Version: " + actualVersion;
 
             // short circuit check if the strings are exactly equal
@@ -73,15 +72,15 @@ abstract class AbstractVersionEnforcer extends AbstractStandardEnforcerRule {
                 getLog().debug(msg + " is allowed in the range " + requiredVersionRange + ".");
             } else {
                 try {
-                    vr = VersionRange.createFromVersionSpec(requiredVersionRange);
+                    VersionRange versionRange = VersionRange.createFromVersionSpec(requiredVersionRange);
 
-                    if (containsVersion(vr, actualVersion)) {
-                        getLog().debug(msg + " is allowed in the range " + toString(vr) + ".");
+                    if (containsVersion(versionRange, actualVersion)) {
+                        getLog().debug(msg + " is allowed in the range " + toString(versionRange) + ".");
                     } else {
                         String message = getMessage();
 
                         if (message == null || message.isEmpty()) {
-                            message = msg + " is not in the allowed range " + toString(vr) + ".";
+                            message = msg + " is not in the allowed range " + toString(versionRange) + ".";
                         }
 
                         throw new EnforcerRuleException(message);
@@ -94,19 +93,19 @@ abstract class AbstractVersionEnforcer extends AbstractStandardEnforcerRule {
         }
     }
 
-    protected static String toString(VersionRange vr) {
+    protected static String toString(VersionRange versionRange) {
         // as recommended version is used as lower bound in this context modify the string representation
-        if (vr.getRecommendedVersion() != null) {
-            return "[" + vr.getRecommendedVersion().toString() + ",)";
+        if (versionRange.getRecommendedVersion() != null) {
+            return "[" + versionRange.getRecommendedVersion().toString() + ",)";
         } else {
-            return vr.toString();
+            return versionRange.toString();
         }
     }
 
     @Override
     public String getCacheId() {
         if (version != null && !version.isEmpty()) {
-            // return the hashcodes of the parameter that matters
+            // return the hash codes of the parameter that matters
             return "" + version.hashCode();
         } else {
             return "0";
@@ -132,9 +131,9 @@ abstract class AbstractVersionEnforcer extends AbstractStandardEnforcerRule {
      * <li><code>(,2.0.5],[2.1.1,)</code> Versions up to 2.0.5 (included) and 2.1.1 or higher</li>
      * </ul>
      *
-     * @param theVersion the required version to set
+     * @param version the required version to set
      */
-    public void setVersion(String theVersion) {
-        this.version = theVersion;
+    public void setVersion(String version) {
+        this.version = version;
     }
 }
