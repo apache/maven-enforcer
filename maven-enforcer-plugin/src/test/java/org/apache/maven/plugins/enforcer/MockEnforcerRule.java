@@ -69,34 +69,6 @@ public class MockEnforcerRule implements EnforcerRule {
         this.failRule = theFailRule;
     }
 
-    /**
-     * @return the isResultValid
-     */
-    public boolean isResultValid() {
-        return this.isResultValid;
-    }
-
-    /**
-     * @param theIsResultValid the isResultValid to set
-     */
-    public void setResultValid(boolean theIsResultValid) {
-        this.isResultValid = theIsResultValid;
-    }
-
-    /**
-     * @param theCacheId the cacheId to set
-     */
-    public void setCacheId(String theCacheId) {
-        this.cacheId = theCacheId;
-    }
-
-    /**
-     * @param theIsCacheable the isCacheable to set
-     */
-    public void setCacheable(boolean theIsCacheable) {
-        this.isCacheable = theIsCacheable;
-    }
-
     /*
      * (non-Javadoc)
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
