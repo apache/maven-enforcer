@@ -231,52 +231,52 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
      * </ul>
      * Note: '!' is allowed at the beginning of the string and still considered valid.
      *
-     * @param theFamily the family to check.
-     * @return true if one of the valid families.
+     * @param family the family to check
+     * @return true if one of the valid families
      */
-    public boolean isValidFamily(String theFamily) {
+    public boolean isValidFamily(String family) {
 
         // in case they are checking !family
-        theFamily = StringUtils.stripStart(theFamily, "!");
+        family = StringUtils.stripStart(family, "!");
 
-        return (theFamily == null || theFamily.isEmpty())
-                || Os.getValidFamilies().contains(theFamily);
+        return (family == null || family.isEmpty())
+                || Os.getValidFamilies().contains(family);
     }
 
     /**
-     * Sets the arch.
+     * Sets the architecture.
      *
-     * @param theArch the arch to set
+     * @param architecture the architecture to set
      */
-    public void setArch(String theArch) {
-        this.arch = theArch;
+    public void setArch(String architecture) {
+        this.arch = architecture;
     }
 
     /**
      * Sets the family.
      *
-     * @param theFamily the family to set
+     * @param family the family to set
      */
-    public void setFamily(String theFamily) {
-        this.family = theFamily;
+    public void setFamily(String family) {
+        this.family = family;
     }
 
     /**
      * Sets the name.
      *
-     * @param theName the name to set
+     * @param name the name to set
      */
-    public void setName(String theName) {
-        this.name = theName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
      * Sets the version.
      *
-     * @param theVersion the version to set
+     * @param version the version to set
      */
-    public void setVersion(String theVersion) {
-        this.version = theVersion;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     /**
@@ -288,7 +288,7 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
 
     @Override
     public String getCacheId() {
-        // return the hashcodes of all the parameters
+        // return the hash codes of all the parameters
         StringBuilder b = new StringBuilder();
         if (version != null && !version.isEmpty()) {
             b.append(version.hashCode());
