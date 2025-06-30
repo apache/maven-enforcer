@@ -147,10 +147,10 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
     /**
      * Sets the search transitive.
      *
-     * @param theSearchTransitive the searchTransitive to set
+     * @param searchTransitive the searchTransitive to set
      */
-    public void setSearchTransitive(boolean theSearchTransitive) {
-        this.searchTransitive = theSearchTransitive;
+    public void setSearchTransitive(boolean searchTransitive) {
+        this.searchTransitive = searchTransitive;
     }
 
     /**
@@ -170,10 +170,10 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
      * include rule.
      *
      * @see #getExcludes()
-     * @param theExcludes the excludes to set
+     * @param excludes the excludes to set
      */
-    public void setExcludes(List<String> theExcludes) {
-        this.excludes = theExcludes;
+    public void setExcludes(List<String> excludes) {
+        this.excludes = excludes;
     }
 
     /**
@@ -196,10 +196,10 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
      * include "xerces:xerces-api"
      *
      * @see #setIncludes(List)
-     * @param theIncludes the includes to set
+     * @param includes the includes to set
      */
-    public void setIncludes(List<String> theIncludes) {
-        this.includes = theIncludes;
+    public void setIncludes(List<String> includes) {
+        this.includes = includes;
     }
 
     public boolean isSearchTransitive() {

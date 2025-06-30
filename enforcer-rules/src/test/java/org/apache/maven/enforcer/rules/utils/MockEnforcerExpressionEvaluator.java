@@ -30,19 +30,19 @@ public class MockEnforcerExpressionEvaluator extends PluginParameterExpressionEv
     /**
      * Instantiates a new mock enforcer expression evaluator.
      *
-     * @param theContext the context
+     * @param context the context
      */
-    public MockEnforcerExpressionEvaluator(MavenSession theContext) {
-        super(theContext, new MojoExecution(new MojoDescriptor()));
+    public MockEnforcerExpressionEvaluator(MavenSession context) {
+        super(context, new MojoExecution(new MojoDescriptor()));
     }
 
     @Override
-    public Object evaluate(String expr) {
-        if (expr != null) {
+    public Object evaluate(String expression) {
+        if (expression != null) {
             // just remove the ${ } and return the name as the value
-            return expr.replaceAll("\\$\\{|}", "");
+            return expression.replaceAll("\\$\\{|}", "");
         } else {
-            return expr;
+            return expression;
         }
     }
 }

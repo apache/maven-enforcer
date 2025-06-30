@@ -96,10 +96,10 @@ public final class RequireJavaVendor extends AbstractStandardEnforcerRule {
      * java.vendor, which you can also see with mvn --version. <br>
      * Excludes override the include rules.
      *
-     * @param theExcludes the vendors to exclude from the include list
+     * @param excludes the vendors to exclude from the include list
      */
-    public void setExcludes(List<String> theExcludes) {
-        this.excludes = theExcludes;
+    public void setExcludes(List<String> excludes) {
+        this.excludes = excludes;
     }
 
     /**
@@ -114,12 +114,12 @@ public final class RequireJavaVendor extends AbstractStandardEnforcerRule {
      * <li><code>Amazon</code> prohibits vendor name Amazon </li>
      * </ul>
      *
-     * @param theIncludes the list of required vendors
+     * @param includes the list of required vendors
      *
      * @see #setExcludes(List)
      */
-    public void setIncludes(List<String> theIncludes) {
-        this.includes = theIncludes;
+    public void setIncludes(List<String> includes) {
+        this.includes = includes;
     }
 
     @Override

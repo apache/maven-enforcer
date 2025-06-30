@@ -475,18 +475,18 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
      * later than the plugin is executing.
      *
      * @param project   the project
-     * @param thePhases the phases
+     * @param phases the phases
      * @return the bound plugins
      * @throws PluginNotFoundException     the plugin not found exception
      * @throws LifecycleExecutionException the lifecycle execution exception
      */
-    private Set<Plugin> getBoundPlugins(MavenProject project, String thePhases)
+    private Set<Plugin> getBoundPlugins(MavenProject project, String phases)
             throws PluginNotFoundException, LifecycleExecutionException {
 
         Set<Plugin> allPlugins = new HashSet<>();
 
         // lookup the bindings for all the passed in phases
-        String[] lifecyclePhases = thePhases.split(",");
+        String[] lifecyclePhases = phases.split(",");
         for (int i = 0; i < lifecyclePhases.length; i++) {
             String lifecyclePhase = lifecyclePhases[i];
             if (lifecyclePhase != null && !lifecyclePhase.isEmpty()) {
@@ -884,19 +884,19 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
     /**
      * Sets the ban latest.
      *
-     * @param theBanLatest the banLatest to set
+     * @param banLatest the banLatest to set
      */
-    public void setBanLatest(boolean theBanLatest) {
-        this.banLatest = theBanLatest;
+    public void setBanLatest(boolean banLatest) {
+        this.banLatest = banLatest;
     }
 
     /**
      * Sets the ban release.
      *
-     * @param theBanRelease the banRelease to set
+     * @param banRelease the banRelease to set
      */
-    public void setBanRelease(boolean theBanRelease) {
-        this.banRelease = theBanRelease;
+    public void setBanRelease(boolean banRelease) {
+        this.banRelease = banRelease;
     }
 
     /**
@@ -911,19 +911,19 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
     /**
      * Sets the ban snapshots.
      *
-     * @param theBanSnapshots the banSnapshots to set
+     * @param banSnapshots the banSnapshots to set
      */
-    public void setBanSnapshots(boolean theBanSnapshots) {
-        this.banSnapshots = theBanSnapshots;
+    public void setBanSnapshots(boolean banSnapshots) {
+        this.banSnapshots = banSnapshots;
     }
 
     /**
      * Sets the ban timestamps.
      *
-     * @param theBanTimestamps the banTimestamps to set
+     * @param banTimestamps the banTimestamps to set
      */
-    public void setBanTimestamps(boolean theBanTimestamps) {
-        this.banTimestamps = theBanTimestamps;
+    public void setBanTimestamps(boolean banTimestamps) {
+        this.banTimestamps = banTimestamps;
     }
 
     @Override
