@@ -239,8 +239,7 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
         // in case they are checking !family
         family = StringUtils.stripStart(family, "!");
 
-        return (family == null || family.isEmpty())
-                || Os.getValidFamilies().contains(family);
+        return (family == null || family.isEmpty()) || Os.getValidFamilies().contains(family);
     }
 
     /**
