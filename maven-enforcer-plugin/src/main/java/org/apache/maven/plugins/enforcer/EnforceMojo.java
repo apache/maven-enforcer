@@ -355,7 +355,7 @@ public class EnforceMojo extends AbstractMojo {
     /**
      * Create rules configuration based on command line provided rules list.
      *
-     * @return an configuration in case where rules list is present or empty
+     * @return a configuration in case where rules list is present or empty
      */
     private Optional<PlexusConfiguration> createRulesFromCommandLineOptions() {
 
