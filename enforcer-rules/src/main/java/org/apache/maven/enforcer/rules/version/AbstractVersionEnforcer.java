@@ -51,7 +51,7 @@ abstract class AbstractVersionEnforcer extends AbstractStandardEnforcerRule {
     /**
      * Compares the specified version to see if it is allowed by the defined version range.
      *
-     * @param variableName         name of variable to use in messages.For example, "Maven" or "Java".
+     * @param variableName         name of variable to use in messages. For example, "Maven" or "Java".
      * @param requiredVersionRange range of allowed versions
      * @param actualVersion        the version to be checked
      * @throws EnforcerRuleException the enforcer rule exception
