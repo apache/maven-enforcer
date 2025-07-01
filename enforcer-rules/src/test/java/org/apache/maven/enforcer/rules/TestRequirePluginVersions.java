@@ -471,13 +471,13 @@ class TestRequirePluginVersions {
      *
      * @param group    the group
      * @param artifact the artifact
-     * @param theSet   the set
+     * @param plugins   the set
      */
-    private void assertContainsPlugin(String group, String artifact, Collection<Plugin> theSet) {
-        Plugin p = new Plugin();
-        p.setGroupId(group);
-        p.setArtifactId(artifact);
-        assertTrue(theSet.contains(p));
+    private void assertContainsPlugin(String group, String artifact, Collection<Plugin> plugins) {
+        Plugin plugin = new Plugin();
+        plugin.setGroupId(group);
+        plugin.setArtifactId(artifact);
+        assertTrue(plugins.contains(plugin));
     }
 
     /**
@@ -485,13 +485,13 @@ class TestRequirePluginVersions {
      *
      * @param group    the group
      * @param artifact the artifact
-     * @param theSet   the the set
+     * @param plugins   the set
      */
-    private void assertNotContainPlugin(String group, String artifact, Collection<Plugin> theSet) {
-        Plugin p = new Plugin();
-        p.setGroupId(group);
-        p.setArtifactId(artifact);
-        assertFalse(theSet.contains(p));
+    private void assertNotContainPlugin(String group, String artifact, Collection<Plugin> plugins) {
+        Plugin plugin = new Plugin();
+        plugin.setGroupId(group);
+        plugin.setArtifactId(artifact);
+        assertFalse(plugins.contains(plugin));
     }
 
     /**

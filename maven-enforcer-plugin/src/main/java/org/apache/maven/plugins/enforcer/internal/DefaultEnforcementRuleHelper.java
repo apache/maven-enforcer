@@ -79,13 +79,13 @@ public class DefaultEnforcementRuleHelper implements EnforcerRuleHelper {
     }
 
     @Override
-    public File alignToBaseDirectory(File theFile) {
-        return evaluator.alignToBaseDirectory(theFile);
+    public File alignToBaseDirectory(File file) {
+        return evaluator.alignToBaseDirectory(file);
     }
 
     @Override
-    public Object evaluate(String theExpression) throws ExpressionEvaluationException {
-        return evaluator.evaluate(theExpression);
+    public Object evaluate(String expression) throws ExpressionEvaluationException {
+        return evaluator.evaluate(expression);
     }
 
     @Override
@@ -94,23 +94,23 @@ public class DefaultEnforcementRuleHelper implements EnforcerRuleHelper {
     }
 
     @Override
-    public Object getComponent(String theComponentKey) throws ComponentLookupException {
-        return container.lookup(theComponentKey);
+    public Object getComponent(String componentKey) throws ComponentLookupException {
+        return container.lookup(componentKey);
     }
 
     @Override
-    public Object getComponent(String theRole, String theRoleHint) throws ComponentLookupException {
-        return container.lookup(theRole, theRoleHint);
+    public Object getComponent(String role, String roleHint) throws ComponentLookupException {
+        return container.lookup(role, roleHint);
     }
 
     @Override
-    public List<Object> getComponentList(String theRole) throws ComponentLookupException {
-        return container.lookupList(theRole);
+    public List<Object> getComponentList(String role) throws ComponentLookupException {
+        return container.lookupList(role);
     }
 
     @Override
-    public Map<String, Object> getComponentMap(String theRole) throws ComponentLookupException {
-        return container.lookupMap(theRole);
+    public Map<String, Object> getComponentMap(String role) throws ComponentLookupException {
+        return container.lookupMap(role);
     }
 
     @Override

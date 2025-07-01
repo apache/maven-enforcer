@@ -444,17 +444,17 @@ public class EnforceMojo extends AbstractMojo {
     }
 
     /**
-     * @param theFail the fail to set
+     * @param fail whether to fail
      */
-    public void setFail(boolean theFail) {
-        this.fail = theFail;
+    public void setFail(boolean fail) {
+        this.fail = fail;
     }
 
     /**
-     * @param theFailFast the failFast to set
+     * @param failFast whether to fail fast
      */
-    public void setFailFast(boolean theFailFast) {
-        this.failFast = theFailFast;
+    public void setFailFast(boolean failFast) {
+        this.failFast = failFast;
     }
 
     private String createRuleMessage(
@@ -492,9 +492,9 @@ public class EnforceMojo extends AbstractMojo {
     }
 
     /**
-     * @param thefailIfNoRules the failIfNoRules to set
+     * @param failIfNoRules whether to fsail if there are no rules
      */
-    public void setFailIfNoRules(boolean thefailIfNoRules) {
-        this.failIfNoRules = thefailIfNoRules;
+    public void setFailIfNoRules(boolean failIfNoRules) {
+        this.failIfNoRules = failIfNoRules;
     }
 }

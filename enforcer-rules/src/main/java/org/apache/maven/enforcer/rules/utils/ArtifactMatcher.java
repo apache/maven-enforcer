@@ -222,21 +222,21 @@ public final class ArtifactMatcher {
     }
 
     /**
-     * Copied from Artifact.VersionRange. This is tweaked to handle singular ranges properly. Currently, the default
-     * containsVersion method assumes a singular version means allow everything. This method assumes that "2.0.4" ==
-     * "[2.0.4,)"
+     * Copied from Artifact.VersionRange. This is tweaked to handle singular ranges properly. The default
+     * containsVersion method assumes a singular version means allow everything.
+     * This method assumes that "2.0.4" == "[2.0.4,)"
      *
      * @param allowedRange range of allowed versions
-     * @param theVersion   the version to be checked
+     * @param version the version to be checked
      * @return true if the version is contained by the range
      */
-    public static boolean containsVersion(VersionRange allowedRange, ArtifactVersion theVersion) {
+    public static boolean containsVersion(VersionRange allowedRange, ArtifactVersion version) {
         ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
         if (recommendedVersion == null) {
-            return allowedRange.containsVersion(theVersion);
+            return allowedRange.containsVersion(version);
         } else {
             // only singular versions ever have a recommendedVersion
-            int compareTo = recommendedVersion.compareTo(theVersion);
+            int compareTo = recommendedVersion.compareTo(version);
             return compareTo <= 0;
         }
     }

@@ -63,10 +63,10 @@ public class MockEnforcerRule implements EnforcerRule {
     }
 
     /**
-     * @param theFailRule the failRule to set
+     * @param failRule the failRule to set
      */
-    public void setFailRule(boolean theFailRule) {
-        this.failRule = theFailRule;
+    public void setFailRule(boolean failRule) {
+        this.failRule = failRule;
     }
 
     /**

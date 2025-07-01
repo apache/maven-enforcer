@@ -113,8 +113,8 @@ public final class BanDependencyManagementScope extends AbstractStandardEnforcer
                 + System.lineSeparator();
     }
 
-    public void setExcludes(List<String> theExcludes) {
-        this.excludes = theExcludes;
+    public void setExcludes(List<String> excludes) {
+        this.excludes = excludes;
     }
 
     @Override
