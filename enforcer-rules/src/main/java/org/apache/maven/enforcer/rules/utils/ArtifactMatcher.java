@@ -145,7 +145,6 @@ public final class ArtifactMatcher {
         }
 
         private boolean matches(int index, String input) {
-            //          return matches(parts[index], input);
             if (partsRegex[index] == null) {
                 String regex = parts[index]
                         .replace(".", "\\.")
@@ -238,6 +237,54 @@ public final class ArtifactMatcher {
             // only singular versions ever have a recommendedVersion
             int compareTo = recommendedVersion.compareTo(version);
             return compareTo <= 0;
+        }
+    }
+
+    /**
+     * To be used for artifacts which are equivalent for the purposes of the {@link ArtifactMatcher}.
+     */
+    public static class MatchingArtifact {
+        String artifactString;
+
+        public MatchingArtifact(Artifact artifact) {
+            artifactString = new StringBuilder()
+                    .append(artifact.getGroupId())
+                    .append(":")
+                    .append(artifact.getArtifactId())
+                    .append(":")
+                    .append(artifact.getVersion())
+                    .append(":")
+                    .append(artifact.getType())
+                    .append(":")
+                    .append(artifact.getScope())
+                    .append(":")
+                    .append(artifact.getClassifier())
+                    .toString();
+        }
+
+        @Override
+        public int hashCode() {
+            return artifactString.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            MatchingArtifact other = (MatchingArtifact) obj;
+            return Objects.equals(artifactString, other.artifactString);
+        }
+
+        @Override
+        public String toString() {
+            return artifactString;
         }
     }
 }
