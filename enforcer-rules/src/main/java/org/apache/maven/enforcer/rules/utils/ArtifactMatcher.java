@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -47,7 +48,7 @@ public final class ArtifactMatcher {
         private final String pattern;
 
         private final String[] parts;
-        private final java.util.regex.Pattern[] partsRegex;
+        private final Predicate<String>[] partsRegex;
 
         public Pattern(String pattern) {
             if (pattern == null) {
@@ -67,7 +68,7 @@ public final class ArtifactMatcher {
                     throw new IllegalArgumentException("Pattern or its part is empty.");
                 }
             }
-            partsRegex = new java.util.regex.Pattern[parts.length];
+            partsRegex = new Predicate[parts.length];
         }
 
         public boolean match(Artifact artifact) {
@@ -160,9 +161,14 @@ public final class ArtifactMatcher {
                 if (input == null) {
                     input = "";
                 }
-                partsRegex[index] = java.util.regex.Pattern.compile(regex);
+                if (".*".equals(regex)) {
+                    partsRegex[index] = test -> true;
+                } else {
+                    partsRegex[index] = test ->
+                            java.util.regex.Pattern.compile(regex).matcher(test).matches();
+                }
             }
-            return partsRegex[index].matcher(input).matches();
+            return partsRegex[index].test(input);
         }
 
         @Override
