@@ -25,7 +25,7 @@
 
 Maven Enforcer Extension - The Extended Loving Iron Fist of Maven\x99
 
-  The Enforcer Extension provides a way to globally define rules without making use of pom inheritence.
+  The Enforcer Extension provides a way to globally define rules without making use of pom inheritance.
   This way you don't have to adjust the pom.xml , but you can enforce a set of rules.   
   
 * Usage

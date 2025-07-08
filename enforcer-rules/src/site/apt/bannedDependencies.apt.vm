@@ -53,7 +53,7 @@ Banned Dependencies
         
         []
 
-   * <<includes>> - a list of artifacts to include. These are exceptions to the excludes. It is meant to allow wide exclusion rules with wildcards and fine tune using includes. If nothing has been excluded, then the includes have no effect. In otherwords, includes only subtract from artifacts that matched an exclude rule.
+   * <<includes>> - a list of artifacts to include. These are exceptions to the excludes. It is meant to allow wide exclusion rules with wildcards and fine tune using includes. If nothing has been excluded, then the includes have no effect. In other words, includes only subtract from artifacts that matched an exclude rule.
    
    For example, to ban all xerces except xerces-api you would exclude "xerces" (groupId) and include "xerces:xerces-api"   
    

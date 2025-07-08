@@ -401,7 +401,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
                 throw new EnforcerRuleError("Invalid " + field + " string: " + pluginString);
             }
         } else {
-            throw new EnforcerRuleError("Invalid " + field + " string: " + pluginString);
+            throw new EnforcerRuleError("Invalid " + field + " null plugin string.");
         }
     }
 

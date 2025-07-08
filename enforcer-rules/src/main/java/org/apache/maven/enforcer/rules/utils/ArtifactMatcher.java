@@ -146,6 +146,10 @@ public final class ArtifactMatcher {
         }
 
         private boolean matches(int index, String input) {
+            // TODO: Check if this can be done better or prevented earlier.
+            if (input == null) {
+                input = "";
+            }
             if (partsRegex[index] == null) {
                 String regex = parts[index]
                         .replace(".", "\\.")
@@ -157,10 +161,6 @@ public final class ArtifactMatcher {
                         .replace("(", "\\(")
                         .replace(")", "\\)");
 
-                // TODO: Check if this can be done better or prevented earlier.
-                if (input == null) {
-                    input = "";
-                }
                 if (".*".equals(regex)) {
                     partsRegex[index] = test -> true;
                 } else {

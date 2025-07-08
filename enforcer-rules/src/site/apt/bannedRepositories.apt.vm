@@ -41,7 +41,7 @@ Banned Specified Repositories
 
    * <<allowedRepositories>> - Specify explicitly allowed non-plugin repositories. This is a white list of http/https url patterns.
 
-   * <<allowedPluginRepositories>> - Specify explicitly allowed plugin repositories. This is a white list of http/https url patternes.
+   * <<allowedPluginRepositories>> - Specify explicitly allowed plugin repositories. This is a white list of http/https url patterns.
 
 * Sample Configuration
 
