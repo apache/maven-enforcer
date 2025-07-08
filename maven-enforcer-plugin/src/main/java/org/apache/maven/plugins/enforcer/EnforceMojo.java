@@ -492,7 +492,7 @@ public class EnforceMojo extends AbstractMojo {
     }
 
     /**
-     * @param failIfNoRules whether to fsail if there are no rules
+     * @param failIfNoRules whether to fail if there are no rules
      */
     public void setFailIfNoRules(boolean failIfNoRules) {
         this.failIfNoRules = failIfNoRules;
