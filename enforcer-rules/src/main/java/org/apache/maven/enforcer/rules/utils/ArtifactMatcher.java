@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -47,7 +48,7 @@ public final class ArtifactMatcher {
         private final String pattern;
 
         private final String[] parts;
-        private final java.util.regex.Pattern[] partsRegex;
+        private final Predicate<String>[] partsRegex;
 
         public Pattern(String pattern) {
             if (pattern == null) {
@@ -67,7 +68,7 @@ public final class ArtifactMatcher {
                     throw new IllegalArgumentException("Pattern or its part is empty.");
                 }
             }
-            partsRegex = new java.util.regex.Pattern[parts.length];
+            partsRegex = new Predicate[parts.length];
         }
 
         public boolean match(Artifact artifact) {
@@ -149,7 +150,6 @@ public final class ArtifactMatcher {
             if (input == null) {
                 input = "";
             }
-            //          return matches(parts[index], input);
             if (partsRegex[index] == null) {
                 String regex = parts[index]
                         .replace(".", "\\.")
@@ -161,9 +161,14 @@ public final class ArtifactMatcher {
                         .replace("(", "\\(")
                         .replace(")", "\\)");
 
-                partsRegex[index] = java.util.regex.Pattern.compile(regex);
+                if (".*".equals(regex)) {
+                    partsRegex[index] = test -> true;
+                } else {
+                    partsRegex[index] = test ->
+                            java.util.regex.Pattern.compile(regex).matcher(test).matches();
+                }
             }
-            return partsRegex[index].matcher(input).matches();
+            return partsRegex[index].test(input);
         }
 
         @Override
@@ -238,6 +243,54 @@ public final class ArtifactMatcher {
             // only singular versions ever have a recommendedVersion
             int compareTo = recommendedVersion.compareTo(version);
             return compareTo <= 0;
+        }
+    }
+
+    /**
+     * To be used for artifacts which are equivalent for the purposes of the {@link ArtifactMatcher}.
+     */
+    public static class MatchingArtifact {
+        String artifactString;
+
+        public MatchingArtifact(Artifact artifact) {
+            artifactString = new StringBuilder()
+                    .append(artifact.getGroupId())
+                    .append(":")
+                    .append(artifact.getArtifactId())
+                    .append(":")
+                    .append(artifact.getVersion())
+                    .append(":")
+                    .append(artifact.getType())
+                    .append(":")
+                    .append(artifact.getScope())
+                    .append(":")
+                    .append(artifact.getClassifier())
+                    .toString();
+        }
+
+        @Override
+        public int hashCode() {
+            return artifactString.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            MatchingArtifact other = (MatchingArtifact) obj;
+            return Objects.equals(artifactString, other.artifactString);
+        }
+
+        @Override
+        public String toString() {
+            return artifactString;
         }
     }
 }
