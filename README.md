@@ -81,3 +81,4 @@ Additional Resources
 [test-results]: https://ci-maven.apache.org/job/Maven/job/maven-box/job/maven-enforcer/job/master/lastCompletedBuild/testReport/
 [ml-list]: https://maven.apache.org/mailing-lists.html
 [code-style]: https://maven.apache.org/developers/conventions/code.html
+[cla]: https://www.apache.org/licenses/#clas
