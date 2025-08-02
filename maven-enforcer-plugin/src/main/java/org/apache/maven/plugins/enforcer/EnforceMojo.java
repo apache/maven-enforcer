@@ -19,10 +19,11 @@
 package org.apache.maven.plugins.enforcer;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
@@ -70,7 +71,7 @@ public class EnforceMojo extends AbstractMojo {
     /**
      * This is a static variable used to persist the cached results across plugin invocations.
      */
-    protected static Hashtable<String, EnforcerRule> cache = new Hashtable<>();
+    protected static Map<String, EnforcerRule> cache = new ConcurrentHashMap<>();
 
     /**
      * MojoExecution needed by the ExpressionEvaluator
