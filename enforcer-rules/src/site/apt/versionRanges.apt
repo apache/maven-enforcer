@@ -23,9 +23,9 @@
   2007-09-01
   ------
 
-Version Range Specification   
+Enforcer Version Range Specification   
 
-   The {{{./requireMavenVersion.html}RequireMavenVersion}} and {{{./requireJavaVersion.html}RequireJavaVersion}} rules use the {{{https://cwiki.apache.org/confluence/display/MAVENOLD/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges}standard Maven version range syntax}} with one minor change for ease of use (denoted with *):
+   The {{{./requireMavenVersion.html}RequireMavenVersion}} and {{{./requireJavaVersion.html}RequireJavaVersion}} rules use the {{{https://maven.apache.org/pom.html#Dependency_Version_Requirement_Specification}standard Maven version range syntax}} with one minor change for ease of use (denoted with *):
    
 
 *----------*--------------+
