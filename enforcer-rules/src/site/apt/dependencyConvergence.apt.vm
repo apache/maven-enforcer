@@ -139,8 +139,8 @@ and
 
 * Timestamped Version
 	
-By default, the non-unique versions are matched, which means the <<<X.Y-SNAPSHOT>>> instead of the timestamped versions.
-If you want to use the unique versions of the dependencies, set the uniqueVersions property to <<<true>>>:
+  By default, the non-unique versions are matched, which means the <<<X.Y-SNAPSHOT>>> instead of the timestamped versions.
+  If you want to use the unique versions of the dependencies, set the uniqueVersions property to <<<true>>>:
 
 +---------------------------------------------
       <dependencyConvergence>
