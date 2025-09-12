@@ -20,13 +20,13 @@ package org.apache.maven.plugins.enforcer.internal;
 
 import javax.annotation.PreDestroy;
 import javax.inject.Named;
-import javax.inject.Singleton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.maven.SessionScoped;
 import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,12 +38,16 @@ import org.slf4j.LoggerFactory;
  * @since 3.2.0
  */
 @Named
-@Singleton
+@SessionScoped
 public class EnforcerRuleCache {
 
     private final Logger logger = LoggerFactory.getLogger(EnforcerRuleCache.class);
 
     private final Map<Class<? extends AbstractEnforcerRule>, List<String>> cache = new HashMap<>();
+
+    EnforcerRuleCache() {
+        logger.debug("Enforcer rule cache - created");
+    }
 
     public boolean isCached(AbstractEnforcerRule rule) {
 
@@ -71,6 +75,7 @@ public class EnforcerRuleCache {
 
     @PreDestroy
     public void cleanup() {
+        logger.debug("Enforcer rule cache - cleanup");
         synchronized (this) {
             cache.clear();
         }
