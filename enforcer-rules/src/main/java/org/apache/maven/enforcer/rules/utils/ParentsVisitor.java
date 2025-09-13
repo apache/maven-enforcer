@@ -18,9 +18,10 @@
  */
 package org.apache.maven.enforcer.rules.utils;
 
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
@@ -31,7 +32,7 @@ import org.eclipse.aether.graph.DependencyVisitor;
 public class ParentsVisitor implements DependencyVisitor, ParentNodeProvider {
 
     private final Map<DependencyNode, DependencyNode> parents = new HashMap<>();
-    private final Stack<DependencyNode> parentStack = new Stack<>();
+    private final Deque<DependencyNode> parentStack = new ConcurrentLinkedDeque<>();
 
     @Override
     public DependencyNode getParent(DependencyNode node) {
