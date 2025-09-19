@@ -39,7 +39,7 @@ under the License.
       <item name="Check specific rule via CLI" href="examples/check-specific-rule-via-cli.html"/>
     </menu>
     <menu name="Resources">
-      <item name="Version Ranges" href="https://cwiki.apache.org/confluence/display/MAVENOLD/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges"/>
+      <item name="Enforcer Version Ranges" href="../enforcer-rules/versionRanges.html"/>
     </menu>
   </body>
 </site>
