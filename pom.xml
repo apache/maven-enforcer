@@ -88,6 +88,9 @@
     <!-- plugins used in IT, not defined in parent -->
     <version.maven-pmd-plugin>3.21.0</version.maven-pmd-plugin>
     <version.maven-wrapper-plugin>3.2.0</version.maven-wrapper-plugin>
+
+    <!-- TODO remove with next parent -->
+    <version.maven-invoker-plugin>3.9.1</version.maven-invoker-plugin>
   </properties>
 
   <dependencyManagement>
