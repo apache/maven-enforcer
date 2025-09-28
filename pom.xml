@@ -28,7 +28,7 @@
   </parent>
   <groupId>org.apache.maven.enforcer</groupId>
   <artifactId>enforcer</artifactId>
-  <version>3.6.2-SNAPSHOT</version>
+  <version>3.6.2</version>
   <packaging>pom</packaging>
 
   <name>Apache Maven Enforcer</name>
@@ -58,7 +58,7 @@
   <scm>
     <connection>scm:git:https://gitbox.apache.org/repos/asf/maven-enforcer.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/maven-enforcer.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>enforcer-3.6.2</tag>
     <url>https://github.com/apache/maven-enforcer/tree/${project.scm.tag}</url>
   </scm>
   <issueManagement>
@@ -81,7 +81,7 @@
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
     <javaVersion>8</javaVersion>
     <mockito.version>4.11.0</mockito.version>
-    <project.build.outputTimestamp>2025-07-12T17:12:35Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2025-09-28T21:21:38Z</project.build.outputTimestamp>
     <!-- the same as in Maven  -->
     <resolver.version>1.9.23</resolver.version>
 
