@@ -58,6 +58,19 @@ class BannedDependenciesTest {
     private BannedDependencies rule;
 
     @Test
+    void excludesDoNotUseTransitiveDependenciesNullSafe() throws Exception {
+        when(session.getCurrentProject()).thenReturn(project);
+        when(project.getDependencyArtifacts()).thenReturn(ARTIFACT_STUB_FACTORY.getTypedArtifacts());
+
+        rule.setSearchTransitive(false);
+        rule.setExcludes(Collections.singletonList("g:b:*:*:compile:*"));
+
+        assertThatCode(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining("g:b:jar:1.0 <--- banned via the exclude/include list");
+    }
+
+    @Test
     void excludesDoNotUseTransitiveDependencies() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
         when(project.getDependencyArtifacts()).thenReturn(ARTIFACT_STUB_FACTORY.getScopedArtifacts());
@@ -160,9 +173,6 @@ class BannedDependenciesTest {
 
     @Test
     void invalidExcludeFormat() throws Exception {
-        when(session.getCurrentProject()).thenReturn(project);
-        when(project.getDependencyArtifacts()).thenReturn(ARTIFACT_STUB_FACTORY.getScopedArtifacts());
-
         rule.setSearchTransitive(false);
         rule.setExcludes(Collections.singletonList("::::::::::"));
 
@@ -171,9 +181,6 @@ class BannedDependenciesTest {
 
     @Test
     void invalidIncludeFormat() throws Exception {
-        when(session.getCurrentProject()).thenReturn(project);
-        when(project.getDependencyArtifacts()).thenReturn(ARTIFACT_STUB_FACTORY.getScopedArtifacts());
-
         rule.setSearchTransitive(false);
         rule.setExcludes(Collections.singletonList("*"));
         rule.setIncludes(Collections.singletonList("*:*:x:x:x:x:x:x:x:x:"));

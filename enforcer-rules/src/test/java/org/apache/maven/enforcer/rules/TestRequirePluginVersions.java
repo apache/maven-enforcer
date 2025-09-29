@@ -115,7 +115,7 @@ class TestRequirePluginVersions {
         source.setArtifactId("foo");
         source.setGroupId("group");
 
-        // setup the plugins. I'm setting up the foo group
+        // set up the plugins. I'm setting up the foo group
         // with a few bogus entries and then a real one.
         // to test that the list is exhaustively
         // searched for versions before giving up.
@@ -192,7 +192,7 @@ class TestRequirePluginVersions {
         Plugin source = new Plugin();
         source.setGroupId("group");
 
-        // setup the plugins.
+        // set up the plugins.
         List<Plugin> plugins = new ArrayList<>();
         plugins.add(EnforcerTestUtils.newPlugin("group", "a-artifact", "1.0-${SNAPSHOT}"));
         plugins.add(EnforcerTestUtils.newPlugin("group", "b-artifact", "${1.0}"));
@@ -289,12 +289,6 @@ class TestRequirePluginVersions {
      */
     @Test
     void testGetAdditionalPluginsEmptySet() throws Exception {
-
-        Set<Plugin> plugins = new HashSet<>();
-        plugins.add(EnforcerTestUtils.newPlugin("group", "a-artifact", "1.0"));
-        plugins.add(EnforcerTestUtils.newPlugin("group", "foo", null));
-        plugins.add(EnforcerTestUtils.newPlugin("group", "foo2", ""));
-
         List<String> additional = new ArrayList<>();
         additional.add("group:a-artifact");
         additional.add("group:another-artifact");
@@ -477,13 +471,13 @@ class TestRequirePluginVersions {
      *
      * @param group    the group
      * @param artifact the artifact
-     * @param theSet   the the set
+     * @param plugins   the set
      */
-    private void assertContainsPlugin(String group, String artifact, Collection<Plugin> theSet) {
-        Plugin p = new Plugin();
-        p.setGroupId(group);
-        p.setArtifactId(artifact);
-        assertTrue(theSet.contains(p));
+    private void assertContainsPlugin(String group, String artifact, Collection<Plugin> plugins) {
+        Plugin plugin = new Plugin();
+        plugin.setGroupId(group);
+        plugin.setArtifactId(artifact);
+        assertTrue(plugins.contains(plugin));
     }
 
     /**
@@ -491,13 +485,13 @@ class TestRequirePluginVersions {
      *
      * @param group    the group
      * @param artifact the artifact
-     * @param theSet   the the set
+     * @param plugins   the set
      */
-    private void assertNotContainPlugin(String group, String artifact, Collection<Plugin> theSet) {
-        Plugin p = new Plugin();
-        p.setGroupId(group);
-        p.setArtifactId(artifact);
-        assertFalse(theSet.contains(p));
+    private void assertNotContainPlugin(String group, String artifact, Collection<Plugin> plugins) {
+        Plugin plugin = new Plugin();
+        plugin.setGroupId(group);
+        plugin.setArtifactId(artifact);
+        assertFalse(plugins.contains(plugin));
     }
 
     /**

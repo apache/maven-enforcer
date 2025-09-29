@@ -46,13 +46,8 @@ class TestAbstractVersionEnforcer {
         try {
             rule.enforceVersion(var, range, version);
             fail("Expected to receive EnforcerRuleException because:" + version + " is not contained by " + range);
-        } catch (Exception e) {
-            if (e instanceof EnforcerRuleException) {
-                // log.info( "Caught Expected Exception: " +
-                // e.getLocalizedMessage() );
-            } else {
-                fail("Received wrong exception. Expected EnforcerRuleExeption. Received:" + e);
-            }
+        } catch (EnforcerRuleException expected) {
+            // success
         }
     }
 

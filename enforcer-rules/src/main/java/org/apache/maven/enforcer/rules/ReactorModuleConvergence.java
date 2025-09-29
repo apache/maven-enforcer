@@ -35,7 +35,7 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * This rule will check if a multi module build will follow the best practices.
+ * This rule will check if a multi-module build will follow the best practices.
  *
  * @author Karl-Heinz Marbaise
  * @since 1.4
@@ -192,7 +192,7 @@ public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule
                     }
                 }
             } else {
-                // This situation is currently ignored, cause it's handled by existModulesWithoutParentsInReactor()
+                // This situation is currently ignored because it's handled by existModulesWithoutParentsInReactor()
             }
         }
 
@@ -254,7 +254,7 @@ public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule
     }
 
     /**
-     * Assume we have a module which is a child of a multi module build but this child does not have a parent. This
+     * Assume we have a module which is a child of a multi-module build but this child does not have a parent. This
      * method will exactly search for such cases.
      *
      * @param sortedProjects The sorted list of the reactor modules.
@@ -304,12 +304,12 @@ public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule
 
     /**
      * Go through the list of modules in the builds and check if we have dependencies. If yes we will check every
-     * dependency based on groupId/artifactId if it belongs to the multi module build. In such a case it will be checked
+     * dependency based on groupId/artifactId if it belongs to the multi-module build. In such a case it will be checked
      * if the version does fit the version in the rest of build.
      *
-     * @param reactorVersion The version of the reactor.
-     * @param sortedProjects The list of existing projects within this build.
-     * @return List of violations. Never null. If the list is empty than no violation has happened.
+     * @param reactorVersion the version of the reactor
+     * @param sortedProjects the list of existing projects within this build
+     * @return map of violations. Never null. If the map is empty, then no violation has happened.
      */
     // CHECKSTYLE_OFF: LineLength
     private Map<MavenProject, List<Dependency>> areThereDependenciesWhichAreNotPartOfTheReactor(

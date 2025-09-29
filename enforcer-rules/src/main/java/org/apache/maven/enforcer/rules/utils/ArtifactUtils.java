@@ -20,7 +20,9 @@ package org.apache.maven.enforcer.rules.utils;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.RepositoryUtils;
@@ -85,27 +87,33 @@ public final class ArtifactUtils {
     }
 
     /**
-     * Checks if the given dependency artifact matches the given collection of patterns
+     * Prepares patterns directly into a reusable predicate.
+     * This can improve efficiency where there are lots of patterns and/or artifacts to match.
      *
-     * @param artifact dependency artifact to match against patterns
-     * @param patterns patterns to match against the artifacts
-     * @return {@code true} if the given artifact matches the set of patterns
+     * @param patterns the patterns to use for the predicate
+     * @return a re-usable predicate.
      */
-    public static boolean matchDependencyArtifact(Artifact artifact, Collection<String> patterns) {
-        try {
-            return ofNullable(patterns)
-                    .map(collection -> collection.stream()
-                            .map(p -> p.split(":"))
-                            .map(StringUtils::stripAll)
-                            .map(arr -> String.join(":", arr))
-                            .anyMatch(pattern -> compareDependency(pattern, artifact)))
-                    .orElse(false);
-        } catch (IllegalArgumentException e) {
-            if (e.getCause() instanceof InvalidVersionSpecificationException) {
-                throw new IllegalArgumentException(e.getMessage());
-            }
-            throw e;
-        }
+    public static Predicate<Artifact> prepareDependencyArtifactMatcher(Collection<String> patterns) {
+        return cleansePatterns(patterns)
+                .map(ArtifactMatcher.Pattern::new)
+                .map(pattern -> (Predicate<Artifact>) pattern::match)
+                .reduce(Predicate::or)
+                .orElse(test -> false);
+    }
+
+    /**
+     * Cleans the patterns provided ready for use in {@link ArtifactMatcher.Pattern}
+     *
+     * @param patterns the patterns to be cleaned
+     * @return a Stream of the patterns prepared for use.
+     */
+    private static Stream<String> cleansePatterns(Collection<String> patterns) {
+        return ofNullable(patterns)
+                .map(collection -> collection.stream()
+                        .map(p -> p.split(":"))
+                        .map(StringUtils::stripAll)
+                        .map(arr -> String.join(":", arr)))
+                .orElse(Stream.empty());
     }
 
     /**

@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -44,9 +45,10 @@ public final class ArtifactMatcher {
      * @author I don't know
      */
     public static class Pattern {
-        private String pattern;
+        private final String pattern;
 
-        private String[] parts;
+        private final String[] parts;
+        private final Predicate<String>[] partsRegex;
 
         public Pattern(String pattern) {
             if (pattern == null) {
@@ -66,6 +68,7 @@ public final class ArtifactMatcher {
                     throw new IllegalArgumentException("Pattern or its part is empty.");
                 }
             }
+            partsRegex = new Predicate[parts.length];
         }
 
         public boolean match(Artifact artifact) {
@@ -103,28 +106,28 @@ public final class ArtifactMatcher {
                 throws InvalidVersionSpecificationException {
             switch (parts.length) {
                 case 6:
-                    if (!matches(parts[5], classifier)) {
+                    if (!matches(5, classifier)) {
                         return false;
                     }
                 case 5:
-                    if (scope == null || scope.equals("")) {
+                    if (scope == null || scope.isEmpty()) {
                         scope = Artifact.SCOPE_COMPILE;
                     }
 
-                    if (!matches(parts[4], scope)) {
+                    if (!matches(4, scope)) {
                         return false;
                     }
                 case 4:
-                    if (type == null || type.equals("")) {
+                    if (type == null || type.isEmpty()) {
                         type = "jar";
                     }
 
-                    if (!matches(parts[3], type)) {
+                    if (!matches(3, type)) {
                         return false;
                     }
 
                 case 3:
-                    if (!matches(parts[2], version)) {
+                    if (!matches(2, version)) {
                         if (!containsVersion(
                                 VersionRange.createFromVersionSpec(parts[2]), new DefaultArtifactVersion(version))) {
                             return false;
@@ -132,33 +135,40 @@ public final class ArtifactMatcher {
                     }
 
                 case 2:
-                    if (!matches(parts[1], artifactId)) {
+                    if (!matches(1, artifactId)) {
                         return false;
                     }
                 case 1:
-                    return matches(parts[0], groupId);
+                    return matches(0, groupId);
                 default:
                     throw new AssertionError();
             }
         }
 
-        private boolean matches(String expression, String input) {
-            String regex = expression
-                    .replace(".", "\\.")
-                    .replace("*", ".*")
-                    .replace(":", "\\:")
-                    .replace('?', '.')
-                    .replace("[", "\\[")
-                    .replace("]", "\\]")
-                    .replace("(", "\\(")
-                    .replace(")", "\\)");
-
+        private boolean matches(int index, String input) {
             // TODO: Check if this can be done better or prevented earlier.
             if (input == null) {
                 input = "";
             }
+            if (partsRegex[index] == null) {
+                String regex = parts[index]
+                        .replace(".", "\\.")
+                        .replace("*", ".*")
+                        .replace(":", "\\:")
+                        .replace('?', '.')
+                        .replace("[", "\\[")
+                        .replace("]", "\\]")
+                        .replace("(", "\\(")
+                        .replace(")", "\\)");
 
-            return java.util.regex.Pattern.matches(regex, input);
+                if (".*".equals(regex)) {
+                    partsRegex[index] = test -> true;
+                } else {
+                    partsRegex[index] = test ->
+                            java.util.regex.Pattern.compile(regex).matcher(test).matches();
+                }
+            }
+            return partsRegex[index].test(input);
         }
 
         @Override
@@ -217,22 +227,70 @@ public final class ArtifactMatcher {
     }
 
     /**
-     * Copied from Artifact.VersionRange. This is tweaked to handle singular ranges properly. Currently the default
-     * containsVersion method assumes a singular version means allow everything. This method assumes that "2.0.4" ==
-     * "[2.0.4,)"
+     * Copied from Artifact.VersionRange. This is tweaked to handle singular ranges properly. The default
+     * containsVersion method assumes a singular version means allow everything.
+     * This method assumes that "2.0.4" == "[2.0.4,)"
      *
-     * @param allowedRange range of allowed versions.
-     * @param theVersion   the version to be checked.
-     * @return true if the version is contained by the range.
+     * @param allowedRange range of allowed versions
+     * @param version the version to be checked
+     * @return true if the version is contained by the range
      */
-    public static boolean containsVersion(VersionRange allowedRange, ArtifactVersion theVersion) {
+    public static boolean containsVersion(VersionRange allowedRange, ArtifactVersion version) {
         ArtifactVersion recommendedVersion = allowedRange.getRecommendedVersion();
         if (recommendedVersion == null) {
-            return allowedRange.containsVersion(theVersion);
+            return allowedRange.containsVersion(version);
         } else {
             // only singular versions ever have a recommendedVersion
-            int compareTo = recommendedVersion.compareTo(theVersion);
-            return (compareTo <= 0);
+            int compareTo = recommendedVersion.compareTo(version);
+            return compareTo <= 0;
+        }
+    }
+
+    /**
+     * To be used for artifacts which are equivalent for the purposes of the {@link ArtifactMatcher}.
+     */
+    public static class MatchingArtifact {
+        String artifactString;
+
+        public MatchingArtifact(Artifact artifact) {
+            artifactString = new StringBuilder()
+                    .append(artifact.getGroupId())
+                    .append(":")
+                    .append(artifact.getArtifactId())
+                    .append(":")
+                    .append(artifact.getVersion())
+                    .append(":")
+                    .append(artifact.getType())
+                    .append(":")
+                    .append(artifact.getScope())
+                    .append(":")
+                    .append(artifact.getClassifier())
+                    .toString();
+        }
+
+        @Override
+        public int hashCode() {
+            return artifactString.hashCode();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            MatchingArtifact other = (MatchingArtifact) obj;
+            return Objects.equals(artifactString, other.artifactString);
+        }
+
+        @Override
+        public String toString() {
+            return artifactString;
         }
     }
 }

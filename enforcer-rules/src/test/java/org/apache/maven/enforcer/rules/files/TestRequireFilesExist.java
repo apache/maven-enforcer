@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  */
 class TestRequireFilesExist {
     @TempDir
-    public File temporaryFolder;
+    private File temporaryFolder;
 
     private final RequireFilesExist rule = new RequireFilesExist();
 

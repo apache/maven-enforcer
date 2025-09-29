@@ -50,19 +50,19 @@ public final class RequireJavaVersion extends AbstractVersionEnforcer {
     private boolean display = false;
 
     @Override
-    public void setVersion(String theVersion) {
+    public void setVersion(String version) {
 
-        if ("8".equals(theVersion)) {
+        if ("8".equals(version)) {
             super.setVersion("1.8");
             return;
         }
 
-        if (!theVersion.contains("8")) {
-            super.setVersion(theVersion);
+        if (!version.contains("8")) {
+            super.setVersion(version);
             return;
         }
 
-        Matcher matcher = JDK8_VERSION_PATTERN.matcher(theVersion);
+        Matcher matcher = JDK8_VERSION_PATTERN.matcher(version);
 
         StringBuffer result = new StringBuffer();
         while (matcher.find()) {
@@ -102,24 +102,24 @@ public final class RequireJavaVersion extends AbstractVersionEnforcer {
     }
 
     /**
-     * Converts a jdk string from 1.5.0-11b12 to a single 3 digit version like 1.5.0-11
+     * Converts a JDK string from 1.5.0-11b12 to a single 3 digit version like 1.5.0-11
      *
-     * @param theJdkVersion to be converted.
-     * @return the converted string.
+     * @param jdkVersion to be converted
+     * @return the converted string
      */
-    public static String normalizeJDKVersion(String theJdkVersion) {
+    public static String normalizeJDKVersion(String jdkVersion) {
 
-        theJdkVersion = theJdkVersion.replaceAll("_|-", ".");
-        String tokenArray[] = StringUtils.split(theJdkVersion, ".");
+        jdkVersion = jdkVersion.replaceAll("_|-", ".");
+        String tokenArray[] = StringUtils.split(jdkVersion, ".");
         List<String> tokens = Arrays.asList(tokenArray);
-        StringBuilder buffer = new StringBuilder(theJdkVersion.length());
+        StringBuilder buffer = new StringBuilder(jdkVersion.length());
 
         Iterator<String> iter = tokens.iterator();
         for (int i = 0; i < tokens.size() && i < 4; i++) {
             String section = iter.next();
             section = section.replaceAll("[^0-9]", "");
 
-            if (section != null && !section.isEmpty()) {
+            if (!section.isEmpty()) {
                 buffer.append(Integer.parseInt(section));
 
                 if (i != 2) {

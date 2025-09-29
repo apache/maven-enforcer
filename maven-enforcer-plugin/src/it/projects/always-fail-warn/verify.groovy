@@ -18,6 +18,8 @@
  */
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.text.contains( '[WARNING] Rule 0: org.apache.maven.enforcer.rules.AlwaysFail warned with message:' )
+assert buildLog.text.contains( '[WARNING] Rule 1: org.apache.maven.enforcer.rules.AlwaysFail(fail1) warned with message:' )
+assert buildLog.text.contains( '[WARNING] Rule 2: org.apache.maven.enforcer.rules.AlwaysFail(fail3) warned with message:' )
 
 
  

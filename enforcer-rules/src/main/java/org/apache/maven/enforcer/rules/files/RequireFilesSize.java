@@ -45,6 +45,9 @@ public final class RequireFilesSize extends AbstractRequireFiles {
     /** the min size allowed. */
     private long minsize = 0;
 
+    /** the mode for computing the size when the files are directories. */
+    private boolean recursive = false;
+
     /** The error msg. */
     private String errorMsg;
 
@@ -86,7 +89,7 @@ public final class RequireFilesSize extends AbstractRequireFiles {
 
         // check the file now
         if (file.exists()) {
-            long length = file.length();
+            long length = computeLength(file);
             if (length < minsize) {
                 this.errorMsg = (file + " size (" + length + ") too small. Minimum is " + minsize + ".");
                 return false;
@@ -112,6 +115,18 @@ public final class RequireFilesSize extends AbstractRequireFiles {
         }
     }
 
+    private long computeLength(File file) {
+        File[] files = file.listFiles();
+        long length = file.length();
+        if (files == null || !recursive) {
+            return length;
+        }
+        for (File child : files) {
+            length += computeLength(child);
+        }
+        return length;
+    }
+
     @Override
     String getErrorMsg() {
         return this.errorMsg;
@@ -123,5 +138,9 @@ public final class RequireFilesSize extends AbstractRequireFiles {
 
     public void setMinsize(long minsize) {
         this.minsize = minsize;
+    }
+
+    public void setRecursive(boolean recursive) {
+        this.recursive = recursive;
     }
 }

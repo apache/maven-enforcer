@@ -127,34 +127,30 @@ class TestRequireNoRepositories {
         return r;
     }
 
-    private MavenProject addRepository(MavenProject project, Repository r) {
+    private void addRepository(MavenProject project, Repository r) {
         Model originalModel = project.getOriginalModel();
         List<Repository> repositories = new ArrayList<>();
         repositories.add(r);
         when(originalModel.getRepositories()).thenReturn(repositories);
-        return project;
     }
 
-    private MavenProject addEmptyRepository(MavenProject project) {
+    private void addEmptyRepository(MavenProject project) {
         Model originalModel = project.getOriginalModel();
         List<Repository> repositories = new ArrayList<>();
         when(originalModel.getRepositories()).thenReturn(repositories);
-        return project;
     }
 
-    private MavenProject addPluginRepository(MavenProject project, Repository r) {
+    private void addPluginRepository(MavenProject project, Repository r) {
         Model originalModel = project.getOriginalModel();
         List<Repository> repositories = new ArrayList<>();
         repositories.add(r);
         when(originalModel.getPluginRepositories()).thenReturn(repositories);
-        return project;
     }
 
-    private MavenProject addEmptyPluginRepository(MavenProject project) {
+    private void addEmptyPluginRepository(MavenProject project) {
         Model originalModel = project.getOriginalModel();
         List<Repository> repositories = new ArrayList<>();
         when(originalModel.getPluginRepositories()).thenReturn(repositories);
-        return project;
     }
 
     /**
@@ -169,7 +165,7 @@ class TestRequireNoRepositories {
     }
 
     /**
-     * The model contains a single repository which is is not allowed by the default rules.
+     * The model contains a single repository which is not allowed by the default rules.
      */
     @Test
     void testAllBannedWithRepository() {
@@ -183,7 +179,7 @@ class TestRequireNoRepositories {
     }
 
     /**
-     * The model contains a single plugin repository which is is not allowed by the default rules.
+     * The model contains a single plugin repository which is not allowed by the default rules.
      */
     @Test
     void testAllBannedWithPluginRepository() {

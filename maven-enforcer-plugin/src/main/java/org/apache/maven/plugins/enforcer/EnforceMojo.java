@@ -19,10 +19,11 @@
 package org.apache.maven.plugins.enforcer;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
@@ -70,7 +71,7 @@ public class EnforceMojo extends AbstractMojo {
     /**
      * This is a static variable used to persist the cached results across plugin invocations.
      */
-    protected static Hashtable<String, EnforcerRule> cache = new Hashtable<>();
+    protected static Map<String, EnforcerRule> cache = new ConcurrentHashMap<>();
 
     /**
      * MojoExecution needed by the ExpressionEvaluator
@@ -298,15 +299,14 @@ public class EnforceMojo extends AbstractMojo {
             getLog().debug(String.format("Executing Rule Config Provider %s", ruleDesc.getRule()));
         }
 
-        XmlPlexusConfiguration configuration = null;
         try {
-            configuration = new XmlPlexusConfiguration(ruleProducer.getRulesConfig());
+            XmlPlexusConfiguration configuration = new XmlPlexusConfiguration(ruleProducer.getRulesConfig());
+            getLog().info(String.format("Rule Config Provider %s executed", getRuleName(ruleDesc)));
+
+            return configuration;
         } catch (EnforcerRuleException e) {
             throw new EnforcerRuleManagerException("Rules Provider error for: " + getRuleName(ruleDesc), e);
         }
-        getLog().info(String.format("Rule Config Provider %s executed", getRuleName(ruleDesc)));
-
-        return configuration;
     }
 
     private void executeRule(int ruleIndex, EnforcerRuleDesc ruleDesc, EnforcerRuleHelper helper)
@@ -356,7 +356,7 @@ public class EnforceMojo extends AbstractMojo {
     /**
      * Create rules configuration based on command line provided rules list.
      *
-     * @return an configuration in case where rules list is present or empty
+     * @return a configuration in case where rules list is present or empty
      */
     private Optional<PlexusConfiguration> createRulesFromCommandLineOptions() {
 
@@ -445,17 +445,17 @@ public class EnforceMojo extends AbstractMojo {
     }
 
     /**
-     * @param theFail the fail to set
+     * @param fail whether to fail
      */
-    public void setFail(boolean theFail) {
-        this.fail = theFail;
+    public void setFail(boolean fail) {
+        this.fail = fail;
     }
 
     /**
-     * @param theFailFast the failFast to set
+     * @param failFast whether to fail fast
      */
-    public void setFailFast(boolean theFailFast) {
-        this.failFast = theFailFast;
+    public void setFailFast(boolean failFast) {
+        this.failFast = failFast;
     }
 
     private String createRuleMessage(
@@ -493,9 +493,9 @@ public class EnforceMojo extends AbstractMojo {
     }
 
     /**
-     * @param thefailIfNoRules the failIfNoRules to set
+     * @param failIfNoRules whether to fail if there are no rules
      */
-    public void setFailIfNoRules(boolean thefailIfNoRules) {
-        this.failIfNoRules = thefailIfNoRules;
+    public void setFailIfNoRules(boolean failIfNoRules) {
+        this.failIfNoRules = failIfNoRules;
     }
 }

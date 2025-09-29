@@ -31,7 +31,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.project.MavenProject;
 
 /**
- * This rule checks that this project's maven session whether have banned repositories.
+ * This rule checks whether this project's maven session has banned repositories.
  *
  * @author <a href="mailto:wangyf2010@gmail.com">Simon Wang</a>
  */
@@ -90,24 +90,24 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
 
         String errMsg = repoErrMsg + pluginRepoErrMsg;
 
-        if (errMsg != null && !errMsg.isEmpty()) {
+        if (!errMsg.isEmpty()) {
             throw new EnforcerRuleException(errMsg);
         }
     }
 
     // ----------------------------------------------------------------------
-    // Protected methods
+    // Package methods
     // ----------------------------------------------------------------------
 
-    protected void setBannedRepositories(List<String> bannedRepositories) {
+    void setBannedRepositories(List<String> bannedRepositories) {
         this.bannedRepositories = bannedRepositories;
     }
 
-    protected void setAllowedRepositories(List<String> allowedRepositories) {
+    void setAllowedRepositories(List<String> allowedRepositories) {
         this.allowedRepositories = allowedRepositories;
     }
 
-    protected void setAllowedPluginRepositories(List<String> allowedPluginRepositories) {
+    void setAllowedPluginRepositories(List<String> allowedPluginRepositories) {
         this.allowedPluginRepositories = allowedPluginRepositories;
     }
 
@@ -161,18 +161,17 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
     }
 
     private String populateErrorMessage(List<ArtifactRepository> resultBannedRepos, String errorMessagePrefix) {
-        StringBuffer errMsg = new StringBuffer("");
         if (!resultBannedRepos.isEmpty()) {
-            errMsg.append("Current maven session contains banned" + errorMessagePrefix
+            return "Current maven session contains banned" + errorMessagePrefix
                     + "repository urls, please double check your pom or settings.xml:" + System.lineSeparator()
-                    + getRepositoryUrlString(resultBannedRepos) + System.lineSeparator() + System.lineSeparator());
+                    + getRepositoryUrlString(resultBannedRepos) + System.lineSeparator() + System.lineSeparator();
         }
 
-        return errMsg.toString();
+        return "";
     }
 
     private String getRepositoryUrlString(List<ArtifactRepository> resultBannedRepos) {
-        StringBuilder urls = new StringBuilder("");
+        StringBuilder urls = new StringBuilder();
         for (ArtifactRepository repo : resultBannedRepos) {
             urls.append(repo.getId() + " - " + repo.getUrl() + System.lineSeparator());
         }

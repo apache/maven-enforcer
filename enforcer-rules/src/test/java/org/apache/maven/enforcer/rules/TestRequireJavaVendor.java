@@ -27,7 +27,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The Class TestRequireJavaVendor.
@@ -45,7 +47,7 @@ class TestRequireJavaVendor {
     }
 
     @Test
-    void matchingInclude() throws EnforcerRuleException {
+    void matchingInclude() {
         // Set the required vendor to the current system vendor
         underTest.setIncludes(Collections.singletonList(SystemUtils.JAVA_VENDOR));
 

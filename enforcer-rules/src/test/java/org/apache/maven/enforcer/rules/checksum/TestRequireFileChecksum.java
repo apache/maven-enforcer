@@ -39,7 +39,7 @@ class TestRequireFileChecksum {
     private final RequireFileChecksum rule = new RequireFileChecksum();
 
     @TempDir
-    public File temporaryFolder;
+    private File temporaryFolder;
 
     @Test
     void testFileChecksumMd5() throws IOException, EnforcerRuleException {

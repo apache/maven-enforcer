@@ -19,13 +19,16 @@
 package org.apache.maven.enforcer.rules.dependency;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
+import org.apache.maven.enforcer.rules.utils.ArtifactMatcher.MatchingArtifact;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.execution.MavenSession;
 import org.eclipse.aether.graph.DependencyNode;
@@ -104,7 +107,8 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
         } else {
             StringBuilder messageBuilder = new StringBuilder();
             DependencyNode rootNode = resolverUtil.resolveTransitiveDependenciesVerbose(Collections.emptyList());
-            if (!validate(rootNode, 0, messageBuilder)) {
+            Set<MatchingArtifact> visitedArtifacts = new HashSet<>();
+            if (!validate(rootNode, 0, messageBuilder, visitedArtifacts)) {
                 String message = "";
                 if (getMessage() != null) {
                     message = getMessage() + System.lineSeparator();
@@ -114,12 +118,17 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
         }
     }
 
-    protected boolean validate(DependencyNode node, int level, StringBuilder messageBuilder) {
-        boolean rootFailed = level > 0 && !validate(ArtifactUtils.toArtifact(node));
+    protected boolean validate(
+            DependencyNode node, int level, StringBuilder messageBuilder, Set<MatchingArtifact> visitedArtifacts) {
+        Artifact artifact = ArtifactUtils.toArtifact(node);
+        boolean rootFailed = false;
+        if (level > 0 && visitedArtifacts.add(new MatchingArtifact(artifact))) {
+            rootFailed = !validate(artifact);
+        }
         StringBuilder childMessageBuilder = new StringBuilder();
         if (rootFailed
                 || !node.getChildren().stream()
-                        .map(childNode -> validate(childNode, level + 1, childMessageBuilder))
+                        .map(childNode -> validate(childNode, level + 1, childMessageBuilder, visitedArtifacts))
                         .reduce(true, Boolean::logicalAnd)) {
             messageBuilder
                     .append(StringUtils.repeat("   ", level))
@@ -147,10 +156,10 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
     /**
      * Sets the search transitive.
      *
-     * @param theSearchTransitive the searchTransitive to set
+     * @param searchTransitive the searchTransitive to set
      */
-    public void setSearchTransitive(boolean theSearchTransitive) {
-        this.searchTransitive = theSearchTransitive;
+    public void setSearchTransitive(boolean searchTransitive) {
+        this.searchTransitive = searchTransitive;
     }
 
     /**
@@ -170,10 +179,10 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
      * include rule.
      *
      * @see #getExcludes()
-     * @param theExcludes the excludes to set
+     * @param excludes the excludes to set
      */
-    public void setExcludes(List<String> theExcludes) {
-        this.excludes = theExcludes;
+    public void setExcludes(List<String> excludes) {
+        this.excludes = excludes;
     }
 
     /**
@@ -196,10 +205,10 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
      * include "xerces:xerces-api"
      *
      * @see #setIncludes(List)
-     * @param theIncludes the includes to set
+     * @param includes the includes to set
      */
-    public void setIncludes(List<String> theIncludes) {
-        this.includes = theIncludes;
+    public void setIncludes(List<String> includes) {
+        this.includes = includes;
     }
 
     public boolean isSearchTransitive() {

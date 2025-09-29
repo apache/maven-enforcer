@@ -20,3 +20,4 @@ def buildLog = new File(basedir, 'build.log').text
 
 // rule executed
 assert buildLog.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.files.RequireFilesSize passed')
+assert buildLog.contains('[ERROR] Rule 1: org.apache.maven.enforcer.rules.files.RequireFilesSize failed with message')

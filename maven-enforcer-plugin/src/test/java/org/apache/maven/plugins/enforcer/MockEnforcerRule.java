@@ -27,15 +27,15 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
  */
 public class MockEnforcerRule implements EnforcerRule {
 
-    public boolean failRule = false;
+    private boolean failRule = false;
 
-    public String cacheId = "";
+    private String cacheId = "";
 
-    public boolean isCacheable = false;
+    private boolean isCacheable = false;
 
-    public boolean isResultValid = false;
+    private boolean isResultValid = false;
 
-    public boolean executed = false;
+    private boolean executed = false;
 
     public MockEnforcerRule(boolean fail) {
         this.failRule = fail;
@@ -63,38 +63,10 @@ public class MockEnforcerRule implements EnforcerRule {
     }
 
     /**
-     * @param theFailRule the failRule to set
+     * @param failRule the failRule to set
      */
-    public void setFailRule(boolean theFailRule) {
-        this.failRule = theFailRule;
-    }
-
-    /**
-     * @return the isResultValid
-     */
-    public boolean isResultValid() {
-        return this.isResultValid;
-    }
-
-    /**
-     * @param theIsResultValid the isResultValid to set
-     */
-    public void setResultValid(boolean theIsResultValid) {
-        this.isResultValid = theIsResultValid;
-    }
-
-    /**
-     * @param theCacheId the cacheId to set
-     */
-    public void setCacheId(String theCacheId) {
-        this.cacheId = theCacheId;
-    }
-
-    /**
-     * @param theIsCacheable the isCacheable to set
-     */
-    public void setCacheable(boolean theIsCacheable) {
-        this.isCacheable = theIsCacheable;
+    public void setFailRule(boolean failRule) {
+        this.failRule = failRule;
     }
 
     /*
@@ -120,5 +92,14 @@ public class MockEnforcerRule implements EnforcerRule {
      */
     public boolean isResultValid(EnforcerRule theCachedRule) {
         return isResultValid;
+    }
+
+    /**
+     * Checks if the rule got executed.
+     *
+     * @return {@code true} if executed, {@code false} otherwise.
+     */
+    public boolean isExecuted() {
+        return executed;
     }
 }

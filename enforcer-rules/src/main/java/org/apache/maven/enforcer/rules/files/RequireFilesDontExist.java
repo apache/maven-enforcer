@@ -30,7 +30,7 @@ public final class RequireFilesDontExist extends AbstractRequireFiles {
     @Override
     boolean checkFile(File file) {
         // if we get here and the handle is null, treat it as a success
-        return file == null ? true : !file.exists();
+        return file == null || !file.exists();
     }
 
     @Override

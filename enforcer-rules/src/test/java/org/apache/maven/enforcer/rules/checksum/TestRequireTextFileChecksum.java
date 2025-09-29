@@ -132,7 +132,7 @@ class TestRequireTextFileChecksum {
         rule.setNormalizeLineSeparatorTo(LineSeparator.UNIX);
 
         rule.execute();
-        // name is not unique therefore compare generated charset
-        Assertions.assertEquals(Charset.forName(System.getProperty("file.encoding")), rule.getEncoding());
+        // Name is not unique. Therefore compare generated charset.
+        Assertions.assertEquals(Charset.defaultCharset(), rule.getEncoding());
     }
 }

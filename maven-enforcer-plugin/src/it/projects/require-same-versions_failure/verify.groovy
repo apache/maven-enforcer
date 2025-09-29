@@ -16,41 +16,13 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.enforcer.rule.api;
+def buildLog = new File(basedir, 'build.log').text
 
-/**
- * Base interface for old and new API.
- * <p>
- * Used for internal purpose.
- *
- * @author Slawomir Jaranowski
- * @since 3.2.1
- */
-public interface EnforcerRuleBase {
+assert buildLog.contains('[INFO] BUILD FAILURE')
+assert buildLog.contains('ERROR] Rule 0: org.apache.maven.enforcer.rules.RequireSameVersions failed with message:')
+assert buildLog.contains('ERROR] Rule 1: org.apache.maven.enforcer.rules.RequireSameVersions failed with message:')
 
-    /**
-     * Current Enforcer execution level
-     *
-     * @return an Enforcer execution level
-     */
-    default EnforcerLevel getLevel() {
-        return EnforcerLevel.ERROR;
-    }
-
-    /**
-     * Used by {@code EnforcerMojo} to inject logger instance
-     *
-     * @param log an {@link EnforcerLogger} instance
-     */
-    default void setLog(EnforcerLogger log) {}
-
-    /**
-     * Rule name for current rule instance.
-     *
-     * @return a rule name.
-     * @since 3.6.0
-     */
-    default String getRuleName() {
-        return null;
-    }
-}
+// two rules so message will be reported twice
+assert buildLog.count('[ERROR] - org.apache.maven.plugins:maven-surefire-plugin:maven-plugin (buildPlugin)') == 2
+assert buildLog.count('[ERROR] - org.apache.maven.plugins:maven-failsafe-plugin:maven-plugin (buildPlugin)') == 2
+assert buildLog.count('[ERROR] - org.apache.maven.plugins:maven-surefire-report-plugin:maven-plugin (reportPlugin)') == 2

@@ -21,7 +21,10 @@ package org.apache.maven.enforcer.rules.dependency;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import java.util.function.Predicate;
+
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.execution.MavenSession;
 
@@ -33,15 +36,24 @@ import org.apache.maven.execution.MavenSession;
 @Named("bannedDependencies")
 public final class BannedDependencies extends BannedDependenciesBase {
 
+    private Predicate<Artifact> shouldExclude;
+    private Predicate<Artifact> shouldInclude;
+
     @Inject
     BannedDependencies(MavenSession session, ResolverUtil resolverUtil) {
         super(session, resolverUtil);
     }
 
     @Override
+    public void execute() throws EnforcerRuleException {
+        shouldExclude = ArtifactUtils.prepareDependencyArtifactMatcher(getExcludes());
+        shouldInclude = ArtifactUtils.prepareDependencyArtifactMatcher(getIncludes());
+        super.execute();
+    }
+
+    @Override
     protected boolean validate(Artifact artifact) {
-        return !ArtifactUtils.matchDependencyArtifact(artifact, getExcludes())
-                || ArtifactUtils.matchDependencyArtifact(artifact, getIncludes());
+        return !shouldExclude.test(artifact) || shouldInclude.test(artifact);
     }
 
     @Override

@@ -103,4 +103,16 @@ Built-In Rules
 
   []
 
+Common parameters
+
+  The following parameters are supported by all rules:
+
+  * <<level>> - steering whether a rule should fail a build or just display a warning, allowed values: <<ERROR>>, <<WARN>>. Default is <<ERROR>>
+
+  * <<ruleName>> - optional name of rule configuration
+
+  []
+
+Custom rules
+
   You may also create and inject your own custom rules by following the {{{https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html}maven-enforcer-rule-api}} instructions.

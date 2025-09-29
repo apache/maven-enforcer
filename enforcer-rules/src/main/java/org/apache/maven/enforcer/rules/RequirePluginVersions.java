@@ -63,7 +63,6 @@ import org.apache.maven.plugin.InvalidPluginException;
 import org.apache.maven.plugin.PluginManager;
 import org.apache.maven.plugin.PluginManagerException;
 import org.apache.maven.plugin.PluginNotFoundException;
-import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugin.version.PluginVersionNotFoundException;
 import org.apache.maven.plugin.version.PluginVersionResolutionException;
 import org.apache.maven.project.MavenProject;
@@ -364,22 +363,19 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
     /**
      * Add the additional plugins if they don't exist yet.
      *
-     * @param existing   the existing
-     * @param additional the additional
-     * @return the sets the
+     * @param existing   the existing plugins
+     * @param additional the additional plugins
+     * @return the additional and existing plugins
      * @throws EnforcerRuleError the enforcer error
      */
     public Set<Plugin> addAdditionalPlugins(Set<Plugin> existing, List<String> additional) throws EnforcerRuleError {
         if (additional != null) {
+            if (existing == null) {
+                existing = new HashSet<>();
+            }
             for (String pluginString : additional) {
                 Plugin plugin = parsePluginString(pluginString, "AdditionalPlugins");
-
-                if (existing == null) {
-                    existing = new HashSet<>();
-                    existing.add(plugin);
-                } else if (!existing.contains(plugin)) {
-                    existing.add(plugin);
-                }
+                existing.add(plugin);
             }
         }
         return existing;
@@ -405,7 +401,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
                 throw new EnforcerRuleError("Invalid " + field + " string: " + pluginString);
             }
         } else {
-            throw new EnforcerRuleError("Invalid " + field + " string: " + pluginString);
+            throw new EnforcerRuleError("Invalid " + field + " null plugin string.");
         }
     }
 
@@ -476,18 +472,18 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
      * later than the plugin is executing.
      *
      * @param project   the project
-     * @param thePhases the phases
+     * @param phases the phases
      * @return the bound plugins
      * @throws PluginNotFoundException     the plugin not found exception
      * @throws LifecycleExecutionException the lifecycle execution exception
      */
-    private Set<Plugin> getBoundPlugins(MavenProject project, String thePhases)
+    private Set<Plugin> getBoundPlugins(MavenProject project, String phases)
             throws PluginNotFoundException, LifecycleExecutionException {
 
         Set<Plugin> allPlugins = new HashSet<>();
 
         // lookup the bindings for all the passed in phases
-        String[] lifecyclePhases = thePhases.split(",");
+        String[] lifecyclePhases = phases.split(",");
         for (int i = 0; i < lifecyclePhases.length; i++) {
             String lifecyclePhase = lifecyclePhases[i];
             if (lifecyclePhase != null && !lifecyclePhase.isEmpty()) {
@@ -497,7 +493,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
                             + lifecycle.getId());
                     allPlugins.addAll(getAllPlugins(project, lifecycle));
                 } catch (BuildFailureException e) {
-                    // i'm going to swallow this because the
+                    // swallow this because the
                     // user may have declared a phase that
                     // doesn't exist for every module.
                 }
@@ -609,7 +605,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
 
         for (Map.Entry<String, String> entry : mappings.entrySet()) {
             getLog().debug("  lifecycleMapping = " + entry.getKey());
-            String pluginsForLifecycle = (String) entry.getValue();
+            String pluginsForLifecycle = entry.getValue();
             getLog().debug("  plugins = " + pluginsForLifecycle);
             if (pluginsForLifecycle != null && !pluginsForLifecycle.isEmpty()) {
                 String pluginList[] = pluginsForLifecycle.split(",");
@@ -652,7 +648,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
                 for (String phase : phases) {
                     getLog().debug("getPhaseToLifecycleMap(): phase: " + phase);
                     if (phaseToLifecycleMap.containsKey(phase)) {
-                        Lifecycle prevLifecycle = (Lifecycle) phaseToLifecycleMap.get(phase);
+                        Lifecycle prevLifecycle = phaseToLifecycleMap.get(phase);
                         throw new LifecycleExecutionException("Phase '" + phase
                                 + "' is defined in more than one lifecycle: '" + lifecycle.getId() + "' and '"
                                 + prevLifecycle.getId() + "'");
@@ -711,7 +707,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
             } catch (ComponentLookupException e) {
                 if (defaultMappings == null) {
                     throw new LifecycleExecutionException(
-                            "Cannot find lifecycle mapping for packaging: \'" + packaging + "\'.", e);
+                            "Cannot find lifecycle mapping for packaging: '" + packaging + "'.", e);
                 }
             }
         }
@@ -719,7 +715,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
         if (mappings == null) {
             if (defaultMappings == null) {
                 throw new LifecycleExecutionException(
-                        "Cannot find lifecycle mapping for packaging: \'" + packaging + "\', and there is no default");
+                        "Cannot find lifecycle mapping for packaging: '" + packaging + "', and there is no default");
             } else {
                 mappings = defaultMappings;
             }
@@ -782,12 +778,11 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
      * @throws LifecycleExecutionException the lifecycle execution exception
      * @throws PluginNotFoundException     the plugin not found exception
      */
-    private PluginDescriptor verifyPlugin(
+    private void verifyPlugin(
             Plugin plugin, MavenProject project, Settings settings, ArtifactRepository localRepository)
             throws LifecycleExecutionException, PluginNotFoundException {
-        PluginDescriptor pluginDescriptor;
         try {
-            pluginDescriptor = pluginManager.verifyPlugin(plugin, project, settings, localRepository);
+            pluginManager.verifyPlugin(plugin, project, settings, localRepository);
         } catch (PluginManagerException e) {
             throw new LifecycleExecutionException(
                     "Internal error in the plugin manager getting plugin '" + plugin.getKey() + "': " + e.getMessage(),
@@ -800,7 +795,6 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
                 | ArtifactNotFoundException e) {
             throw new LifecycleExecutionException(e.getMessage(), e);
         }
-        return pluginDescriptor;
     }
 
     /**
@@ -887,19 +881,19 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
     /**
      * Sets the ban latest.
      *
-     * @param theBanLatest the banLatest to set
+     * @param banLatest the banLatest to set
      */
-    public void setBanLatest(boolean theBanLatest) {
-        this.banLatest = theBanLatest;
+    public void setBanLatest(boolean banLatest) {
+        this.banLatest = banLatest;
     }
 
     /**
      * Sets the ban release.
      *
-     * @param theBanRelease the banRelease to set
+     * @param banRelease the banRelease to set
      */
-    public void setBanRelease(boolean theBanRelease) {
-        this.banRelease = theBanRelease;
+    public void setBanRelease(boolean banRelease) {
+        this.banRelease = banRelease;
     }
 
     /**
@@ -914,19 +908,19 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
     /**
      * Sets the ban snapshots.
      *
-     * @param theBanSnapshots the banSnapshots to set
+     * @param banSnapshots the banSnapshots to set
      */
-    public void setBanSnapshots(boolean theBanSnapshots) {
-        this.banSnapshots = theBanSnapshots;
+    public void setBanSnapshots(boolean banSnapshots) {
+        this.banSnapshots = banSnapshots;
     }
 
     /**
      * Sets the ban timestamps.
      *
-     * @param theBanTimestamps the banTimestamps to set
+     * @param banTimestamps the banTimestamps to set
      */
-    public void setBanTimestamps(boolean theBanTimestamps) {
-        this.banTimestamps = theBanTimestamps;
+    public void setBanTimestamps(boolean banTimestamps) {
+        this.banTimestamps = banTimestamps;
     }
 
     @Override

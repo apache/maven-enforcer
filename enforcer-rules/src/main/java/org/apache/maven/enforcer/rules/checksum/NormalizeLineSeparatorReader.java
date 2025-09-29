@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.Reader;
 
 /**
- * Converts Unix line separators to Windows ones and vice-versa.
+ * Converts Unix line separators to Windows ones and vice versa.
  */
 class NormalizeLineSeparatorReader extends FilterReader {
 

@@ -74,34 +74,34 @@ class TestArtifactMatcher {
 
     @Test
     void testPattern() throws InvalidVersionSpecificationException {
-        executePatternMatch(
-                "groupId:artifactId:1.0:jar:compile", "groupId", "artifactId", "1.0", "compile", "jar", true);
+        assertPatternDoesMatch("groupId:artifactId:1.0:jar:compile", "groupId", "artifactId", "1.0", "compile", "jar");
 
-        executePatternMatch("groupId:artifactId:1.0:jar:compile", "groupId", "artifactId", "1.0", "", "", true);
+        assertPatternDoesMatch("groupId:artifactId:1.0:jar:compile", "groupId", "artifactId", "1.0", "", "");
 
-        executePatternMatch("groupId:artifactId:1.0", "groupId", "artifactId", "1.0", "", "", true);
+        assertPatternDoesMatch("groupId:artifactId:1.0", "groupId", "artifactId", "1.0", "", "");
 
-        executePatternMatch("groupId:artifactId:1.0", "groupId", "artifactId", "1.1", "", "", true);
+        assertPatternDoesMatch("groupId:artifactId:1.0", "groupId", "artifactId", "1.1", "", "");
 
-        executePatternMatch("groupId:artifactId:[1.0]", "groupId", "artifactId", "1.1", "", "", false);
+        assertPatternDoesNotMatch("groupId:artifactId:[1.0]", "groupId", "artifactId", "1.1", "", "");
 
-        executePatternMatch("groupId:*:1.0", "groupId", "artifactId", "1.0", "test", "", true);
+        assertPatternDoesMatch("groupId:*:1.0", "groupId", "artifactId", "1.0", "test", "");
 
-        executePatternMatch("*:*:1.0", "groupId", "artifactId", "1.0", "", "", true);
+        assertPatternDoesMatch("*:*:1.0", "groupId", "artifactId", "1.0", "", "");
 
-        executePatternMatch("*:artifactId:*", "groupId", "artifactId", "1.0", "", "", true);
+        assertPatternDoesMatch("*:artifactId:*", "groupId", "artifactId", "1.0", "", "");
 
-        executePatternMatch("*", "groupId", "artifactId", "1.0", "", "", true);
+        assertPatternDoesMatch("*", "groupId", "artifactId", "1.0", "", "");
 
         // MENFORCER-74/75
-        executePatternMatch("*:*:*:jar:compile:tests", "groupId", "artifactId", "1.0", "", "", "tests", true);
+        assertPatternDoesMatchWithClassifier(
+                "*:*:*:jar:compile:tests", "groupId", "artifactId", "1.0", "", "", "tests");
 
         // MENFORCER-83
-        executePatternMatch("*upId", "groupId", "artifactId", "1.0", "", "", true);
+        assertPatternDoesMatch("*upId", "groupId", "artifactId", "1.0", "", "");
 
-        executePatternMatch("gr*pId:?rt?f?ct?d:1.0", "groupId", "artifactId", "1.0", "", "", true);
+        assertPatternDoesMatch("gr*pId:?rt?f?ct?d:1.0", "groupId", "artifactId", "1.0", "", "");
 
-        executePatternMatch("org.apache.*:maven-*:*", "org.apache.maven", "maven-core", "3.0", "", "", true);
+        assertPatternDoesMatch("org.apache.*:maven-*:*", "org.apache.maven", "maven-core", "3.0", "", "");
     }
 
     @Test
@@ -125,31 +125,48 @@ class TestArtifactMatcher {
         executeMatch(matcher, "groupId", "anotherArtifact", "1.1", "", "", false);
     }
 
-    private void executePatternMatch(
+    private void assertPatternDoesMatch(
             final String pattern,
             final String groupId,
             final String artifactId,
             final String versionRange,
             final String scope,
-            final String type,
-            boolean expectedResult)
-            throws InvalidVersionSpecificationException {
-        executePatternMatch(pattern, groupId, artifactId, versionRange, scope, type, "", expectedResult);
+            final String type) {
+        assertPatternDoesMatchWithClassifier(pattern, groupId, artifactId, versionRange, scope, type, "");
     }
 
-    private void executePatternMatch(
+    private void assertPatternDoesNotMatch(
+            final String pattern,
+            final String groupId,
+            final String artifactId,
+            final String versionRange,
+            final String scope,
+            final String type) {
+        assertPatternDoesNotMatchWithClassifier(pattern, groupId, artifactId, versionRange, scope, type, "");
+    }
+
+    private void assertPatternDoesMatchWithClassifier(
             final String pattern,
             final String groupId,
             final String artifactId,
             final String versionRange,
             final String scope,
             final String type,
-            final String classifier,
-            boolean expectedResult) {
-        assertEquals(
-                expectedResult,
-                new ArtifactMatcher.Pattern(pattern)
-                        .match(createMockArtifact(groupId, artifactId, versionRange, scope, type, classifier)));
+            final String classifier) {
+        assertTrue(new ArtifactMatcher.Pattern(pattern)
+                .match(createMockArtifact(groupId, artifactId, versionRange, scope, type, classifier)));
+    }
+
+    private void assertPatternDoesNotMatchWithClassifier(
+            final String pattern,
+            final String groupId,
+            final String artifactId,
+            final String versionRange,
+            final String scope,
+            final String type,
+            final String classifier) {
+        assertFalse(new ArtifactMatcher.Pattern(pattern)
+                .match(createMockArtifact(groupId, artifactId, versionRange, scope, type, classifier)));
     }
 
     private void executeMatch(

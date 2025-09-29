@@ -85,7 +85,7 @@ public final class BanDependencyManagementScope extends AbstractStandardEnforcer
         }
     }
 
-    protected List<Dependency> getViolatingDependencies(DependencyManagement depMgmt) {
+    List<Dependency> getViolatingDependencies(DependencyManagement depMgmt) {
         final ArtifactMatcher excludesMatcher;
         if (excludes != null) {
             excludesMatcher = new ArtifactMatcher(excludes, Collections.emptyList());
@@ -113,8 +113,8 @@ public final class BanDependencyManagementScope extends AbstractStandardEnforcer
                 + System.lineSeparator();
     }
 
-    public void setExcludes(List<String> theExcludes) {
-        this.excludes = theExcludes;
+    public void setExcludes(List<String> excludes) {
+        this.excludes = excludes;
     }
 
     @Override

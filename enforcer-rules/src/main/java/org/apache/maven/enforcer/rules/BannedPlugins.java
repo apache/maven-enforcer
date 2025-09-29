@@ -23,6 +23,7 @@ import javax.inject.Named;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -66,9 +67,10 @@ public final class BannedPlugins extends AbstractStandardEnforcerRule {
 
     @Override
     public void execute() throws EnforcerRuleException {
-
+        Predicate<Artifact> shouldExclude = ArtifactUtils.prepareDependencyArtifactMatcher(excludes);
+        Predicate<Artifact> shouldInclude = ArtifactUtils.prepareDependencyArtifactMatcher(includes);
         String result = session.getCurrentProject().getPluginArtifacts().stream()
-                .filter(a -> !validate(a))
+                .filter(a -> !(!shouldExclude.test(a) || shouldInclude.test(a)))
                 .collect(
                         StringBuilder::new,
                         (messageBuilder, node) ->
@@ -78,11 +80,6 @@ public final class BannedPlugins extends AbstractStandardEnforcerRule {
         if (!result.isEmpty()) {
             throw new EnforcerRuleException(result);
         }
-    }
-
-    private boolean validate(Artifact artifact) {
-        return !ArtifactUtils.matchDependencyArtifact(artifact, excludes)
-                || ArtifactUtils.matchDependencyArtifact(artifact, includes);
     }
 
     @Override

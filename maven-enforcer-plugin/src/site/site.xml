@@ -18,13 +18,12 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<project xmlns="http://maven.apache.org/DECORATION/1.8.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.8.0 https://maven.apache.org/xsd/decoration-1.8.0.xsd">
+<site xmlns="http://maven.apache.org/SITE/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd">
   <body>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
+      <item name="Plugin Documentation" href="plugin-info.html"/>
       <item name="Usage" href="usage.html"/>
       <item name="FAQ" href="faq.html"/>
       <item name="Built-In Rules" href="../../enforcer/enforcer-rules/index.html"/>
@@ -40,7 +39,7 @@ under the License.
       <item name="Check specific rule via CLI" href="examples/check-specific-rule-via-cli.html"/>
     </menu>
     <menu name="Resources">
-      <item name="Version Ranges" href="https://cwiki.apache.org/confluence/display/MAVENOLD/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges"/>
+      <item name="Enforcer Version Ranges" href="../enforcer-rules/versionRanges.html"/>
     </menu>
   </body>
-</project>
+</site>

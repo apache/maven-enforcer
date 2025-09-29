@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -49,14 +50,18 @@ public class MyCustomRule extends AbstractEnforcerRule {
 
     // Inject needed Maven components
 
-    @Inject
-    private MavenProject project;
+    private final MavenProject project;
+
+    private final MavenSession session;
+
+    private final RuntimeInformation runtimeInformation;
 
     @Inject
-    private MavenSession session;
-
-    @Inject
-    private RuntimeInformation runtimeInformation;
+    public MyCustomRule(MavenProject project, MavenSession session, RuntimeInformation runtimeInformation) {
+        this.project = Objects.requireNonNull(project);
+        this.session = Objects.requireNonNull(session);
+        this.runtimeInformation = Objects.requireNonNull(runtimeInformation);
+    }
 
     public void execute() throws EnforcerRuleException {
 

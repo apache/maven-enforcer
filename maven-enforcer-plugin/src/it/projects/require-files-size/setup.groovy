@@ -16,41 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.enforcer.rule.api;
+def dir = new File(basedir, "test")
+dir.mkdir()
 
-/**
- * Base interface for old and new API.
- * <p>
- * Used for internal purpose.
- *
- * @author Slawomir Jaranowski
- * @since 3.2.1
- */
-public interface EnforcerRuleBase {
+def content = "A" * 4096 // 4KB of 'A'
 
-    /**
-     * Current Enforcer execution level
-     *
-     * @return an Enforcer execution level
-     */
-    default EnforcerLevel getLevel() {
-        return EnforcerLevel.ERROR;
-    }
-
-    /**
-     * Used by {@code EnforcerMojo} to inject logger instance
-     *
-     * @param log an {@link EnforcerLogger} instance
-     */
-    default void setLog(EnforcerLogger log) {}
-
-    /**
-     * Rule name for current rule instance.
-     *
-     * @return a rule name.
-     * @since 3.6.0
-     */
-    default String getRuleName() {
-        return null;
-    }
+(1..3).each { i ->
+    def file = new File(dir, "file${i}.txt")
+    file.text = content
 }
+
+println "Successfully created bogus files with 4KB of data."

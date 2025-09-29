@@ -35,13 +35,13 @@ Banned Specified Repositories
 
 * Support Parameters
 
-   * <<banRepositories>> - Specify banned non-plugin repositories. This is a black list of http/https url patterns.
+   * <<bannedRepositories>> - Specify banned non-plugin repositories. This is a black list of http/https url patterns.
 
-   * <<banPluginRepositories>> - Specify banned plugin repositories. This is a black list of http/https url patterns.
+   * <<bannedPluginRepositories>> - Specify banned plugin repositories. This is a black list of http/https url patterns.
 
    * <<allowedRepositories>> - Specify explicitly allowed non-plugin repositories. This is a white list of http/https url patterns.
 
-   * <<allowedPluginRepositories>> - Specify explicitly allowed plugin repositories. This is a white list of http/https url patternes.
+   * <<allowedPluginRepositories>> - Specify explicitly allowed plugin repositories. This is a white list of http/https url patterns.
 
 * Sample Configuration
 
