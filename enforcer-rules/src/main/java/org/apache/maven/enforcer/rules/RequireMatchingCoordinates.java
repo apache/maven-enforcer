@@ -29,6 +29,7 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * This rule checks that the Maven coordinates (i.e. the project's {@code groupId} and {@code artifactId}) each match a given pattern.
+ *
  * @since 3.5.0
  */
 @Named("requireMatchingCoordinates")

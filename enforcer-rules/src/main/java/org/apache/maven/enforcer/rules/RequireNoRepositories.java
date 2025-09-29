@@ -226,7 +226,7 @@ public final class RequireNoRepositories extends AbstractStandardEnforcerRule {
      * @param repos          all repositories, never {@code null}
      * @param allowedRepos   allowed repositories, never {@code null}
      * @param allowSnapshots
-     * @return List of banned repositoreis.
+     * @return list of banned repositoreis
      */
     private static List<String> findBannedRepositories(
             List<Repository> repos, List<String> allowedRepos, boolean allowSnapshots) {

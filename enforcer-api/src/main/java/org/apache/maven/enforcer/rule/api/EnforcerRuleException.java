@@ -28,7 +28,7 @@ package org.apache.maven.enforcer.rule.api;
  */
 public class EnforcerRuleException extends Exception {
 
-    /** serialVersionUID. */
+    /** SerialVersionUID. */
     private static final long serialVersionUID = 1L;
 
     /** The source. */

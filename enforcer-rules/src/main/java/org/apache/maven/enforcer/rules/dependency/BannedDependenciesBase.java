@@ -145,7 +145,7 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
     protected abstract String getErrorMessage();
 
     /**
-     * Validates a dependency artifact if it fulfills the enforcer rule
+     * Validates a dependency artifact if it fulfills the enforcer rule.
      *
      * @param dependency dependency to be checked against the list of excludes
      * @return {@code true} if the dependency <b>passes</b> the rule, {@code false} if the dependency
@@ -178,8 +178,8 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
      * The rule will fail if any dependency matches any exclude, unless it also matches an
      * include rule.
      *
-     * @see #getExcludes()
      * @param excludes the excludes to set
+     * @see #getExcludes()
      */
     public void setExcludes(List<String> excludes) {
         this.excludes = excludes;
@@ -204,8 +204,8 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
      * For example, to ban all xerces except xerces-api → exclude "xerces",
      * include "xerces:xerces-api"
      *
-     * @see #setIncludes(List)
      * @param includes the includes to set
+     * @see #setIncludes(List)
      */
     public void setIncludes(List<String> includes) {
         this.includes = includes;

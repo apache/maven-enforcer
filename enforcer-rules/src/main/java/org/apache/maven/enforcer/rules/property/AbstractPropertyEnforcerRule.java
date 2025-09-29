@@ -48,7 +48,7 @@ abstract class AbstractPropertyEnforcerRule extends AbstractStandardEnforcerRule
     /**
      * Set the property value to a given regular expression. Defaults to <code>null</code> (any value is ok).
      *
-     * @param regex The regular expression
+     * @param regex the regular expression
      */
     public final void setRegex(String regex) {
         this.regex = regex;
@@ -104,20 +104,21 @@ abstract class AbstractPropertyEnforcerRule extends AbstractStandardEnforcerRule
     }
 
     /**
-     * How the property that is being evaluated is called
+     * How the property that is being evaluated is called.
+     *
      * @return kind of property
      */
     protected abstract String getName();
 
     /**
-     * The name of the property currently being evaluated, this is used for default message purposes only
+     * The name of the property currently being evaluated, this is used for default message purposes only.
      *
      * @return the name of the property
      */
     protected abstract String getPropertyName();
 
     /**
-     * Resolves the property value
+     * Resolves the property value.
      *
      * @return a resolve value
      * @throws EnforcerRuleException in case of problems

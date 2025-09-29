@@ -25,7 +25,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Base EnforcerLogger implementation
+ * Base EnforcerLogger implementation.
  *
  * @author Slawomir Jaranowski
  * @since 3.2.0

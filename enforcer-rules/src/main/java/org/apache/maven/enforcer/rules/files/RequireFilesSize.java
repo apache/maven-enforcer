@@ -39,13 +39,13 @@ public final class RequireFilesSize extends AbstractRequireFiles {
 
     private static final long MAXSIZE = 10000;
 
-    /** the max size allowed. */
+    /** The max size allowed. */
     private long maxsize = MAXSIZE;
 
-    /** the min size allowed. */
+    /** The min size allowed. */
     private long minsize = 0;
 
-    /** the mode for computing the size when the files are directories. */
+    /** The mode for computing the size when the files are directories. */
     private boolean recursive = false;
 
     /** The error msg. */

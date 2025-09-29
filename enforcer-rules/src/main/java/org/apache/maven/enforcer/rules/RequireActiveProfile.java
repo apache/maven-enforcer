@@ -37,11 +37,13 @@ import org.apache.maven.project.MavenProject;
 @Named("requireActiveProfile")
 public final class RequireActiveProfile extends AbstractStandardEnforcerRule {
 
-    /** Comma separated list of profiles to check.
+    /**
+     * Comma separated list of profiles to check.
      */
     private String profiles = null;
 
-    /** If all profiles must be active. If false, only one must be active
+    /**
+     * If all profiles must be active. If false, only one must be active.
      */
     private boolean all = true;
 

@@ -29,12 +29,12 @@ package org.apache.maven.enforcer.rule.api;
 abstract class AbstractEnforcerRuleBase implements EnforcerRuleBase {
 
     /**
-     * EnforcerLogger instance
+     * EnforcerLogger instance.
      */
     private EnforcerLogger log;
 
     /**
-     * Used by {@code EnforcerMojo} to inject logger instance
+     * Used by {@code EnforcerMojo} to inject logger instance.
      *
      * @param log an {@link EnforcerLogger} instance
      */

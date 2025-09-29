@@ -86,8 +86,8 @@ public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule
     /**
      * Convenience method to create a user readable message.
      *
-     * @param sortedProjects The list of reactor projects.
-     * @throws EnforcerRuleException In case of a violation.
+     * @param sortedProjects the list of reactor projects
+     * @throws EnforcerRuleException in case of a violation
      */
     private void checkMissingParentsInReactor(List<MavenProject> sortedProjects) throws EnforcerRuleException {
         List<MavenProject> modulesWithoutParentsInReactor = existModulesWithoutParentsInReactor(sortedProjects);
@@ -135,8 +135,8 @@ public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule
     /**
      * Convenience method to create a user readable message.
      *
-     * @param sortedProjects The list of reactor projects.
-     * @throws EnforcerRuleException In case of a violation.
+     * @param sortedProjects the list of reactor projects
+     * @throws EnforcerRuleException in case of a violation
      */
     private void checkParentsInReactor(List<MavenProject> sortedProjects) throws EnforcerRuleException {
         // After we are sure having consistent version we can simply use the first one?
@@ -160,8 +160,8 @@ public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule
     /**
      * Convenience method to create user readable message.
      *
-     * @param sortedProjects The list of reactor projects.
-     * @throws EnforcerRuleException In case of a violation.
+     * @param sortedProjects the list of reactor projects
+     * @throws EnforcerRuleException in case of a violation
      */
     private void checkReactor(List<MavenProject> sortedProjects) throws EnforcerRuleException {
         List<MavenProject> consistenceCheckResult = isReactorVersionConsistent(sortedProjects);
@@ -221,9 +221,9 @@ public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule
      * This will check of the groupId/artifactId can be found in any reactor project. The version will be ignored cause
      * versions are checked before.
      *
-     * @param project        The project which should be checked if it is contained in the sortedProjects.
-     * @param sortedProjects The list of existing projects.
-     * @return true if the project has been found within the list false otherwise.
+     * @param project        the project which should be checked if it is contained in the sortedProjects
+     * @param sortedProjects the list of existing projects
+     * @return true if the project has been found within the list false otherwise
      */
     private boolean isProjectPartOfTheReactor(MavenProject project, List<MavenProject> sortedProjects) {
         return isGAPartOfTheReactor(project.getGroupId(), project.getArtifactId(), sortedProjects);
@@ -236,10 +236,10 @@ public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule
     /**
      * This will check if the given <code>groupId/artifactId</code> is part of the current reactor.
      *
-     * @param groupId        The groupId
-     * @param artifactId     The artifactId
-     * @param sortedProjects The list of projects within the reactor.
-     * @return true if the groupId/artifactId is part of the reactor false otherwise.
+     * @param groupId        the groupId
+     * @param artifactId     the artifactId
+     * @param sortedProjects the list of projects within the reactor
+     * @return true if the groupId/artifactId is part of the reactor false otherwise
      */
     private boolean isGAPartOfTheReactor(String groupId, String artifactId, List<MavenProject> sortedProjects) {
         boolean result = false;
@@ -257,8 +257,8 @@ public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule
      * Assume we have a module which is a child of a multi-module build but this child does not have a parent. This
      * method will exactly search for such cases.
      *
-     * @param sortedProjects The sorted list of the reactor modules.
-     * @return The resulting list will contain the modules in the reactor which do not have a parent. The list will
+     * @param sortedProjects the sorted list of the reactor modules
+     * @return the resulting list will contain the modules in the reactor which do not have a parent. The list will
      *         never null. If the list is empty no violation have happened.
      */
     private List<MavenProject> existModulesWithoutParentsInReactor(List<MavenProject> sortedProjects) {
@@ -283,9 +283,9 @@ public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule
     /**
      * Convenience method to handle adding a dependency to the Map of List.
      *
-     * @param result     The result List which should be handled.
-     * @param project    The MavenProject which will be added.
-     * @param dependency The dependency which will be added.
+     * @param result     the result List which should be handled
+     * @param project    the MavenProject which will be added
+     * @param dependency the dependency which will be added
      */
     private void addDep(Map<MavenProject, List<Dependency>> result, MavenProject project, Dependency dependency) {
         if (result.containsKey(project)) {
@@ -348,8 +348,8 @@ public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule
      *  &lt;version&gt;1.1-SNAPSHOT&lt;/version&gt;
      * </pre>
      *
-     * @param projectList The sorted list of the reactor modules.
-     * @return The resulting list will contain the modules in the reactor which do the thing in the example above. The
+     * @param projectList the sorted list of the reactor modules
+     * @return the resulting list will contain the modules in the reactor which do the thing in the example above. The
      *         list will never null. If the list is empty no violation have happened.
      */
     private List<MavenProject> isReactorVersionConsistent(List<MavenProject> projectList) {
@@ -383,7 +383,7 @@ public final class ReactorModuleConvergence extends AbstractStandardEnforcerRule
     /**
      * This will add the given user message to the output.
      *
-     * @param sb The already initialized exception message part.
+     * @param sb the already initialized exception message part
      */
     private void addMessageIfExist(StringBuilder sb) {
         if (!StringUtils.isEmpty(getMessage())) {

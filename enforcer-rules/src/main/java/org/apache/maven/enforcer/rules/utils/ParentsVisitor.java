@@ -27,7 +27,7 @@ import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
 
 /**
- * A {@link DependencyVisitor} building a map of parent nodes
+ * A {@link DependencyVisitor} building a map of parent nodes.
  */
 public class ParentsVisitor implements DependencyVisitor, ParentNodeProvider {
 

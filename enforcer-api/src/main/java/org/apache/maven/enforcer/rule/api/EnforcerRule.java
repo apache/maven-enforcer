@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  * Interface to be implemented by any rules executed by the enforcer.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @deprecated Please see
+ * @deprecated please see
  *         <a href="https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html">Writing a custom rule</a>
  */
 @Deprecated
@@ -37,7 +37,7 @@ public interface EnforcerRule extends EnforcerRuleBase {
      * then decide based on the fail flag if it should stop or just log the
      * message as a warning.
      *
-     * @param helper The helper provides access to the log, MavenSession and has
+     * @param helper the helper provides access to the log, MavenSession and has
      *               helpers to get common components. It is also able to look up components
      *               by class name.
      * @throws EnforcerRuleException the enforcer rule exception

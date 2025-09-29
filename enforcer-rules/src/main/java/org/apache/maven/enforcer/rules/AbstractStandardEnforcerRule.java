@@ -42,6 +42,7 @@ public abstract class AbstractStandardEnforcerRule extends AbstractEnforcerRule 
 
     /**
      * Returns an identifier of a given project.
+     *
      * @param project the project
      * @return the identifier of the project in the format {@code <groupId>:<artifactId>:<version>}
      */
@@ -70,9 +71,9 @@ public abstract class AbstractStandardEnforcerRule extends AbstractEnforcerRule 
      * Creates a string with line/column information for problems originating directly from this POM. Inspired by
      * {@code o.a.m.model.building.ModelProblemUtils.formatLocation(...)}.
      *
-     * @param project the current project.
-     * @param location The location which should be formatted, must not be {@code null}.
-     * @return The formatted problem location or an empty string if unknown, never {@code null}.
+     * @param project the current project
+     * @param location the location which should be formatted, must not be {@code null}
+     * @return the formatted problem location or an empty string if unknown, never {@code null}
      */
     protected static String formatLocation(MavenProject project, InputLocation location) {
         StringBuilder buffer = new StringBuilder();

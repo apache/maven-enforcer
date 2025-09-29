@@ -35,7 +35,7 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  * rules.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @deprecated Please see
+ * @deprecated please see
  *         <a href="https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html">Writing a custom rule</a>
  */
 @Deprecated

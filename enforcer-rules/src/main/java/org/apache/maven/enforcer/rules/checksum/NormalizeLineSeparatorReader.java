@@ -30,7 +30,7 @@ class NormalizeLineSeparatorReader extends FilterReader {
     private static final int EOL = -1;
 
     /**
-     * Type representing either Unix or Windows line separators
+     * Type representing either Unix or Windows line separators.
      */
     public enum LineSeparator {
         WINDOWS("\r\n", null),
@@ -53,6 +53,7 @@ class NormalizeLineSeparatorReader extends FilterReader {
 
         /**
          * Checks if two given characters match the line separator represented by this object.
+         *
          * @param currentCharacter the character to check against
          * @param previousCharacter optional previous character (may be {@code null})
          * @return one of {@link MatchResult}

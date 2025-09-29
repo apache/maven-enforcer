@@ -36,7 +36,6 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 public final class RequireJavaVendor extends AbstractStandardEnforcerRule {
     /**
      * Java vendors to include. If none is defined, all are included.
-     *
      */
     private List<String> includes;
 
@@ -115,7 +114,6 @@ public final class RequireJavaVendor extends AbstractStandardEnforcerRule {
      * </ul>
      *
      * @param includes the list of required vendors
-     *
      * @see #setExcludes(List)
      */
     public void setIncludes(List<String> includes) {

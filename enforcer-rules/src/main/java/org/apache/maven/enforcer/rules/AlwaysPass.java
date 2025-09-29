@@ -22,6 +22,7 @@ import javax.inject.Named;
 
 /**
  * Always pass. This rule is useful for testing the Enforcer configuration.
+ *
  * @author Ben Lidgey
  */
 @Named("alwaysPass")

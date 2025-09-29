@@ -23,7 +23,7 @@ package org.apache.maven.enforcer.rule.api;
  *
  * @author Mirko Friedenhagen
  * @since 1.4
- * @deprecated Please see
+ * @deprecated please see
  *         <a href="https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html">Writing a custom rule</a>
  */
 @Deprecated

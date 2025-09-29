@@ -80,7 +80,7 @@ public class EnforcerRuleManager {
      *
      * @param rules a rules configuration
      * @param log   a Mojo logger
-     * @return List of rule instances
+     * @return list of rule instances
      * @throws EnforcerRuleManagerException report a problem during rules creating
      */
     public List<EnforcerRuleDesc> createRules(PlexusConfiguration rules, Log log) throws EnforcerRuleManagerException {

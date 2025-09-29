@@ -74,25 +74,25 @@ public class EnforceMojo extends AbstractMojo {
     protected static Map<String, EnforcerRule> cache = new ConcurrentHashMap<>();
 
     /**
-     * MojoExecution needed by the ExpressionEvaluator
+     * MojoExecution needed by the ExpressionEvaluator.
      */
     @Parameter(defaultValue = "${mojoExecution}", readonly = true, required = true)
     protected MojoExecution mojoExecution;
 
     /**
-     * The MavenSession
+     * The MavenSession.
      */
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
     protected MavenSession session;
 
     /**
-     * POM
+     * POM.
      */
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
 
     /**
-     * Flag to easily skip all checks
+     * Flag to easily skip all checks.
      */
     @Parameter(property = "enforcer.skip", defaultValue = "false")
     protected boolean skip = false;
@@ -104,13 +104,13 @@ public class EnforceMojo extends AbstractMojo {
     private boolean fail = true;
 
     /**
-     * Fail on the first rule that doesn't pass
+     * Fail on the first rule that doesn't pass.
      */
     @Parameter(property = "enforcer.failFast", defaultValue = "false")
     private boolean failFast = false;
 
     /**
-     * Flag to fail the build if no rules are present
+     * Flag to fail the build if no rules are present.
      *
      * @since 3.2.0
      */
@@ -186,7 +186,7 @@ public class EnforceMojo extends AbstractMojo {
      *
      * @param rulesToExecute a rules to execute
      * @throws MojoExecutionException when values are incorrect
-     * @deprecated Use <code>enforcer.rules</code> property instead
+     * @deprecated use <code>enforcer.rules</code> property instead
      */
     @Parameter(required = false, property = "rules")
     @Deprecated
@@ -403,7 +403,7 @@ public class EnforceMojo extends AbstractMojo {
     }
 
     /**
-     * This method determines if a rule should execute based on the cache
+     * This method determines if a rule should execute based on the cache.
      *
      * @param rule the rule to verify
      * @return {@code true} if rule should be executed, otherwise {@code false}

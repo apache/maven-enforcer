@@ -89,6 +89,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
     /**
      * Sets dependencies to exclude.
+     *
      * @param excludes a list of {@code groupId:artifactId} names
      */
     public void setExcludes(List<String> excludes) {

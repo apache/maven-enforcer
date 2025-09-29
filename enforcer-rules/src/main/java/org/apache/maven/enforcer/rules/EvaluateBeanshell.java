@@ -40,8 +40,9 @@ public final class EvaluateBeanshell extends AbstractStandardEnforcerRule {
     /** Beanshell interpreter. */
     private final Interpreter interpreter = new Interpreter();
 
-    /** The condition to be evaluated.
-     * */
+    /**
+     * The condition to be evaluated.
+     */
     private String condition;
 
     private final ExpressionEvaluator evaluator;
