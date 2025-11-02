@@ -24,10 +24,10 @@ import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.project.MavenProject;
-import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 
 class BanDependencyManagementScopeTest {
@@ -45,7 +45,7 @@ class BanDependencyManagementScopeTest {
         depMgmt.addDependency(excludedDepWithScope);
         rule.setExcludes(Collections.singletonList("*:artifact4"));
         rule.setLog(mock(EnforcerLogger.class));
-        MatcherAssert.assertThat(rule.getViolatingDependencies(depMgmt), Matchers.contains(depWithScope));
+        assertThat(rule.getViolatingDependencies(depMgmt), Matchers.contains(depWithScope));
     }
 
     static Dependency createDependency(String groupId, String artifactId, String version) {
