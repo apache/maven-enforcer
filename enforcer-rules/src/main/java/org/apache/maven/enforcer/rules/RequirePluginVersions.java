@@ -610,7 +610,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
             if (pluginsForLifecycle != null && !pluginsForLifecycle.isEmpty()) {
                 String pluginList[] = pluginsForLifecycle.split(",");
                 for (String plugin : pluginList) {
-                    plugin = StringUtils.strip(plugin);
+                    plugin = plugin == null ? null : plugin.trim();
                     getLog().debug("    plugin = " + plugin);
                     String tokens[] = plugin.split(":");
                     getLog().debug("    GAV = " + Arrays.asList(tokens));
