@@ -42,7 +42,7 @@ class RequireUpperBoundDepsTest {
     private RequireUpperBoundDeps rule;
 
     @Test
-    void testRule() throws Exception {
+    void rule() throws Exception {
 
         rule.setLog(mock(EnforcerLogger.class));
 

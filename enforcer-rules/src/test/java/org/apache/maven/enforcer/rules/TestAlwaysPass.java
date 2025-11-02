@@ -33,7 +33,7 @@ import static org.mockito.Mockito.mock;
 class TestAlwaysPass {
 
     @Test
-    void testExecute() {
+    void execute() {
 
         AlwaysPass rule = new AlwaysPass();
         rule.setLog(mock(EnforcerLogger.class));

@@ -55,7 +55,7 @@ class TestAbstractVersionEnforcer {
      * Test enforce version.
      */
     @Test
-    void testEnforceVersion() throws Exception {
+    void enforceVersion() throws Exception {
         RequireJavaVersion rule = new RequireJavaVersion();
         rule.setLog(mock(EnforcerLogger.class));
 

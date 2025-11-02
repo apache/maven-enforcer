@@ -18,7 +18,6 @@
  */
 package org.apache.maven.enforcer.rules.checksum;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
@@ -34,7 +33,7 @@ class TestNormalizeLineSeparatorReader {
     private static final String WINDOWS_MULTILINE_STRING = "line1\r\nline2\r\n\r\n";
 
     @Test
-    void testUnixToWindows() throws IOException {
+    void unixToWindows() throws Exception {
         try (Reader reader =
                 new NormalizeLineSeparatorReader(new StringReader(UNIX_MULTILINE_STRING), LineSeparator.WINDOWS)) {
             assertEquals(WINDOWS_MULTILINE_STRING, IOUtils.toString(reader));
@@ -42,7 +41,7 @@ class TestNormalizeLineSeparatorReader {
     }
 
     @Test
-    void testUnixToUnix() throws IOException {
+    void unixToUnix() throws Exception {
         try (Reader reader =
                 new NormalizeLineSeparatorReader(new StringReader(UNIX_MULTILINE_STRING), LineSeparator.UNIX)) {
             assertEquals(UNIX_MULTILINE_STRING, IOUtils.toString(reader));
@@ -50,7 +49,7 @@ class TestNormalizeLineSeparatorReader {
     }
 
     @Test
-    void testWindowsToUnix() throws IOException {
+    void windowsToUnix() throws Exception {
         try (Reader reader =
                 new NormalizeLineSeparatorReader(new StringReader(WINDOWS_MULTILINE_STRING), LineSeparator.UNIX)) {
             assertEquals(UNIX_MULTILINE_STRING, IOUtils.toString(reader));
@@ -58,7 +57,7 @@ class TestNormalizeLineSeparatorReader {
     }
 
     @Test
-    void testWindowsToWindows() throws IOException {
+    void windowsToWindows() throws Exception {
         try (Reader reader =
                 new NormalizeLineSeparatorReader(new StringReader(WINDOWS_MULTILINE_STRING), LineSeparator.WINDOWS)) {
             assertEquals(WINDOWS_MULTILINE_STRING, IOUtils.toString(reader));

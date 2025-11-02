@@ -18,7 +18,6 @@
  */
 package org.apache.maven.enforcer.rules.dependency;
 
-import java.io.IOException;
 import java.util.Collections;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -62,7 +61,7 @@ class RequireReleaseDepsTest {
     private RequireReleaseDeps rule;
 
     @Test
-    void testSearchNonTransitive() throws IOException {
+    void searchNonTransitive() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
         when(project.getDependencyArtifacts()).thenReturn(ARTIFACT_STUB_FACTORY.getScopedArtifacts());
         rule.setSearchTransitive(false);
@@ -73,7 +72,7 @@ class RequireReleaseDepsTest {
     }
 
     @Test
-    void testSearchTransitiveMultipleFailures() throws Exception {
+    void searchTransitiveMultipleFailures() throws Exception {
         when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
                 .thenReturn(getDependencyNodeWithMultipleSnapshots());
         rule.setSearchTransitive(true);
@@ -87,7 +86,7 @@ class RequireReleaseDepsTest {
     }
 
     @Test
-    void testSearchTransitiveNoFailures() throws Exception {
+    void searchTransitiveNoFailures() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
         when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
                 .thenReturn(new DependencyNodeBuilder().build());
@@ -97,7 +96,7 @@ class RequireReleaseDepsTest {
     }
 
     @Test
-    void testShouldFailOnlyWhenRelease() throws Exception {
+    void shouldFailOnlyWhenRelease() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
         when(project.getArtifact()).thenReturn(ARTIFACT_STUB_FACTORY.getSnapshotArtifact());
         rule.setOnlyWhenRelease(true);
@@ -108,7 +107,7 @@ class RequireReleaseDepsTest {
     }
 
     @Test
-    void testWildcardExcludeTests() throws Exception {
+    void wildcardExcludeTests() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
         when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
                 .thenReturn(getDependencyNodeWithMultipleTestSnapshots());
@@ -120,7 +119,7 @@ class RequireReleaseDepsTest {
     }
 
     @Test
-    void testWildcardExcludeAll() throws Exception {
+    void wildcardExcludeAll() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
         when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
                 .thenReturn(getDependencyNodeWithMultipleTestSnapshots());
@@ -132,7 +131,7 @@ class RequireReleaseDepsTest {
     }
 
     @Test
-    void testExcludesAndIncludes() throws Exception {
+    void excludesAndIncludes() throws Exception {
         when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
                 .thenReturn(getDependencyNodeWithMultipleTestSnapshots());
 
@@ -152,12 +151,12 @@ class RequireReleaseDepsTest {
      * Test id.
      */
     @Test
-    void testId() {
+    void id() {
         assertThat(rule.getCacheId()).isNull();
     }
 
     @Test
-    void testFailWhenParentIsSnapshot() throws Exception {
+    void failWhenParentIsSnapshot() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
         when(project.getParentArtifact()).thenReturn(ARTIFACT_STUB_FACTORY.getSnapshotArtifact());
         when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))

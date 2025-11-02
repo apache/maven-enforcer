@@ -137,7 +137,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testEnforceMojo() throws Exception {
+    void enforceMojo() throws Exception {
         mojo.setFail(true);
 
         EnforcerRuleDesc[] rules = new EnforcerRuleDesc[2];
@@ -170,7 +170,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testCaching() throws Exception {
+    void caching() throws Exception {
         mojo.setFail(true);
 
         EnforcerRuleDesc[] rules = new EnforcerRuleDesc[10];
@@ -239,7 +239,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testCachePersistence1() throws Exception {
+    void cachePersistence1() throws Exception {
         mojo.setFail(true);
 
         EnforcerRuleDesc[] rules = new EnforcerRuleDesc[10];
@@ -257,7 +257,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testCachePersistence2() throws Exception {
+    void cachePersistence2() throws Exception {
         mojo.setFail(true);
 
         EnforcerRuleDesc[] rules = new EnforcerRuleDesc[10];
@@ -274,7 +274,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testCachePersistence3() throws Exception {
+    void cachePersistence3() throws Exception {
         System.gc();
 
         try {
@@ -298,7 +298,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testLoggingOnEnforcerRuleExceptionWithMessage() throws Exception {
+    void loggingOnEnforcerRuleExceptionWithMessage() throws Exception {
         // fail=false because this is out of scope here (also allows for cleaner test code without catch block)
         mojo.setFail(false);
 
@@ -322,7 +322,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testLoggingOnEnforcerRuleExceptionWithoutMessage() throws Exception {
+    void loggingOnEnforcerRuleExceptionWithoutMessage() throws Exception {
         // fail=false because this is out of scope here (also allows for cleaner test code without catch block)
         mojo.setFail(false);
 
@@ -345,7 +345,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testFailIfNoTests() throws MojoExecutionException {
+    void failIfNoTests() throws Exception {
         mojo.setFail(false);
         mojo.setFailIfNoRules(false);
 
@@ -358,7 +358,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testFailIfBothRuleOverridePropertiesAreSet() throws MojoExecutionException {
+    void failIfBothRuleOverridePropertiesAreSet() throws Exception {
         mojo.setFail(false);
 
         List<String> rules = Arrays.asList("rule1", "rule2");
@@ -371,7 +371,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testShouldPrintWarnWhenUsingDeprecatedRulesProperty() throws MojoExecutionException {
+    void shouldPrintWarnWhenUsingDeprecatedRulesProperty() throws Exception {
         mojo.setFail(false);
 
         Log logSpy = setupLogSpy();
@@ -383,7 +383,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testShouldNotPrintWarnWhenDeprecatedRulesPropertyIsEmpty() throws MojoExecutionException {
+    void shouldNotPrintWarnWhenDeprecatedRulesPropertyIsEmpty() throws Exception {
         mojo.setFail(false);
 
         Log logSpy = setupLogSpy();

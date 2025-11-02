@@ -106,7 +106,7 @@ class TestRequirePluginVersions {
      * Test has version specified.
      */
     @Test
-    void testHasVersionSpecified() throws Exception {
+    void hasVersionSpecified() throws Exception {
 
         when(evaluator.evaluate(anyString())).thenAnswer(i -> i.getArgument(0));
         when(evaluator.evaluate(isNull())).thenReturn(null);
@@ -185,7 +185,7 @@ class TestRequirePluginVersions {
      * Test has version specified with properties.
      */
     @Test
-    void testHasVersionSpecifiedWithProperties() throws Exception {
+    void hasVersionSpecifiedWithProperties() throws Exception {
 
         when(evaluator.evaluate(anyString())).thenAnswer(i -> ((String) i.getArgument(0)).replaceAll("\\$\\{|}", ""));
 
@@ -250,7 +250,7 @@ class TestRequirePluginVersions {
      * @throws MojoExecutionException the mojo execution exception
      */
     @Test
-    void testGetAdditionalPluginsNull() throws Exception {
+    void getAdditionalPluginsNull() throws Exception {
         rule.addAdditionalPlugins(null, null);
     }
 
@@ -258,7 +258,7 @@ class TestRequirePluginVersions {
      * Test get additional plugins invalid format.
      */
     @Test
-    void testGetAdditionalPluginsInvalidFormat() {
+    void getAdditionalPluginsInvalidFormat() {
 
         List<String> additional = new ArrayList<>();
 
@@ -288,7 +288,7 @@ class TestRequirePluginVersions {
      * @throws MojoExecutionException the mojo execution exception
      */
     @Test
-    void testGetAdditionalPluginsEmptySet() throws Exception {
+    void getAdditionalPluginsEmptySet() throws Exception {
         List<String> additional = new ArrayList<>();
         additional.add("group:a-artifact");
         additional.add("group:another-artifact");
@@ -307,7 +307,7 @@ class TestRequirePluginVersions {
      * @throws MojoExecutionException the mojo execution exception
      */
     @Test
-    void testGetAdditionalPlugins() throws Exception {
+    void getAdditionalPlugins() throws Exception {
 
         Set<Plugin> plugins = new HashSet<>();
         plugins.add(EnforcerTestUtils.newPlugin("group", "a-artifact", "1.0"));
@@ -333,7 +333,7 @@ class TestRequirePluginVersions {
      * @throws MojoExecutionException the mojo execution exception
      */
     @Test
-    void testGetUncheckedPlugins() throws Exception {
+    void getUncheckedPlugins() throws Exception {
 
         Set<Plugin> plugins = new HashSet<>();
         plugins.add(EnforcerTestUtils.newPlugin("group", "a-artifact", "1.0"));
@@ -358,7 +358,7 @@ class TestRequirePluginVersions {
      * Test combining values from both lists
      */
     @Test
-    void testCombinePlugins() {
+    void combinePlugins() {
 
         Set<String> plugins = new HashSet<>();
         plugins.add("group:a-artifact");
@@ -381,7 +381,7 @@ class TestRequirePluginVersions {
      * Test combining with an empty list
      */
     @Test
-    void testCombinePlugins1() {
+    void combinePlugins1() {
 
         Set<String> plugins = new HashSet<>();
         Collection<String> results = rule.combineUncheckedPlugins(plugins, "group2:a,group3:b");
@@ -397,7 +397,7 @@ class TestRequirePluginVersions {
      * Test combining with a null list
      */
     @Test
-    void testCombinePlugins2() {
+    void combinePlugins2() {
 
         Collection<String> results = rule.combineUncheckedPlugins(null, "group2:a,group3:b");
 
@@ -412,7 +412,7 @@ class TestRequirePluginVersions {
      * Test combining with an empty string
      */
     @Test
-    void testCombinePlugins3() {
+    void combinePlugins3() {
 
         Set<String> plugins = new HashSet<>();
         plugins.add("group:a-artifact");
@@ -431,7 +431,7 @@ class TestRequirePluginVersions {
      * Test combining with a null string
      */
     @Test
-    void testCombinePlugins4() {
+    void combinePlugins4() {
 
         Set<String> plugins = new HashSet<>();
         plugins.add("group:a-artifact");
@@ -450,7 +450,7 @@ class TestRequirePluginVersions {
      * Test combining with an invalid plugin string
      */
     @Test
-    void testCombinePlugins5() {
+    void combinePlugins5() {
 
         Set<String> plugins = new HashSet<>();
         plugins.add("group:a-artifact");
@@ -498,7 +498,7 @@ class TestRequirePluginVersions {
      * Test id.
      */
     @Test
-    void testId() {
+    void id() {
         rule.getCacheId();
     }
 }

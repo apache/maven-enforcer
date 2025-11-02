@@ -52,7 +52,7 @@ class TestEvaluateBeanshell {
     private EvaluateBeanshell rule;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         rule.setLog(Mockito.mock(EnforcerLogger.class));
 
         // we need not testing ExpressionEvaluator
@@ -63,14 +63,14 @@ class TestEvaluateBeanshell {
      * Test rule.
      */
     @Test
-    void testRulePass() throws Exception {
+    void rulePass() throws Exception {
 
         rule.setCondition("\"This is a test.\" == \"This is a test.\"");
         rule.execute();
     }
 
     @Test
-    void testRuleFail() {
+    void ruleFail() {
         rule.setCondition("\"Test\" == null");
         rule.setMessage("We have a variable : ${env}");
 
@@ -83,7 +83,7 @@ class TestEvaluateBeanshell {
     }
 
     @Test
-    void testRuleFailNoMessage() {
+    void ruleFailNoMessage() {
         rule.setCondition("\"Test\" == null");
         try {
             rule.execute();
@@ -95,7 +95,7 @@ class TestEvaluateBeanshell {
     }
 
     @Test
-    void testRuleInvalidExpression() throws Exception {
+    void ruleInvalidExpression() throws Exception {
         rule.setCondition("${env} == null");
         rule.setMessage("We have a variable : ${env}");
 
@@ -109,7 +109,7 @@ class TestEvaluateBeanshell {
     }
 
     @Test
-    void testRuleInvalidBeanshell() {
+    void ruleInvalidBeanshell() {
         rule.setCondition("this is not valid beanshell");
         rule.setMessage("We have a variable : ${env}");
         try {

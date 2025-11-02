@@ -19,7 +19,6 @@
 package org.apache.maven.enforcer.rules.files;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -44,7 +43,7 @@ class TestRequireFilesDontExist {
     private final RequireFilesDontExist rule = new RequireFilesDontExist();
 
     @Test
-    void testFileExists() throws IOException {
+    void fileExists() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
 
         rule.setFilesList(Collections.singletonList(f));
@@ -59,7 +58,7 @@ class TestRequireFilesDontExist {
     }
 
     @Test
-    void testEmptyFile() {
+    void emptyFile() {
         rule.setFilesList(Collections.singletonList(null));
         try {
             rule.execute();
@@ -70,7 +69,7 @@ class TestRequireFilesDontExist {
     }
 
     @Test
-    void testEmptyFileAllowNull() {
+    void emptyFileAllowNull() {
         rule.setFilesList(Collections.singletonList(null));
         rule.setAllowNulls(true);
         try {
@@ -81,7 +80,7 @@ class TestRequireFilesDontExist {
     }
 
     @Test
-    void testEmptyFileList() {
+    void emptyFileList() {
         rule.setFilesList(Collections.emptyList());
         assertTrue(rule.getFiles().isEmpty());
         try {
@@ -93,7 +92,7 @@ class TestRequireFilesDontExist {
     }
 
     @Test
-    void testEmptyFileListAllowNull() {
+    void emptyFileListAllowNull() {
         rule.setFilesList(Collections.emptyList());
         assertTrue(rule.getFiles().isEmpty());
         rule.setAllowNulls(true);
@@ -105,7 +104,7 @@ class TestRequireFilesDontExist {
     }
 
     @Test
-    void testFileDoesNotExist() throws EnforcerRuleException, IOException {
+    void fileDoesNotExist() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
         f.delete();
 
@@ -117,7 +116,7 @@ class TestRequireFilesDontExist {
     }
 
     @Test
-    void testFileDoesNotExistSatisfyAny() throws EnforcerRuleException, IOException {
+    void fileDoesNotExistSatisfyAny() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
         f.delete();
 
@@ -137,7 +136,7 @@ class TestRequireFilesDontExist {
      * Test id.
      */
     @Test
-    void testId() {
+    void id() {
         assertNotNull(rule.getCacheId());
     }
 }

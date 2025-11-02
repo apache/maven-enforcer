@@ -57,7 +57,7 @@ class TestRequireOS {
      * Test os.
      */
     @Test
-    void testOS() {
+    void os() {
         Log log = new SystemStreamLog();
 
         RequireOS rule = new RequireOS(new OperatingSystemProfileActivator(), mavenSession);
@@ -120,7 +120,7 @@ class TestRequireOS {
     }
 
     @Test
-    void testInvalidFamily() {
+    void invalidFamily() {
         RequireOS rule = new RequireOS(new OperatingSystemProfileActivator(), mavenSession);
         rule.setLog(mock(EnforcerLogger.class));
 
@@ -131,7 +131,7 @@ class TestRequireOS {
     }
 
     @Test
-    void testId() {
+    void id() {
         RequireOS rule = new RequireOS(new OperatingSystemProfileActivator(), mavenSession);
         rule.setVersion("1.2");
         assertThat(rule.getCacheId()).isNotEmpty();

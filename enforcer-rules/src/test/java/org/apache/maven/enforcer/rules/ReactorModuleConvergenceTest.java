@@ -48,7 +48,7 @@ class ReactorModuleConvergenceTest {
     private ReactorModuleConvergence rule;
 
     @BeforeEach
-    public void before() throws ExpressionEvaluationException {
+    void before() throws ExpressionEvaluationException {
         session = mock(MavenSession.class);
         rule = new ReactorModuleConvergence(session);
         rule.setLog(mock(EnforcerLogger.class));
@@ -61,14 +61,14 @@ class ReactorModuleConvergenceTest {
     }
 
     @Test
-    void shouldNotFailWithNoProject() throws EnforcerRuleException {
+    void shouldNotFailWithNoProject() throws Exception {
         setupSortedProjects(Collections.emptyList());
 
         rule.execute();
     }
 
     @Test
-    void shouldNotFailWithAValidProject() throws EnforcerRuleException {
+    void shouldNotFailWithAValidProject() throws Exception {
         MavenProject mp1 = createProjectParent();
         MavenProject mp2 = createProjectChild1(mp1);
         MavenProject mp3 = createProjectChild2(mp1);
@@ -81,50 +81,40 @@ class ReactorModuleConvergenceTest {
 
     @Test
     void shouldFailWithWrongVersionInOneChild() {
-        assertThrows(EnforcerRuleException.class, () -> {
-            MavenProject mp1 = createProjectParent();
-            MavenProject mp2 = createProjectChild1(mp1);
-            MavenProject mp3 = createProjectChild2WithWrongVersion(mp1);
+        MavenProject mp1 = createProjectParent();
+        MavenProject mp2 = createProjectChild1(mp1);
+        MavenProject mp3 = createProjectChild2WithWrongVersion(mp1);
+        List<MavenProject> projects = Arrays.asList(mp1, mp2, mp3);
+        setupSortedProjects(projects);
+        assertThrows(EnforcerRuleException.class, () ->
 
-            List<MavenProject> projects = Arrays.asList(mp1, mp2, mp3);
-            setupSortedProjects(projects);
-
-            rule.execute();
-
-            // intentionally no assertTrue() cause we expect getting an exception.
-        });
+            rule.execute());
 
         // intentionally no assertTrue() cause we expect getting an exception.
     }
 
     @Test
     void shouldFailWithWrongParent() {
-        assertThrows(EnforcerRuleException.class, () -> {
-            MavenProject mp1 = createProjectParent();
+        MavenProject mp1 = createProjectParent();
+        MavenProject wrongParentVersion = mock(MavenProject.class);
+        when(wrongParentVersion.getGroupId()).thenReturn("org.apache.enforcer");
+        when(wrongParentVersion.getArtifactId()).thenReturn("m1");
+        when(wrongParentVersion.getVersion()).thenReturn("1.1-SNAPSHOT");
+        when(wrongParentVersion.getId()).thenReturn("org.apache.enforcer:m1:jar:1.1-SNAPSHOT");
+        when(wrongParentVersion.getDependencies()).thenReturn(Collections.emptyList());
+        MavenProject mp2 = createProjectChild2(wrongParentVersion);
+        MavenProject mp3 = createProjectChild2(mp1);
+        List<MavenProject> projects = Arrays.asList(mp1, mp2, mp3);
+        setupSortedProjects(projects);
+        assertThrows(EnforcerRuleException.class, () ->
 
-            MavenProject wrongParentVersion = mock(MavenProject.class);
-            when(wrongParentVersion.getGroupId()).thenReturn("org.apache.enforcer");
-            when(wrongParentVersion.getArtifactId()).thenReturn("m1");
-            when(wrongParentVersion.getVersion()).thenReturn("1.1-SNAPSHOT");
-            when(wrongParentVersion.getId()).thenReturn("org.apache.enforcer:m1:jar:1.1-SNAPSHOT");
-            when(wrongParentVersion.getDependencies()).thenReturn(Collections.emptyList());
-
-            MavenProject mp2 = createProjectChild2(wrongParentVersion);
-            MavenProject mp3 = createProjectChild2(mp1);
-
-            List<MavenProject> projects = Arrays.asList(mp1, mp2, mp3);
-            setupSortedProjects(projects);
-
-            rule.execute();
-
-            // intentionally no assertTrue() cause we expect getting an exception.
-        });
+            rule.execute());
 
         // intentionally no assertTrue() cause we expect getting an exception.
     }
 
     @Test
-    void shouldNotFailWithACompanyParent() throws EnforcerRuleException {
+    void shouldNotFailWithACompanyParent() throws Exception {
         MavenProject companyParent = createCompanyParent();
         MavenProject mp1 = createProjectParent(companyParent);
 
@@ -139,46 +129,38 @@ class ReactorModuleConvergenceTest {
 
     @Test
     void shouldFailWithMissingParentsInReactory() {
-        assertThrows(EnforcerRuleException.class, () -> {
-            MavenProject mp1 = createProjectParent();
-            MavenProject mp2 = createProjectChild1(mp1);
-            MavenProject mp3 = createProjectChild2(null);
+        MavenProject mp1 = createProjectParent();
+        MavenProject mp2 = createProjectChild1(mp1);
+        MavenProject mp3 = createProjectChild2(null);
+        List<MavenProject> projects = Arrays.asList(mp1, mp2, mp3);
+        setupSortedProjects(projects);
+        assertThrows(EnforcerRuleException.class, () ->
 
-            List<MavenProject> projects = Arrays.asList(mp1, mp2, mp3);
-            setupSortedProjects(projects);
-
-            rule.execute();
-        });
+            rule.execute());
     }
 
     @Test
     void shouldFailWithAParentWhichIsNotPartOfTheReactory() {
-        assertThrows(EnforcerRuleException.class, () -> {
-            MavenProject mp1 = createProjectParent();
+        MavenProject mp1 = createProjectParent();
+        MavenProject wrongParentVersion = mock(MavenProject.class);
+        when(wrongParentVersion.getGroupId()).thenReturn("org.apache");
+        when(wrongParentVersion.getArtifactId()).thenReturn("m1");
+        when(wrongParentVersion.getVersion()).thenReturn("1.0-SNAPSHOT");
+        when(wrongParentVersion.getId()).thenReturn("org.apache.enforcer:m1:jar:1.0-SNAPSHOT");
+        when(wrongParentVersion.getDependencies()).thenReturn(Collections.emptyList());
+        MavenProject mp2 = createProjectChild2(wrongParentVersion);
+        MavenProject mp3 = createProjectChild2(mp1);
+        List<MavenProject> projects = Arrays.asList(mp1, mp2, mp3);
+        setupSortedProjects(projects);
+        assertThrows(EnforcerRuleException.class, () ->
 
-            MavenProject wrongParentVersion = mock(MavenProject.class);
-            when(wrongParentVersion.getGroupId()).thenReturn("org.apache");
-            when(wrongParentVersion.getArtifactId()).thenReturn("m1");
-            when(wrongParentVersion.getVersion()).thenReturn("1.0-SNAPSHOT");
-            when(wrongParentVersion.getId()).thenReturn("org.apache.enforcer:m1:jar:1.0-SNAPSHOT");
-            when(wrongParentVersion.getDependencies()).thenReturn(Collections.emptyList());
-
-            MavenProject mp2 = createProjectChild2(wrongParentVersion);
-            MavenProject mp3 = createProjectChild2(mp1);
-
-            List<MavenProject> projects = Arrays.asList(mp1, mp2, mp3);
-            setupSortedProjects(projects);
-
-            rule.execute();
-
-            // intentionally no assertTrue() cause we expect getting an exception.
-        });
+            rule.execute());
 
         // intentionally no assertTrue() cause we expect getting an exception.
     }
 
     @Test
-    void shouldNotFailWithDependencyInReactory() throws EnforcerRuleException {
+    void shouldNotFailWithDependencyInReactory() throws Exception {
         MavenProject mp1 = createProjectParent();
         MavenProject mp2 = createProjectChild1(mp1);
 
@@ -199,25 +181,18 @@ class ReactorModuleConvergenceTest {
 
     @Test
     void shouldFailWithWrongDependencyInReactor() {
-        assertThrows(EnforcerRuleException.class, () -> {
-            MavenProject mp1 = createProjectParent();
-            MavenProject mp2 = createProjectChild1(mp1);
+        MavenProject mp1 = createProjectParent();
+        MavenProject mp2 = createProjectChild1(mp1);
+        Dependency goodDependency = createDependency("org.junit", "junit", "2.0");
+        Dependency wrongDepFromReactor = createDependency("org.apache.enforcer", "m2", "1.1-SNAPSHOT");
+        List<Dependency> depList = Arrays.asList(goodDependency, wrongDepFromReactor);
+        when(mp2.getDependencies()).thenReturn(depList);
+        MavenProject mp3 = createProjectChild2(mp1);
+        List<MavenProject> projects = Arrays.asList(mp1, mp2, mp3);
+        setupSortedProjects(projects);
+        assertThrows(EnforcerRuleException.class, () ->
 
-            Dependency goodDependency = createDependency("org.junit", "junit", "2.0");
-
-            Dependency wrongDepFromReactor = createDependency("org.apache.enforcer", "m2", "1.1-SNAPSHOT");
-            List<Dependency> depList = Arrays.asList(goodDependency, wrongDepFromReactor);
-            when(mp2.getDependencies()).thenReturn(depList);
-
-            MavenProject mp3 = createProjectChild2(mp1);
-
-            List<MavenProject> projects = Arrays.asList(mp1, mp2, mp3);
-            setupSortedProjects(projects);
-
-            rule.execute();
-
-            // intentionally no assertTrue() cause we expect getting an exception.
-        });
+            rule.execute());
 
         // intentionally no assertTrue() cause we expect getting an exception.
     }

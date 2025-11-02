@@ -36,7 +36,7 @@ public class TestMockEnforcerExpressionEvaluator {
      * Test evaluate.
      */
     @Test
-    public void testEvaluate() {
+    void evaluate() {
         MavenSession session = EnforcerTestUtils.getMavenSession();
 
         PluginParameterExpressionEvaluator ev = new MockEnforcerExpressionEvaluator(session);

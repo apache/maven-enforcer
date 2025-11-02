@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
  */
 class TestAlwaysFail {
     @Test
-    void testExecute() {
+    void execute() {
         AlwaysFail rule = new AlwaysFail();
         assertThatCode(rule::execute).isInstanceOf(EnforcerRuleException.class).hasMessage("Always fails!");
     }

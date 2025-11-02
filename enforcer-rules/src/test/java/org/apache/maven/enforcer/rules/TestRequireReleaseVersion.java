@@ -48,7 +48,7 @@ class TestRequireReleaseVersion {
     private RequireReleaseVersion rule;
 
     @Test
-    void testProjectWithReleaseVersion() throws Exception {
+    void projectWithReleaseVersion() throws Exception {
         ArtifactStubFactory factory = new ArtifactStubFactory();
 
         when(project.getArtifact()).thenReturn(factory.getReleaseArtifact());
@@ -57,7 +57,7 @@ class TestRequireReleaseVersion {
     }
 
     @Test
-    void testProjectWithSnapshotVersion() throws Exception {
+    void projectWithSnapshotVersion() throws Exception {
         ArtifactStubFactory factory = new ArtifactStubFactory();
 
         when(project.getArtifact()).thenReturn(factory.getSnapshotArtifact());
@@ -98,7 +98,7 @@ class TestRequireReleaseVersion {
      * Test cache.
      */
     @Test
-    void testCache() {
+    void cache() {
         assertThat(rule.getCacheId()).isNull();
     }
 }

@@ -20,6 +20,7 @@ package org.apache.maven.enforcer.rules.property;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.utils.ExpressionEvaluator;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -49,7 +50,7 @@ class TestRequireProperty {
      *
      */
     @Test
-    void testRule() throws Exception {
+    void rule() throws Exception {
 
         // this property should not be set
         rule.setProperty("testPropJunk");
@@ -66,11 +67,9 @@ class TestRequireProperty {
         // this property should be set by the surefire
         // plugin
         rule.setProperty("testProp");
-        try {
+        Assertions.assertDoesNotThrow(() -> {
             rule.execute();
-        } catch (EnforcerRuleException e) {
-            fail("This should not throw an exception");
-        }
+        }, "This should not throw an exception");
     }
 
     /**
@@ -78,7 +77,7 @@ class TestRequireProperty {
      *
      */
     @Test
-    void testRuleWithRegex() throws Exception {
+    void ruleWithRegex() throws Exception {
 
         when(evaluator.evaluate("${testProp}")).thenReturn("This is a test.");
 
@@ -96,11 +95,9 @@ class TestRequireProperty {
 
         // this expr should match the property
         rule.setRegex("[This].*[.]");
-        try {
+        Assertions.assertDoesNotThrow(() -> {
             rule.execute();
-        } catch (EnforcerRuleException e) {
-            fail("This should not throw an exception");
-        }
+        }, "This should not throw an exception");
     }
 
     /**

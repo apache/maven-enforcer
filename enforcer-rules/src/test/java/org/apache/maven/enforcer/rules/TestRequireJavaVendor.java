@@ -42,7 +42,7 @@ class TestRequireJavaVendor {
     private RequireJavaVendor underTest;
 
     @BeforeEach
-    public void prepareTest() {
+    void prepareTest() {
         underTest = new RequireJavaVendor();
     }
 

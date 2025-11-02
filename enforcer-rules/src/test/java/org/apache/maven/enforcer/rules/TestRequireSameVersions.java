@@ -51,7 +51,7 @@ class TestRequireSameVersions {
     }
 
     @Test
-    void testProjectWithSameVersionsInBuildAndReport() throws IOException {
+    void projectWithSameVersionsInBuildAndReport() throws Exception {
         String version = "1.0.0";
         Artifact dependency = constructArtifact("acme-dependency", version);
         Artifact buildPluginOne = constructArtifact("acme-build-plugin-one", version);
@@ -80,7 +80,7 @@ class TestRequireSameVersions {
     }
 
     @Test
-    void testProjectWithSameVersionsInPlugins() throws IOException {
+    void projectWithSameVersionsInPlugins() throws Exception {
         String version = "1.0.0";
         Artifact dependency = constructArtifact("acme-dependency", version);
         Artifact buildPluginOne = constructArtifact("acme-build-plugin-one", version);
@@ -109,7 +109,7 @@ class TestRequireSameVersions {
     }
 
     @Test
-    void testProjectWithSameVersionsInBuildAndReportAndPlugins() throws IOException {
+    void projectWithSameVersionsInBuildAndReportAndPlugins() throws Exception {
         String version = "1.0.0";
         Artifact dependency = constructArtifact("acme-dependency", version);
         Artifact buildPluginOne = constructArtifact("acme-build-plugin-one", version);
@@ -138,7 +138,7 @@ class TestRequireSameVersions {
     }
 
     @Test
-    void testProjectWithDifferentPluginVersionsInBuildAndReport() throws IOException {
+    void projectWithDifferentPluginVersionsInBuildAndReport() throws Exception {
         String version = "1.0.0";
         Artifact dependency = constructArtifact("acme-dependency", version);
         Artifact buildPluginOne = constructArtifact("acme-build-plugin-one", version);
@@ -167,7 +167,7 @@ class TestRequireSameVersions {
     }
 
     @Test
-    void testProjectWithDifferentPluginVersionsInPlugins() throws IOException {
+    void projectWithDifferentPluginVersionsInPlugins() throws Exception {
         String version = "1.0.0";
         Artifact dependency = constructArtifact("acme-dependency", version);
         Artifact buildPluginOne = constructArtifact("acme-build-plugin-one", version);
@@ -196,7 +196,7 @@ class TestRequireSameVersions {
     }
 
     @Test
-    void testProjectWithDifferentPluginVersionsInBuildAndReportAndPlugins() throws IOException {
+    void projectWithDifferentPluginVersionsInBuildAndReportAndPlugins() throws Exception {
         String version = "1.0.0";
         Artifact dependency = constructArtifact("acme-dependency", version);
         Artifact buildPluginOne = constructArtifact("acme-build-plugin-one", version);
@@ -225,7 +225,7 @@ class TestRequireSameVersions {
     }
 
     @Test
-    void testProjectWithDifferentDependencyVersionsInBuildAndReportAndPlugins() throws IOException {
+    void projectWithDifferentDependencyVersionsInBuildAndReportAndPlugins() throws Exception {
         String version = "1.0.0";
         Artifact dependency = constructArtifact("acme-dependency", "1.0.1");
         Artifact buildPluginOne = constructArtifact("acme-build-plugin-one", version);

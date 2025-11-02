@@ -52,12 +52,12 @@ class TestBannedRepositories {
     private BannedRepositories rule;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         rule.setLog(mock(EnforcerLogger.class));
     }
 
     @Test
-    void testNoCheckRules() throws EnforcerRuleException {
+    void noCheckRules() throws Exception {
         ArtifactRepository repo1 = new MavenArtifactRepository("repo1", "http://repo1/", null, null, null);
         List<ArtifactRepository> repos = new ArrayList<>();
         repos.add(repo1);
@@ -69,7 +69,7 @@ class TestBannedRepositories {
     }
 
     @Test
-    void testBannedRepositories() {
+    void bannedRepositories() {
         ArtifactRepository repo1 = new MavenArtifactRepository("repo1", "http://repo1/", null, null, null);
         ArtifactRepository repo2 = new MavenArtifactRepository("repo1", "http://repo1/test", null, null, null);
         ArtifactRepository repo3 = new MavenArtifactRepository("repo1", "http://repo2/test", null, null, null);
@@ -96,7 +96,7 @@ class TestBannedRepositories {
     }
 
     @Test
-    void testAllowedRepositoriesAllOK() throws EnforcerRuleException {
+    void allowedRepositoriesAllOK() throws Exception {
         ArtifactRepository repo1 = new MavenArtifactRepository("repo1", "http://repo1/", null, null, null);
         ArtifactRepository repo2 = new MavenArtifactRepository("repo1", "http://repo1/test", null, null, null);
 
@@ -119,7 +119,7 @@ class TestBannedRepositories {
     }
 
     @Test
-    void testAllowedRepositoriesException() {
+    void allowedRepositoriesException() {
         ArtifactRepository repo1 = new MavenArtifactRepository("repo1", "http://repo1/", null, null, null);
         ArtifactRepository repo2 = new MavenArtifactRepository("repo1", "http://repo1/test", null, null, null);
         ArtifactRepository repo3 = new MavenArtifactRepository("repo1", "http://repo2/test", null, null, null);

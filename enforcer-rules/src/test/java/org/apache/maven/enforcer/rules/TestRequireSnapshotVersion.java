@@ -49,7 +49,7 @@ class TestRequireSnapshotVersion {
     private RequireSnapshotVersion rule;
 
     @BeforeEach
-    public void before() {
+    void before() {
         factory = new ArtifactStubFactory();
     }
 

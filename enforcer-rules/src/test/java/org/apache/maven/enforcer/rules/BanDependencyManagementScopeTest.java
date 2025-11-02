@@ -32,7 +32,7 @@ import static org.mockito.Mockito.mock;
 
 class BanDependencyManagementScopeTest {
     @Test
-    void testGetViolatingDependencies() {
+    void getViolatingDependencies() {
         BanDependencyManagementScope rule = new BanDependencyManagementScope(new MavenProject());
         DependencyManagement depMgmt = new DependencyManagement();
         Dependency depWithoutScope = createDependency("myGroup", "artifact1", null);

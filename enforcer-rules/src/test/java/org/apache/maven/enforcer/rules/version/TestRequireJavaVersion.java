@@ -53,7 +53,7 @@ class TestRequireJavaVersion {
      * Test fix jdk version.
      */
     @Test
-    void testFixJDKVersion() {
+    void fixJDKVersion() {
         // test that we only take the first 3 versions for
         // comparison
         assertThat(RequireJavaVersion.normalizeJDKVersion("1.5.0_11")).isEqualTo("1.5.0-11");
@@ -84,7 +84,7 @@ class TestRequireJavaVersion {
      * @throws EnforcerRuleException the enforcer rule exception
      */
     @Test
-    void settingsTheJavaVersionAsNormalizedVersionShouldNotFail() throws EnforcerRuleException {
+    void settingsTheJavaVersionAsNormalizedVersionShouldNotFail() throws Exception {
         String normalizedJDKVersion = RequireJavaVersion.normalizeJDKVersion(SystemUtils.JAVA_VERSION);
 
         rule.setVersion(normalizedJDKVersion);
@@ -132,7 +132,7 @@ class TestRequireJavaVersion {
      * Test id.
      */
     @Test
-    void testId() {
+    void id() {
         assertThat(rule.getCacheId()).isEqualTo("0");
     }
 

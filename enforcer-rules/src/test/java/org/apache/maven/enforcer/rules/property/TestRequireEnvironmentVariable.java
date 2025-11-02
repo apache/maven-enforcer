@@ -37,7 +37,7 @@ class TestRequireEnvironmentVariable {
      *
      */
     @Test
-    void testRule() {
+    void rule() {
         // this env variable should not be set
         rule.setVariableName("JUNK");
 
@@ -50,11 +50,9 @@ class TestRequireEnvironmentVariable {
 
         // PATH shall be common to windows and linux
         rule.setVariableName("PATH");
-        try {
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(() -> {
             rule.execute();
-        } catch (EnforcerRuleException e) {
-            fail("This should not throw an exception");
-        }
+        }, "This should not throw an exception");
     }
 
     /**
@@ -62,7 +60,7 @@ class TestRequireEnvironmentVariable {
      *
      */
     @Test
-    void testRuleWithRegex() {
+    void ruleWithRegex() {
 
         rule.setVariableName("PATH");
         // This expression should not match the property
@@ -78,11 +76,9 @@ class TestRequireEnvironmentVariable {
 
         // can't really predict what a PATH will look like, just enforce it ain't empty
         rule.setRegex(".{1,}");
-        try {
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(() -> {
             rule.execute();
-        } catch (EnforcerRuleException e) {
-            fail("This should not throw an exception");
-        }
+        }, "This should not throw an exception");
     }
 
     @Test
