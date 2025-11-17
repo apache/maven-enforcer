@@ -33,6 +33,15 @@ Require Plugin Versions
 
    * <<banLatest>> - disallow any use of "LATEST" as a version for any plugin. Default = true.
 
+   * <<banMavenDefaults>> -- require all plugin versions to be defined in the project;
+   the default is true. If false, the version of a plugin will be obtained from the
+   super POM or default lifecycle bindings. That is, a value of false will
+   free the project from having to define versions of many standard plugins, instead
+   delegating them to the version of Maven designed by the project's
+   {{{https://maven.apache.org/tools/wrapper/}Maven wrapper}}
+   or a version of Maven enforced by the
+   {{{./requireMavenVersion.html}requireMavenVersion}} rule.
+
    * <<banRelease>> - disallow any use of "RELEASE" as a version for any plugin. Default = true.
 
    * <<banSnapshots>> - disallow any use of SNAPSHOT plugins. Default = true.
