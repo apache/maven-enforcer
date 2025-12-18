@@ -126,6 +126,7 @@ class TestMavenVersion {
 
     private static Stream<Arguments> provideIsInVersionsrange() {
         // Based on from https://maven.apache.org/enforcer/enforcer-rules/versionRanges.html
+        // in combination with the there linked https://maven.apache.org/pom.html#Dependency_Version_Requirement_Specification
         return Stream.of(
           Arguments.of("3.9.12", "3.9.11", "3.9.12 >= 3.9.11 (\"Minimum in enforcer\")"),
           Arguments.of("4.0.0-rc-5", "3.6.3", "4.0.0-rc-5 >= 3.9.12 (\"Minimum in enforcer\")"),
