@@ -18,16 +18,20 @@
  */
 package org.apache.maven.enforcer.rules.version;
 
+import java.util.stream.Stream;
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.rtinfo.RuntimeInformation;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
@@ -110,6 +114,78 @@ class TestMavenVersion {
         } catch (EnforcerRuleException e) {
             // expected to catch this.
         }
+    }
+
+    @ParameterizedTest(name = "{0} should be in version range \"{1}\", because {2}")
+    @MethodSource("provideIsInVersionsrange")
+    @DisplayName("The provided version")
+    void shouldBeInVersionsRange(String runtimeVersion, String rulesVersionRange) throws EnforcerRuleException {
+        when(runtimeInformation.getMavenVersion()).thenReturn(runtimeVersion);
+        rule.setVersion(rulesVersionRange);
+        rule.execute();
+    }
+
+
+    private static Stream<Arguments> provideIsInVersionsrange() {
+        // Based on from https://maven.apache.org/enforcer/enforcer-rules/versionRanges.html
+        // in combination with the there linked https://maven.apache.org/pom.html#Dependency_Version_Requirement_Specification
+        return Stream.of(
+          Arguments.of("3.9.12", "3.9.11", "3.9.12 >= 3.9.11 (\"Minimum in enforcer\")"),
+          Arguments.of("4.0.0-rc-5", "3.6.3", "4.0.0-rc-5 >= 3.9.12 (\"Minimum in enforcer\")"),
+          Arguments.of("3.9.12", "(,3.9.12]", "3.9.12 <= 3.9.12"),
+          Arguments.of("3.9.12", "(,3.9.13]", "3.9.12 < 3.9.13"),
+          Arguments.of("3.9.12", "[3.9.12]", "3.9.12 == 3.9.12"),
+          Arguments.of("3.9.12", "[3.9.12,)", "3.9.12 >= 3.9.12"),
+          Arguments.of("3.9.12", "[3.9.11,)", "3.9.12 >= 3.9.11"),
+          Arguments.of("3.9.12", "(3.9.11,)", "3.9.12 > 3.9.11"),
+          Arguments.of("3.9.12", "(3.9.12-alpha-1,)", "3.9.12 > 3.9.12-alpha-1"),
+          Arguments.of("3.9.12", "(3.6.3,3.9.13)", "3.6.3 < 3.9.12 < 3.9.13"),
+          Arguments.of("3.9.12", "(3.6.3,3.9.12]", "3.6.3 < 3.9.12 <= 3.9.12"),
+          Arguments.of("3.9.12", "(,3.9.11],[3.9.12,)", "3.9.12 <= 3.9.11 (false) OR 3.9.12 >= 3.9.12 (true)"),
+          Arguments.of("3.9.12", "(,3.9.12],[3.9.11,)", "3.9.12 <= 3.9.12 (true) OR 3.9.11 >= 3.9.12 (false)"),
+          Arguments.of("3.9.12", "(,3.9.11],(,3.9.10,[3.9.12,)", "3.9.12 <= 3.9.11 (false) OR 3.9.12 <= 3.9.10 (false) OR  3.9.12 >= 3.9.12 (true)"),
+          Arguments.of("3.9.11", "(,3.9.12),(3.9.12,)", "3.9.12 != 3.9.12"),
+          Arguments.of("4.0.0-rc-5", "(3.6.3,4.0.0)", "3.6.3 < 4.0.0-rc-5 < 4.0.0")
+          );
+    }
+
+    @ParameterizedTest(name = "{0} should NOT be in version range \"{1}\", because {2}")
+    @MethodSource("provideIsNotInVersionsrange")
+    @DisplayName("The provided version")
+    void shouldNotBeInVersionsRange(String runtimeVersion, String rulesVersionRange) {
+        when(runtimeInformation.getMavenVersion()).thenReturn(runtimeVersion);
+        rule.setVersion(rulesVersionRange);
+        try {
+            rule.execute();
+            fail("Expected an exception.");
+        } catch (EnforcerRuleException e) {
+            // expected that this fails
+        }
+    }
+
+
+    private static Stream<Arguments> provideIsNotInVersionsrange() {
+        // Based on from https://maven.apache.org/enforcer/enforcer-rules/versionRanges.html
+        // in combination with the there linked https://maven.apache.org/pom.html#Dependency_Version_Requirement_Specification
+        return Stream.of(
+          Arguments.of("3.9.11", "3.9.12", "3.9.11 is not >= 3.9.12 (\"Minimum in enforcer\")"),
+          Arguments.of("3.9.13", "(,3.9.12]", "3.9.13 is not <= 3.9.12"),
+          Arguments.of("3.9.13", "(,3.9.13]", "3.9.13 is not < 3.9.13"),
+          Arguments.of("3.9.13", "[3.9.12]", "3.9.13 is not == 3.9.12"),
+          Arguments.of("3.9.11", "[3.9.12,)", "3.9.11 is not >= 3.9.12"),
+          Arguments.of("3.9.11", "[3.9.12,)", "3.9.11 is not >= 3.9.12"),
+          Arguments.of("3.9.11", "(3.9.11,)", "3.9.11 is not > 3.9.11"),
+          Arguments.of("3.9.12-alpha-1", "(3.9.12-alpha-2,)", "3.9.12-alpha 1 is not > 3.9.12-alpha-2"),
+          Arguments.of("3.9.11", "(3.6.12,3.9.13)", "3.6.12 is not < 3.9.11 but 3.9.11 is < 3.9.13"),
+          Arguments.of("3.9.13", "(3.6.11,3.9.12)", "3.6.12 is < 3.9.13 but 3.9.13 is not < 3.9.12"),
+          Arguments.of("3.9.12", "(3.6.3,3.9.11]", "3.6.3 is < 3.9.12 but 3.9.12 is not <= 3.9.11"),
+          Arguments.of("3.9.12", "(,3.9.11],[3.9.13,)", "3.9.12 is not <= 3.9.11 and 3.9.12 is not >= 3.9.13"),
+          Arguments.of("3.9.12", "(,3.9.11],[3.9.12,)", "3.9.12 is not <= 3.9.11 but 3.9.12 is >= 3.9.13"),
+          Arguments.of("3.9.12", "(,3.9.12],[3.9.13,)", "3.9.12 is <= 3.9.12 and 3.9.12 is not >= 3.9.13"),
+          Arguments.of("3.9.12", "(,3.9.12],(,3.9.12,[3.9.13,)", "3.9.12 is <= 3.9.11 and 3.9.12 is <= 3.9.10 but  3.9.12 is not >= 3.9.13"),
+          Arguments.of("3.9.12", "(,3.9.12),(3.9.12,)", "3.9.11 is not != 3.9.12"),
+          Arguments.of("4.0.0-rc-5", "(3.6.12,3.99.99)", "3.6.12 is < 4.0.0-rc-5 but 4.0.0-rc-5 is not < 3.99.99")
+          );
     }
 
     /**
