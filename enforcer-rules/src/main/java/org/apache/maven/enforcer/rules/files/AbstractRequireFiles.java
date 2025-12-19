@@ -64,7 +64,7 @@ abstract class AbstractRequireFiles extends AbstractStandardEnforcerRule {
     public void execute() throws EnforcerRuleException {
 
         if (!allowNulls && files.isEmpty()) {
-            throw new EnforcerRuleError("The file list is empty and Null files are disabled.");
+            throw new EnforcerRuleError("The file list is empty, and null files are disabled.");
         }
 
         List<File> failures = new ArrayList<>();
@@ -93,19 +93,34 @@ abstract class AbstractRequireFiles extends AbstractStandardEnforcerRule {
 
         StringBuilder buf = new StringBuilder();
         if (message != null) {
-            buf.append(message + System.lineSeparator());
+            buf.append(message + '\n');
         }
-        buf.append(getErrorMsg());
+        if (getErrorMsg() != null && containsNonNull(failures)) {
+            buf.append(getErrorMsg());
+        }
 
         for (File file : failures) {
-            if (file != null) {
-                buf.append(file.getAbsolutePath() + System.lineSeparator());
+            if (file == null) {
+                buf.append("A null filename was given and allowNulls is false.");
             } else {
-                buf.append("(an empty filename was given and allowNulls is false)" + System.lineSeparator());
+                buf.append(perFileMessage(file));
             }
         }
 
         throw new EnforcerRuleException(buf.toString());
+    }
+
+    String perFileMessage(File file) {
+        return file.getPath() + "\n";
+    }
+
+    private static boolean containsNonNull(List<File> failures) {
+        for (File file : failures) {
+            if (file != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
