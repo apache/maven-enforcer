@@ -172,6 +172,39 @@ class BannedDependenciesTest {
     }
 
     @Test
+    void excludesReportsRootAndTransitiveDependencies() throws Exception {
+
+        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+                .thenReturn(new DependencyNodeBuilder()
+                        .withType(DependencyNodeBuilder.Type.POM)
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withArtifactId("childA")
+                                .withVersion("1.0.0")
+                                .withChildNode(new DependencyNodeBuilder()
+                                        .withType(DependencyNodeBuilder.Type.WAR)
+                                        .withArtifactId("childAA")
+                                        .withVersion("1.0.0-SNAPSHOT")
+                                        .withChildNode(new DependencyNodeBuilder()
+                                                .withType(DependencyNodeBuilder.Type.WAR)
+                                                .withArtifactId("childAAA")
+                                                .withVersion("1.0.0-SNAPSHOT")
+                                                .build())
+                                        .build())
+                                .build())
+                        .build());
+
+        rule.setSearchTransitive(true);
+        rule.setExcludes(Collections.singletonList("*:*:*:war"));
+
+        assertThatCode(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining(
+                        "default-group:childAA:war:classifier:1.0.0-SNAPSHOT <--- banned via the exclude/include list")
+                .hasMessageContaining(
+                        "default-group:childAAA:war:classifier:1.0.0-SNAPSHOT <--- banned via the exclude/include list");
+    }
+
+    @Test
     void invalidExcludeFormat() throws Exception {
         rule.setSearchTransitive(false);
         rule.setExcludes(Collections.singletonList("::::::::::"));

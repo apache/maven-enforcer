@@ -126,10 +126,10 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
             rootFailed = !validate(artifact);
         }
         StringBuilder childMessageBuilder = new StringBuilder();
-        if (rootFailed
-                || !node.getChildren().stream()
+        if (!node.getChildren().stream()
                         .map(childNode -> validate(childNode, level + 1, childMessageBuilder, visitedArtifacts))
-                        .reduce(true, Boolean::logicalAnd)) {
+                        .reduce(true, Boolean::logicalAnd)
+                || rootFailed) {
             messageBuilder
                     .append(StringUtils.repeat("   ", level))
                     .append(ArtifactUtils.toArtifact(node).getId());
