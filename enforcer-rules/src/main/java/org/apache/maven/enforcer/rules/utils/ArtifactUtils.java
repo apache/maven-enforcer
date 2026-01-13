@@ -34,7 +34,6 @@ import org.eclipse.aether.graph.DependencyNode;
 import static java.util.Optional.ofNullable;
 
 /**
- *
  * @author Robert Scholte
  * @since 3.0.0
  */
@@ -59,7 +58,7 @@ public final class ArtifactUtils {
     }
 
     /**
-     * Returns a subset of dependency artifacts that match the given collection of patterns
+     * Returns a subset of dependency artifacts that match the given collection of patterns.
      *
      * @param dependencies dependency artifacts to match against patterns
      * @param patterns patterns to match against the artifacts
@@ -91,7 +90,7 @@ public final class ArtifactUtils {
      * This can improve efficiency where there are lots of patterns and/or artifacts to match.
      *
      * @param patterns the patterns to use for the predicate
-     * @return a re-usable predicate.
+     * @return a re-usable predicate
      */
     public static Predicate<Artifact> prepareDependencyArtifactMatcher(Collection<String> patterns) {
         return cleansePatterns(patterns)
@@ -105,7 +104,7 @@ public final class ArtifactUtils {
      * Cleans the patterns provided ready for use in {@link ArtifactMatcher.Pattern}
      *
      * @param patterns the patterns to be cleaned
-     * @return a Stream of the patterns prepared for use.
+     * @return a Stream of the patterns prepared for use
      */
     private static Stream<String> cleansePatterns(Collection<String> patterns) {
         return ofNullable(patterns)
@@ -120,7 +119,7 @@ public final class ArtifactUtils {
      * Compares the given pattern against the given artifact. The pattern should follow the format
      * <code>groupId:artifactId:version:type:scope:classifier</code>.
      *
-     * @param pattern The pattern to compare the artifact with.
+     * @param pattern the pattern to compare the artifact with
      * @param artifact the artifact
      * @return <code>true</code> if the artifact matches one of the patterns
      */

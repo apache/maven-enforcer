@@ -30,7 +30,6 @@ import org.apache.maven.model.ReportPlugin;
 
 /**
  * @author Brian Fox
- *
  */
 public class PluginWrapper {
     private final String groupId;
@@ -68,7 +67,7 @@ public class PluginWrapper {
 
     /**
      * Whether the version is coming from the default lifecycle bindings.
-     * Cannot be determined before Maven 3.6.1
+     * Cannot be determined before Maven 3.6.1.
      *
      * @param o either Plugin or ReportPlugin
      * @return null if untraceable, otherwise its matching value
@@ -87,7 +86,7 @@ public class PluginWrapper {
 
     /**
      * Whether the version is coming from the super POM.
-     * Cannot be determined before Maven 3.6.1
+     * Cannot be determined before Maven 3.6.1.
      *
      * @param o either Plugin or ReportPlugin
      * @return null if untraceable, otherwise its matching value

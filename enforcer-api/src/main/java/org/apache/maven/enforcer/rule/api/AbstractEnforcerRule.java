@@ -30,7 +30,7 @@ package org.apache.maven.enforcer.rule.api;
 public abstract class AbstractEnforcerRule extends AbstractEnforcerRuleBase {
 
     /**
-     * Enforcer Rule execution level
+     * Enforcer Rule execution level.
      */
     private EnforcerLevel level = EnforcerLevel.ERROR;
 
@@ -40,7 +40,7 @@ public abstract class AbstractEnforcerRule extends AbstractEnforcerRuleBase {
     private String ruleName;
 
     /**
-     * Current Enforcer execution level
+     * Current Enforcer execution level.
      *
      * @return an Enforcer execution level
      */
@@ -52,7 +52,7 @@ public abstract class AbstractEnforcerRule extends AbstractEnforcerRuleBase {
     /**
      * Rule name for current rule instance.
      *
-     * @return a rule name.
+     * @return a rule name
      * @since 3.6.0
      */
     @Override
@@ -79,8 +79,8 @@ public abstract class AbstractEnforcerRule extends AbstractEnforcerRuleBase {
      * then decide based on the fail flag and rule level if it should stop or just log the
      * message as a warning.
      *
-     * @throws EnforcerRuleException the enforcer rule exception
      * @throws EnforcerRuleError in order to brake a build immediately
+     * @throws EnforcerRuleException the enforcer rule exception
      */
     public abstract void execute() throws EnforcerRuleException;
 }

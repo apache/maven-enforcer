@@ -59,7 +59,7 @@ class ResolverUtil {
     private final MavenSession session;
 
     /**
-     * Default constructor
+     * Default constructor.
      */
     @Inject
     ResolverUtil(RepositorySystem repositorySystem, MavenSession session) {

@@ -21,12 +21,13 @@ package org.apache.maven.enforcer.rules.utils;
 import org.eclipse.aether.graph.DependencyNode;
 
 /**
- * Provides the information about {@link org.eclipse.aether.graph.DependencyNode} parent nodes
+ * Provides the information about {@link org.eclipse.aether.graph.DependencyNode} parent nodes.
  */
 public interface ParentNodeProvider {
 
     /**
-     * Returns the parent node of the given node
+     * Returns the parent node of the given node.
+     *
      * @param node node to get the information for
      * @return parent node or {@code null} is no information is known
      */

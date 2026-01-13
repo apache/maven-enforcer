@@ -102,7 +102,7 @@ public final class RequireJavaVersion extends AbstractVersionEnforcer {
     }
 
     /**
-     * Converts a JDK string from 1.5.0-11b12 to a single 3 digit version like 1.5.0-11
+     * Converts a JDK string from 1.5.0-11b12 to a single 3 digit version like 1.5.0-11.
      *
      * @param jdkVersion to be converted
      * @return the converted string

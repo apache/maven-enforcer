@@ -34,7 +34,7 @@ public final class EnforcerRuleDesc {
     private final EnforcerRuleBase rule;
 
     /**
-     * Create a new Rule Description
+     * Create a new Rule Description.
      *
      * @param name  a rule name
      * @param rule  a rule instance

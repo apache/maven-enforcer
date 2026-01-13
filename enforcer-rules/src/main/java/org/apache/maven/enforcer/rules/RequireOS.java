@@ -157,7 +157,7 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
      * Helper method to determine if the current OS is allowed based on the injected values for family, name, version
      * and arch.
      *
-     * @return true if the version is allowed.
+     * @return true if the version is allowed
      */
     public boolean isAllowed() {
         // empty lambda as problems collector
@@ -167,7 +167,7 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
     /**
      * Helper method to check that at least one of family, name, version or arch is set.
      *
-     * @return true if all parameters are empty.
+     * @return true if all parameters are empty
      */
     public boolean allParamsEmpty() {
         return (family == null || family.isEmpty())
@@ -179,7 +179,7 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
     /**
      * Creates a Profile object that contains the activation information.
      *
-     * @return a properly populated profile to be used for OS validation.
+     * @return a properly populated profile to be used for OS validation
      */
     private Profile createProfile() {
         Profile profile = new Profile();
@@ -190,7 +190,7 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
     /**
      * Creates an Activation object that contains the ActivationOS information.
      *
-     * @return a properly populated Activation object.
+     * @return a properly populated Activation object
      */
     private Activation createActivation() {
         Activation activation = new Activation();
@@ -202,7 +202,7 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
     /**
      * Creates an ActivationOS object containing family, name, version and arch.
      *
-     * @return a properly populated ActivationOS object.
+     * @return a properly populated ActivationOS object
      */
     private ActivationOS createOsBean() {
         ActivationOS os = new ActivationOS();
@@ -279,7 +279,7 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
     }
 
     /**
-     * @param display The value for the display.
+     * @param display the value for the display
      */
     public void setDisplay(boolean display) {
         this.display = display;

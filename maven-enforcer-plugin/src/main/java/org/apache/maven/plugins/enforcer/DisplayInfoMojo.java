@@ -36,13 +36,13 @@ import org.apache.maven.plugins.annotations.Parameter;
 public class DisplayInfoMojo extends AbstractMojo {
 
     /**
-     * The MavenSession
+     * The MavenSession.
      */
     @Parameter(defaultValue = "${session}", readonly = true, required = true)
     protected MavenSession session;
 
     /**
-     * Entry point to the mojo
+     * Entry point to the mojo.
      */
     public void execute() {
         String mavenVersion = session.getSystemProperties().getProperty("maven.version");

@@ -66,22 +66,22 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
     private static final String SNAPSHOT_SUFFIX = "-SNAPSHOT";
 
     /**
-     * {@code true} if versions ending with {@code -SNAPSHOT} should be allowed
+     * {@code true} if versions ending with {@code -SNAPSHOT} should be allowed.
      */
     private boolean allowSnapshots;
 
     /**
-     * {@code true} if versions using {@code LATEST} should be allowed
+     * {@code true} if versions using {@code LATEST} should be allowed.
      */
     private boolean allowLatest;
 
     /**
-     * {@code true} if versions using {@code RELEASE} should be allowed
+     * {@code true} if versions using {@code RELEASE} should be allowed.
      */
     private boolean allowRelease;
 
     /**
-     * {@code true} if version ranges should be allowed
+     * {@code true} if version ranges should be allowed.
      */
     private boolean allowRanges;
 
@@ -92,12 +92,12 @@ public final class BanDynamicVersions extends AbstractStandardEnforcerRule {
     private boolean allowRangesWithIdenticalBounds;
 
     /**
-     * {@code true} if optional dependencies should not be checked
+     * {@code true} if optional dependencies should not be checked.
      */
     private boolean excludeOptionals;
 
     /**
-     * the scopes of dependencies which should be excluded from this rule
+     * The scopes of dependencies which should be excluded from this rule.
      */
     private List<String> excludedScopes = Collections.emptyList();
 

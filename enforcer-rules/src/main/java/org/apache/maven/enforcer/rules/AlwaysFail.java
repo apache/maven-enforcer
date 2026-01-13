@@ -25,6 +25,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 /**
  * Always fail. This rule is useful for testing the Enforcer configuration, or to always fail the build if a particular
  * profile is enabled.
+ *
  * @author Ben Lidgey
  */
 @Named("alwaysFail")

@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * EnforcerLogger implementation for {@code WARN} execution level
+ * EnforcerLogger implementation for {@code WARN} execution level.
  *
  * @author Slawomir Jaranowski
  * @since 3.2.0

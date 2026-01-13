@@ -324,7 +324,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
      *
      * @param uncheckedPlugins
      * @param plugins
-     * @return The plugins which have been removed.
+     * @return the plugins which have been removed
      */
     Set<Plugin> removeUncheckedPlugins(Collection<String> uncheckedPlugins, Set<Plugin> plugins)
             throws EnforcerRuleError {
@@ -342,7 +342,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
      *
      * @param uncheckedPlugins     a new collections
      * @param uncheckedPluginsList a list to merge
-     * @return List of unchecked plugins.
+     * @return list of unchecked plugins
      */
     public Collection<String> combineUncheckedPlugins(
             Collection<String> uncheckedPlugins, String uncheckedPluginsList) {
@@ -433,7 +433,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
      *
      * @param plugin  plugin to lookup
      * @param project project to search
-     * @return matching plugin, <code>null</code> if not found.
+     * @return matching plugin, <code>null</code> if not found
      */
     private Plugin findCurrentPlugin(Plugin plugin, MavenProject project) throws EnforcerRuleException {
         Plugin found = null;
@@ -474,8 +474,8 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
      * @param project   the project
      * @param phases the phases
      * @return the bound plugins
-     * @throws PluginNotFoundException     the plugin not found exception
      * @throws LifecycleExecutionException the lifecycle execution exception
+     * @throws PluginNotFoundException     the plugin not found exception
      */
     private Set<Plugin> getBoundPlugins(MavenProject project, String phases)
             throws PluginNotFoundException, LifecycleExecutionException {
@@ -591,8 +591,8 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
      * @param project   the project
      * @param lifecycle the lifecycle
      * @return the all plugins
-     * @throws PluginNotFoundException     the plugin not found exception
      * @throws LifecycleExecutionException the lifecycle execution exception
+     * @throws PluginNotFoundException     the plugin not found exception
      */
     private Set<Plugin> getAllPlugins(MavenProject project, Lifecycle lifecycle)
             throws PluginNotFoundException, LifecycleExecutionException {
@@ -799,7 +799,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
 
     /**
      * Gets all plugin entries in build.plugins, build.pluginManagement.plugins, profile.build.plugins, reporting and
-     * profile.reporting in this project and all parents
+     * profile.reporting in this project and all parents.
      *
      * @param project the project
      * @return the all plugin entries wrapped in a PluginWrapper Object

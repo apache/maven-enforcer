@@ -47,7 +47,7 @@ public interface EnforcerLogger {
     /**
      * Is the logger instance enabled for the DEBUG level?
      *
-     * @return {@code true} if this Logger is enabled for the DEBUG level, {@code false} otherwise.
+     * @return {@code true} if this Logger is enabled for the DEBUG level, {@code false} otherwise
      * @since 3.4.0
      */
     boolean isDebugEnabled();
@@ -71,7 +71,7 @@ public interface EnforcerLogger {
     /**
      * Is the logger instance enabled for the INFO level?
      *
-     * @return {@code true} if this Logger is enabled for the INFO level, {@code false} otherwise.
+     * @return {@code true} if this Logger is enabled for the INFO level, {@code false} otherwise
      * @since 3.4.0
      */
     boolean isInfoEnabled();
@@ -95,7 +95,7 @@ public interface EnforcerLogger {
     /**
      * Is the logger instance enabled for the WARN level?
      *
-     * @return {@code true} if this Logger is enabled for the WARN level, {@code false} otherwise.
+     * @return {@code true} if this Logger is enabled for the WARN level, {@code false} otherwise
      * @since 3.4.0
      */
     boolean isWarnEnabled();
@@ -119,7 +119,7 @@ public interface EnforcerLogger {
     /**
      * Is the logger instance enabled for the ERROR level?
      *
-     * @return {@code true} if this Logger is enabled for the ERROR level, {@code false} otherwise.
+     * @return {@code true} if this Logger is enabled for the ERROR level, {@code false} otherwise
      * @since 3.4.0
      */
     boolean isErrorEnabled();

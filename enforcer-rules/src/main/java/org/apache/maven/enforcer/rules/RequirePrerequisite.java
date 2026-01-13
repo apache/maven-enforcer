@@ -67,8 +67,8 @@ public final class RequirePrerequisite extends AbstractStandardEnforcerRule {
     /**
      * Only the projects with one of these packagings will be enforced to have the correct prerequisite.
      *
-     * @since 1.4
      * @param packagings the list of packagings
+     * @since 1.4
      */
     public void setPackagings(List<String> packagings) {
         this.packagings = packagings;

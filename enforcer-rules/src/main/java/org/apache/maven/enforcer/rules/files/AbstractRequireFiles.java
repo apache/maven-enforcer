@@ -37,7 +37,7 @@ abstract class AbstractRequireFiles extends AbstractStandardEnforcerRule {
     /** List of files to check. */
     private List<File> files = Collections.emptyList();
 
-    /** if null file handles should be allowed. If they are allowed, it means treat it as a success. */
+    /** If null file handles should be allowed. If they are allowed, it means treat it as a success. */
     private boolean allowNulls = false;
 
     /** Allow that a single one of the files can make the rule to pass. */

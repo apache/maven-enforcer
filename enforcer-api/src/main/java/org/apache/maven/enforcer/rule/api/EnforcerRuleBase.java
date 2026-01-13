@@ -29,7 +29,7 @@ package org.apache.maven.enforcer.rule.api;
 public interface EnforcerRuleBase {
 
     /**
-     * Current Enforcer execution level
+     * Current Enforcer execution level.
      *
      * @return an Enforcer execution level
      */
@@ -38,7 +38,7 @@ public interface EnforcerRuleBase {
     }
 
     /**
-     * Used by {@code EnforcerMojo} to inject logger instance
+     * Used by {@code EnforcerMojo} to inject logger instance.
      *
      * @param log an {@link EnforcerLogger} instance
      */
@@ -47,7 +47,7 @@ public interface EnforcerRuleBase {
     /**
      * Rule name for current rule instance.
      *
-     * @return a rule name.
+     * @return a rule name
      * @since 3.6.0
      */
     default String getRuleName() {

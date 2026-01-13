@@ -118,10 +118,10 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
     /**
      * Check whether specified repositories have banned repositories.
      *
-     * @param repositories: candidate repositories.
-     * @param includes : 'include' patterns.
-     * @param excludes : 'exclude' patterns.
-     * @return Banned repositories.
+     * @param repositories: candidate repositories
+     * @param includes : 'include' patterns
+     * @param excludes : 'exclude' patterns
+     * @return banned repositories
      */
     private List<ArtifactRepository> checkRepositories(
             List<ArtifactRepository> repositories, List<String> includes, List<String> excludes) {
