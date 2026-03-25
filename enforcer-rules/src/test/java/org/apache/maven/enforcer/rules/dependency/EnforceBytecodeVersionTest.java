@@ -60,6 +60,7 @@ class EnforceBytecodeVersionTest {
                 arguments("1.7", 51),
                 arguments("1.8", 52),
                 arguments("8", 52),
+                arguments("1.9", 53),
                 arguments("9", 53),
                 arguments("11", 55),
                 arguments("12", 56),

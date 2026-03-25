@@ -91,6 +91,9 @@ public class EnforceBytecodeVersion extends AbstractStandardEnforcerRule {
         // Java8
         JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("8", 52);
         JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.8", 52);
+        // Java9
+        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("9", 53);
+        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.9", 53);
     }
 
     /**
