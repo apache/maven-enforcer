@@ -202,6 +202,11 @@ public class EnforceBytecodeVersion extends AbstractStandardEnforcerRule {
      */
     private boolean strict = false;
 
+    /**
+     * Optimization to calculate same JAR with same options once per session, by default is enabled.
+     */
+    private boolean processOncePerSession = true;
+
     // ---
 
     /**
@@ -322,7 +327,7 @@ public class EnforceBytecodeVersion extends AbstractStandardEnforcerRule {
                 (ConcurrentMap<ChecksOptions, Boolean>) session.getRepositorySession()
                         .getData()
                         .computeIfAbsent(getClass().getSimpleName(), ConcurrentHashMap::new);
-        if (performedChecks.putIfAbsent(checksOptions, Boolean.TRUE) != null) {
+        if (processOncePerSession && performedChecks.putIfAbsent(checksOptions, Boolean.TRUE) != null) {
             // we already performed checks on this file with these parameters
             return null;
         }
