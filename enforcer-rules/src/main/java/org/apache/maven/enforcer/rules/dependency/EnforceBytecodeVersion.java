@@ -18,25 +18,6 @@
  */
 package org.apache.maven.enforcer.rules.dependency;
 
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -110,60 +91,6 @@ public class EnforceBytecodeVersion extends AbstractStandardEnforcerRule {
         // Java8
         JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("8", 52);
         JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.8", 52);
-        // Java9
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("9", 53);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.9", 53);
-        // Java10
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("10", 54);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.10", 54);
-        // Java11
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("11", 55);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.11", 55);
-        // Java 12
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("12", 56);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.12", 56);
-        // Java 13
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("13", 57);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.13", 57);
-        // Java 14
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("14", 58);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.14", 58);
-        // Java 15
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("15", 59);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.15", 59);
-        // Java 16
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("16", 60);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.16", 60);
-        // Java 17
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("17", 61);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.17", 61);
-        // Java 18
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("18", 62);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.18", 62);
-        // Java 19
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("19", 63);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.19", 63);
-        // Java 20
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("20", 64);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.20", 64);
-        // Java 21
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("21", 65);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.21", 65);
-        // Java 22
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("22", 66);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.22", 66);
-        // Java 23
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("23", 67);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.23", 67);
-        // Java 24
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("24", 68);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.24", 68);
-        // Java 25
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("25", 69);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.25", 69);
-        // Java 26
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("26", 70);
-        JDK_TO_MAJOR_VERSION_NUMBER_MAPPING.put("1.26", 70);
     }
 
     /**
