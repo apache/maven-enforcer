@@ -82,8 +82,11 @@
     <javaVersion>8</javaVersion>
     <mockito.version>4.11.0</mockito.version>
     <project.build.outputTimestamp>2025-09-28T21:22:14Z</project.build.outputTimestamp>
-    <!-- the same as in Maven  -->
+    <!-- all the same as in Maven  -->
     <resolver.version>1.9.25</resolver.version>
+    <version.plexus-utils>3.6.0</version.plexus-utils>
+    <version.plexus-xml>3.0.1</version.plexus-xml>
+    <version.slf4j>1.7.36</version.slf4j>
 
     <!-- plugins used in IT, not defined in parent -->
     <version.maven-pmd-plugin>3.21.0</version.maven-pmd-plugin>
@@ -162,13 +165,13 @@
       <dependency>
         <groupId>org.eclipse.sisu</groupId>
         <artifactId>org.eclipse.sisu.plexus</artifactId>
-        <version>0.9.0.M2</version>
+        <version>1.0.0</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-classworlds</artifactId>
-        <version>2.5.2</version>
+        <version>2.9.0</version>
         <scope>provided</scope>
       </dependency>
       <dependency>
@@ -193,6 +196,16 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
         <version>3.20.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${version.slf4j}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>${version.slf4j}</version>
       </dependency>
 
       <!-- test dependencies -->
