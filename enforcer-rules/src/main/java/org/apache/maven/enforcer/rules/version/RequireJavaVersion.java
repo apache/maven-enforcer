@@ -98,7 +98,11 @@ public final class RequireJavaVersion extends AbstractVersionEnforcer {
 
         setCustomMessageIfNoneConfigured(detectedJdkVersion, getVersion());
 
-        enforceVersion("JDK", getVersion(), detectedJdkVersion);
+        try {
+            enforceVersion("JDK", getVersion(), new DefaultArtifactVersion(javaVersion));
+        } catch (EnforcerRuleException ex) {
+            enforceVersion("JDK", getVersion(), detectedJdkVersion);
+        }
     }
 
     /**
