@@ -181,7 +181,7 @@ public class EnforceBytecodeVersion extends AbstractStandardEnforcerRule {
     /**
      * List of dependency scopes, to include dependencies in it. Default is to include all scopes.
      */
-    private List<String> includedScopes;
+    private List<String> scopes;
 
     /**
      * List of dependency scopes, to ignore dependencies in it. Default is to not exclude any scope. Excluding
@@ -531,9 +531,9 @@ public class EnforceBytecodeVersion extends AbstractStandardEnforcerRule {
             includeExcludeMatcher = d -> artifactMatcher.match(ArtifactUtils.toArtifact(d));
         }
         Predicate<Dependency> scopeMatcher = d -> true;
-        if (includedScopes != null) {
+        if (scopes != null) {
             scopeMatcher = d -> {
-                if (includedScopes.contains(d.getScope())) {
+                if (scopes.contains(d.getScope())) {
                     return true;
                 } else {
                     getLog().debug("Skipping {} due to scope");
