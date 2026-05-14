@@ -81,6 +81,9 @@ public class PluginWrapper {
         }
 
         String modelId = versionLocation.getSource().getModelId();
+        if (modelId == null) {
+            return Optional.empty();
+        }
         return Optional.of(
                 modelId.startsWith("org.apache.maven:maven-core:") && modelId.endsWith(":default-lifecycle-bindings"));
     }
@@ -100,6 +103,9 @@ public class PluginWrapper {
         }
 
         String modelId = versionLocation.getSource().getModelId();
+        if (modelId == null) {
+            return Optional.empty();
+        }
         return Optional.of(
                 modelId.startsWith("org.apache.maven:maven-model-builder:") && modelId.endsWith(":super-pom"));
     }

@@ -40,6 +40,8 @@ import org.eclipse.aether.collection.DependencyCollectionException;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
+import org.eclipse.aether.resolution.DependencyRequest;
+import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver;
 import org.eclipse.aether.util.graph.visitor.TreeDependencyVisitor;
@@ -82,7 +84,7 @@ class ResolverUtil {
      * @throws EnforcerRuleException thrown if the lookup fails
      */
     DependencyNode resolveTransitiveDependenciesVerbose(List<String> excludedScopes) throws EnforcerRuleException {
-        return resolveTransitiveDependencies(true, true, excludedScopes);
+        return resolveTransitiveDependencies(true, false, true, excludedScopes);
     }
 
     /**
@@ -93,7 +95,7 @@ class ResolverUtil {
      * @throws EnforcerRuleException thrown if the lookup fails
      */
     DependencyNode resolveTransitiveDependencies() throws EnforcerRuleException {
-        return resolveTransitiveDependencies(false, true, Arrays.asList(SCOPE_TEST, SCOPE_PROVIDED));
+        return resolveTransitiveDependencies(false, false, true, Arrays.asList(SCOPE_TEST, SCOPE_PROVIDED));
     }
 
     /**
@@ -107,10 +109,16 @@ class ResolverUtil {
      */
     DependencyNode resolveTransitiveDependencies(boolean excludeOptional, List<String> excludedScopes)
             throws EnforcerRuleException {
-        return resolveTransitiveDependencies(false, excludeOptional, excludedScopes);
+        return resolveTransitiveDependencies(false, false, excludeOptional, excludedScopes);
     }
 
     DependencyNode resolveTransitiveDependencies(boolean verbose, boolean excludeOptional, List<String> excludedScopes)
+            throws EnforcerRuleException {
+        return resolveTransitiveDependencies(verbose, false, excludeOptional, excludedScopes);
+    }
+
+    DependencyNode resolveTransitiveDependencies(
+            boolean verbose, boolean resolve, boolean excludeOptional, List<String> excludedScopes)
             throws EnforcerRuleException {
 
         try {
@@ -145,11 +153,19 @@ class ResolverUtil {
                     new CollectRequest(dependencies, managedDependencies, project.getRemoteProjectRepositories());
             collectRequest.setRootArtifact(RepositoryUtils.toArtifact(project.getArtifact()));
 
-            return repositorySystem
-                    .collectDependencies(repositorySystemSession, collectRequest)
-                    .getRoot();
+            if (resolve) {
+                DependencyRequest dependencyRequest = new DependencyRequest();
+                dependencyRequest.setCollectRequest(collectRequest);
 
-        } catch (DependencyCollectionException e) {
+                return repositorySystem
+                        .resolveDependencies(repositorySystemSession, dependencyRequest)
+                        .getRoot();
+            } else {
+                return repositorySystem
+                        .collectDependencies(repositorySystemSession, collectRequest)
+                        .getRoot();
+            }
+        } catch (DependencyCollectionException | DependencyResolutionException e) {
             throw new EnforcerRuleException("Could not build dependency tree " + e.getLocalizedMessage(), e);
         }
     }

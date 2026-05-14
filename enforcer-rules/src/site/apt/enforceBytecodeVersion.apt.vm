@@ -1,0 +1,92 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.    
+ 
+  ------
+  Enforce Bytecode Version
+  ------
+  Baptiste Mathus
+  ------
+  Mars 2013
+  ------
+
+Enforce Bytecode Version
+
+  This rule checks the dependencies transitively and fails if any class of any dependency is having its bytecode version higher than the one specified.
+
+  The following parameters are supported by this rule:
+
+  * <<maxJdkVersion>> - the maximum target jdk version (e.g. 8, 11, 17, 21...)
+
+  * <<maxJavaMajorVersionNumber>> - an integer indicating the maximum bytecode major version number (cannot be specified if maxJdkVersion is present)
+
+  * <<maxJavaMinorVersionNumber>> - an integer indicating the maximum bytecode minor version number (cannot be specified if maxJdkVersion is present)
+
+  * <<includes>>, <<excludes>> - optional lists of artifact patterns to include or exclude ([groupId]:[artifactId]:[type]:[version] with wildcards and optional segments)
+
+  * <<ignoreClasses>> - a list of classes to ignore bytecode version problems. Wildcards can be specified using the * character.
+
+  * <<scopes>> - a list of scopes (e.g. test, provided) to include when scanning artifacts
+
+  * <<ignoredScopes>> - a list of scopes (e.g. test, provided) to ignore when scanning artifacts
+
+  * <<ignoreOptionals>> - a boolean, if <<<true>>> all dependencies which have <<<<optional>true</optional>>>> are ignored.
+
+  * <<searchTransitive>> - a boolean, specify if transitive dependencies should be searched (default) or only look at direct dependencies.
+
+  * <<strict>> - a boolean, if <<<true>>> process module-info and Multi-Release JAR classes
+
+  * <<processOncePerSession>> - a boolean (by default <<true>>), optimize and process same JAR only once per session
+
+  []
+
+Note
+  Sample Plugin Configuration:
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-bytecode-version</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <enforceBytecodeVersion>
+                  <maxJdkVersion>8</maxJdkVersion>
+                  <excludes>
+                    <exclude>org.jline:jline</exclude>
+                  </excludes>
+                </enforceBytecodeVersion>
+              </rules>
+              <fail>true</fail>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+

@@ -125,7 +125,7 @@ class NormalizeLineSeparatorReader extends FilterReader {
                     previousCharacter = currentCharacter;
                     return read();
                 default:
-                    // fall-through
+                // fall-through
             }
         } else { // WINDOWS
             // if current is unix, convert
@@ -138,7 +138,7 @@ class NormalizeLineSeparatorReader extends FilterReader {
                     // invalid option
                     throw new IllegalStateException("No potential matches expected for Unix line separator");
                 default:
-                    // fall-through
+                // fall-through
             }
         }
         previousCharacter = currentCharacter;
