@@ -84,8 +84,6 @@
     <project.build.outputTimestamp>2025-09-28T21:22:14Z</project.build.outputTimestamp>
     <!-- all the same as in Maven  -->
     <resolver.version>1.9.25</resolver.version>
-    <version.plexus-utils>3.6.0</version.plexus-utils>
-    <version.plexus-xml>3.0.1</version.plexus-xml>
     <version.slf4j>1.7.36</version.slf4j>
 
     <!-- plugins used in IT, not defined in parent -->
