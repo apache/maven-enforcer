@@ -189,14 +189,16 @@ public final class ArtifactMatcher {
      * @throws NullPointerException if any of the arguments is null
      */
     public ArtifactMatcher(final Collection<String> excludeStrings, final Collection<String> includeStrings) {
-        ofNullable(excludeStrings).ifPresent(excludes -> excludes.stream()
-                .filter(StringUtils::isNotEmpty)
-                .map(Pattern::new)
-                .forEach(excludePatterns::add));
-        ofNullable(includeStrings).ifPresent(includes -> includes.stream()
-                .filter(StringUtils::isNotEmpty)
-                .map(Pattern::new)
-                .forEach(includePatterns::add));
+        ofNullable(excludeStrings)
+                .ifPresent(excludes -> excludes.stream()
+                        .filter(StringUtils::isNotEmpty)
+                        .map(Pattern::new)
+                        .forEach(excludePatterns::add));
+        ofNullable(includeStrings)
+                .ifPresent(includes -> includes.stream()
+                        .filter(StringUtils::isNotEmpty)
+                        .map(Pattern::new)
+                        .forEach(includePatterns::add));
     }
 
     private boolean match(Function<Pattern, Boolean> matcher) {
