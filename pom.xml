@@ -84,7 +84,7 @@
     <project.build.outputTimestamp>2026-05-15T10:38:37Z</project.build.outputTimestamp>
     <!-- the same as in Maven  -->
     <resolver.version>1.9.27</resolver.version>
-    <version.slf4j>1.7.36</version.slf4j>
+    <version.slf4j>2.0.18</version.slf4j>
 
     <!-- plugins used in IT, not defined in parent -->
     <version.maven-pmd-plugin>3.28.0</version.maven-pmd-plugin>
