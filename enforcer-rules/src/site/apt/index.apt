@@ -49,6 +49,8 @@ Built-In Rules
 
   * {{{./dependencyConvergence.html}dependencyConvergence}} - ensure all dependencies converge to the same version.
 
+  * {{{./enforceBytecodeVersion.html}enforceBytecodeVersion}} - enforces that dependency bytecode versions do not exceed the configured maximum.
+
   * {{{./evaluateBeanshell.html}evaluateBeanshell}} - evaluates a beanshell script.
 
   * {{{./externalRules.html}externalRules}} - evaluate rules from an external resource.
