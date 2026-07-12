@@ -18,16 +18,71 @@
  */
 package org.apache.maven.enforcer.rules.dependency;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.graph.Dependency;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.Mockito.mock;
 
 class EnforceBytecodeVersionTest {
+
+    @Test
+    void filterDependenciesExcludesMatchesWithoutIncludes() throws Exception {
+        EnforceBytecodeVersion rule = newRule();
+        setField(rule, "excludes", Collections.singletonList("org.example:excluded"));
+
+        Dependency included = dependency("org.example", "included");
+        Dependency excluded = dependency("org.example", "excluded");
+
+        assertEquals(Collections.singletonList(included), filterDependencies(rule, Arrays.asList(included, excluded)));
+    }
+
+    @Test
+    void filterDependenciesIncludesOverrideExcludes() throws Exception {
+        EnforceBytecodeVersion rule = newRule();
+        setField(rule, "excludes", Collections.singletonList("org.example:*"));
+        setField(rule, "includes", Collections.singletonList("org.example:included"));
+
+        Dependency included = dependency("org.example", "included");
+        Dependency excluded = dependency("org.example", "excluded");
+
+        assertEquals(Collections.singletonList(included), filterDependencies(rule, Arrays.asList(included, excluded)));
+    }
+
+    private static EnforceBytecodeVersion newRule() {
+        return new EnforceBytecodeVersion(
+                mock(org.apache.maven.execution.MavenSession.class), mock(ResolverUtil.class));
+    }
+
+    private static Dependency dependency(String groupId, String artifactId) {
+        return new Dependency(new DefaultArtifact(groupId + ":" + artifactId + ":jar:1.0"), "compile");
+    }
+
+    private static void setField(EnforceBytecodeVersion rule, String name, List<String> value) throws Exception {
+        Field field = EnforceBytecodeVersion.class.getDeclaredField(name);
+        field.setAccessible(true);
+        field.set(rule, value);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<Dependency> filterDependencies(EnforceBytecodeVersion rule, List<Dependency> dependencies)
+            throws Exception {
+        Method method = EnforceBytecodeVersion.class.getDeclaredMethod("filterDependencies", List.class);
+        method.setAccessible(true);
+        return (List<Dependency>) method.invoke(rule, dependencies);
+    }
 
     static Stream<Arguments> renderVersion() {
         return Stream.of(
