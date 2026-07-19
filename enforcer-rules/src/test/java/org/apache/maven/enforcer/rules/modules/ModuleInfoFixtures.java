@@ -20,9 +20,16 @@ package org.apache.maven.enforcer.rules.modules;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.ModuleVisitor;
@@ -45,14 +52,53 @@ final class ModuleInfoFixtures {
         return new Builder(name, true);
     }
 
-    /** Write an arbitrary (empty) compiled class so an output directory looks non-empty to a rule. */
+    /**
+     * Write an arbitrary (empty) compiled class in its package directory so an output directory
+     * looks to a rule exactly like a compiler-produced one.
+     */
     static void writeDummyClass(File outputDirectory, String binaryName) throws IOException {
+        File classFile = new File(outputDirectory, binaryName.replace('.', '/') + ".class");
+        Files.createDirectories(classFile.getParentFile().toPath());
+        Files.write(classFile.toPath(), dummyClass(binaryName));
+    }
+
+    private static byte[] dummyClass(String binaryName) {
         ClassWriter cw = new ClassWriter(0);
         cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, binaryName.replace('.', '/'), null, "java/lang/Object", null);
         cw.visitEnd();
-        File classFile = new File(outputDirectory, binaryName.replace('.', '/') + ".class");
-        Files.createDirectories(classFile.getParentFile().toPath());
-        Files.write(classFile.toPath(), cw.toByteArray());
+        return cw.toByteArray();
+    }
+
+    /**
+     * Write a dependency JAR fixture: dummy classes plus an optional {@code module-info.class}
+     * (explicit module) or an optional {@code Automatic-Module-Name} manifest entry.
+     *
+     * @param jarFile              the JAR file to create
+     * @param moduleInfo           bytes of a {@code module-info.class}, or {@code null}
+     * @param automaticModuleName  manifest {@code Automatic-Module-Name}, or {@code null}
+     * @param binaryClassNames     dot-separated names of dummy classes to include
+     */
+    static File writeJar(File jarFile, byte[] moduleInfo, String automaticModuleName, String... binaryClassNames)
+            throws IOException {
+        Manifest manifest = new Manifest();
+        manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+        if (automaticModuleName != null) {
+            manifest.getMainAttributes().putValue("Automatic-Module-Name", automaticModuleName);
+        }
+        try (OutputStream out = Files.newOutputStream(jarFile.toPath());
+                JarOutputStream jar = new JarOutputStream(out, manifest)) {
+            if (moduleInfo != null) {
+                jar.putNextEntry(new JarEntry("module-info.class"));
+                jar.write(moduleInfo);
+                jar.closeEntry();
+            }
+            for (String binaryName : binaryClassNames) {
+                jar.putNextEntry(new JarEntry(binaryName.replace('.', '/') + ".class"));
+                jar.write(dummyClass(binaryName));
+                jar.closeEntry();
+            }
+        }
+        return jarFile;
     }
 
     static final class Builder {
@@ -61,6 +107,7 @@ final class ModuleInfoFixtures {
         private final List<String> requires = new ArrayList<>();
         private final List<Directive> exports = new ArrayList<>();
         private final List<Directive> opens = new ArrayList<>();
+        private final Set<String> packages = new LinkedHashSet<>();
 
         private Builder(String name, boolean open) {
             this.name = name;
@@ -82,6 +129,14 @@ final class ModuleInfoFixtures {
             return this;
         }
 
+        /** Record packages in the {@code ModulePackages} attribute (exported/opened ones are added implicitly). */
+        Builder packages(String... packageNames) {
+            for (String packageName : packageNames) {
+                packages.add(packageName);
+            }
+            return this;
+        }
+
         byte[] toBytes() {
             ClassWriter cw = new ClassWriter(0);
             cw.visit(Opcodes.V9, Opcodes.ACC_MODULE, "module-info", null, null, null);
@@ -95,6 +150,19 @@ final class ModuleInfoFixtures {
             }
             for (Directive open : opens) {
                 mv.visitOpen(open.internalName(), 0, open.targetsOrNull());
+            }
+            if (!packages.isEmpty()) {
+                // a ModulePackages attribute must be a superset of all exported/opened packages
+                Set<String> all = new LinkedHashSet<>(packages);
+                for (Directive export : exports) {
+                    all.add(export.packageName);
+                }
+                for (Directive open : opens) {
+                    all.add(open.packageName);
+                }
+                for (String packageName : all) {
+                    mv.visitPackage(packageName.replace('.', '/'));
+                }
             }
             mv.visitEnd();
             cw.visitEnd();

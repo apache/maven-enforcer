@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Reads the {@code Module} attribute of a {@code module-info.class} (name, {@code requires},
@@ -72,13 +73,7 @@ final class JavaModuleInfoReader {
             Object descriptor = descriptorType
                     .getMethod("read", InputStream.class)
                     .invoke(null, new ByteArrayInputStream(classFile));
-
-            String name = (String) descriptorType.getMethod("name").invoke(descriptor);
-            boolean open = (Boolean) descriptorType.getMethod("isOpen").invoke(descriptor);
-            List<String> requires = requireNames(descriptor, descriptorType);
-            List<JavaModuleInfo.Directive> exports = directives(descriptor, descriptorType, "exports", "Exports");
-            List<JavaModuleInfo.Directive> opens = directives(descriptor, descriptorType, "opens", "Opens");
-            return new JavaModuleInfo(name, open, requires, exports, opens);
+            return fromDescriptor(descriptor);
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause();
             if (cause != null && INVALID_DESCRIPTOR.equals(cause.getClass().getName())) {
@@ -91,6 +86,21 @@ final class JavaModuleInfoReader {
         } catch (ReflectiveOperationException e) {
             throw new IOException("Could not read module descriptor", e);
         }
+    }
+
+    /**
+     * Map an already-obtained {@code java.lang.module.ModuleDescriptor} instance (accessed
+     * reflectively, e.g. from a {@code ModuleFinder}) to a {@link JavaModuleInfo}.
+     */
+    static JavaModuleInfo fromDescriptor(Object descriptor) throws ReflectiveOperationException {
+        Class<?> descriptorType = Class.forName(MODULE_DESCRIPTOR);
+        String name = (String) descriptorType.getMethod("name").invoke(descriptor);
+        boolean open = (Boolean) descriptorType.getMethod("isOpen").invoke(descriptor);
+        List<String> requires = requireNames(descriptor, descriptorType);
+        List<JavaModuleInfo.Directive> exports = directives(descriptor, descriptorType, "exports", "Exports");
+        List<JavaModuleInfo.Directive> opens = directives(descriptor, descriptorType, "opens", "Opens");
+        Set<String> packages = packageNames(descriptor, descriptorType);
+        return new JavaModuleInfo(name, open, requires, exports, opens, packages);
     }
 
     private static byte[] readAllBytes(InputStream in) throws IOException {
@@ -130,6 +140,16 @@ final class JavaModuleInfoReader {
         String version = System.getProperty("java.class.version", "52.0");
         int dot = version.indexOf('.');
         return Integer.parseInt(dot >= 0 ? version.substring(0, dot) : version);
+    }
+
+    private static Set<String> packageNames(Object descriptor, Class<?> descriptorType)
+            throws ReflectiveOperationException {
+        Set<?> packages = (Set<?>) descriptorType.getMethod("packages").invoke(descriptor);
+        Set<String> result = new TreeSet<String>();
+        for (Object packageName : packages) {
+            result.add((String) packageName);
+        }
+        return result;
     }
 
     private static List<String> requireNames(Object descriptor, Class<?> descriptorType)
