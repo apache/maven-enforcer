@@ -50,8 +50,9 @@ final class ModuleInfoFixtures {
         ClassWriter cw = new ClassWriter(0);
         cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, binaryName.replace('.', '/'), null, "java/lang/Object", null);
         cw.visitEnd();
-        Files.createDirectories(outputDirectory.toPath());
-        Files.write(new File(outputDirectory, binaryName + ".class").toPath(), cw.toByteArray());
+        File classFile = new File(outputDirectory, binaryName.replace('.', '/') + ".class");
+        Files.createDirectories(classFile.getParentFile().toPath());
+        Files.write(classFile.toPath(), cw.toByteArray());
     }
 
     static final class Builder {

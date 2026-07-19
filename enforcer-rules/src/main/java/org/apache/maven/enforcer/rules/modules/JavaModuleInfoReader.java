@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -138,6 +140,8 @@ final class JavaModuleInfoReader {
         for (Object require : requires) {
             result.add((String) name.invoke(require));
         }
+        // ModuleDescriptor#requires() is a Set: sort for stable diagnostics across JDKs
+        Collections.sort(result);
         return result;
     }
 
@@ -156,8 +160,11 @@ final class JavaModuleInfoReader {
             for (Object target : to) {
                 moduleTargets.add((String) target);
             }
+            // targets and directives come from Sets: sort for stable diagnostics across JDKs
+            Collections.sort(moduleTargets);
             result.add(new JavaModuleInfo.Directive(pkg, moduleTargets));
         }
+        result.sort(Comparator.comparing(JavaModuleInfo.Directive::packageName));
         return result;
     }
 }
