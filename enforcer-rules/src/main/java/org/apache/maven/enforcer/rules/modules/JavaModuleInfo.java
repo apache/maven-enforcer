@@ -20,10 +20,12 @@ package org.apache.maven.enforcer.rules.modules;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Immutable view of the {@code Module} attribute of a {@code module-info.class}:
- * the module name plus its {@code requires} / {@code exports} / {@code opens} directives.
+ * the module name plus its {@code requires} / {@code exports} / {@code opens} directives
+ * and the module's package set.
  * Package and module names are in the source form (dot-separated).
  */
 final class JavaModuleInfo {
@@ -33,13 +35,21 @@ final class JavaModuleInfo {
     private final List<String> requires;
     private final List<Directive> exports;
     private final List<Directive> opens;
+    private final Set<String> packages;
 
-    JavaModuleInfo(String name, boolean open, List<String> requires, List<Directive> exports, List<Directive> opens) {
+    JavaModuleInfo(
+            String name,
+            boolean open,
+            List<String> requires,
+            List<Directive> exports,
+            List<Directive> opens,
+            Set<String> packages) {
         this.name = name;
         this.open = open;
         this.requires = Collections.unmodifiableList(requires);
         this.exports = Collections.unmodifiableList(exports);
         this.opens = Collections.unmodifiableList(opens);
+        this.packages = Collections.unmodifiableSet(packages);
     }
 
     /** The module name, e.g. {@code com.example.foo}. */
@@ -68,6 +78,19 @@ final class JavaModuleInfo {
     /** {@code opens} directives. */
     List<Directive> opens() {
         return opens;
+    }
+
+    /**
+     * All packages of the module, as reported by {@code ModuleDescriptor.packages()}.
+     *
+     * <p>Complete when the descriptor comes from a packaged artifact (the {@code ModulePackages}
+     * attribute is written at packaging time, and {@code ModuleFinder} falls back to scanning the
+     * artifact). For a bare {@code module-info.class} read from an output directory it may contain
+     * only the exported/opened packages — enumerate the directory instead when completeness
+     * matters there.</p>
+     */
+    Set<String> packages() {
+        return packages;
     }
 
     /** A single {@code exports}/{@code opens} directive: a package and its optional target modules. */
