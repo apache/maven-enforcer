@@ -48,7 +48,7 @@ public final class BanUnjustifiedOpens extends AbstractModuleInfoRule {
     }
 
     public void setAllowedOpens(List<String> allowedOpens) {
-        this.allowedOpens = allowedOpens;
+        this.allowedOpens = allowedOpens != null ? allowedOpens : new ArrayList<>();
     }
 
     @Override
