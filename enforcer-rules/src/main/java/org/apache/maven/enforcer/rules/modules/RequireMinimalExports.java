@@ -60,7 +60,7 @@ public final class RequireMinimalExports extends AbstractModuleInfoRule {
     }
 
     public void setAllowedExports(List<String> allowedExports) {
-        this.allowedExports = allowedExports;
+        this.allowedExports = allowedExports != null ? allowedExports : new ArrayList<>();
     }
 
     public void setIgnoreQualifiedExports(boolean ignoreQualifiedExports) {
