@@ -1,0 +1,112 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+  ------
+  Ban Split Packages
+  ------
+  Gerd Aschemann
+  ------
+  2026-07-17
+  ------
+
+Ban Split Packages
+
+  A package must belong to exactly one Java module. Two modules on the module path containing the same
+  package form an illegal <split package> that the boot layer rejects at resolution
+  (<<<java.lang.module.ResolutionException>>>) — and if the offending module happens not to be
+  <<<requires>>>d, the resolver never pulls it in: the build stays green while a type or endpoint is
+  silently absent at runtime. Split packages are typically introduced by accident: a build-time code
+  generator, a shaded or unpacked dependency, or a copied resource placing classes of a <foreign>
+  package into the project's output.
+
+  This rule intersects the package sets of the project's compiled output(s) and of <<every>> declared
+  dependency — deliberately not only the <<<requires>>>d modules, which is exactly what catches the
+  silent variant. Overlaps between two modules that would both end up on the module path fail the
+  build; overlaps involving a plain classpath artifact are legal today and are reported at
+  <<<classpathSeverity>>> (default <<<warn>>>) as a modularization hazard. An automatic module counts
+  as being on the module path only when the project actually <<<requires>>> its derived name.
+
+  The rule is a safety net, not a fix — the durable cure is placing generated or copied classes in the
+  module that owns their package.
+
+* Reading the compiled output
+
+  The project's packages are determined by walking <<<$\{project.build.outputDirectory\}>>> for compiled
+  classes (not from the module descriptor, whose package list is only finalized at packaging time —
+  offending classes are frequently added <after> compilation). The <<<enforce>>> execution must therefore
+  run <<after>> compilation: bind it to a phase such as <<<process-classes>>> (the default
+  <<<validate>>> phase runs before <<<compile>>>).
+
+  Both output layouts are supported: the classic one (one Maven project = one Java module) and the
+  Maven 4 <module source hierarchy> (POM model 4.1.0), where one Maven project compiles several
+  modules, each to its own subdirectory <<<$\{project.build.outputDirectory\}/<module-name>/>>>.
+  Dependency packages are read through <<<java.lang.module.ModuleFinder>>>, which handles automatic
+  modules transparently.
+
+  The following parameters are supported by this rule:
+
+   * <<classpathSeverity>> - severity for overlaps involving an artifact that is not on the module
+     path: <<<warn>>> (default), <<<error>>> or <<<ignore>>>. Such overlaps are legal on the classpath
+     today, but break a later migration to the module path.
+
+   * <<allowedSplitPackages>> - a list of package names permitted to overlap.
+
+   * <<ignoredModules>> - a list of module names whose artifacts are excluded from the check.
+
+   * <<ignoredArtifacts>> - a list of dependencies excluded from the check, as
+     <<<groupId:artifactId>>>.
+
+   * <<message>> - an optional message to the user if the rule fails.
+
+   []
+
+  Sample Plugin Configuration:
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>ban-split-packages</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <rules>
+                <banSplitPackages>
+                  <classpathSeverity>error</classpathSeverity>
+                  <allowedSplitPackages>
+                    <allowedSplitPackage>com.example.legacy.shared</allowedSplitPackage>
+                  </allowedSplitPackages>
+                </banSplitPackages>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+

@@ -1,0 +1,89 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+  ------
+  Ban Unjustified Opens
+  ------
+  Gerd Aschemann
+  ------
+  2026-07-16
+  ------
+
+Ban Unjustified Opens
+
+  This rule bans unqualified deep-reflection access into a Java module. A bare <<<opens a.b.c;>>> (or an
+  <<<open module>>>) grants <every> other module reflective access to a package's private members, which defeats
+  strong encapsulation. A framework that needs reflective access should be named explicitly with a qualified
+  <<<opens a.b.c to some.framework;>>>.
+
+  Packages that genuinely must be opened to the whole world can be listed in <<<allowedOpens>>> to pass the check.
+  The rule does nothing for non-modular projects (no <<<module-info.class>>>).
+
+* Reading the module descriptor
+
+  This rule inspects the compiled <<<module-info.class>>> under <<<$\{project.build.outputDirectory\}>>>, so its
+  <<<enforce>>> execution must run <<after>> compilation. Bind it to a phase such as <<<process-classes>>>
+  (the default <<<validate>>> phase runs before <<<compile>>>, when no <<<module-info.class>>> exists yet).
+
+  Both output layouts are supported: the classic one (the descriptor directly in the output directory, one
+  Maven project = one Java module) and the Maven 4 <module source hierarchy> (POM model 4.1.0), where one
+  Maven project compiles several modules, each to its own subdirectory
+  <<<$\{project.build.outputDirectory\}/<module-name>/>>>.
+
+  The following parameters are supported by this rule:
+
+   * <<allowedOpens>> - a list of package names that are allowed to be opened unqualifiedly despite the ban.
+
+   * <<message>> - an optional message to the user if the rule fails.
+
+   []
+
+  Sample Plugin Configuration:
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>ban-unjustified-opens</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <rules>
+                <banUnjustifiedOpens>
+                  <allowedOpens>
+                    <allowedOpen>com.example.foo.dto</allowedOpen>
+                  </allowedOpens>
+                </banUnjustifiedOpens>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+

@@ -1,0 +1,83 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+  ------
+  Require Explicit Modules
+  ------
+  Gerd Aschemann
+  ------
+  2026-07-16
+  ------
+
+Require Explicit Modules
+
+  This rule requires that a project which compiles classes is an <explicit> Java module, i.e. that its main
+  output contains a <<<module-info.class>>>. This prevents a modular application from silently consuming the
+  artifact as an <automatic module> (a plain JAR placed on the module path), whose auto-derived name and
+  "exports everything" semantics are unstable across releases.
+
+  The rule does nothing for projects that compile no classes (e.g. <<<pom>>> aggregators, or a module that only
+  carries resources), so it can be enabled across a whole build without special-casing.
+
+* Reading the module descriptor
+
+  This rule inspects the compiled <<<module-info.class>>> under <<<$\{project.build.outputDirectory\}>>>, so its
+  <<<enforce>>> execution must run <<after>> compilation. Bind it to a phase such as <<<process-classes>>>
+  (the default <<<validate>>> phase runs before <<<compile>>>, when no <<<module-info.class>>> exists yet).
+
+  Both output layouts are supported: the classic one (the descriptor directly in the output directory, one
+  Maven project = one Java module) and the Maven 4 <module source hierarchy> (POM model 4.1.0), where one
+  Maven project compiles several modules, each to its own subdirectory
+  <<<$\{project.build.outputDirectory\}/<module-name>/>>>.
+
+  The following parameters are supported by this rule:
+
+   * <<message>> - an optional message to the user if the rule fails.
+
+   []
+
+  Sample Plugin Configuration:
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>require-explicit-modules</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <rules>
+                <requireExplicitModules/>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+
