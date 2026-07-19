@@ -37,6 +37,7 @@ The following built-in rules ship along with the enforcer plugin:
 - [bannedDependencies](./bannedDependencies.html) - enforces that excluded dependencies aren't included.
 - [bannedPlugins](./bannedPlugins.html) - enforces that specific plugins aren't included in the build.
 - [bannedRepositories](./bannedRepositories.html) - enforces to not include banned repositories.
+- [banSplitPackages](./banSplitPackages.html) - bans packages contained in more than one Java module (split packages).
 - [banTransitiveDependencies](./banTransitiveDependencies.html) - enforces that project doesn't have transitive dependencies.
 - [banUnjustifiedOpens](./banUnjustifiedOpens.html) - bans unqualified `opens` (and `open module`) in a Java module.
 - [dependencyConvergence](./dependencyConvergence.html) - ensure all dependencies converge to the same version.
