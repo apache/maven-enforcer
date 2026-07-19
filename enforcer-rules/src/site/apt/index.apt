@@ -45,6 +45,8 @@ Built-In Rules
   
   * {{{./bannedRepositories.html}bannedRepositories}} - enforces to not include banned repositories.
 
+  * {{{./banSplitPackages.html}banSplitPackages}} - bans packages contained in more than one Java module (split packages).
+
   * {{{./banTransitiveDependencies.html}banTransitiveDependencies}} - enforces that project doesn't have transitive dependencies.
 
   * {{{./banUnjustifiedOpens.html}banUnjustifiedOpens}} - bans unqualified <<<opens>>> (and <<<open module>>>) in a Java module.
