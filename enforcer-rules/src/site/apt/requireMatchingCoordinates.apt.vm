@@ -36,7 +36,7 @@ Require Matching Coordinates
 
    * <<artifactIdPattern>> - an optional {{{https://docs.oracle.com/javase/tutorial/essential/regex/}regular expression}}, which must match the project's <<<artifactId>>>. If not set there is no check on the <<<artifactId>>>.
 
-   * <<moduleNameMustMatchArtifactId>> - boolean flag to enforce that the the module's directory name is always equal to the module's <<<artifactId>>>. By default <<<false>>>.
+   * <<moduleNameMustMatchArtifactId>> - boolean flag to enforce that the module's directory name is always equal to the module's <<<artifactId>>>. By default <<<false>>>.
 
    []
 
