@@ -528,7 +528,7 @@ public class EnforceBytecodeVersion extends AbstractStandardEnforcerRule {
         Predicate<Dependency> includeExcludeMatcher = d -> true;
         if (includes != null || excludes != null) {
             ArtifactMatcher artifactMatcher = new ArtifactMatcher(excludes, includes);
-            includeExcludeMatcher = d -> artifactMatcher.match(ArtifactUtils.toArtifact(d));
+            includeExcludeMatcher = d -> !artifactMatcher.match(ArtifactUtils.toArtifact(d));
         }
         Predicate<Dependency> scopeMatcher = d -> true;
         if (scopes != null) {
