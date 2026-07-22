@@ -36,7 +36,7 @@ public final class RequireFilesExist extends AbstractRequireFiles {
 
     @Override
     String getErrorMsg() {
-        return "Some required files are missing:" + System.lineSeparator();
+        return "Some required files are missing:\n";
     }
 
     /**
