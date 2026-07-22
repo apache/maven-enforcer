@@ -1,0 +1,95 @@
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~ http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+  ------
+  Require Minimal Exports
+  ------
+  Gerd Aschemann
+  ------
+  2026-07-16
+  ------
+
+Require Minimal Exports
+
+  This rule keeps a Java module's public surface minimal by banning <<<exports>>> of packages that are meant to be
+  internal. By default any package whose name has an <<<internal>>> or <<<impl>>> segment (e.g.
+  <<<com.example.foo.internal>>> or <<<com.example.impl.util>>>) must not be exported.
+
+  Qualified exports (<<<exports a.b.c to some.friend;>>>) are ignored by default, because naming the consumer is a
+  deliberate, reviewable decision. The rule does nothing for non-modular projects (no <<<module-info.class>>>).
+
+* Reading the module descriptor
+
+  This rule inspects the compiled <<<module-info.class>>> under <<<$\{project.build.outputDirectory\}>>>, so its
+  <<<enforce>>> execution must run <<after>> compilation. Bind it to a phase such as <<<process-classes>>>
+  (the default <<<validate>>> phase runs before <<<compile>>>, when no <<<module-info.class>>> exists yet).
+
+  Both output layouts are supported: the classic one (the descriptor directly in the output directory, one
+  Maven project = one Java module) and the Maven 4 <module source hierarchy> (POM model 4.1.0), where one
+  Maven project compiles several modules, each to its own subdirectory
+  <<<$\{project.build.outputDirectory\}/<module-name>/>>>.
+
+  The following parameters are supported by this rule:
+
+   * <<internalPackagePattern>> - a regular expression matching packages considered non-API. An exported package
+     that matches fails the build. Default is <<<.*\\.(internal|impl)(\\..*)?>>>.
+
+   * <<allowedExports>> - a list of package names that are exempt from the check even if they match
+     <<<internalPackagePattern>>>.
+
+   * <<ignoreQualifiedExports>> - if <<<true>>> (default) only unqualified <<<exports>>> are checked; set to
+     <<<false>>> to also check qualified <<<exports ... to>>> directives.
+
+   * <<message>> - an optional message to the user if the rule fails.
+
+   []
+
+  Sample Plugin Configuration:
+
++---+
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>require-minimal-exports</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <rules>
+                <requireMinimalExports>
+                  <allowedExports>
+                    <allowedExport>com.example.foo.internal.api</allowedExport>
+                  </allowedExports>
+                </requireMinimalExports>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
++---+

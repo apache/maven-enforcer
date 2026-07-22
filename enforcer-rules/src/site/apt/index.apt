@@ -47,6 +47,8 @@ Built-In Rules
 
   * {{{./banTransitiveDependencies.html}banTransitiveDependencies}} - enforces that project doesn't have transitive dependencies.
 
+  * {{{./banUnjustifiedOpens.html}banUnjustifiedOpens}} - bans unqualified <<<opens>>> (and <<<open module>>>) in a Java module.
+
   * {{{./dependencyConvergence.html}dependencyConvergence}} - ensure all dependencies converge to the same version.
 
   * {{{./enforceBytecodeVersion.html}enforceBytecodeVersion}} - enforces that dependency bytecode versions do not exceed the configured maximum.
@@ -63,6 +65,8 @@ Built-In Rules
 
   * {{{./requireExplicitDependencyScope.html}requireExplicitDependencyScope}} - enforces that all dependencies have an explicit scope.
 
+  * {{{./requireExplicitModules.html}requireExplicitModules}} - enforces that a project with compiled classes is an explicit Java module.
+
   * {{{./requireFileChecksum.html}requireFileChecksum}} - enforces that the specified file has a certain checksum.
   
   * {{{./requireFilesDontExist.html}requireFilesDontExist}} - enforces that the list of files does not exist.
@@ -78,6 +82,8 @@ Built-In Rules
   * {{{./requireMatchingCoordinates.html}requireMatchingCoordinates}} - enforces specific group ID and/or artifact ID patterns.
 
   * {{{./requireMavenVersion.html}requireMavenVersion}} - enforces the Maven version.
+
+  * {{{./requireMinimalExports.html}requireMinimalExports}} - enforces that a Java module does not export internal packages.
 
   * {{{./requireNoRepositories.html}requireNoRepositories}} - enforces to not include repositories.
 

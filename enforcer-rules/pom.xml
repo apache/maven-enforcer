@@ -159,6 +159,14 @@
       <artifactId>slf4j-simple</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- test only: generates module-info.class fixtures for the module rules; production code reads
+         module-info via java.lang.module.ModuleDescriptor (accessed reflectively, see JavaModuleInfoReader). -->
+    <dependency>
+      <groupId>org.ow2.asm</groupId>
+      <artifactId>asm</artifactId>
+      <version>9.7.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
