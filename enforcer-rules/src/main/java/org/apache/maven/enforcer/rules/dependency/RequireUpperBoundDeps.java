@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
@@ -203,7 +204,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
         private final ParentsVisitor parentsVisitor = new ParentsVisitor();
         private boolean uniqueVersions;
-        private List<String> includes = null;
+        private Predicate<Artifact> includesMatcher = null;
 
         public RequireUpperBoundDepsVisitor setUniqueVersions(boolean uniqueVersions) {
             this.uniqueVersions = uniqueVersions;
@@ -211,7 +212,9 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
         }
 
         public RequireUpperBoundDepsVisitor setIncludes(List<String> includes) {
-            this.includes = includes;
+            this.includesMatcher = includes != null && !includes.isEmpty()
+                    ? ArtifactUtils.prepareDependencyArtifactMatcher(includes)
+                    : null;
             return this;
         }
 
@@ -223,8 +226,11 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
             DependencyNodeHopCountPair pair = new DependencyNodeHopCountPair(node, this);
             String key = pair.constructKey();
 
-            if (includes != null && !includes.isEmpty() && !includes.contains(key)) {
-                return true;
+            if (includesMatcher != null) {
+                Artifact artifact = ArtifactUtils.toArtifact(node);
+                if (!includesMatcher.test(artifact)) {
+                    return true;
+                }
             }
 
             keyToPairsMap.computeIfAbsent(key, k1 -> new ArrayList<>()).add(pair);
