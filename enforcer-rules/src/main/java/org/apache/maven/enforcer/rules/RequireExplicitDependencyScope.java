@@ -67,9 +67,14 @@ public final class RequireExplicitDependencyScope extends AbstractStandardEnforc
         if (numMissingDependencyScopes > 0) {
             ChoiceFormat scopesFormat = new ChoiceFormat("1#scope|1<scopes");
             String logCategory = getLevel() == EnforcerLevel.ERROR ? "errors" : "warnings";
-            throw new EnforcerRuleException("Found " + numMissingDependencyScopes + " missing dependency "
+            StringBuilder buf = new StringBuilder();
+            if (getMessage() != null) {
+                buf.append(getMessage()).append(System.lineSeparator());
+            }
+            buf.append("Found " + numMissingDependencyScopes + " missing dependency "
                     + scopesFormat.format(numMissingDependencyScopes)
                     + ". Look at the " + logCategory + " emitted above for the details.");
+            throw new EnforcerRuleException(buf.toString());
         }
     }
 }

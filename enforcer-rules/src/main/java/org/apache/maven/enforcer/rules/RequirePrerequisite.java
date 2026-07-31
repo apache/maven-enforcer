@@ -91,7 +91,12 @@ public final class RequirePrerequisite extends AbstractStandardEnforcerRule {
             Prerequisites prerequisites = project.getPrerequisites();
 
             if (prerequisites == null) {
-                throw new EnforcerRuleException("Requires prerequisite not set");
+                StringBuilder buf = new StringBuilder();
+                if (getMessage() != null) {
+                    buf.append(getMessage()).append(System.lineSeparator());
+                }
+                buf.append("Requires prerequisite not set");
+                throw new EnforcerRuleException(buf.toString());
             }
 
             if (mavenVersion != null) {
@@ -107,8 +112,13 @@ public final class RequirePrerequisite extends AbstractStandardEnforcerRule {
                 VersionRange restrictedVersionRange = requiredVersionRange.restrict(specifiedVersion);
 
                 if (restrictedVersionRange.getRecommendedVersion() == null) {
-                    throw new EnforcerRuleException("The specified Maven prerequisite( " + specifiedVersion
+                    StringBuilder buf = new StringBuilder();
+                    if (getMessage() != null) {
+                        buf.append(getMessage()).append(System.lineSeparator());
+                    }
+                    buf.append("The specified Maven prerequisite( " + specifiedVersion
                             + " ) doesn't match the required version: " + mavenVersion);
+                    throw new EnforcerRuleException(buf.toString());
                 }
             }
         } catch (InvalidVersionSpecificationException e) {

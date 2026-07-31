@@ -79,6 +79,9 @@ public final class RequireProfileIdsExist extends AbstractStandardEnforcerRule {
         }
 
         StringBuilder sb = new StringBuilder();
+        if (getMessage() != null) {
+            sb.append(getMessage()).append(System.lineSeparator());
+        }
         if (profileIds.size() > 1) {
             sb.append("The requested profiles don't exist: ");
         } else {

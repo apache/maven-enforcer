@@ -80,7 +80,11 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
         // CHECKSTYLE_ON: LineLength
 
         if (versionMembers.size() > 1) {
-            StringBuilder builder = new StringBuilder("Found entries with different versions" + System.lineSeparator());
+            StringBuilder builder = new StringBuilder();
+            if (getMessage() != null) {
+                builder.append(getMessage()).append(System.lineSeparator());
+            }
+            builder.append("Found entries with different versions" + System.lineSeparator());
             for (Map.Entry<String, List<String>> entry : versionMembers.entrySet()) {
                 builder.append("Entries with version ").append(entry.getKey()).append(System.lineSeparator());
                 for (String conflictId : entry.getValue()) {
@@ -93,8 +97,13 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
         if (sameModuleVersions) {
             MavenProject topLevelProject = session.getTopLevelProject();
             if (!Objects.equals(topLevelProject.getVersion(), project.getVersion())) {
-                throw new EnforcerRuleException("Top level project has version " + topLevelProject.getVersion()
+                StringBuilder builder = new StringBuilder();
+                if (getMessage() != null) {
+                    builder.append(getMessage()).append(System.lineSeparator());
+                }
+                builder.append("Top level project has version " + topLevelProject.getVersion()
                         + " but current module has different version " + project.getVersion());
+                throw new EnforcerRuleException(builder.toString());
             }
         }
     }
