@@ -1,48 +1,34 @@
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~ http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.    
- 
-  ------
-  Reactor Module Convergence
-  ------
-  Karl-Heinz Marbaise
-  ------
-  2014-03-14
-  ------
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-Reactor Module Convergence
+http://www.apache.org/licenses/LICENSE-2.0
 
-  This rule checks that the versions within the reactor are consistent furthermore
-  it will check that every module within the project contains a parent and that the 
-  parent is part of the reactor build. Furthermore it will be checked if dependencies
-  are intermodule dependencies that they using the same version as given by the reactor. 
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
-  The following parameters are supported by this rule:
-   
-  * <<message>> - an optional supplemental message to the user if the rule fails.
-  
-  * <<ignoreModuleDependencies>> - Ignore module dependencies which references modules within the
-    reactor (default: false).
+# Reactor Module Convergence
 
-   []
+This rule checks that the versions within the reactor are consistent furthermore it will check that every module within the project contains a parent and that the parent is part of the reactor build. Furthermore it will be checked if dependencies are intermodule dependencies that they using the same version as given by the reactor. 
 
+The following parameters are supported by this rule:
 
-  Sample Plugin Configuration:
-  
-+---+
+- **message** - an optional supplemental message to the user if the rule fails.
+- **ignoreModuleDependencies** - Ignore module dependencies which references modules within the reactor (default: false).
+
+Sample Plugin Configuration:
+
+```xml
 <project>
   [...]
   <build>
@@ -73,33 +59,30 @@ Reactor Module Convergence
   </build>
   [...]
 </project>
-+---+
+```
 
-  There are different situations within a multi module build which can lead to problems
-  (for example not working with maven-release-plugin etc.).
-  This rule is intended to prevent such problems.
-  
-  Let us assume we have the following (simple) project structure for a multi module setup.
+There are different situations within a multi module build which can lead to problems (for example not working with maven-release-plugin etc.). This rule is intended to prevent such problems.
 
-+-----
+Let us assume we have the following (simple) project structure for a multi module setup.
+
+```unknown
    root (pom.xml)
      +--- module1 (pom.xml)
      +--- module2 (pom.xml)
-+-----
+```
 
-  The root <<pom.xml>> looks like this:
-  
-+-----
+The root **pom.xml** looks like this:
+
+```xml
   <groupId>com.mycompany.project</groupId>
   <artifactId>parent</artifactId>
   <version>1.0-SNAPSHOT</version>
   (..)
-+-----
+```
 
-  The best practice in Maven is that all childs inherit the version from their parent 
-  and don't define a new version which looks like this:
-  
-+-----
+The best practice in Maven is that all childs inherit the version from their parent and don't define a new version which looks like this:
+
+```xml
   <parent>
     <groupId>...</groupId>
     <artifactId>...</artifactId>
@@ -108,12 +91,11 @@ Reactor Module Convergence
 
   <artifactId>module1</artifactId>
   (..)
-+-----  
+```
 
-  But sometimes people mistaken things or violate the best-practice which  
-  looks like this:
+But sometimes people mistaken things or violate the best-practice which looks like this:
 
-+-----
+```xml
   <parent>
     <groupId>...</groupId>
     <artifactId>...</artifactId>
@@ -122,21 +104,19 @@ Reactor Module Convergence
   
   <artifactId>module1</artifactId>
   <version>1.1-SNAPSHOT</version>
-+-----
+```
 
-  By using this rule you would get a message during the build 
-  with the following resulting output:
+By using this rule you would get a message during the build with the following resulting output:
 
-+-----
+```unknown
 [WARNING] Rule 0: org.apache.maven.enforcer.rules.ReactorModuleConvergence failed with message:
 The reactor contains different versions.
  --> com.mycompany.project:myproject:pom:1.1-SNAPSHOT
-+-----
+```
 
-  The next which happens is that the parent in a reactor is sometimes 
-  the wrong one like the following situation:
-  
-+-----
+The next which happens is that the parent in a reactor is sometimes the wrong one like the following situation:
+
+```xml
   <parent>
     <groupId>...</groupId>
     <artifactId>...</artifactId>
@@ -146,20 +126,19 @@ The reactor contains different versions.
   <artifactId>module1</artifactId>
   <version>1.0-SNAPSHOT</version>
   (..)
-+-----  
+```
 
-  This will prompted by the following message:
-  
-+-----
+This will prompted by the following message:
+
+```unknown
 [WARNING] Rule 0: org.apache.maven.enforcer.rules.ReactorModuleConvergence failed with message:
 Reactor modules have parents which contain a wrong version.
  --> com.mycompany.project:myproject:pom:1.1-SNAPSHOT parent:com.mycompany.project:myproject:pom:1.0-SNAPSHOT
-+-----
+```
 
-  If you have only changed a parent by accident with the wrong version 
-  like this:
-  
-+-----
+If you have only changed a parent by accident with the wrong version like this:
+
+```xml
   <parent>
     <groupId>...</groupId>
     <artifactId>...</artifactId>
@@ -168,29 +147,27 @@ Reactor modules have parents which contain a wrong version.
 
   <artifactId>module1</artifactId>
   (..)
-+-----  
-  
-  you will get the same message as above:
-  
-+-----
+```
+
+you will get the same message as above:
+
+```unknown
 [WARNING] Rule 0: org.apache.maven.enforcer.rules.ReactorModuleConvergence failed with message:
 The reactor contains different versions.
  --> com.mycompany.project:myproject:pom:1.1-SNAPSHOT
-+-----
+```
 
-  An other things which happens that simply the parent will be forgotten which
-  produces a message like this:
+An other things which happens that simply the parent will be forgotten which produces a message like this:
 
-+----
+```unknown
 [WARNING] Rule 0: org.apache.maven.enforcer.rules.ReactorModuleConvergence failed with message:
 Reactor contains modules without parents.
  module: com.mycompany.project:myproject:pom:1.2-SNAPSHOT
-+----
+```
 
-  In larger multi-module builds it happens also that the defined parent is given
-  but does not belong to the reactor like this:
-  
-+-----
+In larger multi-module builds it happens also that the defined parent is given but does not belong to the reactor like this:
+
+```xml
   <parent>
     <groupId>org.apache.enforcer</groupId>
     <artifactId>something-different</artifactId>
@@ -199,32 +176,28 @@ Reactor contains modules without parents.
 
   <artifactId>module1</artifactId>
   (..)
-+-----  
-  
-  Usually already the Maven warning like this should be paid attention to:
-  
-+-----
+```
+
+Usually already the Maven warning like this should be paid attention to:
+
+```unknown
 [WARNING] 
 [WARNING] Some problems were encountered while building the effective model for org.apache.enforcer:pom:1.0.4-SNAPSHOT
 [WARNING] 'parent.relativePath' points at org.apache.enforcer:something-different instead of org.apache.enforcer:something-different, please verify your project structure @ line 7, column 11
 [WARNING] 
-+-----
+```
 
-  but this will oversight often. So the enforcer rule will break simply
-  such mail formed build via the message (This required that the parent
-  has the same version as the rest of the build which happens):
-   
-+-----
+but this will oversight often. So the enforcer rule will break simply such mail formed build via the message (This required that the parent has the same version as the rest of the build which happens):
+
+```unknown
 [WARNING] Rule 0: org.apache.maven.enforcer.rules.ReactorModuleConvergence failed with message:
 Module parents have been found which could not be found in the reactor.
  module: org.apache.enforcer:something-different:pom:1.0.4-SNAPSHOT
-+-----
+```
 
+An other case which happens (for example by merging from a branch into trunk/master) is that an intermodule dependency contains the wrong version like this:
 
-  An other case which happens (for example by merging from a branch into trunk/master)
-  is that an intermodule dependency contains the wrong version like this:
-
-+-----
+```xml
   <parent>
     <groupId>...</groupId>
     <artifactId>...</artifactId>
@@ -242,13 +215,13 @@ Module parents have been found which could not be found in the reactor.
   (..)
   </dependencies>
   (..)
-+-----
- 
-  This will result in the following message:
+```
 
-+-----
+This will result in the following message:
+
+```unknown
 [WARNING] Rule 0: org.apache.maven.enforcer.rules.ReactorModuleConvergence failed with message:
 Reactor modules contains dependencies which do not reference the reactor.
  module: com.mycompany.project:myproject-x:jar:1.2-SNAPSHOT
     dependency: com.mycompany.project:myproject:1.1
-+-----
+```

@@ -1,64 +1,46 @@
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~ http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.    
- 
-  ------
-  Require Java Version
-  ------
-  Brian Fox
-  ------
-  2007-09-01
-  ------
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-Require Java Version
+http://www.apache.org/licenses/LICENSE-2.0
 
-   This rule enforces certain Java JDK versions. The rule uses the {{{./versionRanges.html}Enforcer version range syntax}} to define allowed versions.
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
-   The following parameters are supported by this rule:
-   
-   * <<message>> - an optional message to the user if the rule fails.
-   
-   * <<version>> - {{{./versionRanges.html}range}} of allowed JDKs.
+# Require Java Version
 
-   * <<display>> -  flag to display the normalized JDK version.
+This rule enforces certain Java JDK versions. The rule uses the [Enforcer version range syntax](./versionRanges.html) to define allowed versions.
 
+The following parameters are supported by this rule:
 
-   For JDK 1.8 you can also use simple <<<8>>> as <version> - it will be internally changed to <<<1.8>>>
-   
-   []
+- **message** - an optional message to the user if the rule fails.
+- **version** - [range](./versionRanges.html) of allowed JDKs.
+- **display** - flag to display the normalized JDK version.
 
-   The JDK version is retrieved and the following processing occurs before being checked:
-   
-  [[1]] Drop all non-numeric characters preceding the first number. (build 1.5.0_07-b03 becomes 1.5.0_07-b03)
-  
-  [[2]] Replace all '_' and '-' with '.' (1.5.0_07-b03 becomes 1.5.0.07.b03)
-  
-  [[3]] Remove all non digit characters "[^0-9] and convert each section using Integer.parseInt() (1.5.0_07-b03 becomes 1.5.0.7.3)
-  
-  [[3]] Split the string on '.' and take the first 3 sections, separated by '.' and add '-' followed by the fourth section (1.5.0.7.3 becomes 1.5.0-7)
-  
-  []
-   
-   This preprocessing normalizes various JDK version strings into a standard x.y.z-b version number.
-   Your required range should therefore use the x.y.z-b format for comparison.
-   There is an easy way to see how your current JDK string will be normalized, you can enable <<display>> option.
+    For JDK 1.8 you can also use simple `8` as _version_ - it will be internally changed to `1.8`
 
-   Sample Plugin Configuration:
-   
-+---+
+The JDK version is retrieved and the following processing occurs before being checked:
+
+1. Drop all non-numeric characters preceding the first number. (build 1.5.0\_07-b03 becomes 1.5.0\_07-b03)
+1. Replace all '\_' and '-' with '.' (1.5.0\_07-b03 becomes 1.5.0.07.b03)
+1. Remove all non digit characters "\[^0-9\] and convert each section using Integer.parseInt() (1.5.0\_07-b03 becomes 1.5.0.7.3)
+1. Split the string on '.' and take the first 3 sections, separated by '.' and add '-' followed by the fourth section (1.5.0.7.3 becomes 1.5.0-7)
+
+This preprocessing normalizes various JDK version strings into a standard x.y.z-b version number. Your required range should therefore use the x.y.z-b format for comparison. There is an easy way to see how your current JDK string will be normalized, you can enable **display** option.
+
+Sample Plugin Configuration:
+
+```xml
 <project>
   [...]
   <build>
@@ -87,6 +69,6 @@ Require Java Version
   </build>
   [...]
 </project>
-+---+
-  
-  If you would like to enforce a certain vendor string for the JDK, you would use the {{{./requireJavaVendor.html}RequireJavaVendor}} rule
+```
+
+If you would like to enforce a certain vendor string for the JDK, you would use the [RequireJavaVendor](./requireJavaVendor.html) rule

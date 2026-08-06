@@ -1,37 +1,31 @@
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~ http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-  ------
-  External Rules
-  ------
-  George Gastaldi
-  ------
-  2022-08-17
-  ------
+http://www.apache.org/licenses/LICENSE-2.0
 
-External Rules
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
-    This rule will provide rules configuration from an external resource.
+# External Rules
 
-    It can be a classpath resource present in a <<<maven-enforcer-plugin>>> dependency or a local file.
+This rule will provide rules configuration from an external resource.
 
-    Sample Plugin Configuration:
+It can be a classpath resource present in a `maven-enforcer-plugin` dependency or a local file.
 
-+---+
+Sample Plugin Configuration:
+
+```xml
 <project>
     [...]
     <build>
@@ -77,14 +71,13 @@ External Rules
     </build>
     [...]
 </project>
-+---+
+```
 
+# The External Enforcer Rule Descriptor
 
-The External Enforcer Rule Descriptor
+Here is a sample rules file. The rules element expects the same content as in the [Enforcer Mojo rules configuration](https://maven.apache.org/enforcer/maven-enforcer-plugin/enforce-mojo.html#rules):
 
-    Here is a sample rules file. The rules element expects the same content as in the {{{https://maven.apache.org/enforcer/maven-enforcer-plugin/enforce-mojo.html#rules}Enforcer Mojo rules configuration}}:
-
-+---+
+```xml
 <enforcer>
     <rules>
         <dependencyConvergence/>
@@ -98,22 +91,19 @@ The External Enforcer Rule Descriptor
         </bannedDependencies>
     </rules>
 </enforcer>
-+---+
+```
 
-<<<xsltLocation>>>: Rule Descriptor Transformation (since Enforcer 3.6.0)
+# `xsltLocation`: Rule Descriptor Transformation (since Enforcer 3.6.0)
 
-    In addition to <<<location>>> parameter, <<<externalRules>>> accepts another optional parameter <<<xsltLocation>>>.
+In addition to `location` parameter, `externalRules` accepts another optional parameter `xsltLocation`.
 
-    It is useful, when you want to consume rules defined in an external project, but you need to
-    remove or adapt some of those for the local circumstances.
+It is useful, when you want to consume rules defined in an external project, but you need to remove or adapt some of those for the local circumstances.
 
-    <<<xsltLocation>>> specifies the location of an XSLT file used to transform the rule document available via
-    <<<location>>> before it is applied. If it starts with <<<classpath:>>> the resource is read from the classpath.
-    Otherwise, it is handled as a filesystem path, either absolute, or relative to <<<$\{project.basedir\}>>>.
+`xsltLocation` specifies the location of an XSLT file used to transform the rule document available via `location` before it is applied. If it starts with `classpath:` the resource is read from the classpath. Otherwise, it is handled as a filesystem path, either absolute, or relative to `${esc.d}{project.basedir}`.
 
-    Here is an example: If <<<location>>> points at the following rule set:
+Here is an example: If `location` points at the following rule set:
 
-+---+
+```xml
 <enforcer>
   <rules>
     <bannedDependencies>
@@ -124,11 +114,11 @@ The External Enforcer Rule Descriptor
     </bannedDependencies>
   </rules>
 </enforcer>
-+---+
+```
 
-    and if <<<xsltLocation>>> points at the following transformation
+and if `xsltLocation` points at the following transformation
 
-+---+
+```xml
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output omit-xml-declaration="yes"/>
 
@@ -143,11 +133,11 @@ The External Enforcer Rule Descriptor
   <xsl:template match=
 "//bannedDependencies/excludes/exclude[contains(text(), 'com.google.code.findbugs:jsr305')]"/>
 </xsl:stylesheet>
-+---+
+```
 
-    Then the effective rule set will look like to following:
+Then the effective rule set will look like to following:
 
-+---+
+```xml
 <enforcer>
   <rules>
     <bannedDependencies>
@@ -157,5 +147,4 @@ The External Enforcer Rule Descriptor
     </bannedDependencies>
   </rules>
 </enforcer>
-+---+
-
+```

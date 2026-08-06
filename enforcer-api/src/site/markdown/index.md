@@ -1,32 +1,24 @@
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~ http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.    
- 
-  ------
-  Introduction
-  ------
-  Brian Fox
-  ------
-  2007-09-01
-  ------
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-Maven Enforcer Rule API - Extending The Loving Iron Fist of Maven\x99
+http://www.apache.org/licenses/LICENSE-2.0
 
-  Custom rules are easy to make with the <<<maven-enforcer-rule-api>>>. These rules can then be invoked with the 
-  {{{../../plugins/maven-enforcer-plugin/}maven-enforcer-plugin}}. 
-  
-  See {{{./writing-a-custom-rule.html}Writing a Custom Rule}} for instructions on how to make your own rule.
- 
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+# Maven Enforcer Rule API - Extending The Loving Iron Fist of Maven
+
+Custom rules are easy to make with the `maven-enforcer-rule-api`. These rules can then be invoked with the [maven-enforcer-plugin](../../plugins/maven-enforcer-plugin/). 
+
+See [Writing a Custom Rule](./writing-a-custom-rule.html) for instructions on how to make your own rule.

@@ -1,47 +1,35 @@
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~ http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.    
- 
-  ------
-  Require Active Profile
-  ------
-  Karl-Heinz Marbaise
-  ------
-  2014-01-09
-  ------
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-Require Active Profile
+http://www.apache.org/licenses/LICENSE-2.0
 
-  This rule checks that a specified list of profiles is activated.
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
+# Require Active Profile
 
-   The following parameters are supported by this rule:
-   
-   * <<message>> - an optional message to the user if the rule fails.
-   
-   * <<profiles>> - A comma separated list of profile to check.
-   
-   * <<all>> - Checks if all given profiles are active. Default is true.
-   
-   []
+This rule checks that a specified list of profiles is activated.
 
-   
-  Sample Plugin Configuration:
-  
-+---+
+The following parameters are supported by this rule:
+
+- **message** - an optional message to the user if the rule fails.
+- **profiles** - A comma separated list of profile to check.
+- **all** - Checks if all given profiles are active. Default is true.
+
+Sample Plugin Configuration:
+
+```xml
 <project>
   [...]
   <build>
@@ -71,11 +59,11 @@ Require Active Profile
   </build>
   [...]
 </project>
-+---+
+```
 
-  Sample Plugin Configuration to check if one of the given profiles is active:
-  
-+---+
+Sample Plugin Configuration to check if one of the given profiles is active:
+
+```xml
 <project>
   [...]
   <build>
@@ -106,4 +94,4 @@ Require Active Profile
   </build>
   [...]
 </project>
-+---+
+```
