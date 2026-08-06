@@ -1,68 +1,41 @@
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~ http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-  ------
-  Require Plugin Versions
-  ------
-  Brian Fox
-  ------
-  2009-09-01
-  ------
+http://www.apache.org/licenses/LICENSE-2.0
 
-Require Plugin Versions
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
-   This rule enforces that all plugins have a version defined, either in the plugin or pluginManagement section of the pom or a parent pom.
+# Require Plugin Versions
 
-   The following parameters are supported by this rule:
+This rule enforces that all plugins have a version defined, either in the plugin or pluginManagement section of the pom or a parent pom.
 
-   * <<message>> - an optional message to the user if the rule fails.
+The following parameters are supported by this rule:
 
-   * <<banLatest>> - disallow any use of "LATEST" as a version for any plugin. Default = true.
+- **message** - an optional message to the user if the rule fails.
+- **banLatest** - disallow any use of "LATEST" as a version for any plugin. Default = true.
+- **banMavenDefaults** -- require all plugin versions to be defined in the project; the default is true. If false, the version of a plugin will be obtained from the super POM or default lifecycle bindings. That is, a value of false will free the project from having to define versions of many standard plugins, instead delegating them to the version of Maven defined by the project's [Maven wrapper](https://maven.apache.org/tools/wrapper/) or the version of Maven enforced by the [requireMavenVersion](./requireMavenVersion.html) rule.
+- **banRelease** - disallow any use of "RELEASE" as a version for any plugin. Default = true.
+- **banSnapshots** - disallow any use of SNAPSHOT plugins. Default = true.
+- **banTimestamps** - disallow any use of snapshot plugins with timestamp version (only enabled when banSnapshots is true). Default = true.
+- **phases** - The comma separated list of phases that should be used to find lifecycle plugin bindings. The default value is "clean,deploy,site".
+- **additionalPlugins** - A list of additional plugins to enforce have versions. These are plugins that may not be in the poms but are used anyway, like help, eclipse etc. The plugins should be specified in the form: group:artifactId.
+- **unCheckedPluginList** - A comma separated list of plugins to skip version checking. Ie allow no version, or snapshots, etc. The plugins should be specified in the form: group:artifactId.
 
-   * <<banMavenDefaults>> -- require all plugin versions to be defined in the project;
-   the default is true. If false, the version of a plugin will be obtained from the
-   super POM or default lifecycle bindings. That is, a value of false will
-   free the project from having to define versions of many standard plugins, instead
-   delegating them to the version of Maven defined by the project's
-   {{{https://maven.apache.org/tools/wrapper/}Maven wrapper}}
-   or the version of Maven enforced by the
-   {{{./requireMavenVersion.html}requireMavenVersion}} rule.
+Sample Plugin Configuration (showing some defaults, defaults can be skipped):
 
-   * <<banRelease>> - disallow any use of "RELEASE" as a version for any plugin. Default = true.
-
-   * <<banSnapshots>> - disallow any use of SNAPSHOT plugins. Default = true.
-
-   * <<banTimestamps>> - disallow any use of snapshot plugins with timestamp version (only enabled when banSnapshots is true). Default = true.
-
-   * <<phases>> - The comma separated list of phases that should be used to find
-     lifecycle plugin bindings. The default value is "clean,deploy,site".
-
-   * <<additionalPlugins>> - A list of additional plugins to enforce have versions. These
-     are plugins that may not be in the poms but are used anyway, like help, eclipse etc.
-     The plugins should be specified in the form: group:artifactId.
-
-   * <<unCheckedPluginList>> - A comma separated list of plugins to skip version checking. Ie allow no version, or snapshots, etc. The plugins should be specified in the form: group:artifactId.
-
-
-   []
-
-   Sample Plugin Configuration (showing some defaults, defaults can be skipped):
-
-+---+
+```xml
 <project>
   [...]
   <build>
@@ -100,4 +73,4 @@ Require Plugin Versions
   </build>
   [...]
 </project>
-+---+
+```

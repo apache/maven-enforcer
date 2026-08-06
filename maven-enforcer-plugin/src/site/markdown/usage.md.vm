@@ -1,67 +1,51 @@
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~ http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.    
- 
-  ------
-  Usage
-  ------
-  Brian Fox
-  ------
-  2007-03-01
-  ------
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-Usage
- 
-  Brief examples on how to use the enforcer goals.
- 
-* Generic Plugin configuration information
+http://www.apache.org/licenses/LICENSE-2.0
 
-  See the following links for information about including and configuring plugins in your project:
-  
-  *{{{/guides/mini/guide-configuring-plugins.html}Configuring Plugins}}
-  
-  *{{{/guides/plugin/guide-java-plugin-development.html}Plugin Development}}
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
-  *{{{/guides/introduction/introduction-to-plugin-prefix-mapping.html}Plugin Prefix}}
-  
-  []
+# Usage
 
-* The <<<enforcer:enforce>>> mojo
+Brief examples on how to use the enforcer goals.
 
-   This goal is meant to be bound to a lifecycle phase and configured in your
-   <<<pom.xml>>>. The enforcers execute the configured rules to check for certain constraints. 
-   The available built-in rules are described {{{../enforcer-rules/index.html}here}}. Besides the rules to execute, these goals support three options:
-   
-   * {{{./enforce-mojo.html#skip}skip}} - a quick way to skip checks via a profile or using <<<-Denforcer.skip>>> from the command line.
-   
-   * {{{./enforce-mojo.html#fail}fail}} - if the goal should fail the build when a rule fails. The default is <<<true>>>. If false, the errors will be logged as warnings.
-   
-   * {{{./enforce-mojo.html#failFast}failFast}} - if the goal should stop checking after the first failure. The default is <<<false>>>.
-   
-   []
-   
-   Each rule to be executed should be added to the rules element along with the specific configuration for that rule.
+Generic Plugin configuration information
+----------------------------------------
 
-   As of version 1.4, you may add a <<<level>>> element to the rules. Valid values are <<<WARN>>> and <<<ERROR>>>. When
-   <<<level>>> <<<WARN>>> is specified, the rule will only spit out a warning but will not fail the build.
-   
+See the following links for information about including and configuring plugins in your project:
 
-   Sample Plugin Configuration:
-   
-+---+
+- [Configuring Plugins](/guides/mini/guide-configuring-plugins.html)
+- [Plugin Development](/guides/plugin/guide-java-plugin-development.html)
+- [Plugin Prefix](/guides/introduction/introduction-to-plugin-prefix-mapping.html)
+
+The `enforcer:enforce` mojo
+---------------------------
+
+This goal is meant to be bound to a lifecycle phase and configured in your `pom.xml`. The enforcers execute the configured rules to check for certain constraints. The available built-in rules are described [here](../enforcer-rules/index.html). Besides the rules to execute, these goals support three options:
+
+- [skip](./enforce-mojo.html#skip) - a quick way to skip checks via a profile or using `-Denforcer.skip` from the command line.
+- [fail](./enforce-mojo.html#fail) - if the goal should fail the build when a rule fails. The default is `true`. If false, the errors will be logged as warnings.
+- [failFast](./enforce-mojo.html#failFast) - if the goal should stop checking after the first failure. The default is `false`.
+
+Each rule to be executed should be added to the rules element along with the specific configuration for that rule.
+
+As of version 1.4, you may add a `level` element to the rules. Valid values are `WARN` and `ERROR`. When `level` `WARN` is specified, the rule will only spit out a warning but will not fail the build.
+
+Sample Plugin Configuration:
+
+```xml
 <project>
   [...]
   <build>
@@ -104,5 +88,4 @@ Usage
   </build>
   [...]
 </project>
-+---+
-
+```

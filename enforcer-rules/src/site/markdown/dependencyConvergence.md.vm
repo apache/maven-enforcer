@@ -1,41 +1,31 @@
- ~~ Licensed to the Apache Software Foundation (ASF) under one
- ~~ or more contributor license agreements.  See the NOTICE file
- ~~ distributed with this work for additional information
- ~~ regarding copyright ownership.  The ASF licenses this file
- ~~ to you under the Apache License, Version 2.0 (the
- ~~ "License"); you may not use this file except in compliance
- ~~ with the License.  You may obtain a copy of the License at
- ~~
- ~~   http://www.apache.org/licenses/LICENSE-2.0
- ~~
- ~~ Unless required by applicable law or agreed to in writing,
- ~~ software distributed under the License is distributed on an
- ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- ~~ KIND, either express or implied.  See the License for the
- ~~ specific language governing permissions and limitations
- ~~ under the License.
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
- -----
- Dependency Convergence
- -----
- -----
- 2008-09-13
- -----
+http://www.apache.org/licenses/LICENSE-2.0
 
-Dependency Convergence
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
-  This rule requires that dependency versions are the same everywhere in the tree.
-  If a project has two dependencies, A and B, both depending on the same
-  artifact, C, this rule will fail the build if A depends on one
-  version of C and B depends on a different version of C.
+# Dependency Convergence
 
-  Here is a concrete example.
+This rule requires that dependency versions are the same everywhere in the tree. If a project has two dependencies, A and B, both depending on the same artifact, C, this rule will fail the build if A depends on one version of C and B depends on a different version of C.
 
-  A project containing these two dependencies does not converge
-  because org.jdom:jdom:1.1.3 depends on Jaxen 1.1.3 and
-  org.org.jenkins-ci.main:jenkins-core:2.492 depends on Jaxen 2.0.0:
-  
-+-----------------------------------------------------------------------------------
+Here is a concrete example.
+
+A project containing these two dependencies does not converge because org.jdom:jdom:1.1.3 depends on Jaxen 1.1.3 and org.org.jenkins-ci.main:jenkins-core:2.492 depends on Jaxen 2.0.0:
+
+```xml
   <dependencies>
     <dependency>
       <groupId>org.jdom</groupId>
@@ -48,12 +38,11 @@ Dependency Convergence
       <version>2.492</groupId>
     </dependency>
   </dependencies>  
-+-----------------------------------------------------------------------------------
+```
 
-  This is not obvious from the dependencies themselves. However, if the dependencyConvergence
-  rule is activated in the project, this message will be logged during compilation:
+This is not obvious from the dependencies themselves. However, if the dependencyConvergence rule is activated in the project, this message will be logged during compilation:
 
-+-----------------------------------------------------------------------------------
+```unknown
 [ERROR]
 Dependency convergence error for jaxen:jaxen. Paths to dependency are:
 +-org.myorg:my-project:1.0.0-SNAPSHOT
@@ -63,13 +52,11 @@ and
 +-org.myorg:my-project:1.0.0-SNAPSHOT
   +-org.org.jenkins-ci.main:jenkins-core:2.492
     +-jaxen:jaxen:2.0.0
-+-----------------------------------------------------------------------------------
+```
 
-  However, if you exclude JDOM's dependency on Jaxen in your own pom, then only
-  one version of Jaxen is added to the classpath and the rule
-  passes:
-  
-+-----------------------------------------------------------------------------------
+However, if you exclude JDOM's dependency on Jaxen in your own pom, then only one version of Jaxen is added to the classpath and the rule passes:
+
+```xml
     <dependency>
       <groupId>org.jdom</groupId>
       <artifactId>jdom</artifactId>
@@ -86,15 +73,11 @@ and
       <artifactId>jenkins-core</artifactId>
       <version>2.492</groupId>
     </dependency>
-+-----------------------------------------------------------------------------------
+```
 
-  You can also use the dependencyManagement element or a "bill of materials" (BOM)
-  to uniquely specify a single version for all transitive dependencies with the
-  same group ID, artifact ID, and classifier. For example, this dependencyManagement
-  element pins the project's Jaxen version to 2.0.0, regardless of which versions
-  may appear in transitive dependencies:
+You can also use the dependencyManagement element or a "bill of materials" (BOM) to uniquely specify a single version for all transitive dependencies with the same group ID, artifact ID, and classifier. For example, this dependencyManagement element pins the project's Jaxen version to 2.0.0, regardless of which versions may appear in transitive dependencies:
 
-+-----------------------------------------------------------------------------------
+```xml
   <dependencyManagement>
     <dependency>
       <groupId>jaxen</groupId>
@@ -102,11 +85,11 @@ and
       <version>2.0.0</groupId>
     </dependency>
   </dependencyManagement>
-+-----------------------------------------------------------------------------------
+```
 
-  Here is how a project should be set up to use this rule:
+Here is how a project should be set up to use this rule:
 
-+-----------------------------------------------------------------------------------
+```xml
 <project>
   ...
   <build>
@@ -135,40 +118,31 @@ and
   </build>
   ...
 </project>
-+-----------------------------------------------------------------------------------
+```
 
-* Timestamped Version
-	
-  By default, the non-unique versions are matched, which means the <<<X.Y-SNAPSHOT>>> instead of the timestamped versions.
-  If you want to use the unique versions of the dependencies, set the uniqueVersions property to <<<true>>>:
+Timestamped Version
+-------------------
 
-+---------------------------------------------
+By default, the non-unique versions are matched, which means the `X.Y-SNAPSHOT` instead of the timestamped versions. If you want to use the unique versions of the dependencies, set the uniqueVersions property to `true`:
+
+```xml
       <dependencyConvergence>
         <uniqueVersions>true</uniqueVersions> 
       </dependencyConvergence>
-+---------------------------------------------
+```
 
-* Filtering Dependency Errors
+Filtering Dependency Errors
+---------------------------
 
-  By default, all dependency convergence errors are reported, and any single error will fail the build. If you want
-  to tune which dependency errors are reported and fail the build, you can add the following optional parameters:
+By default, all dependency convergence errors are reported, and any single error will fail the build. If you want to tune which dependency errors are reported and fail the build, you can add the following optional parameters:
 
-    * <<includes>> - A list of artifacts for which dependency convergence should be enforced. Not specifying any includes
-      is interpreted the same as including all artifacts.
+- **includes** - A list of artifacts for which dependency convergence should be enforced. Not specifying any includes is interpreted the same as including all artifacts.
+- **excludes** - A list of artifacts for which dependency convergence should not be enforced. These are exceptions to the includes.
+- **excludedScopes** - A list of scopes of artifacts for which dependency convergence should not be enforced. Not specifying any scopes is interpreted as having the following scopes excluded: `provided`, `test`.
 
-    * <<excludes>> - A list of artifacts for which dependency convergence should not be enforced. These are exceptions
-      to the includes.
+The format for artifacts is groupId\[:artifactId\]\[:version\]\[:type\]\[:scope\]\[:classifier\] where artifactId, version, type, scope, and classifier are optional. Wildcards may replace an entire section or just parts of a section. This rule uses the [Enforcer version range syntax](./versionRanges.html) to define allowed versions.
 
-    * <<excludedScopes>> - A list of scopes of artifacts for which dependency convergence should not be enforced.
-    Not specifying any scopes is interpreted as having the following scopes excluded: <<<provided>>>, <<<test>>>.
-
-    []
-
-  The format for artifacts is groupId[:artifactId][:version][:type][:scope][:classifier] where artifactId, version,
-  type, scope, and classifier are optional. Wildcards may replace an entire section or just parts of a
-  section. This rule uses the {{{./versionRanges.html}Enforcer version range syntax}} to define allowed versions.
-
-+---------------------------------------------
+```xml
       <dependencyConvergence>
         <excludedScopes>
           <scope>compile</scope>
@@ -183,4 +157,4 @@ and
           <exclude>org.apache.commons:*:[3.4]</exclude>
         </excludes>
       </dependencyConvergence>
-+---------------------------------------------
+```

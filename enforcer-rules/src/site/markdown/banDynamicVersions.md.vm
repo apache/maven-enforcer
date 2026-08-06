@@ -1,81 +1,51 @@
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~ http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.    
- 
-  ------
-  Ban Dynamic Versions
-  ------
-  Konrad Windszus
-  ------
-  2022-10-13
-  ------
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-Ban Dynamic Versions
+http://www.apache.org/licenses/LICENSE-2.0
 
-  This rule bans dependencies having versions that require resolving (i.e. dynamic versions which might change with each build and require
-  lookup of {{{https://maven.apache.org/ref/3-LATEST/maven-repository-metadata/repository-metadata.html}repository metadata}}). Dynamic versions are either
-  
-  * {{{https://maven.apache.org/pom.html#Dependency_Version_Requirement_Specification}version ranges}}, i.e. all version strings starting with either <<<[>>> or <<<(>>>,
-  
-  * the special placeholders <<<LATEST>>>/<<<RELEASE>>> or
-  
-  * versions ending with <<<-SNAPSHOT>>>.
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
-  []
+# Ban Dynamic Versions
 
-  The following parameters are supported by this rule:
-  
-  * <<allowSnapshots>> - if <<<true>>> dependencies with versions ending with <<<-SNAPSHOT>>> will not be banned. Default is <<<false>>>.
-  
-  * <<allowRelease>> - if <<<true>>> dependencies with version placeholder <<<RELEASE>>> will not be banned. Default is <<<false>>>.
-  
-  * <<allowLatest>> - if <<<true>>> dependencies with versions placeholder <<<LATEST>>> will not be banned. Default is <<<false>>>.
-  
-  * <<allowRanges>> - if <<<true>>> versions starting with either <<<[>>> or <<<(>>> will not be banned. Default is <<<false>>>.
-  
-  * <<allowRangesWithIdenticalBounds>> - if <<<true>>> ranges having a range with same upper and lower bound (always inclusive) will not be banned (although they require resolving in some Maven versions, {{{https://issues.apache.org/jira/browse/MNG-7561}MNG-7461}}).
-  
-  * <<excludeOptionals>> - if <<<true>>> direct optional dependencies won't be checked. Default is <<<false>>>.
-  
-  * <<excludedScopes>> - the list of scopes to exclude from direct dependencies. By default no scopes are excluded. For transitive dependencies the regular Maven rules are applied.
-  
-  * <<ignores>> - a list of dependencies to ignore. The format is <<<groupId[:artifactId[:version[:type[:scope:[classifier]]]]]>>> where <<<artifactId>>>, <<<version>>>, <<<type>>>, <<<scope>>> and <<<classifier>>> are optional (but require all previous parts). Wildcards may be used to replace an entire or just parts of a section.
-      Examples:
-       
-        * <<<org.apache.maven>>>
-        
-        * <<<org.apache.maven:someArtifact>>>
-        
-        * <<<org.apache.maven:artifact:someVersion>>>
-        
-        * <<<org.apache.maven:*:*:jar:test>>>
-        
-        * <<<*:*:*:jar:compile:tests>>>
+This rule bans dependencies having versions that require resolving (i.e. dynamic versions which might change with each build and require lookup of [repository metadata](https://maven.apache.org/ref/3-LATEST/maven-repository-metadata/repository-metadata.html)). Dynamic versions are either
 
-        * <<<org.apache.*:maven-*:*>>>
-        
-        []
+- [version ranges](https://maven.apache.org/pom.html#Dependency_Version_Requirement_Specification), i.e. all version strings starting with either `[` or `(`,
+- the special placeholders `LATEST`/`RELEASE` or
+- versions ending with `-SNAPSHOT`.
 
-  * <<verbose>> - if <<<true>>> the dependency tree is checked before Maven computes the final dependency tree. Setting this property will make the rule check dependencies before any conflicts are resolved. This is similar to the <<<verbose>>> parameter for the <<<tree>>> goal for <<<maven-dependency-plugin>>>. Default is <<<false>>>.
-  
-  []
+The following parameters are supported by this rule:
 
-  Sample Plugin Configuration:
-  
-+---+
+- **allowSnapshots** - if `true` dependencies with versions ending with `-SNAPSHOT` will not be banned. Default is `false`.
+- **allowRelease** - if `true` dependencies with version placeholder `RELEASE` will not be banned. Default is `false`.
+- **allowLatest** - if `true` dependencies with versions placeholder `LATEST` will not be banned. Default is `false`.
+- **allowRanges** - if `true` versions starting with either `[` or `(` will not be banned. Default is `false`.
+- **allowRangesWithIdenticalBounds** - if `true` ranges having a range with same upper and lower bound (always inclusive) will not be banned (although they require resolving in some Maven versions, [MNG-7461](https://issues.apache.org/jira/browse/MNG-7561)).
+- **excludeOptionals** - if `true` direct optional dependencies won't be checked. Default is `false`.
+- **excludedScopes** - the list of scopes to exclude from direct dependencies. By default no scopes are excluded. For transitive dependencies the regular Maven rules are applied.
+- **ignores** - a list of dependencies to ignore. The format is `groupId[:artifactId[:version[:type[:scope:[classifier]]]]]` where `artifactId`, `version`, `type`, `scope` and `classifier` are optional (but require all previous parts). Wildcards may be used to replace an entire or just parts of a section. Examples:
+    - `org.apache.maven`
+    - `org.apache.maven:someArtifact`
+    - `org.apache.maven:artifact:someVersion`
+    - `org.apache.maven:*:*:jar:test`
+    - `*:*:*:jar:compile:tests`
+    - `org.apache.*:maven-*:*`
+- **verbose** - if `true` the dependency tree is checked before Maven computes the final dependency tree. Setting this property will make the rule check dependencies before any conflicts are resolved. This is similar to the `verbose` parameter for the `tree` goal for `maven-dependency-plugin`. Default is `false`.
+
+Sample Plugin Configuration:
+
+```xml
 <project>
   [...]
   <build>
@@ -107,4 +77,4 @@ Ban Dynamic Versions
   </build>
   [...]
 </project>
-+---+
+```

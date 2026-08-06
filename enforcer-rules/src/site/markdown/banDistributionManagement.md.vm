@@ -1,47 +1,35 @@
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~ http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.    
- 
-  ------
-  Ban Distribution Management
-  ------
-  Karl-Heinz Marbaise
-  ------
-  2014-06-28
-  ------
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-Ban Distribution Management
+http://www.apache.org/licenses/LICENSE-2.0
 
-  This rule can be used to force the absence of distributionManagement
-  in your pom files.
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
-  The following parameters are supported by this rule:
+# Ban Distribution Management
 
-  * <<allowRepository>> - You can allow repository entry (default: false).
+This rule can be used to force the absence of distributionManagement in your pom files.
 
-  * <<allowSnapshotRepository>> - you can allow snapshotRepository entry (default: false).
+The following parameters are supported by this rule:
 
-  * <<allowSite>> - You can allow site entry (default: false).
-   
-  []
+- **allowRepository** - You can allow repository entry (default: false).
+- **allowSnapshotRepository** - you can allow snapshotRepository entry (default: false).
+- **allowSite** - You can allow site entry (default: false).
 
-   
-  Sample Plugin Configuration:
-  
-+------+
+Sample Plugin Configuration:
+
+```xml
 <project>
   [...]
   <build>
@@ -68,19 +56,14 @@ Ban Distribution Management
   </build>
   [...]
 </project>
-+-------+
+```
 
-* Best Practice
+Best Practice
+-------------
 
- Usually you should define the <<distributionManagement>> only in a limited number of cases.
- If you are in a corporate environment it makes usually only sense to define the <<distributionManagement>>
- in the corporate pom and forbid the usage in any other pom's. Sometimes it makes sense to
- allow for example the site repository definition in your other pom's which can be defined by using the
- <<banDistributionManagement>> rule. For this use case the following has to be defined in your 
- corporate pom file:
- 
- 
-+------+
+Usually you should define the **distributionManagement** only in a limited number of cases. If you are in a corporate environment it makes usually only sense to define the **distributionManagement** in the corporate pom and forbid the usage in any other pom's. Sometimes it makes sense to allow for example the site repository definition in your other pom's which can be defined by using the **banDistributionManagement** rule. For this use case the following has to be defined in your corporate pom file:
+
+```xml
 <project>
   [...]
   <build>
@@ -109,62 +92,54 @@ Ban Distribution Management
   </build>
   [...]
 </project>
-+------+
- 
+```
 
-* The Project Types
+The Project Types
+-----------------
 
- If we take a closer look to the possible project structures you will find the following cases where
- the green arrow will show our current position.
+If we take a closer look to the possible project structures you will find the following cases where the green arrow will show our current position.
 
- * The Project without Parent.
+- The Project without Parent.
 
-  We have no parent and no modules at all. This could be the situation where we are creating
-  a corporate pom file or another simple Maven project. So the definition of maven-enforcer-plugin
-  is within this pom file.
-  
-[images/root.png] Root Project.
+    We have no parent and no modules at all. This could be the situation where we are creating a corporate pom file or another simple Maven project. So the definition of maven-enforcer-plugin is within this pom file.
 
-  In consequence it does not really make sense to check if the pom contains distributionManagement
-  entries or not.
+    ![Root Project.](images/root.png)
 
- * Project with Parent.
+    *Root Project.*
 
- We have a project with a parent. The parent is likely a kind of a corporate pom file which
- contains the definition of maven-enforcer-plugin. So in this case it makes sense to check
- if distributionManagement entries are made or not. 
- 
- <<Note>>: At the moment it is not possible to 
- check if the parent does not contain the definition of maven-enforcer-plugin which would change
- the situation.
+    In consequence it does not really make sense to check if the pom contains distributionManagement entries or not.
 
-[images/root-with-parent.png] Root project.
+- Project with Parent.
 
+    We have a project with a parent. The parent is likely a kind of a corporate pom file which contains the definition of maven-enforcer-plugin. So in this case it makes sense to check if distributionManagement entries are made or not. 
 
- * Project with Parent and Modules.
- 
-  This situation is more or less the same as the one before. So banDistributionManagement rule will check
-  the distributionManagement entries.
-  
-[images/root-with-parent-and-modules.png] Root project with parent and modules.
+    **Note**: At the moment it is not possible to check if the parent does not contain the definition of maven-enforcer-plugin which would change the situation.
 
+    ![Root project.](images/root-with-parent.png)
 
- * Root Project With Modules.
+    *Root project.*
 
-  If we don't have a parent this means the definition of maven-enforcer-plugin
-  is likely done in the current pom file which means it does not make really sense
-  to check the distributionManagement.
-  
-[images/root-with-modules.png] Root with Modules.
+- Project with Parent and Modules.
 
+    This situation is more or less the same as the one before. So banDistributionManagement rule will check the distributionManagement entries.
 
- * Module of a Multi Module Build
+    ![Root project with parent and modules.](images/root-with-parent-and-modules.png)
 
-  In this case we have the scenario that the module m1 has a parent <<p1>> which could contain
-  the definition of the maven-enforcer-plugin or the <<parent>> of which in consequence means to check the
-  distributionManagement entries.
+    *Root project with parent and modules.*
 
-[images/module.png] Root with Modules.
+- Root Project With Modules.
 
+    If we don't have a parent this means the definition of maven-enforcer-plugin is likely done in the current pom file which means it does not make really sense to check the distributionManagement.
 
- []
+    ![Root with Modules.](images/root-with-modules.png)
+
+    *Root with Modules.*
+
+- Module of a Multi Module Build
+
+    In this case we have the scenario that the module m1 has a parent **p1** which could contain the definition of the maven-enforcer-plugin or the **parent** of which in consequence means to check the distributionManagement entries.
+
+    ![Root with Modules.](images/module.png)
+
+    *Root with Modules.*
+

@@ -1,49 +1,34 @@
- ~~ Licensed to the Apache Software Foundation (ASF) under one
- ~~ or more contributor license agreements.  See the NOTICE file
- ~~ distributed with this work for additional information
- ~~ regarding copyright ownership.  The ASF licenses this file
- ~~ to you under the Apache License, Version 2.0 (the
- ~~ "License"); you may not use this file except in compliance
- ~~ with the License.  You may obtain a copy of the License at
- ~~
- ~~   http://www.apache.org/licenses/LICENSE-2.0
- ~~
- ~~ Unless required by applicable law or agreed to in writing,
- ~~ software distributed under the License is distributed on an
- ~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- ~~ KIND, either express or implied.  See the License for the
- ~~ specific language governing permissions and limitations
- ~~ under the License.
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
- -----
- Require Upper Bound Dependencies
- -----
- -----
- 2012-02-08
- -----
+http://www.apache.org/licenses/LICENSE-2.0
 
-  This rule requires that the version for each dependency resolved during a build is equal
-  to or higher than highest version found in the  transitive dependencies. The version of each dependency
-  resolved during the build will normally be the version specified in the POM or the 
-  version with the least transitive steps (the "nearest" definition).  For more 
-  information about Maven dependency resolution, see 
-  {{{https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html}Introduction to the Dependency Mechanism}}.
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
-  The following parameters are supported by this rule:
+This rule requires that the version for each dependency resolved during a build is equal to or higher than highest version found in the transitive dependencies. The version of each dependency resolved during the build will normally be the version specified in the POM or the version with the least transitive steps (the "nearest" definition). For more information about Maven dependency resolution, see [Introduction to the Dependency Mechanism](https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html).
 
-  * <<uniqueVersions>> - if SNAPSHOTs should be compared by their timestamped version or not. Default: <<<false>>>
+The following parameters are supported by this rule:
 
-  * <<excludes>> - specify the dependencies that will be ignored. The format is <<<groupId[:artifactId]>>>
+- **uniqueVersions** - if SNAPSHOTs should be compared by their timestamped version or not. Default: `false`
+- **excludes** - specify the dependencies that will be ignored. The format is `groupId[:artifactId]`
+- **includes** - specify the dependencies that will be checked. If not empty only these will be checked. The format is `groupId[:artifactId]`
+- **excludedScopes** - a list of dependency scope which will be excluded. Default: `test`, `provided`
 
-  * <<includes>> - specify the dependencies that will be checked. If not empty only these will be checked. The format is <<<groupId[:artifactId]>>>
+Here is a concrete example. This will cause a build to fail:
 
-  * <<excludedScopes>> - a list of dependency scope which will be excluded. Default: <<<test>>>, <<<provided>>>
-
-  []
-
-  Here is a concrete example. This will cause a build to fail:
-  
------------------------------------------------------------------------------------
+```
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -57,14 +42,13 @@
       <!-- Depends on org.slf4j:slf4j-api:1.5.0 -->
     </dependency>
   </dependencies>
------------------------------------------------------------------------------------
+```
 
-  Here the build fails because slf4j-api 1.4.0 is added to the classpath,
-  but logback-classic depends on the higher 1.5.0 version of slf4j-api.
+Here the build fails because slf4j-api 1.4.0 is added to the classpath, but logback-classic depends on the higher 1.5.0 version of slf4j-api.
 
-  This is the log message:
+This is the log message:
 
------------------------------------------------------------------------------------
+```
 
 Failed while enforcing RequireUpperBoundDeps. The error(s) are [
 RequireUpperBoundDeps error for org.slf4j:slf4j-api:1.4.0. Paths to dependency are:
@@ -75,12 +59,11 @@ and
   +-ch.qos.logback:logback-classic:0.9.9
     +-org.slf4j:slf4j-api:1.5.0
 ]
+```
 
------------------------------------------------------------------------------------
+This will succeed because the highest version, 1.6.0, is selected:
 
-  This will succeed because the highest version, 1.6.0, is selected:
-  
------------------------------------------------------------------------------------
+```
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -94,11 +77,11 @@ and
       <!-- Depends on org.slf4j:slf4j-api:1.5.0 -->
     </dependency>
   </dependencies>
------------------------------------------------------------------------------------
+```
 
-  Here is how a project should be set up to use this rule:
+Here is how a project should be set up to use this rule:
 
------------------------------------------------------------------------------------
+```
 <project>
   ...
   <build>
@@ -145,4 +128,4 @@ and
   </build>
   ...
 </project>
------------------------------------------------------------------------------------
+```

@@ -1,55 +1,39 @@
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~ http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.    
- 
-  ------
-  Require File Size
-  ------
-  Brian Fox
-  ------
-  2008-08-06
-  ------
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-Require File Size
+http://www.apache.org/licenses/LICENSE-2.0
 
-  This rule checks that the specified list of files exist and are within the specified size range.
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
+# Require File Size
 
-   The following parameters are supported by this rule:
-   
-   * <<message>> - an optional message to the user if the rule fails.
-   
-   * <<files>> - A list of files to check. If this list is empty, the main project artifact will be checked.
-   
-   * <<maxsize>> - maximum size in bytes for this file.
-   
-   * <<minsize>> - minimum size in bytes for this file.
+This rule checks that the specified list of files exist and are within the specified size range.
 
-   * <<recursive>> - the mode for computing the size when the files are directories. Default is <<false>>, so the size reflects the directory itself and not its contents. If set to <<true>>, the size is computed by summing up the sizes of all files under the designated directory recursively.
-   
-   * <<allowNulls>> - If null files should be allowed. If allowed, they will be treated as if they do exist. Default is false.
+The following parameters are supported by this rule:
 
-   * <<satisfyAny>> - Allows that one of files can make the rule pass, instead of all the files. Default is false.
-   
-   []
+- **message** - an optional message to the user if the rule fails.
+- **files** - A list of files to check. If this list is empty, the main project artifact will be checked.
+- **maxsize** - maximum size in bytes for this file.
+- **minsize** - minimum size in bytes for this file.
+- **recursive** - the mode for computing the size when the files are directories. Default is **false**, so the size reflects the directory itself and not its contents. If set to **true**, the size is computed by summing up the sizes of all files under the designated directory recursively.
+- **allowNulls** - If null files should be allowed. If allowed, they will be treated as if they do exist. Default is false.
+- **satisfyAny** - Allows that one of files can make the rule pass, instead of all the files. Default is false.
 
-   
-  Sample Plugin Configuration:
-  
-+---+
+Sample Plugin Configuration:
+
+```xml
 <project>
   [...]
   <build>
@@ -91,4 +75,4 @@ Require File Size
   </build>
   [...]
 </project>
-+---+
+```

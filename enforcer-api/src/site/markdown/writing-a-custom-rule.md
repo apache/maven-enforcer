@@ -1,82 +1,65 @@
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~ http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.    
- 
-  ------
-  Writing a custom rule
-  ------
-  Brian Fox
-  ------
-  2007-09-01
-  ------
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
 
-Writing a custom rule
- 
-  Custom rules are easy to make with the <<<maven-enforcer-rule-api>>>. These rules can then be invoked with the 
-  {{{http://maven.apache.org/plugins/maven-enforcer-plugin/}maven-enforcer-plugin}}. 
-  
-  Note: The files shown below may be downloaded here: {{{./custom-rule.zip}custom-rule.zip}}
+http://www.apache.org/licenses/LICENSE-2.0
 
-* Project with custom Enforcer Rule
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
 
-  First make a new jar project starting with the sample pom below:
-  
-%{snippet|id=project-pom|file=enforcer-api/target/custom-rule-sample/pom.xml}
+# Writing a custom rule
 
-  Target bytecode version of rules using an injection pattern must be <<<1.8>>> or <<<11>>> for Maven versions prior to 3.9.6, <<17>> is supported by Maven 3.9.6+.
+Custom rules are easy to make with the `maven-enforcer-rule-api`. These rules can then be invoked with the [maven-enforcer-plugin](http://maven.apache.org/plugins/maven-enforcer-plugin/). 
 
-  Note that the classloader is shared with the embedding <<<maven-enforcer-plugin>>> (a regular {{{https://maven.apache.org/guides/mini/guide-maven-classloading.html#Plugin_Classloaders}plugin classloader}})
-  and therefore the artifacts <<<org.apache.maven.enforcer:enforcer-api>>> are always loaded in the same version as the embedding <<<maven-enforcer-plugin>>>.
+Note: The files shown below may be downloaded here: [custom-rule.zip](./custom-rule.zip)
 
-  Custom rule artifacts should therefore only depend on <<<enforcer-api>>> and core Maven artifacts with <<<provided>>> scope (for details refer to {{{https://issues.apache.org/jira/browse/MNG-7097}MNG-7097}}).
+## Project with custom Enforcer Rule
 
-  The classes available from <<<enforcer-rules>>> must not be used from custom rules, as those are not considered API and may change in backwards-incompatible ways with every <<<maven-enforcer>>> version (even minor ones).
+First make a new jar project starting with the sample pom below:
 
-  Other dependencies used by custom rule at run time should have <<<compile>>> scope.
+<!-- MACRO{snippet|id=project-pom|file=enforcer-api/target/custom-rule-sample/pom.xml} -->
 
-* Implementation of custom Enforcer Rule
+Target bytecode version of rules using an injection pattern must be `1.8` or `11` for Maven versions prior to 3.9.6, **17** is supported by Maven 3.9.6+.
 
-  The rule must extend {{{./apidocs/org/apache/maven/enforcer/rule/api/AbstractEnforcerRule.html}AbstractEnforcerRule}} (available since API version 3.2.1) and implement its <<<execute>>> method.
+Note that the classloader is shared with the embedding `maven-enforcer-plugin` (a regular [plugin classloader](https://maven.apache.org/guides/mini/guide-maven-classloading.html#Plugin_Classloaders)) and therefore the artifacts `org.apache.maven.enforcer:enforcer-api` are always loaded in the same version as the embedding `maven-enforcer-plugin`.
 
-  Add annotation <<<@Named("yourRuleName")>>> to your Rule class. Your Rule name must start with lowercase character.
+Custom rule artifacts should therefore only depend on `enforcer-api` and core Maven artifacts with `provided` scope (for details refer to [MNG-7097](https://issues.apache.org/jira/browse/MNG-7097)).
 
-  In addition, the rule can provide a setter method or simply field for each parameter allowed to be configured in the pom.xml file (like the parameter <<<shouldIfail>>> shown example).
+The classes available from `enforcer-rules` must not be used from custom rules, as those are not considered API and may change in backwards-incompatible ways with every `maven-enforcer` version (even minor ones).
 
-  Maven component can be injected into Rule by annotation <<<@Inject>>> on field or constructor.
+Other dependencies used by custom rule at run time should have `compile` scope.
 
-  Entry point for Rule executing is <<<execute>>> method, tf the rule succeeds, it should just simply return.
-  If the rule fails, it should throw an {{{./apidocs/org/apache/maven/enforcer/rule/api/EnforcerRuleException.html}EnforcerRuleException}} with a descriptive message telling the user why the rule failed.
-  Enforcer plugin takes decision based on configuration and Enforcer Rule level whether build should pass or fail.
-  In case when you want to brake build immediately, <<<execute>>> method can throw an {{{./apidocs/index.html}EnforcerRuleError}}.
+## Implementation of custom Enforcer Rule
 
-  Here's a sample class:
+The rule must extend [AbstractEnforcerRule](./apidocs/org/apache/maven/enforcer/rule/api/AbstractEnforcerRule.html) (available since API version 3.2.1) and implement its `execute` method.
 
-%{snippet|id=rule-implementation|file=enforcer-api/target/custom-rule-sample/src/main/java/org/example/custom/rule/MyCustomRule.java}
+Add annotation `@Named("yourRuleName")` to your Rule class. Your Rule name must start with lowercase character.
 
+In addition, the rule can provide a setter method or simply field for each parameter allowed to be configured in the pom.xml file (like the parameter `shouldIfail` shown example).
 
-* Using custom Rule
+Maven component can be injected into Rule by annotation `@Inject` on field or constructor.
 
-  * Build and Install or Deploy your custom rule.
- 
-  * Add your custom-rule artifact as a dependency of the <<<maven-enforcer-plugin>>> in your build.
+Entry point for Rule executing is `execute` method, tf the rule succeeds, it should just simply return. If the rule fails, it should throw an [EnforcerRuleException](./apidocs/org/apache/maven/enforcer/rule/api/EnforcerRuleException.html) with a descriptive message telling the user why the rule failed. Enforcer plugin takes decision based on configuration and Enforcer Rule level whether build should pass or fail. In case when you want to brake build immediately, `execute` method can throw an [EnforcerRuleError](./apidocs/index.html).
 
-  * Add your rule to the configuration section of the <<<maven-enforcer-plugin>>>, the name used in <<<@Named>>> annotation of your Rule will be the name of the rule.
+Here's a sample class:
 
-  []
+<!-- MACRO{snippet|id=rule-implementation|file=enforcer-api/target/custom-rule-sample/src/main/java/org/example/custom/rule/MyCustomRule.java} -->
+## Using custom Rule
 
-  That's it. The full plugin config may look like this:
-  
-%{snippet|id=usage-pom|file=enforcer-api/target/custom-rule-sample/usage-pom.xml}
+- Build and Install or Deploy your custom rule.
+- Add your custom-rule artifact as a dependency of the `maven-enforcer-plugin` in your build.
+- Add your rule to the configuration section of the `maven-enforcer-plugin`, the name used in `@Named` annotation of your Rule will be the name of the rule.
+
+That's it. The full plugin config may look like this:
+
+<!-- MACRO{snippet|id=usage-pom|file=enforcer-api/target/custom-rule-sample/usage-pom.xml} -->
