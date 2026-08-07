@@ -39,4 +39,4 @@ The [RequireMavenVersion](./requireMavenVersion.html) and [RequireJavaVersion](.
 |(1.0,2.0)|1.0 &lt; x &lt; 2.0|
 |\[1.0,2.0\]|1.0 &lt;= x &lt;= 2.0|
 |(,1.0\],\[1.2,)|x &lt;= 1.0 or x &gt;= 1.2. Multiple sets are comma-separated|
-|(,1.1),(1.1,)|x \!= 1.1|
+|(,1.1),(1.1,)|x != 1.1|
