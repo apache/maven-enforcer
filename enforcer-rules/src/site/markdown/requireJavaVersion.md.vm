@@ -31,9 +31,9 @@ The following parameters are supported by this rule:
 
 The JDK version is retrieved and the following processing occurs before being checked:
 
-1. Drop all non-numeric characters preceding the first number. (build 1.5.0\_07-b03 becomes 1.5.0\_07-b03)
-1. Replace all '\_' and '-' with '.' (1.5.0\_07-b03 becomes 1.5.0.07.b03)
-1. Remove all non digit characters "\[^0-9\] and convert each section using Integer.parseInt() (1.5.0\_07-b03 becomes 1.5.0.7.3)
+1. Drop all non-numeric characters preceding the first number. (build 1.5.0_07-b03 becomes 1.5.0_07-b03)
+1. Replace all '\_' and '-' with '.' (1.5.0_07-b03 becomes 1.5.0.07.b03)
+1. Remove all non digit characters "\[^0-9\] and convert each section using Integer.parseInt() (1.5.0_07-b03 becomes 1.5.0.7.3)
 1. Split the string on '.' and take the first 3 sections, separated by '.' and add '-' followed by the fourth section (1.5.0.7.3 becomes 1.5.0-7)
 
 This preprocessing normalizes various JDK version strings into a standard x.y.z-b version number. Your required range should therefore use the x.y.z-b format for comparison. There is an easy way to see how your current JDK string will be normalized, you can enable **display** option.
