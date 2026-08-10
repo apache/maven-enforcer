@@ -21,13 +21,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<a name="top"></a>
+<a id="top"></a>
 
 # Frequently Asked Questions
 
 1. [Why can't I just use the prerequisites tag in the pom?](#question)
 
-<a name="question"></a>
+<a id="question"></a>
 
 ### Why can't I just use the prerequisites tag in the pom?
 
