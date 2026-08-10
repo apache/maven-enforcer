@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+---
+title: Frequently Asked Questions
+---
 
 <!--
 Licensed to the Apache Software Foundation (ASF) under one
@@ -19,21 +21,17 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-<faqs xmlns="http://maven.apache.org/FML/1.0.1"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
-  id="FAQ" title="Frequently Asked Questions">
-  <part id="General">
-    <faq id="question">
-      <question>Why can't I just use the prerequisites tag in the pom?</question>
-      <answer>
-        <p>
-          The prerequisites tag was designed to be used by tools like plugins. It will work for regular projects, but it isn't
-          inherited to their children. If it is set in a parent reactor, then Maven will do the check. However if one of the
-          children are built, the check is not performed. The enforcer plugin is designed to allow centralized control over the build environment from
-          a single "super-pom", and to allow greater flexibility in version specification by supporting ranges.
-        </p>
-      </answer>
-    </faq>
-  </part>
-</faqs>
+<a name="top"></a>
+
+# Frequently Asked Questions
+
+1. [Why can't I just use the prerequisites tag in the pom?](#question)
+
+<a name="question"></a>
+
+### Why can't I just use the prerequisites tag in the pom?
+
+The prerequisites tag was designed to be used by tools like plugins. It will work for regular projects, but it isn't
+inherited to their children. If it is set in a parent reactor, then Maven will do the check. However if one of the
+children are built, the check is not performed. The enforcer plugin is designed to allow centralized control over the build environment from
+a single &quot;super-pom&quot;, and to allow greater flexibility in version specification by supporting ranges.
