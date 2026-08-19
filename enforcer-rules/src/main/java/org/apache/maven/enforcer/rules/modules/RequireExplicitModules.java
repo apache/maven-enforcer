@@ -34,14 +34,14 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Requires that a project with compiled classes is an <em>explicit</em> Java module, i.e. that its
- * main output contains a {@code module-info.class}. This prevents a modular application from silently
- * consuming a dependency as an <em>automatic module</em> (a plain JAR placed on the module path),
- * whose auto-derived name and "exports everything" semantics are unstable across releases.
+ * Requires that a project with compiled classes is an <em>explicit</em> Java module. Its main output
+ * must contain a {@code module-info.class}. This prevents a modular application from silently consuming
+ * a dependency as an <em>automatic module</em> (a plain JAR placed on the module path). Such a module's
+ * auto-derived name and "exports everything" semantics are unstable across releases.
  *
- * <p>The rule does nothing for projects that compile no classes (e.g. {@code pom} aggregators or a
+ * <p>The rule does nothing for projects that compile no classes (such as {@code pom} aggregators or a
  * module that only carries resources), so it can be enabled ecosystem-wide without special-casing.
- * In a Maven&nbsp;4 module source hierarchy every per-module output directory is checked.
+ * In a Maven 4 module source hierarchy every per-module output directory is checked.
  */
 @Named("requireExplicitModules")
 public final class RequireExplicitModules extends AbstractModuleInfoRule {

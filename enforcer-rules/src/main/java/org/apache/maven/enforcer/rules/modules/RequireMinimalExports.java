@@ -30,7 +30,7 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * Keeps a module's public surface minimal by banning {@code exports} of packages that are meant to be
- * internal. By default any package whose name has an {@code internal} or {@code impl} segment (e.g.
+ * internal. By default any package whose name has an {@code internal} or {@code impl} segment (such as
  * {@code com.example.foo.internal} or {@code com.example.impl.util}) must not be exported; the set is
  * configurable through {@code <internalPackagePattern>}.
  *
