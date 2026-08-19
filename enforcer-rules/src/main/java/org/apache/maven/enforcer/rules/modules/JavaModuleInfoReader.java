@@ -35,15 +35,15 @@ import java.util.Set;
  * {@code exports}, {@code opens}) by delegating to {@link java.lang.module.ModuleDescriptor}.
  *
  * <p><b>Design decision.</b> This plugin compiles with {@code --release 8}, so it cannot
- * reference {@code java.lang.module.ModuleDescriptor} (a Java&nbsp;9 API) directly. The obvious
+ * reference {@code java.lang.module.ModuleDescriptor} (a Java 9 API) directly. The obvious
  * alternative — a multi-release JAR overlay ({@code src/main/java9}) so the module-reading code
- * could be compiled for Java&nbsp;9 — is deliberately <em>not</em> used: multi-release JAR support
- * in Maven&nbsp;3 is incomplete and can even produce invalid JARs (cf. MNG-6892 / MNG-6293 and
- * {@code maven-jar-plugin#484}); it is only cleanly solved in Maven&nbsp;4 (POM model 4.1.0 +
- * {@code maven-compiler-plugin} 4.0.0-beta-3). To keep these rules usable on <b>Maven&nbsp;3</b>
- * and a Java&nbsp;8 source baseline, we instead access {@code ModuleDescriptor} <b>reflectively</b>
+ * could be compiled for Java 9 — is deliberately <em>not</em> used: multi-release JAR support
+ * in Maven 3 is incomplete and can even produce invalid JARs (see MNG-6892 / MNG-6293 and
+ * {@code maven-jar-plugin#484}); it is only cleanly solved in Maven 4 (POM model 4.1.0 +
+ * {@code maven-compiler-plugin} 4.0.0-beta-3). To keep these rules usable on <b>Maven 3</b>
+ * and a Java 8 source baseline, we instead access {@code ModuleDescriptor} <b>reflectively</b>
  * through this small wrapper class: the API is present at runtime whenever a
- * {@code module-info.class} exists (such a project is necessarily built on Java&nbsp;9+), and the
+ * {@code module-info.class} exists (such a project is necessarily built on Java 9+), and the
  * rules simply do nothing when there is no module descriptor. See {@code apache/maven-enforcer#995}.
  */
 final class JavaModuleInfoReader {
@@ -59,7 +59,7 @@ final class JavaModuleInfoReader {
      * @param in the class-file bytes of a {@code module-info.class}
      * @return the parsed module info, or {@code null} if the bytes are not a valid module descriptor
      * @throws IOException if the bytes cannot be read, or if {@code java.lang.module} is unavailable
-     *                     (i.e. running on a Java&nbsp;8 runtime)
+     *                     because the enforcer is running on a Java 8 runtime
      */
     static JavaModuleInfo read(InputStream in) throws IOException {
         byte[] classFile = readAllBytes(in);
@@ -93,6 +93,8 @@ final class JavaModuleInfoReader {
         }
     }
 
+    // Hand-rolled drain: InputStream.readAllBytes() would do this in one call but is Java 9+,
+    // and this class compiles with --release 8 (see the class javadoc).
     private static byte[] readAllBytes(InputStream in) throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         byte[] chunk = new byte[8192];
@@ -113,7 +115,7 @@ final class JavaModuleInfoReader {
                 || (classFile[1] & 0xFF) != 0xFE
                 || (classFile[2] & 0xFF) != 0xBA
                 || (classFile[3] & 0xFF) != 0xBE) {
-            throw new IOException("Not a Java class file (bad magic)");
+            throw new IOException("Not a Java class file (bad magic number)");
         }
         int major = ((classFile[6] & 0xFF) << 8) | (classFile[7] & 0xFF);
         int runtimeMajor = runtimeClassFileMajor();
@@ -124,7 +126,7 @@ final class JavaModuleInfoReader {
         }
     }
 
-    /** The class-file major version of the running JVM (e.g. 52 for Java&nbsp;8, 69 for Java&nbsp;25). */
+    /** The class-file major version of the running JVM (such as 52 for Java 8, 69 for Java 25). */
     private static int runtimeClassFileMajor() {
         // "java.class.version" is "52.0", "61.0", "69.0", ... — available since Java 1.1.
         String version = System.getProperty("java.class.version", "52.0");

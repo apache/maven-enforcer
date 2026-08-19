@@ -18,6 +18,7 @@
  */
 package org.apache.maven.enforcer.rules.modules;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,12 +38,14 @@ final class JavaModuleInfo {
     JavaModuleInfo(String name, boolean open, List<String> requires, List<Directive> exports, List<Directive> opens) {
         this.name = name;
         this.open = open;
-        this.requires = Collections.unmodifiableList(requires);
-        this.exports = Collections.unmodifiableList(exports);
-        this.opens = Collections.unmodifiableList(opens);
+        // Defensive copies: decouple from the caller's lists so this view stays truly immutable
+        // (List.copyOf would be simpler but is Java 9+; this class compiles with --release 8).
+        this.requires = Collections.unmodifiableList(new ArrayList<>(requires));
+        this.exports = Collections.unmodifiableList(new ArrayList<>(exports));
+        this.opens = Collections.unmodifiableList(new ArrayList<>(opens));
     }
 
-    /** The module name, e.g. {@code com.example.foo}. */
+    /** The module name, such as {@code com.example.foo}. */
     String name() {
         return name;
     }
@@ -77,10 +80,10 @@ final class JavaModuleInfo {
 
         Directive(String packageName, List<String> targets) {
             this.packageName = packageName;
-            this.targets = Collections.unmodifiableList(targets);
+            this.targets = Collections.unmodifiableList(new ArrayList<>(targets));
         }
 
-        /** Exported/opened package, e.g. {@code com.example.foo.api}. */
+        /** Exported/opened package, such as {@code com.example.foo.api}. */
         String packageName() {
             return packageName;
         }

@@ -38,7 +38,7 @@ import org.apache.maven.project.MavenProject;
  * <ul>
  *   <li><b>Classic</b>: the descriptor sits directly in {@code ${project.build.outputDirectory}}
  *       (one Maven project = one Java module);</li>
- *   <li><b>Module source hierarchy</b> (Maven&nbsp;4, POM model 4.1.0): one Maven project compiles
+ *   <li><b>Module source hierarchy</b> (Maven 4, POM model 4.1.0): one Maven project compiles
  *       several modules, each to its own subdirectory
  *       {@code ${project.build.outputDirectory}/<module-name>/module-info.class}.</li>
  * </ul>
@@ -46,7 +46,7 @@ import org.apache.maven.project.MavenProject;
  * Subclasses call {@link #moduleOutputs()} and enforce a specific constraint on each returned
  * {@link ModuleOutput}.
  */
-abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRule {
+public abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRule {
 
     protected final MavenProject project;
 
@@ -85,7 +85,7 @@ abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRule {
      *
      * <p>If the output directory itself holds a {@code module-info.class} (classic layout), exactly
      * that one output is returned. Otherwise, if at least one first-level subdirectory holds a
-     * {@code module-info.class} (Maven&nbsp;4 module source hierarchy), every first-level
+     * {@code module-info.class} (Maven 4 module source hierarchy), every first-level
      * subdirectory is returned as one output each — including non-modular ones, whose
      * {@link ModuleOutput#moduleInfo()} is {@code null}, so rules can flag them. Failing both, the
      * output directory is returned as a single non-modular output.
@@ -137,7 +137,7 @@ abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRule {
         }
     }
 
-    /** Short rule name for log messages, e.g. {@code RequireMinimalExports}. */
+    /** Short rule name for log messages, such as {@code RequireMinimalExports}. */
     protected String ruleName() {
         return getClass().getSimpleName();
     }
