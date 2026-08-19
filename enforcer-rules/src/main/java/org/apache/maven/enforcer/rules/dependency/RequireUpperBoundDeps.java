@@ -46,7 +46,7 @@ import static org.apache.maven.artifact.Artifact.SCOPE_PROVIDED;
 import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 
 /**
- * Rule to enforce that the resolved dependency is also the most recent one of all transitive dependencies.
+ * Rule to enforce that the resolved dependency is the most recent one of all transitive dependencies.
  *
  * @author Geoffrey De Smet
  * @since 1.1
@@ -74,7 +74,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
     private List<String> includes = null;
 
     /**
-     * Scope to exclude.
+     * Scopes to exclude.
      */
     private List<String> excludedScopes = Arrays.asList(SCOPE_TEST, SCOPE_PROVIDED);
 
