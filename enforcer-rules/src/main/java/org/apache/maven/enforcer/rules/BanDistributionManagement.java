@@ -86,7 +86,7 @@ public final class BanDistributionManagement extends AbstractStandardEnforcerRul
             check.execute(isAllowRepository(), isAllowSnapshotRepository(), isAllowSite());
         } catch (EnforcerRuleException e) {
             if (getMessage() != null) {
-                throw new EnforcerRuleException(getMessage() + System.lineSeparator() + e.getMessage(), e);
+                throw new EnforcerRuleException(getMessage() + "\n" + e.getMessage(), e);
             }
             throw e;
         }

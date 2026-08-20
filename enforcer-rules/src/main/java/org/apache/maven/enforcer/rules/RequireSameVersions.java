@@ -82,13 +82,13 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
         if (versionMembers.size() > 1) {
             StringBuilder builder = new StringBuilder();
             if (getMessage() != null) {
-                builder.append(getMessage()).append(System.lineSeparator());
+                builder.append(getMessage()).append("\n");
             }
-            builder.append("Found entries with different versions" + System.lineSeparator());
+            builder.append("Found entries with different versions" + "\n");
             for (Map.Entry<String, List<String>> entry : versionMembers.entrySet()) {
-                builder.append("Entries with version ").append(entry.getKey()).append(System.lineSeparator());
+                builder.append("Entries with version ").append(entry.getKey()).append("\n");
                 for (String conflictId : entry.getValue()) {
-                    builder.append("- ").append(conflictId).append(System.lineSeparator());
+                    builder.append("- ").append(conflictId).append("\n");
                 }
             }
             throw new EnforcerRuleException(builder.toString());
@@ -99,7 +99,7 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
             if (!Objects.equals(topLevelProject.getVersion(), project.getVersion())) {
                 StringBuilder builder = new StringBuilder();
                 if (getMessage() != null) {
-                    builder.append(getMessage()).append(System.lineSeparator());
+                    builder.append(getMessage()).append("\n");
                 }
                 builder.append("Top level project has version " + topLevelProject.getVersion()
                         + " but current module has different version " + project.getVersion());

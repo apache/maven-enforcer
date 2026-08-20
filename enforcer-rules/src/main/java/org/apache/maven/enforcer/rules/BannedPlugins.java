@@ -80,7 +80,7 @@ public final class BannedPlugins extends AbstractStandardEnforcerRule {
         if (!result.isEmpty()) {
             StringBuilder buf = new StringBuilder();
             if (getMessage() != null) {
-                buf.append(getMessage()).append(System.lineSeparator());
+                buf.append(getMessage()).append("\n");
             }
             buf.append(result);
             throw new EnforcerRuleException(buf.toString());

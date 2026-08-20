@@ -51,7 +51,7 @@ public final class RequireMatchingCoordinates extends AbstractStandardEnforcerRu
     public void execute() throws EnforcerRuleException {
         StringBuilder msgBuilder = new StringBuilder();
         if (getMessage() != null) {
-            msgBuilder.append(getMessage()).append(System.lineSeparator());
+            msgBuilder.append(getMessage()).append("\n");
         }
         boolean hasError = false;
         if (groupIdPattern != null
@@ -62,7 +62,7 @@ public final class RequireMatchingCoordinates extends AbstractStandardEnforcerRu
                     .append("\" but is \"")
                     .append(project.getGroupId())
                     .append("\"")
-                    .append(System.lineSeparator());
+                    .append("\n");
             hasError = true;
         }
         if (artifactIdPattern != null
@@ -73,7 +73,7 @@ public final class RequireMatchingCoordinates extends AbstractStandardEnforcerRu
                     .append("\" but is \"")
                     .append(project.getArtifactId())
                     .append("\"")
-                    .append(System.lineSeparator());
+                    .append("\n");
             hasError = true;
         }
         if (moduleNameMustMatchArtifactId
@@ -85,11 +85,11 @@ public final class RequireMatchingCoordinates extends AbstractStandardEnforcerRu
                     .append("\" but is \"")
                     .append(project.getBasedir().getName())
                     .append("\"")
-                    .append(System.lineSeparator());
+                    .append("\n");
             hasError = true;
         }
         if (hasError) {
-            int len = System.lineSeparator().length();
+            int len = "\n".length();
             msgBuilder.setLength(msgBuilder.length() - len);
             throw new EnforcerRuleException(msgBuilder.toString());
         }

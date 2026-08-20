@@ -69,7 +69,7 @@ public final class RequireExplicitDependencyScope extends AbstractStandardEnforc
             String logCategory = getLevel() == EnforcerLevel.ERROR ? "errors" : "warnings";
             StringBuilder buf = new StringBuilder();
             if (getMessage() != null) {
-                buf.append(getMessage()).append(System.lineSeparator());
+                buf.append(getMessage()).append("\n");
             }
             buf.append("Found " + numMissingDependencyScopes + " missing dependency "
                     + scopesFormat.format(numMissingDependencyScopes)

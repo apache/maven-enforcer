@@ -93,7 +93,7 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
         if (!errMsg.isEmpty()) {
             StringBuilder buf = new StringBuilder();
             if (getMessage() != null) {
-                buf.append(getMessage()).append(System.lineSeparator());
+                buf.append(getMessage()).append("\n");
             }
             buf.append(errMsg);
             throw new EnforcerRuleException(buf.toString());

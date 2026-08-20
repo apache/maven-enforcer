@@ -93,7 +93,7 @@ public final class RequirePrerequisite extends AbstractStandardEnforcerRule {
             if (prerequisites == null) {
                 StringBuilder buf = new StringBuilder();
                 if (getMessage() != null) {
-                    buf.append(getMessage()).append(System.lineSeparator());
+                    buf.append(getMessage()).append("\n");
                 }
                 buf.append("Requires prerequisite not set");
                 throw new EnforcerRuleException(buf.toString());
@@ -114,7 +114,7 @@ public final class RequirePrerequisite extends AbstractStandardEnforcerRule {
                 if (restrictedVersionRange.getRecommendedVersion() == null) {
                     StringBuilder buf = new StringBuilder();
                     if (getMessage() != null) {
-                        buf.append(getMessage()).append(System.lineSeparator());
+                        buf.append(getMessage()).append("\n");
                     }
                     buf.append("The specified Maven prerequisite( " + specifiedVersion
                             + " ) doesn't match the required version: " + mavenVersion);
