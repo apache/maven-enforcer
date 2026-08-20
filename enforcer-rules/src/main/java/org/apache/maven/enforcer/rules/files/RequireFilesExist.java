@@ -22,6 +22,7 @@ import javax.inject.Named;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * The Class RequireFilesExist.
@@ -54,7 +55,15 @@ public final class RequireFilesExist extends AbstractRequireFiles {
                 absFile = file;
             }
 
-            return absFile.toURI().equals(absFile.getCanonicalFile().toURI());
+            // Collapse ".." first. A path that still contains those segments never
+            // has the same URI as getCanonicalFile(), so an existing file is
+            // reported missing. Compare the file name rather than the full URI
+            // so /var vs /private/var on macOS does not fail the same way.
+            Path requested = absFile.toPath().toAbsolutePath().normalize();
+            return requested
+                    .getFileName()
+                    .toString()
+                    .equals(requested.toFile().getCanonicalFile().getName());
         } catch (IOException e) {
             return true;
         }

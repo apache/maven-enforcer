@@ -20,6 +20,7 @@ package org.apache.maven.enforcer.rules.files;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -106,6 +107,20 @@ class TestRequireFilesExist {
         EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> rule.execute());
 
         assertNotNull(e.getMessage());
+    }
+
+    @Test
+    void testFileExistsThroughDotDot() throws Exception {
+        File nested = new File(temporaryFolder, "src/a/b");
+        assertTrue(nested.mkdirs());
+        File readme = new File(temporaryFolder, "README.adoc");
+        Files.write(readme.toPath(), "ok".getBytes());
+
+        File viaDotDot = new File(nested, "../../../README.adoc");
+        assertTrue(viaDotDot.exists());
+
+        rule.setFilesList(Collections.singletonList(viaDotDot));
+        rule.execute();
     }
 
     @Test
