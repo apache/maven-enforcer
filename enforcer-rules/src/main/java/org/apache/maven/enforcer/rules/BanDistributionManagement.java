@@ -72,12 +72,23 @@ public final class BanDistributionManagement extends AbstractStandardEnforcerRul
                 getLog().debug("We are in the root of the execution and we have a parent.");
 
                 DistributionManagementCheck check = new DistributionManagementCheck(project);
-                check.execute(isAllowRepository(), isAllowSnapshotRepository(), isAllowSite());
+                executeCheck(check);
             }
         } else {
             getLog().debug("We are in a deeper level.");
             DistributionManagementCheck check = new DistributionManagementCheck(project);
+            executeCheck(check);
+        }
+    }
+
+    private void executeCheck(DistributionManagementCheck check) throws EnforcerRuleException {
+        try {
             check.execute(isAllowRepository(), isAllowSnapshotRepository(), isAllowSite());
+        } catch (EnforcerRuleException e) {
+            if (getMessage() != null) {
+                throw new EnforcerRuleException(getMessage() + "\n" + e.getMessage(), e);
+            }
+            throw e;
         }
     }
 

@@ -33,6 +33,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -144,5 +145,26 @@ class TestBannedRepositories {
             fail("should throw exception");
         } catch (EnforcerRuleException e) {
         }
+    }
+
+    @Test
+    void shouldOutputCustomMessageWhenBanned() {
+        String customMessage = "Custom banned repositories message";
+        rule.setMessage(customMessage);
+
+        ArtifactRepository repo1 = new MavenArtifactRepository("repo1", "http://repo1/", null, null, null);
+        List<ArtifactRepository> repos = new ArrayList<>();
+        repos.add(repo1);
+
+        when(project.getRemoteArtifactRepositories()).thenReturn(repos);
+        when(project.getPluginArtifactRepositories()).thenReturn(repos);
+
+        List<String> bannedRepositories = new ArrayList<>();
+        bannedRepositories.add("http://repo1/*");
+        rule.setBannedRepositories(bannedRepositories);
+
+        assertThatThrownBy(() -> rule.execute())
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageStartingWith(customMessage);
     }
 }

@@ -30,6 +30,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -259,5 +260,29 @@ class TestRequireSameVersions {
 
     private static String extractGaString(Artifact dependency) {
         return String.format("%s:%s", dependency.getGroupId(), dependency.getArtifactId());
+    }
+
+    @Test
+    void shouldOutputCustomMessageWhenVersionsDiffer() throws IOException {
+        String customMessage = "Custom same versions message";
+        rule.setMessage(customMessage);
+
+        Artifact dep1 = constructArtifact("acme-dep", "1.0");
+        Artifact dep2 = constructArtifact("acme-dep2", "2.0");
+
+        HashSet<Artifact> dependencies = new HashSet<>();
+        dependencies.add(dep1);
+        dependencies.add(dep2);
+
+        when(project.getArtifacts()).thenReturn(dependencies);
+        when(project.getPluginArtifacts()).thenReturn(new HashSet<>());
+        when(project.getReportArtifacts()).thenReturn(new HashSet<>());
+
+        rule.addDependency("org.acme:acme-dep");
+        rule.addDependency("org.acme:acme-dep2");
+
+        assertThatThrownBy(() -> rule.execute())
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageStartingWith(customMessage);
     }
 }

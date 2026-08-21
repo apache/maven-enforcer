@@ -119,6 +119,9 @@ public final class BanDuplicatePomDependencyVersions extends AbstractStandardEnf
 
         if (summary.length() > 0) {
             StringBuilder message = new StringBuilder();
+            if (getMessage() != null) {
+                message.append(getMessage()).append("\n");
+            }
             message.append("Found ").append(duplicates).append(" duplicate dependency ");
             message.append(duplicateDependencies.size() == 1 ? "declaration" : "declarations")
                     .append(" in this project:" + System.lineSeparator());
