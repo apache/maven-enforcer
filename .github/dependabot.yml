@@ -18,6 +18,11 @@ version: 2
 updates:
 - package-ecosystem: maven
   directory: "/"
+  exclude-paths:
+    - "enforcer-api/src/custom-rule-sample/**"
+    - "enforcer-rules/src/test/resources/**"
+    - "maven-enforcer-extension/src/it/**"
+    - "maven-enforcer-plugin/src/it/**"
   schedule:
     interval: daily
 
