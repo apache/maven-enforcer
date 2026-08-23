@@ -214,19 +214,6 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.apache.maven.plugin-testing</groupId>
-        <artifactId>maven-plugin-testing-harness</artifactId>
-        <version>3.5.1</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <!-- used in test runtime for ArtifactStubFactory -->
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-archiver</artifactId>
-        <version>4.12.0</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
         <version>3.27.7</version>
