@@ -30,7 +30,7 @@ import org.apache.maven.artifact.versioning.VersionRange;
  * Builds detached {@link Artifact} stubs for rule tests. No file is created and none is attached; a test that
  * needs one calls {@link Artifact#setFile}.
  */
-public class ArtifactStubFactory {
+public class EnforcerArtifactStubFactory {
 
     /**
      * @return {@code testGroupId:release:jar:1.0}, compile scope

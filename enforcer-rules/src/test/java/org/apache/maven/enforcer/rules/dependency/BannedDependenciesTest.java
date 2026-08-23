@@ -21,8 +21,8 @@ package org.apache.maven.enforcer.rules.dependency;
 import java.util.Collections;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rules.utils.ArtifactStubFactory;
 import org.apache.maven.enforcer.rules.utils.DependencyNodeBuilder;
+import org.apache.maven.enforcer.rules.utils.EnforcerArtifactStubFactory;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class BannedDependenciesTest {
 
-    private static final ArtifactStubFactory ARTIFACT_STUB_FACTORY = new ArtifactStubFactory();
+    private static final EnforcerArtifactStubFactory ARTIFACT_STUB_FACTORY = new EnforcerArtifactStubFactory();
 
     @Mock
     private MavenProject project;

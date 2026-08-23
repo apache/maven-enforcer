@@ -19,7 +19,7 @@
 package org.apache.maven.enforcer.rules;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rules.utils.ArtifactStubFactory;
+import org.apache.maven.enforcer.rules.utils.EnforcerArtifactStubFactory;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -49,7 +49,7 @@ class TestRequireReleaseVersion {
 
     @Test
     void testProjectWithReleaseVersion() throws Exception {
-        ArtifactStubFactory factory = new ArtifactStubFactory();
+        EnforcerArtifactStubFactory factory = new EnforcerArtifactStubFactory();
 
         when(project.getArtifact()).thenReturn(factory.getReleaseArtifact());
 
@@ -58,7 +58,7 @@ class TestRequireReleaseVersion {
 
     @Test
     void testProjectWithSnapshotVersion() throws Exception {
-        ArtifactStubFactory factory = new ArtifactStubFactory();
+        EnforcerArtifactStubFactory factory = new EnforcerArtifactStubFactory();
 
         when(project.getArtifact()).thenReturn(factory.getSnapshotArtifact());
 
@@ -69,7 +69,7 @@ class TestRequireReleaseVersion {
 
     @Test
     void shouldFailWhenParentIsSnapshot() throws Exception {
-        ArtifactStubFactory factory = new ArtifactStubFactory();
+        EnforcerArtifactStubFactory factory = new EnforcerArtifactStubFactory();
 
         when(project.getArtifact()).thenReturn(factory.getReleaseArtifact());
         when(project.getParentArtifact()).thenReturn(factory.getSnapshotArtifact());
@@ -83,7 +83,7 @@ class TestRequireReleaseVersion {
 
     @Test
     void shouldAllowParentSnapshot() throws Exception {
-        ArtifactStubFactory factory = new ArtifactStubFactory();
+        EnforcerArtifactStubFactory factory = new EnforcerArtifactStubFactory();
 
         when(project.getArtifact()).thenReturn(factory.getReleaseArtifact());
 

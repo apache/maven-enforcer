@@ -31,7 +31,7 @@ import java.util.UUID;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rules.utils.ArtifactStubFactory;
+import org.apache.maven.enforcer.rules.utils.EnforcerArtifactStubFactory;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -108,7 +108,7 @@ class TestRequireFilesSize {
 
         File f = File.createTempFile("junit", null, temporaryFolder);
 
-        ArtifactStubFactory factory = new ArtifactStubFactory();
+        EnforcerArtifactStubFactory factory = new EnforcerArtifactStubFactory();
         Artifact a = factory.getReleaseArtifact();
         a.setFile(f);
 

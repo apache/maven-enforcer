@@ -23,7 +23,7 @@ import java.util.HashSet;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rules.utils.ArtifactStubFactory;
+import org.apache.maven.enforcer.rules.utils.EnforcerArtifactStubFactory;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 class TestRequireSameVersions {
-    private static final ArtifactStubFactory ARTIFACT_FACTORY = new ArtifactStubFactory();
+    private static final EnforcerArtifactStubFactory ARTIFACT_FACTORY = new EnforcerArtifactStubFactory();
 
     private MavenProject project;
     private RequireSameVersions rule;
