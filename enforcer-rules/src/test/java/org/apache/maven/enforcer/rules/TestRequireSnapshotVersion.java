@@ -19,7 +19,7 @@
 package org.apache.maven.enforcer.rules;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.enforcer.rules.utils.ArtifactStubFactory;
+import org.apache.maven.enforcer.rules.utils.EnforcerArtifactStubFactory;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,14 +43,14 @@ class TestRequireSnapshotVersion {
     @Mock
     private MavenProject project;
 
-    private ArtifactStubFactory factory;
+    private EnforcerArtifactStubFactory factory;
 
     @InjectMocks
     private RequireSnapshotVersion rule;
 
     @BeforeEach
     public void before() {
-        factory = new ArtifactStubFactory();
+        factory = new EnforcerArtifactStubFactory();
     }
 
     @Test
