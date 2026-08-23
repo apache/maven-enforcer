@@ -37,8 +37,11 @@ under the License.
 						<enforceBytecodeVersion>
 							<maxJdkVersion>1.5</maxJdkVersion>
 							<excludes>
-								<exclude>org.mindrot:jbcrypt:*:*</exclude>
+								<exclude>*:*</exclude>
 							</excludes>
+							<includes>
+								<include>com.google.code.findbugs:jsr305</include>
+							</includes>
 						</enforceBytecodeVersion>
 					</rules>
 				</configuration>
