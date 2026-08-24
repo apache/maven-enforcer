@@ -23,6 +23,10 @@ assert file.exists();
 String text = file.getText("utf-8");
 
 assert ! text.contains( '[INFO] Adding ignore: module-info' )
-assert text.contains( 'Found Banned Dependency: org.apache.logging.log4j:log4j-api:jar:2.17.2' )
+// The log4j-api version is test input, pinned in this IT's own pom.xml. Read it back here
+// rather than repeating it, so that bumping the fixture cannot leave this assertion stale.
+def log4jVersion = (new File(basedir, 'pom.xml').getText('UTF-8')
+        =~ /<artifactId>log4j-api<\/artifactId>\s*<version>([^<]+)<\/version>/)[0][1]
+assert text.contains( "Found Banned Dependency: org.apache.logging.log4j:log4j-api:jar:${log4jVersion}" )
 
 return true;
