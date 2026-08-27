@@ -22,8 +22,8 @@ assert file.exists()
 
 String text = file.getText("utf-8")
 
-// old
-// assert text.contains('[DEBUG] Ignore: module-info maps to regex ^module-info(\\.class)?$')
-// new
 assert text.contains('[DEBUG] Ignore: module-info (target < Java 8)')
-assert text.contains('[DEBUG] log4j-api-2.17.2.jar => ')
+
+// the version must not be pinned here: bumping <log4j.version> in pom.xml
+// must not require editing this script
+assert text =~ /\[DEBUG\] log4j-api-\d[\d.]*\.jar => /
