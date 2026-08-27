@@ -23,6 +23,11 @@ assert file.exists();
 String text = file.getText("utf-8");
 
 assert ! text.contains( '[INFO] Adding ignore: module-info' )
-assert text.contains( 'Found Banned Dependency: org.apache.logging.log4j:log4j-api:jar:2.17.2' )
+
+// the version must not be pinned here: bumping <log4j.version> in pom.xml
+// must not require editing this script
+def banned = text =~ /Found Banned Dependency: org\.apache\.logging\.log4j:log4j-api:jar:(\d[\d.]*)/
+assert banned.find() : 'expected log4j-api to be reported as banned'
+println "log4j-api ${banned.group(1)} correctly rejected in strict mode"
 
 return true;
