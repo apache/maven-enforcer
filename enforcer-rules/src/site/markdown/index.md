@@ -54,6 +54,7 @@ The following built-in rules ship along with the enforcer plugin:
 - [requireJavaVersion](./requireJavaVersion.html) - enforces the JDK version.
 - [requireMatchingCoordinates](./requireMatchingCoordinates.html) - enforces specific group ID and/or artifact ID patterns.
 - [requireMavenVersion](./requireMavenVersion.html) - enforces the Maven version.
+- [requireNoModelProblems](./requireNoModelProblems.html) - requires all reactor models to be free of model-building problems.
 - [requireNoRepositories](./requireNoRepositories.html) - enforces to not include repositories.
 - [requireOS](./requireOS.html) - enforces the OS / CPU Architecture.
 - [requirePluginVersions](./requirePluginVersions.html) - enforces that all plugins have a specified version.
