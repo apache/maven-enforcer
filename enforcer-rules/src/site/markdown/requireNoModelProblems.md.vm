@@ -28,9 +28,10 @@ under the License.
 
 This rule fails the build if Maven encountered problems while building any of the reactor's effective models.
 
-The rule requires a Maven runtime that exposes model problems through `MavenSession#getModelProblems()`. On Maven
-versions without that method, the rule logs a warning and is skipped. If a build must guarantee that the check is
-performed, constrain the Maven runtime separately, for example with the `requireMavenVersion` rule.
+The rule requires a Maven runtime that exposes retained model problems through either the Maven 3
+`MavenSession#getModelProblems()` API or the Maven 4 session model problem collector. On Maven versions without either
+capability, the rule logs a warning and is skipped. If a build must guarantee that the check is performed, constrain the
+Maven runtime separately, for example with the `requireMavenVersion` rule.
 
 The following parameter is supported by this rule:
 

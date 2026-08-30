@@ -17,4 +17,6 @@
  * under the License.
  */
 File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( 'This Maven version does not expose retained model problems; the requireNoModelProblems rule is skipped.' )
+assert buildLog.text.contains( 'Model problems must be fixed' )
+assert buildLog.text.contains( '- [WARNING]' )
+assert buildLog.text.contains( 'dependencies.dependency.systemPath' )
