@@ -35,13 +35,10 @@ under the License.
 				<configuration>
 					<rules>
 						<enforceBytecodeVersion>
-							<maxJdkVersion>1.5</maxJdkVersion>
+							<maxJdkVersion>1.4</maxJdkVersion>
 							<excludes>
 								<exclude>*:*</exclude>
 							</excludes>
-							<includes>
-								<include>com.google.code.findbugs:jsr305</include>
-							</includes>
 						</enforceBytecodeVersion>
 					</rules>
 				</configuration>
