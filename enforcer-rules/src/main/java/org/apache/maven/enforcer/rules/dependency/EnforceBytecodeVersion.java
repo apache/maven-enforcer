@@ -525,24 +525,26 @@ public class EnforceBytecodeVersion extends AbstractStandardEnforcerRule {
     }
 
     private List<Dependency> filterDependencies(List<Dependency> dependencies) {
-        Predicate<Dependency> includeExcludeMatcher = d -> true;
+        ArtifactMatcher excludedArtifactMatcher = null;
         if (includes != null || excludes != null) {
-            ArtifactMatcher artifactMatcher = new ArtifactMatcher(excludes, includes);
-            includeExcludeMatcher = d -> artifactMatcher.match(ArtifactUtils.toArtifact(d));
+            // ArtifactMatcher returns true for artifacts selected by excludes unless an
+            // include overrides that exclusion. Those artifacts must be skipped here.
+            excludedArtifactMatcher = new ArtifactMatcher(excludes, includes);
         }
-        Predicate<Dependency> scopeMatcher = d -> true;
-        if (scopes != null) {
-            scopeMatcher = d -> {
-                if (scopes.contains(d.getScope())) {
-                    return true;
-                } else {
-                    getLog().debug("Skipping {} due to scope");
-                    return false;
-                }
-            };
+
+        List<Dependency> filteredDependencies = new ArrayList<>();
+        for (Dependency dependency : dependencies) {
+            if (excludedArtifactMatcher != null
+                    && excludedArtifactMatcher.match(ArtifactUtils.toArtifact(dependency))) {
+                getLog().debug("Skipping excluded dependency " + dependency);
+                continue;
+            }
+            if (scopes != null && !scopes.contains(dependency.getScope())) {
+                getLog().debug("Skipping " + dependency + " due to scope");
+                continue;
+            }
+            filteredDependencies.add(dependency);
         }
-        return dependencies.stream()
-                .filter(includeExcludeMatcher.and(scopeMatcher))
-                .collect(Collectors.toList());
+        return filteredDependencies;
     }
 }

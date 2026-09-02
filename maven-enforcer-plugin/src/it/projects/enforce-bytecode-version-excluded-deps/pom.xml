@@ -35,9 +35,9 @@ under the License.
 				<configuration>
 					<rules>
 						<enforceBytecodeVersion>
-							<maxJdkVersion>1.5</maxJdkVersion>
+							<maxJdkVersion>1.4</maxJdkVersion>
 							<excludes>
-								<exclude>org.mindrot:jbcrypt:*:*</exclude>
+								<exclude>*:*</exclude>
 							</excludes>
 						</enforceBytecodeVersion>
 					</rules>
