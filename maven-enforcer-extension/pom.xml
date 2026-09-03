@@ -73,6 +73,12 @@
               <debug>true</debug>
               <projectsDirectory>src/it/projects</projectsDirectory>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+
+              <pomIncludes>
+                <pomInclude>*/pom.xml</pomInclude>
+                <pomInclude>no-pom-enforcer-skip</pomInclude>
+              </pomIncludes>
+
               <preBuildHookScript>setup</preBuildHookScript>
               <postBuildHookScript>verify</postBuildHookScript>
               <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
