@@ -58,6 +58,14 @@ public class EnforceExtension extends AbstractMavenLifecycleParticipant {
 
     @Override
     public void afterProjectsRead(MavenSession session) throws MavenExecutionException {
+        String skip = session.getUserProperties().getProperty("enforcer.skip");
+        if (skip == null) {
+            skip = session.getSystemProperties().getProperty("enforcer.skip");
+        }
+        if ("true".equalsIgnoreCase(skip) || (skip != null && skip.isEmpty())) {
+            return;
+        }
+
         Xpp3Dom configuration;
         Path config = Paths.get(session.getExecutionRootDirectory(), ENFORCER_EXTENSION_XML);
         if (Files.isRegularFile(config)) {
