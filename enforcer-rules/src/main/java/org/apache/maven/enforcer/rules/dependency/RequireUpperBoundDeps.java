@@ -141,13 +141,16 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
                 .append(getFullArtifactName(conflict.get(0), false))
                 .append(". Paths to dependency are:")
                 .append(System.lineSeparator());
+
         if (conflict.size() > 0) {
             errorMessage.append(buildTreeString(conflict.get(0)));
         }
+
         for (DependencyNode node : conflict.subList(1, conflict.size())) {
             errorMessage.append("and").append(System.lineSeparator());
             errorMessage.append(buildTreeString(node));
         }
+
         return errorMessage.toString();
     }
 
@@ -158,8 +161,9 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
             StringBuilder line = new StringBuilder(getFullArtifactName(currentNode, false));
 
             if (DependencyManagerUtils.getPremanagedVersion(currentNode) != null) {
-                line.append(" (managed) <-- ");
+                line.append(" (managed; requested ");
                 line.append(getFullArtifactName(currentNode, true));
+                line.append(")");
             }
 
             loc.add(line.toString());
