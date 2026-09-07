@@ -26,9 +26,9 @@ under the License.
 
 # Require Explicit Modules
 
-This rule requires that a project which compiles classes is an *explicit* Java module, i.e. that its main output contains a `module-info.class`. This prevents a modular application from silently consuming the artifact as an *automatic module* (a plain JAR placed on the module path), whose auto-derived name and "exports everything" semantics are unstable across releases.
+This rule requires that a project which compiles classes is an *explicit* Java module. Its main output must contain a `module-info.class`. This prevents a modular application from silently consuming the artifact as an *automatic module* (a plain JAR placed on the module path), whose auto-derived name and "exports everything" semantics are unstable across releases.
 
-The rule does nothing for projects that compile no classes (e.g. `pom` aggregators, or a module that only carries resources), so it can be enabled across a whole build without special-casing.
+The rule does nothing for projects that compile no classes (for example `pom` aggregators, or a module that only carries resources), so it can be enabled across a whole build without special-casing.
 
 ## Reading the module descriptor
 

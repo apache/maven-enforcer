@@ -93,6 +93,7 @@ public abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRul
      * @throws EnforcerRuleException if a {@code module-info.class} exists but cannot be read
      */
     protected List<ModuleOutput> moduleOutputs() throws EnforcerRuleException {
+        requireJava9Runtime();
         File outputDirectory = outputDirectory();
         JavaModuleInfo topLevel = readModuleInfo(outputDirectory);
         if (topLevel != null) {
@@ -115,6 +116,44 @@ public abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRul
             }
         }
         return Collections.singletonList(new ModuleOutput(outputDirectory, null));
+    }
+
+    /**
+     * Guard: these rules read {@code module-info.class}, which only a Java 9+ runtime can parse.
+     * Fail fast with a clear, upfront message when the build runs on Java 8, rather than surfacing the
+     * requirement indirectly (an obscure "failed to read" error, or — for {@code requireExplicitModules} —
+     * a misleading "not an explicit module"). The Enforcer plugin itself keeps its Java 8 baseline; only
+     * these Java module rules require 9+.
+     *
+     * @throws EnforcerRuleException if the runtime is Java 8 or older
+     */
+    private void requireJava9Runtime() throws EnforcerRuleException {
+        if (runtimeMajorVersion() < 9) {
+            throw new EnforcerRuleException("The " + ruleName() + " rule requires the build to run on Java 9 "
+                    + "or later; a module-info.class can only be read on a Java 9+ runtime. The current runtime is "
+                    + "Java " + System.getProperty("java.specification.version") + ". The Enforcer plugin itself "
+                    + "still supports Java 8 — only the Java module rules need 9+.");
+        }
+    }
+
+    /**
+     * The major version of the running JVM, detected in a Java 8-safe way: {@code java.specification.version}
+     * is {@code "1.8"} on Java 8 and {@code "9"}, {@code "17"}, … from Java 9 onwards.
+     */
+    private static int runtimeMajorVersion() {
+        String spec = System.getProperty("java.specification.version", "");
+        if (spec.startsWith("1.")) {
+            spec = spec.substring(2); // "1.8" -> "8"
+        }
+        int dot = spec.indexOf('.');
+        if (dot >= 0) {
+            spec = spec.substring(0, dot);
+        }
+        try {
+            return Integer.parseInt(spec);
+        } catch (NumberFormatException e) {
+            return 9; // unrecognized (newer) format: assume modern and let the read proceed
+        }
     }
 
     /**

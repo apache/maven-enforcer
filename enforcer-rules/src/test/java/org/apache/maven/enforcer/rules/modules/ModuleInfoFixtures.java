@@ -47,12 +47,13 @@ final class ModuleInfoFixtures {
 
     /** Write an arbitrary (empty) compiled class so an output directory looks non-empty to a rule. */
     static void writeDummyClass(File outputDirectory, String binaryName) throws IOException {
-        ClassWriter cw = new ClassWriter(0);
-        cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, binaryName.replace('.', '/'), null, "java/lang/Object", null);
-        cw.visitEnd();
+        ClassWriter classWriter = new ClassWriter(0);
+        classWriter.visit(
+                Opcodes.V1_8, Opcodes.ACC_PUBLIC, binaryName.replace('.', '/'), null, "java/lang/Object", null);
+        classWriter.visitEnd();
         File classFile = new File(outputDirectory, binaryName.replace('.', '/') + ".class");
         Files.createDirectories(classFile.getParentFile().toPath());
-        Files.write(classFile.toPath(), cw.toByteArray());
+        Files.write(classFile.toPath(), classWriter.toByteArray());
     }
 
     static final class Builder {
@@ -83,9 +84,9 @@ final class ModuleInfoFixtures {
         }
 
         byte[] toBytes() {
-            ClassWriter cw = new ClassWriter(0);
-            cw.visit(Opcodes.V9, Opcodes.ACC_MODULE, "module-info", null, null, null);
-            ModuleVisitor mv = cw.visitModule(name, open ? Opcodes.ACC_OPEN : 0, null);
+            ClassWriter classWriter = new ClassWriter(0);
+            classWriter.visit(Opcodes.V9, Opcodes.ACC_MODULE, "module-info", null, null, null);
+            ModuleVisitor mv = classWriter.visitModule(name, open ? Opcodes.ACC_OPEN : 0, null);
             mv.visitRequire("java.base", Opcodes.ACC_MANDATED, null);
             for (String module : requires) {
                 mv.visitRequire(module, 0, null);
@@ -97,8 +98,8 @@ final class ModuleInfoFixtures {
                 mv.visitOpen(open.internalName(), 0, open.targetsOrNull());
             }
             mv.visitEnd();
-            cw.visitEnd();
-            return cw.toByteArray();
+            classWriter.visitEnd();
+            return classWriter.toByteArray();
         }
 
         /** Write {@code module-info.class} into {@code outputDirectory} and return that directory. */
