@@ -93,7 +93,6 @@ public abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRul
      * @throws EnforcerRuleException if a {@code module-info.class} exists but cannot be read
      */
     protected List<ModuleOutput> moduleOutputs() throws EnforcerRuleException {
-        requireJava9Runtime();
         File outputDirectory = outputDirectory();
         JavaModuleInfo topLevel = readModuleInfo(outputDirectory);
         if (topLevel != null) {
@@ -119,11 +118,12 @@ public abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRul
     }
 
     /**
-     * Guard: these rules read {@code module-info.class}, which only a Java 9+ runtime can parse.
-     * Fail fast with a clear, upfront message when the build runs on Java 8, rather than surfacing the
-     * requirement indirectly (an obscure "failed to read" error, or — for {@code requireExplicitModules} —
-     * a misleading "not an explicit module"). The Enforcer plugin itself keeps its Java 8 baseline; only
-     * these Java module rules require 9+.
+     * Guard invoked once a {@code module-info.class} is known to be present in an output directory:
+     * only a Java 9+ runtime can parse it, so fail fast with a clear message on Java 8 instead of the
+     * obscure "failed to read" error that {@code ModuleDescriptor.read} would otherwise surface.
+     * Non-modular outputs never reach this guard, so the rules keep their documented behaviour there
+     * (do nothing, or — for {@code requireExplicitModules} — report the missing module). The Enforcer
+     * plugin itself keeps its Java 8 baseline; only reading a module descriptor needs 9+.
      *
      * @throws EnforcerRuleException if the runtime is Java 8 or older
      */
@@ -169,6 +169,9 @@ public abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRul
             getLog().debug("No module-info.class in " + directory);
             return null;
         }
+        // A module-info.class is present but can only be read on a Java 9+ runtime: fail with a clear
+        // message here rather than letting ModuleDescriptor.read surface an obscure error on Java 8.
+        requireJava9Runtime();
         try (InputStream in = Files.newInputStream(moduleInfo.toPath())) {
             return JavaModuleInfoReader.read(in);
         } catch (IOException e) {
