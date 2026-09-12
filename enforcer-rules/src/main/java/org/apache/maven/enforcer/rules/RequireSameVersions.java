@@ -34,6 +34,9 @@ import java.util.regex.Pattern;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginManagement;
+import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -76,7 +79,8 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
         // CHECKSTYLE_OFF: LineLength
         versionMembers.putAll(collectVersionMembers(project.getArtifacts(), dependencies, " (dependency)"));
         versionMembers.putAll(collectVersionMembers(project.getPluginArtifacts(), allBuildPlugins, " (buildPlugin)"));
-        versionMembers.putAll(collectVersionMembers(project.getReportArtifacts(), allReportPlugins, " (reportPlugin)"));
+        versionMembers.putAll(
+                collectReportVersionMembers(project.getReportArtifacts(), allReportPlugins, " (reportPlugin)"));
         // CHECKSTYLE_ON: LineLength
 
         if (versionMembers.size() > 1) {
@@ -134,6 +138,58 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
             }
         }
         return versionMembers;
+    }
+
+    private Map<String, List<String>> collectReportVersionMembers(
+            Set<Artifact> artifacts, Collection<String> patterns, String source) {
+        Map<String, List<String>> versionMembers = new LinkedHashMap<>();
+
+        List<Pattern> regExs = new ArrayList<>();
+        for (String pattern : patterns) {
+            String regex = pattern.replace(".", "\\.")
+                    .replace("*", ".*")
+                    .replace(":", "\\:")
+                    .replace('?', '.');
+
+            regExs.add(Pattern.compile(regex + "(\\:.+)?"));
+        }
+
+        for (Artifact artifact : artifacts) {
+            for (Pattern regEx : regExs) {
+                if (regEx.matcher(artifact.getDependencyConflictId()).matches()) {
+                    String version = getReportPluginVersion(artifact);
+                    versionMembers
+                            .computeIfAbsent(version, unused -> new ArrayList<>())
+                            .add(artifact.getDependencyConflictId() + source);
+                }
+            }
+        }
+        return versionMembers;
+    }
+
+    private String getReportPluginVersion(Artifact artifact) {
+        for (ReportPlugin reportPlugin : project.getReportPlugins()) {
+            if (Objects.equals(artifact.getGroupId(), reportPlugin.getGroupId())
+                    && Objects.equals(artifact.getArtifactId(), reportPlugin.getArtifactId())
+                    && reportPlugin.getVersion() != null) {
+                return reportPlugin.getVersion();
+            }
+        }
+
+        PluginManagement pluginManagement =
+                project.getBuild() != null ? project.getBuild().getPluginManagement() : null;
+
+        if (pluginManagement != null) {
+            for (Plugin plugin : pluginManagement.getPlugins()) {
+                if (Objects.equals(artifact.getGroupId(), plugin.getGroupId())
+                        && Objects.equals(artifact.getArtifactId(), plugin.getArtifactId())
+                        && plugin.getVersion() != null) {
+                    return plugin.getVersion();
+                }
+            }
+        }
+
+        return uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
     }
 
     void addDependency(String dependency) {
