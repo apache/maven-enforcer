@@ -304,6 +304,51 @@ class TestRequireSameVersions {
     }
 
     @Test
+    void testReportPluginUsesBuildPluginVersionBeforeManagedVersion() throws IOException {
+        String buildPluginVersion = "3.5.3";
+        String managedVersion = "3.6.0";
+
+        Artifact buildPlugin = ARTIFACT_FACTORY.createArtifact(
+                "org.apache.maven.plugins", "maven-surefire-plugin", buildPluginVersion);
+        Artifact reportPlugin =
+                ARTIFACT_FACTORY.createArtifact("org.apache.maven.plugins", "maven-surefire-report-plugin", "RELEASE");
+
+        rule.addBuildPlugin(extractGaString(buildPlugin));
+        rule.addReportPlugin(extractGaString(reportPlugin));
+
+        HashSet<Artifact> pluginArtifacts = new HashSet<>();
+        pluginArtifacts.add(buildPlugin);
+
+        HashSet<Artifact> reportArtifacts = new HashSet<>();
+        reportArtifacts.add(reportPlugin);
+
+        when(project.getArtifacts()).thenReturn(new HashSet<>());
+        when(project.getPluginArtifacts()).thenReturn(pluginArtifacts);
+        when(project.getReportArtifacts()).thenReturn(reportArtifacts);
+
+        Plugin buildReportPlugin = new Plugin();
+        buildReportPlugin.setGroupId("org.apache.maven.plugins");
+        buildReportPlugin.setArtifactId("maven-surefire-report-plugin");
+        buildReportPlugin.setVersion(buildPluginVersion);
+
+        Plugin managedReportPlugin = new Plugin();
+        managedReportPlugin.setGroupId("org.apache.maven.plugins");
+        managedReportPlugin.setArtifactId("maven-surefire-report-plugin");
+        managedReportPlugin.setVersion(managedVersion);
+
+        Build build = new Build();
+        build.setPlugins(Collections.singletonList(buildReportPlugin));
+
+        PluginManagement pluginManagement = new PluginManagement();
+        pluginManagement.setPlugins(Collections.singletonList(managedReportPlugin));
+        build.setPluginManagement(pluginManagement);
+
+        when(project.getBuild()).thenReturn(build);
+
+        assertThatCode(rule::execute).doesNotThrowAnyException();
+    }
+
+    @Test
     void shouldOutputCustomMessageWhenVersionsDiffer() throws IOException {
         String customMessage = "Custom same versions message";
         rule.setMessage(customMessage);

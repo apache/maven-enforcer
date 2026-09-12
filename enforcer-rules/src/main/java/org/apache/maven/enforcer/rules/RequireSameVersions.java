@@ -175,7 +175,15 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
                 return reportPlugin.getVersion();
             }
         }
-
+        if (project.getBuild() != null) {
+            for (Plugin plugin : project.getBuild().getPlugins()) {
+                if (Objects.equals(artifact.getGroupId(), plugin.getGroupId())
+                        && Objects.equals(artifact.getArtifactId(), plugin.getArtifactId())
+                        && plugin.getVersion() != null) {
+                    return plugin.getVersion();
+                }
+            }
+        }
         PluginManagement pluginManagement =
                 project.getBuild() != null ? project.getBuild().getPluginManagement() : null;
 
