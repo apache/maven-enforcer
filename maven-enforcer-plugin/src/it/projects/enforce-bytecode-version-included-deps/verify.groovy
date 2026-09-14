@@ -22,6 +22,6 @@ assert file.exists();
 
 String text = file.getText("utf-8");
 
-// commons-lang3 targets JDK 1.8 but is excluded, jsr305 targets JDK 1.5 and is analysed
-assert !text.contains("Found Banned Dependency")
-assert text.contains("BUILD SUCCESS")
+// the wide exclude is overridden by the include, so only commons-lang3 is analysed
+assert text.contains("Found Banned Dependency: org.apache.commons:commons-lang3:jar:3.12.0")
+assert !text.contains("Found Banned Dependency: com.google.code.findbugs:jsr305")
