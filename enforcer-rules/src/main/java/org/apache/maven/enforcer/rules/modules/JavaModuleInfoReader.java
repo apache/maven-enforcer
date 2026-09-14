@@ -57,9 +57,11 @@ final class JavaModuleInfoReader {
      * Parse a {@code module-info.class}.
      *
      * @param in the class-file bytes of a {@code module-info.class}
-     * @return the parsed module info, or {@code null} if the bytes are not a valid module descriptor
-     * @throws IOException if the bytes cannot be read, or if {@code java.lang.module} is unavailable
-     *                     because the enforcer is running on a Java 8 runtime
+     * @return the parsed module info (never {@code null})
+     * @throws IOException if the bytes cannot be read, if the {@code module-info.class} is corrupt or
+     *                     built for a newer Java release than the running JVM, or if
+     *                     {@code java.lang.module} is unavailable because the enforcer is running on a
+     *                     Java 8 runtime
      */
     static JavaModuleInfo read(InputStream in) throws IOException {
         byte[] classFile = readAllBytes(in);
@@ -82,7 +84,11 @@ final class JavaModuleInfoReader {
         } catch (InvocationTargetException e) {
             Throwable cause = e.getCause();
             if (cause != null && INVALID_DESCRIPTOR.equals(cause.getClass().getName())) {
-                return null; // not a valid module-info.class
+                // The bytes are present, carry a valid class-file magic number and a readable class
+                // file version (both checked above), so an invalid descriptor here means the
+                // module-info.class is corrupt. Surface it instead of returning null, which the
+                // caller would otherwise treat as "no module present" and silently pass the rule.
+                throw new IOException("Corrupt or unreadable module-info.class: " + cause.getMessage(), cause);
             }
             throw new IOException("Could not read module descriptor", cause != null ? cause : e);
         } catch (ClassNotFoundException | NoSuchMethodException e) {

@@ -38,7 +38,7 @@ Both output layouts are supported: the classic one (the descriptor directly in t
 
 The following parameters are supported by this rule:
 
-- **internalPackagePattern** - a regular expression matching packages considered non-API. An exported package that matches fails the build. Default is `.*\.(internal|impl)(\..*)?`.
+- **internalPackagePattern** - a regular expression matching packages considered non-API. An exported package that matches fails the build. The pattern is matched against the **whole** package name (`Matcher.matches()`), so write `.*internal.*` rather than `internal` for a substring match. Default is `.*\.(internal|impl)(\..*)?`.
 
 - **allowedExports** - a list of package names that are exempt from the check even if they match `internalPackagePattern`.
 
