@@ -22,6 +22,9 @@ assert file.exists();
 
 String text = file.getText("utf-8");
 
-// the wide exclude is overridden by the include, so only commons-lang3 is analysed
-assert text.contains("Found Banned Dependency: org.apache.commons:commons-lang3:jar:3.12.0")
+// the wide exclude is overridden by the include, so only commons-lang3 is analysed;
+// the version must not be pinned here: bumping the fixture in pom.xml
+// must not require editing this script
+def banned = text =~ /Found Banned Dependency: org\.apache\.commons:commons-lang3:jar:(\d[\d.]*)/
+assert banned.find() : 'expected commons-lang3 to be reported as banned'
 assert !text.contains("Found Banned Dependency: com.google.code.findbugs:jsr305")
