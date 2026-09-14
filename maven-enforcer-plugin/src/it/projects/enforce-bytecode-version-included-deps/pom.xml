@@ -25,7 +25,7 @@ under the License.
   <artifactId>smoking</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>MOJO-1976 bytecode version excludes</name>
+  <name>bytecode version includes override excludes</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -56,8 +56,11 @@ under the License.
             <enforceBytecodeVersion>
               <maxJdkVersion>1.5</maxJdkVersion>
               <excludes>
-                <exclude>org.apache.commons:commons-lang3:*:*</exclude>
+                <exclude>*:*</exclude>
               </excludes>
+              <includes>
+                <include>org.apache.commons:commons-lang3:*:*</include>
+              </includes>
             </enforceBytecodeVersion>
           </rules>
         </configuration>
