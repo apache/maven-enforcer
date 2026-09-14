@@ -22,7 +22,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -56,7 +58,11 @@ public final class RequireMinimalExports extends AbstractModuleInfoRule {
     }
 
     public void setInternalPackagePattern(String internalPackagePattern) {
-        this.internalPackagePattern = internalPackagePattern;
+        // Ignore null (e.g. an empty <internalPackagePattern/> element) so execute() never calls
+        // Pattern.compile(null); keep the default pattern in that case.
+        if (internalPackagePattern != null) {
+            this.internalPackagePattern = internalPackagePattern;
+        }
     }
 
     public void setAllowedExports(List<String> allowedExports) {
@@ -70,24 +76,27 @@ public final class RequireMinimalExports extends AbstractModuleInfoRule {
     @Override
     public void execute() throws EnforcerRuleException {
         Pattern internal = Pattern.compile(internalPackagePattern);
+        // Look up allowed packages by hash rather than scanning the list for every export (O(1) vs
+        // O(n) per export).
+        Set<String> allowed = new HashSet<>(allowedExports);
         for (ModuleOutput output : moduleOutputs()) {
             JavaModuleInfo module = output.moduleInfo();
             if (module == null) {
                 continue;
             }
-            checkModule(module, internal);
+            checkModule(module, internal, allowed);
         }
     }
 
-    private void checkModule(JavaModuleInfo module, Pattern internal) throws EnforcerRuleException {
+    private void checkModule(JavaModuleInfo module, Pattern internal, Set<String> allowed)
+            throws EnforcerRuleException {
         List<String> violations = new ArrayList<>();
         for (JavaModuleInfo.Directive export : module.exports()) {
             if (ignoreQualifiedExports && export.isQualified()) {
                 continue;
             }
             String packageName = export.packageName();
-            if (!allowedExports.contains(packageName)
-                    && internal.matcher(packageName).matches()) {
+            if (!allowed.contains(packageName) && internal.matcher(packageName).matches()) {
                 violations.add(packageName);
             }
         }

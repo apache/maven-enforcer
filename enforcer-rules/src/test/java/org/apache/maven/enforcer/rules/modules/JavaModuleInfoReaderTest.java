@@ -33,7 +33,6 @@ import org.objectweb.asm.Opcodes;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -88,7 +87,7 @@ class JavaModuleInfoReaderTest {
 
         for (JavaModuleInfo.Directive d : m.exports()) {
             if (d.packageName().equals("com.example.foo.api")) {
-                assertTrue(!d.isQualified(), "api export must be unqualified");
+                assertFalse(d.isQualified(), "api export must be unqualified");
             } else if (d.packageName().equals("com.example.foo.internal")) {
                 assertTrue(d.isQualified(), "internal export must be qualified");
                 assertEquals("com.example.bar", d.targets().get(0));
@@ -97,11 +96,14 @@ class JavaModuleInfoReaderTest {
     }
 
     @Test
-    void returnsNullForPlainClassWithoutModuleAttribute() throws Exception {
+    void throwsForPlainClassWithoutModuleAttribute() {
         ClassWriter cw = new ClassWriter(0);
         cw.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, "com/example/Plain", null, "java/lang/Object", null);
         cw.visitEnd();
-        assertNull(JavaModuleInfoReader.read(new ByteArrayInputStream(cw.toByteArray())));
+        // A file named module-info.class that is not a valid module descriptor is corrupt, not
+        // "no module": it must be surfaced rather than silently treated as absent (which would let
+        // the rule pass without checking anything).
+        assertThrows(IOException.class, () -> JavaModuleInfoReader.read(new ByteArrayInputStream(cw.toByteArray())));
     }
 
     @Test
