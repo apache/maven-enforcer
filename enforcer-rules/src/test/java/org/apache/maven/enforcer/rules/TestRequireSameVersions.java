@@ -295,14 +295,6 @@ class TestRequireSameVersions {
         assertThatCode(rule::execute).doesNotThrowAnyException();
     }
 
-    private static Artifact constructArtifact(String artifactId, String version) throws IOException {
-        return ARTIFACT_FACTORY.createArtifact("org.acme", artifactId, version);
-    }
-
-    private static String extractGaString(Artifact dependency) {
-        return String.format("%s:%s", dependency.getGroupId(), dependency.getArtifactId());
-    }
-
     @Test
     void testReportPluginUsesBuildPluginVersionBeforeManagedVersion() throws IOException {
         String buildPluginVersion = "3.5.3";
@@ -349,6 +341,44 @@ class TestRequireSameVersions {
     }
 
     @Test
+    void testReportPluginFailsWhenManagedVersionDiffersFromBuildPlugin() throws IOException {
+        String buildPluginVersion = "3.5.3";
+        String managedVersion = "3.6.0";
+
+        Artifact buildPlugin = ARTIFACT_FACTORY.createArtifact(
+                "org.apache.maven.plugins", "maven-surefire-plugin", buildPluginVersion);
+        Artifact reportPlugin =
+                ARTIFACT_FACTORY.createArtifact("org.apache.maven.plugins", "maven-surefire-report-plugin", "RELEASE");
+
+        rule.addBuildPlugin(extractGaString(buildPlugin));
+        rule.addReportPlugin(extractGaString(reportPlugin));
+
+        HashSet<Artifact> pluginArtifacts = new HashSet<>();
+        pluginArtifacts.add(buildPlugin);
+
+        HashSet<Artifact> reportArtifacts = new HashSet<>();
+        reportArtifacts.add(reportPlugin);
+
+        when(project.getArtifacts()).thenReturn(new HashSet<>());
+        when(project.getPluginArtifacts()).thenReturn(pluginArtifacts);
+        when(project.getReportArtifacts()).thenReturn(reportArtifacts);
+
+        Plugin managedReportPlugin = new Plugin();
+        managedReportPlugin.setGroupId("org.apache.maven.plugins");
+        managedReportPlugin.setArtifactId("maven-surefire-report-plugin");
+        managedReportPlugin.setVersion(managedVersion);
+
+        Build build = new Build();
+        PluginManagement pluginManagement = new PluginManagement();
+        pluginManagement.setPlugins(Collections.singletonList(managedReportPlugin));
+        build.setPluginManagement(pluginManagement);
+
+        when(project.getBuild()).thenReturn(build);
+
+        assertThatThrownBy(rule::execute).isInstanceOf(EnforcerRuleException.class);
+    }
+
+    @Test
     void shouldOutputCustomMessageWhenVersionsDiffer() throws IOException {
         String customMessage = "Custom same versions message";
         rule.setMessage(customMessage);
@@ -370,5 +400,13 @@ class TestRequireSameVersions {
         assertThatThrownBy(() -> rule.execute())
                 .isInstanceOf(EnforcerRuleException.class)
                 .hasMessageStartingWith(customMessage);
+    }
+
+    private static Artifact constructArtifact(String artifactId, String version) throws IOException {
+        return ARTIFACT_FACTORY.createArtifact("org.acme", artifactId, version);
+    }
+
+    private static String extractGaString(Artifact dependency) {
+        return String.format("%s:%s", dependency.getGroupId(), dependency.getArtifactId());
     }
 }

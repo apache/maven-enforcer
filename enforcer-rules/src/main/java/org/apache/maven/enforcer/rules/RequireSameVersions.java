@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
@@ -77,10 +78,20 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
         Set<String> allReportPlugins = new HashSet<>(reportPlugins);
         allReportPlugins.addAll(plugins);
         // CHECKSTYLE_OFF: LineLength
-        versionMembers.putAll(collectVersionMembers(project.getArtifacts(), dependencies, " (dependency)"));
-        versionMembers.putAll(collectVersionMembers(project.getPluginArtifacts(), allBuildPlugins, " (buildPlugin)"));
-        versionMembers.putAll(
-                collectReportVersionMembers(project.getReportArtifacts(), allReportPlugins, " (reportPlugin)"));
+        versionMembers.putAll(collectVersionMembers(
+                project.getArtifacts(),
+                dependencies,
+                " (dependency)",
+                artifact -> uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion()));
+
+        versionMembers.putAll(collectVersionMembers(
+                project.getPluginArtifacts(),
+                allBuildPlugins,
+                " (buildPlugin)",
+                artifact -> uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion()));
+
+        versionMembers.putAll(collectVersionMembers(
+                project.getReportArtifacts(), allReportPlugins, " (reportPlugin)", this::getReportPluginVersion));
         // CHECKSTYLE_ON: LineLength
 
         if (versionMembers.size() > 1) {
@@ -113,7 +124,10 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
     }
 
     private Map<String, List<String>> collectVersionMembers(
-            Set<Artifact> artifacts, Collection<String> patterns, String source) {
+            Set<Artifact> artifacts,
+            Collection<String> patterns,
+            String source,
+            Function<Artifact, String> versionResolver) {
         Map<String, List<String>> versionMembers = new LinkedHashMap<>();
 
         List<Pattern> regExs = new ArrayList<>();
@@ -130,34 +144,7 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
         for (Artifact artifact : artifacts) {
             for (Pattern regEx : regExs) {
                 if (regEx.matcher(artifact.getDependencyConflictId()).matches()) {
-                    String version = uniqueVersions ? artifact.getVersion() : artifact.getBaseVersion();
-                    versionMembers
-                            .computeIfAbsent(version, unused -> new ArrayList<>())
-                            .add(artifact.getDependencyConflictId() + source);
-                }
-            }
-        }
-        return versionMembers;
-    }
-
-    private Map<String, List<String>> collectReportVersionMembers(
-            Set<Artifact> artifacts, Collection<String> patterns, String source) {
-        Map<String, List<String>> versionMembers = new LinkedHashMap<>();
-
-        List<Pattern> regExs = new ArrayList<>();
-        for (String pattern : patterns) {
-            String regex = pattern.replace(".", "\\.")
-                    .replace("*", ".*")
-                    .replace(":", "\\:")
-                    .replace('?', '.');
-
-            regExs.add(Pattern.compile(regex + "(\\:.+)?"));
-        }
-
-        for (Artifact artifact : artifacts) {
-            for (Pattern regEx : regExs) {
-                if (regEx.matcher(artifact.getDependencyConflictId()).matches()) {
-                    String version = getReportPluginVersion(artifact);
+                    String version = versionResolver.apply(artifact);
                     versionMembers
                             .computeIfAbsent(version, unused -> new ArrayList<>())
                             .add(artifact.getDependencyConflictId() + source);
