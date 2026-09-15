@@ -37,7 +37,9 @@ The following built-in rules ship along with the enforcer plugin:
 - [bannedDependencies](./bannedDependencies.html) - enforces that excluded dependencies aren't included.
 - [bannedPlugins](./bannedPlugins.html) - enforces that specific plugins aren't included in the build.
 - [bannedRepositories](./bannedRepositories.html) - enforces to not include banned repositories.
+- [banSplitPackages](./banSplitPackages.html) - bans packages contained in more than one Java module (split packages).
 - [banTransitiveDependencies](./banTransitiveDependencies.html) - enforces that project doesn't have transitive dependencies.
+- [banUnjustifiedOpens](./banUnjustifiedOpens.html) - bans unqualified `opens` (and `open module`) in a Java module.
 - [dependencyConvergence](./dependencyConvergence.html) - ensure all dependencies converge to the same version.
 - [enforceBytecodeVersion](./enforceBytecodeVersion.html) - enforces that dependency bytecode versions do not exceed the configured maximum.
 - [evaluateBeanshell](./evaluateBeanshell.html) - evaluates a beanshell script.
@@ -46,6 +48,7 @@ The following built-in rules ship along with the enforcer plugin:
 - [requireActiveProfile](./requireActiveProfile.html) - enforces one or more active profiles.
 - [requireEnvironmentVariable](./requireEnvironmentVariable.html) - enforces the existence of an environment variable.
 - [requireExplicitDependencyScope](./requireExplicitDependencyScope.html) - enforces that all dependencies have an explicit scope.
+- [requireExplicitModules](./requireExplicitModules.html) - enforces that a project with compiled classes is an explicit Java module.
 - [requireFileChecksum](./requireFileChecksum.html) - enforces that the specified file has a certain checksum.
 - [requireFilesDontExist](./requireFilesDontExist.html) - enforces that the list of files does not exist.
 - [requireFilesExist](./requireFilesExist.html) - enforces that the list of files does exist.
@@ -54,6 +57,7 @@ The following built-in rules ship along with the enforcer plugin:
 - [requireJavaVersion](./requireJavaVersion.html) - enforces the JDK version.
 - [requireMatchingCoordinates](./requireMatchingCoordinates.html) - enforces specific group ID and/or artifact ID patterns.
 - [requireMavenVersion](./requireMavenVersion.html) - enforces the Maven version.
+- [requireMinimalExports](./requireMinimalExports.html) - enforces that a Java module does not export internal packages.
 - [requireNoRepositories](./requireNoRepositories.html) - enforces to not include repositories.
 - [requireOS](./requireOS.html) - enforces the OS / CPU Architecture.
 - [requirePluginVersions](./requirePluginVersions.html) - enforces that all plugins have a specified version.
