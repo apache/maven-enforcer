@@ -17,18 +17,9 @@
  * under the License.
  */
 
-File file = new File( basedir, "build.log" );
-assert file.exists();
+// remove the whole directory with the corrupted artifact,
+// so next builds will resolve it again
+new File(localRepositoryPath, 'junit/junit/4.13.2').deleteDir()
 
-def text = file.getText("utf-8");
-
-try {
-    assert text.find(/IOException while reading .*hibernate-annotations-3.4.0.GA.jar/)
-} finally {
-    File jar = new File( localRepositoryPath, "org/hibernate/hibernate-annotations/3.4.0.GA/hibernate-annotations-3.4.0.GA.jar" );
-    if (jar.exists()) {
-        jar.delete();
-    }
-}
-
-return true;
+def text = new File(basedir, 'build.log').getText('utf-8')
+assert text.find(/IOException while reading .*junit-4.13.2.jar/)

@@ -17,10 +17,13 @@
  * under the License.
  */
 
-File file = new File( localRepositoryPath, "org/hibernate/hibernate-annotations/3.4.0.GA/hibernate-annotations-3.4.0.GA.jar" );
+File file = new File( localRepositoryPath, "junit/junit/4.13.2/junit-4.13.2.jar" );
 if (file.exists()) {
-    file.delete();
-    file.createNewFile();
+    file.delete()
 }
+
+// create a corrupted file
+file.getParentFile().mkdirs()
+file.createNewFile()
 
 return true
