@@ -19,12 +19,14 @@
 package org.apache.maven.enforcer.rules.dependency;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.utils.DependencyNodeBuilder;
 import org.apache.maven.enforcer.rules.utils.EnforcerArtifactStubFactory;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -181,5 +183,25 @@ class RequireReleaseDepsTest {
         rule.setExcludes(Collections.singletonList("testGroupId:*"));
 
         assertThatCode(rule::execute).doesNotThrowAnyException();
+    }
+
+    @Test
+    void optionalSnapshotDependencyShouldFail() throws Exception {
+        when(session.getCurrentProject()).thenReturn(project);
+        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+                .thenReturn(new DependencyNodeBuilder().build());
+
+        Dependency dependency = new Dependency();
+        dependency.setGroupId("org.example");
+        dependency.setArtifactId("optional-snapshot");
+        dependency.setVersion("1.0-SNAPSHOT");
+        dependency.setOptional(true);
+
+        when(project.getDependencies()).thenReturn(Arrays.asList(dependency));
+
+        assertThatCode(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining("org.example:optional-snapshot")
+                .hasMessageContaining("is not a release dependency");
     }
 }
