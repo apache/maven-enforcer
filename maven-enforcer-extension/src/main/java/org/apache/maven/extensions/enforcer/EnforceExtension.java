@@ -92,6 +92,9 @@ public class EnforceExtension extends AbstractMavenLifecycleParticipant {
         }
 
         for (MavenProject project : session.getProjects()) {
+            if (project.getFile() == null) {
+                continue;
+            }
             Plugin enforcerPlugin = null;
             for (Plugin plugin : project.getBuildPlugins()) {
                 if ("maven-enforcer-plugin".equals(plugin.getArtifactId())

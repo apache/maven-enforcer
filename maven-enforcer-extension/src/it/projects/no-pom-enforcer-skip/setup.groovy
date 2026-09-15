@@ -20,10 +20,7 @@
 File extensionsXml = new File(basedir, '.mvn/extensions.xml')
 
 if (extensionsXml.exists()) {
-    File extDir = new File(localRepositoryPath, 'org/apache/maven/extensions/maven-enforcer-extension')
-    String version = extDir.list()?.find { it != 'maven-metadata-local.xml' }
-
-    extensionsXml.text = extensionsXml.text.replace('@project.version@', version)
+    extensionsXml.text = extensionsXml.text.replace('@project.version@', projectVersion)
 }
 
 File testProjectDir = new File(basedir, 'test-project')
