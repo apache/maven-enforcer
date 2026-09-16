@@ -84,7 +84,7 @@ public final class RequireFilesSize extends AbstractRequireFiles {
         }
 
         // check the file now
-        if (file.exists()) {
+        if (fileExists(file)) {
             long length = computeLength(file);
             if (length < minsize) {
                 this.errorMsg = (file + " size (" + length + ") too small. Min. is " + minsize);
