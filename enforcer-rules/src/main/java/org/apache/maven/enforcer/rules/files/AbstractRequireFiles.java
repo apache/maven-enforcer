@@ -19,6 +19,10 @@
 package org.apache.maven.enforcer.rules.files;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -59,6 +63,66 @@ abstract class AbstractRequireFiles extends AbstractStandardEnforcerRule {
      * @return the error msg
      */
     abstract String getErrorMsg();
+
+    /**
+     * Checks whether the given file exists under exactly the given name.
+     *
+     * @param file the file to check
+     * @return <code>true</code> if the file exists and its name matches the name on disk
+     */
+    boolean fileExists(File file) {
+        return file.exists() && osIndependentNameMatch(file);
+    }
+
+    /**
+     * OSes like Windows are case-insensitive, so this method will compare the file path with the actual path. A simple
+     * {@link File#exists()} is not enough for such OS, as it reports a file as existing even when the name differs in
+     * case from the one on disk.
+     *
+     * @param file the file to verify, must exist
+     * @return <code>true</code> if the name of the file matches the name on disk
+     */
+    private boolean osIndependentNameMatch(File file) {
+        try {
+            File absFile;
+            if (!file.isAbsolute()) {
+                absFile = new File(new File(".").getCanonicalFile(), file.getPath());
+            } else {
+                absFile = file;
+            }
+
+            // Collapse ".." and "." first, a path that still contains those segments
+            // has no name to compare.
+            Path requested = absFile.toPath().toAbsolutePath().normalize();
+            if (requested.getFileName() == null) {
+                // a filesystem root has no name of its own
+                return true;
+            }
+
+            String name = requested.getFileName().toString();
+            if (!Files.isSymbolicLink(requested)) {
+                // getCanonicalFile() reports the name as it is stored on disk, which is
+                // all this check needs as long as nothing is resolved away
+                return name.equals(requested.toFile().getCanonicalFile().getName());
+            }
+
+            // The entry is a symbolic link, so getCanonicalFile() would report the name
+            // of its target. Look the link up among the entries of its parent directory
+            // instead, as a directory entry carries the name as it is stored on disk.
+            // toRealPath(NOFOLLOW_LINKS) is not an option, it does not correct the case
+            // on every JDK.
+            try (DirectoryStream<Path> entries = Files.newDirectoryStream(requested.getParent())) {
+                for (Path entry : entries) {
+                    if (entry.getFileName().toString().equals(name)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (IOException e) {
+            return true;
+        }
+    }
 
     @Override
     public void execute() throws EnforcerRuleException {

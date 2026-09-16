@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
@@ -45,8 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 /**
@@ -85,12 +86,10 @@ class TestRequireFilesSize {
     @Test
     void testEmptyFile() {
         rule.setFilesList(Collections.singletonList(null));
-        try {
-            rule.execute();
-            fail("Should get exception");
-        } catch (EnforcerRuleException e) {
-            assertNotNull(e.getMessage());
-        }
+
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+
+        assertNotNull(e.getMessage());
     }
 
     @Test
@@ -127,12 +126,19 @@ class TestRequireFilesSize {
         assertFalse(f.exists());
         rule.setFilesList(Collections.singletonList(f));
 
-        try {
-            rule.execute();
-            fail("Should get exception");
-        } catch (EnforcerRuleException e) {
-            assertNotNull(e.getMessage());
-        }
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+
+        assertNotNull(e.getMessage());
+    }
+
+    @Test
+    void testFileOsIndependentDoesNotExist() {
+        // a file differing only in case is not the requested file, whatever the filesystem says
+        rule.setFilesList(Collections.singletonList(new File("POM.xml")));
+
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+
+        assertNotNull(e.getMessage());
     }
 
     @Test
@@ -140,12 +146,10 @@ class TestRequireFilesSize {
         File f = File.createTempFile("junit", null, temporaryFolder);
         rule.setFilesList(Collections.singletonList(f));
         rule.setMinsize(10);
-        try {
-            rule.execute();
-            fail("Should get exception");
-        } catch (EnforcerRuleException e) {
-            assertNotNull(e.getMessage());
-        }
+
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+
+        assertNotNull(e.getMessage());
     }
 
     @Test
@@ -158,12 +162,10 @@ class TestRequireFilesSize {
         rule.setFilesList(Collections.singletonList(f));
         rule.setMaxsize(10);
         assertTrue(f.length() > 10);
-        try {
-            rule.execute();
-            fail("Should get exception");
-        } catch (EnforcerRuleException e) {
-            assertNotNull(e.getMessage());
-        }
+
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+
+        assertNotNull(e.getMessage());
     }
 
     @Test
@@ -184,6 +186,42 @@ class TestRequireFilesSize {
     }
 
     @Test
+    void testSymbolicLinkTooSmall() throws Exception {
+        File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
+
+        rule.setFilesList(Arrays.asList(linkFile));
+        rule.setMinsize(10);
+
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+
+        assertNotNull(e.getMessage());
+    }
+
+    @Test
+    void testSymbolicLinkTooBig() throws Exception {
+        File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(canonicalFile))) {
+            out.write("123456789101112131415");
+        }
+        assertTrue(canonicalFile.length() > 10);
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
+
+        rule.setFilesList(Arrays.asList(linkFile));
+        rule.setMaxsize(10);
+
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+
+        assertNotNull(e.getMessage());
+    }
+
+    @Test
     void testDirectoryContentOverUpperBound() throws IOException {
         Path d = Files.createTempDirectory(temporaryFolder.toPath(), "junit");
         long totalSize = d.toFile().length();
@@ -195,12 +233,10 @@ class TestRequireFilesSize {
         rule.setFilesList(Collections.singletonList(d.toFile()));
         rule.setMaxsize(totalSize - 1);
         rule.setRecursive(true);
-        try {
-            rule.execute();
-            fail("Should get exception");
-        } catch (EnforcerRuleException e) {
-            assertNotNull(e.getMessage());
-        }
+
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+
+        assertNotNull(e.getMessage());
     }
 
     @Test

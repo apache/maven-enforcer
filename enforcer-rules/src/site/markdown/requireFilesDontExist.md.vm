@@ -28,6 +28,11 @@ under the License.
 
 This rule checks that the specified list of files do not exist.
 
+File names are compared case-sensitively, whatever the filesystem reports. On a case-insensitive
+filesystem, such as the default one on Windows or macOS, an existing file named `pom.xml` therefore
+does not make a check for `POM.xml` fail, so the rule behaves the same on every platform. A symbolic
+link is matched by its own name rather than by the name of its target.
+
 The following parameters are supported by this rule:
 
 - **message** - an optional message to the user if the rule fails.
