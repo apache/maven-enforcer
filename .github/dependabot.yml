@@ -25,6 +25,10 @@ updates:
     - "maven-enforcer-plugin/src/it/**"
   schedule:
     interval: daily
+  ignore:
+    # mrm-maven-plugin 2.x requires Java 17
+    - dependency-name: org.codehaus.mojo:mrm-maven-plugin
+      versions: [">= 2.0.0"]
 
 - package-ecosystem: "github-actions"
   directory: "/"
