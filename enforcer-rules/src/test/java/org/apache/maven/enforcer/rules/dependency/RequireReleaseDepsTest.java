@@ -19,14 +19,12 @@
 package org.apache.maven.enforcer.rules.dependency;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.utils.DependencyNodeBuilder;
 import org.apache.maven.enforcer.rules.utils.EnforcerArtifactStubFactory;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
