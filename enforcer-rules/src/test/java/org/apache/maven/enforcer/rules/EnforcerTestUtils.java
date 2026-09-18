@@ -107,6 +107,26 @@ public final class EnforcerTestUtils {
                 .build();
     }
 
+    public static DependencyNode getDependencyNodeWithOptionalSnapshot() {
+        return new DependencyNodeBuilder()
+                .withType(DependencyNodeBuilder.Type.POM)
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childA")
+                        .withVersion("1.0.0")
+                        .withChildNode(new DependencyNodeBuilder()
+                               .withArtifactId("optional-childA-snapshot")
+                               .withOptional(true)
+                               .withVersion("1.0.0-SNAPSHOT")
+                               .build())
+                        .build())
+                .withChildNode(new DependencyNodeBuilder()
+                        .withArtifactId("childB")
+                        .withVersion("2.0.0-SNAPSHOT")
+                        .withOptional(true)
+                        .build())
+                .build();
+    }
+
     public static DependencyNode getDependencyNodeWithMultipleTestSnapshots() {
         return new DependencyNodeBuilder()
                 .withType(DependencyNodeBuilder.Type.POM)

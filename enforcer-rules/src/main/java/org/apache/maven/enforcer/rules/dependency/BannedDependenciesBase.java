@@ -106,7 +106,9 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
             }
         } else {
             StringBuilder messageBuilder = new StringBuilder();
-            DependencyNode rootNode = resolverUtil.resolveTransitiveDependenciesVerbose(Collections.emptyList());
+            DependencyNode rootNode =
+                    resolverUtil.resolveTransitiveDependencies(true, false, true, Collections.emptyList());
+
             Set<MatchingArtifact> visitedArtifacts = new HashSet<>();
             if (!validate(rootNode, 0, messageBuilder, visitedArtifacts)) {
                 String message = "";

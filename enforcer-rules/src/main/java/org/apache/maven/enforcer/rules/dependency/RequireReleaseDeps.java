@@ -21,9 +21,7 @@ package org.apache.maven.enforcer.rules.dependency;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -31,8 +29,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.Dependency;
-import org.eclipse.aether.artifact.DefaultArtifact;
 
 import static java.util.Optional.ofNullable;
 
@@ -77,7 +73,6 @@ public final class RequireReleaseDeps extends BannedDependenciesBase {
             shouldExclude = ArtifactUtils.prepareDependencyArtifactMatcher(getExcludes());
             shouldInclude = ArtifactUtils.prepareDependencyArtifactMatcher(getIncludes());
             super.execute();
-            checkOptionalSnapshotDependencies();
             if (failWhenParentIsSnapshot) {
 
                 Artifact parentArtifact = getSession().getCurrentProject().getParentArtifact();
@@ -95,38 +90,6 @@ public final class RequireReleaseDeps extends BannedDependenciesBase {
                     throw new EnforcerRuleException("Parent Cannot be a snapshot: " + parentArtifact.getId());
                 }
             }
-        }
-    }
-
-    private void checkOptionalSnapshotDependencies() throws EnforcerRuleException {
-        if (!isSearchTransitive()) {
-            return;
-        }
-
-        List<String> violations = new ArrayList<>();
-        for (Dependency dependency : getSession().getCurrentProject().getDependencies()) {
-            if (!dependency.isOptional()) {
-                continue;
-            }
-
-            Artifact artifact = ArtifactUtils.toArtifact(new org.eclipse.aether.graph.Dependency(
-                    new DefaultArtifact(
-                            dependency.getGroupId(),
-                            dependency.getArtifactId(),
-                            dependency.getClassifier(),
-                            dependency.getType() == null ? "jar" : dependency.getType(),
-                            dependency.getVersion()),
-                    dependency.getScope(),
-                    true));
-
-            if (!validate(artifact)) {
-                violations.add(artifact.getId() + " <--- " + getErrorMessage());
-            }
-        }
-
-        if (!violations.isEmpty()) {
-            String message = getMessage() == null ? "" : getMessage() + System.lineSeparator();
-            throw new EnforcerRuleException(message + String.join(System.lineSeparator(), violations));
         }
     }
 
