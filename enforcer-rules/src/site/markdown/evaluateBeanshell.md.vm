@@ -26,6 +26,8 @@ under the License.
 
 # Beanshell
 
+**Deprecated.** BeanShell is being retired across Maven ([apache/maven#13207](https://github.com/apache/maven/issues/13207)) and this rule will be removed in a future major version. Express the condition with a built-in rule such as [requireProperty](./requireProperty.html), [requireFilesExist](./requireFilesExist.html) or [requireOS](./requireOS.html), or [write a custom rule](https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html).
+
 This rule can execute a beanshell script and evaluate the result.
 
 The following parameters are supported by this rule:

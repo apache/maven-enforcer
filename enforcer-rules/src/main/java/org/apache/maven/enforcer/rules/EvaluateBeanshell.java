@@ -33,7 +33,10 @@ import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator
  * Rule for Maven Enforcer using Beanshell to evaluate a conditional expression.
  *
  * @author hugonnem
+ * @deprecated BeanShell is being retired across Maven; the rule will be removed in a future major version. Express
+ *             the condition with one of the built-in rules such as {@code requireProperty}, or write a custom rule.
  */
+@Deprecated
 @Named("evaluateBeanshell")
 public final class EvaluateBeanshell extends AbstractStandardEnforcerRule {
 
@@ -61,6 +64,8 @@ public final class EvaluateBeanshell extends AbstractStandardEnforcerRule {
 
     @Override
     public void execute() throws EnforcerRuleException {
+        getLog().warn("The evaluateBeanshell rule is deprecated and will be removed in a future major version;"
+                + " express the condition with a built-in rule such as requireProperty, or write a custom rule.");
 
         try {
             getLog().debug("Echo condition : " + condition);
