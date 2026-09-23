@@ -53,6 +53,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -132,6 +133,7 @@ class EnforcerRuleManagerTest {
                 .hasMessage(
                         "Failed to create enforcer rules with name: unKnowRule or for class: org.apache.maven.plugins.enforcer.UnKnowRule")
                 .hasCauseInstanceOf(ClassNotFoundException.class);
+        verify(mojoLog, never()).warn(anyString());
     }
 
     @Test
