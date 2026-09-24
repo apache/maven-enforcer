@@ -145,7 +145,6 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
         if (conflict.size() > 0) {
             errorMessage.append(buildTreeString(conflict.get(0)));
         }
-
         for (DependencyNode node : conflict.subList(1, conflict.size())) {
             errorMessage.append("and").append(System.lineSeparator());
             errorMessage.append(buildTreeString(node));
@@ -161,8 +160,8 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
             StringBuilder line = new StringBuilder(getFullArtifactName(currentNode, false));
 
             if (DependencyManagerUtils.getPremanagedVersion(currentNode) != null) {
-                line.append(" (managed; requested ");
-                line.append(getFullArtifactName(currentNode, true));
+                line.append(" (version managed from ");
+                line.append(DependencyManagerUtils.getPremanagedVersion(currentNode));
                 line.append(")");
             }
 

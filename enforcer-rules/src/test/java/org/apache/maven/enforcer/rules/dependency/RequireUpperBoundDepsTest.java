@@ -27,7 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -52,7 +52,6 @@ class RequireUpperBoundDepsTest {
                         .withChildNode(new DependencyNodeBuilder()
                                 .withArtifactId("childA")
                                 .withVersion("1.0.0")
-                                .withPremanagedVersion("2.0.0")
                                 .build())
                         .withChildNode(new DependencyNodeBuilder()
                                 .withArtifactId("childA")
@@ -60,9 +59,29 @@ class RequireUpperBoundDepsTest {
                                 .build())
                         .build());
 
-        assertThatThrownBy(rule::execute)
+        assertThatCode(rule::execute)
                 .isInstanceOf(EnforcerRuleException.class)
-                .hasMessageContaining(
-                        "default-group:childA:1.0.0:classifier (managed; requested default-group:childA:2.0.0:classifier)");
+                .hasMessageContaining("default-group:childA:1.0.0:classifier")
+                .hasMessageContaining("default-group:childA:2.0.0:classifier");
+    }
+
+    @Test
+    void testManagedVersion() throws Exception {
+
+        rule.setLog(mock(EnforcerLogger.class));
+
+        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+                .thenReturn(new DependencyNodeBuilder()
+                        .withType(DependencyNodeBuilder.Type.POM)
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withArtifactId("childA")
+                                .withVersion("1.0.0")
+                                .withPremanagedVersion("2.0.0")
+                                .build())
+                        .build());
+
+        assertThatCode(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining("default-group:childA:1.0.0:classifier (version managed from 2.0.0)");
     }
 }

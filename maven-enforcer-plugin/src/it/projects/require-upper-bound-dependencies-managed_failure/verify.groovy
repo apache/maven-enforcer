@@ -24,6 +24,6 @@ def message = 'Failed while enforcing RequireUpperBoundDeps. The error(s) are ['
 'Require upper bound dependencies error for org.apache.maven.plugins.enforcer.its:menforcer146-x:1.1. Paths to dependency are:' + LS+
 '+-org.apache.maven.enforcer.its:menforcer146-a:1.0-SNAPSHOT' + LS+
 '  +-org.apache.maven.plugins.enforcer.its:menforcer146-b:1.0' + LS+
-'    +-org.apache.maven.plugins.enforcer.its:menforcer146-x:1.1 (managed; requested org.apache.maven.plugins.enforcer.its:menforcer146-x:2.1)' + LS+
+'    +-org.apache.maven.plugins.enforcer.its:menforcer146-x:1.1 (version managed from 2.1)' + LS+
 ']' + LS
 assert buildLog.text.contains( message )

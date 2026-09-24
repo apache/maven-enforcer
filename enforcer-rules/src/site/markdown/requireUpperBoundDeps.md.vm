@@ -64,7 +64,12 @@ and
   +-ch.qos.logback:logback-classic:0.9.9
     +-org.slf4j:slf4j-api:1.5.0
 ]
-When a dependency is managed to a different version, the error message shows both versions. The version before `(managed; requested ...)` is the version selected by dependency management, while the version after `requested` is the version requested by that dependency path.
+```
+
+When a dependency is managed to a different version, the error message displays `(version managed from X)` after the resolved version, where `X` is the version requested prior to dependency management. For example:
+
+```
++-org.slf4j:slf4j-api:1.6.0 (version managed from 1.5.0)
 ```
 
 This will succeed because the highest version, 1.6.0, is selected:
