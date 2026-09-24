@@ -66,6 +66,12 @@ and
 ]
 ```
 
+When a dependency is managed to a different version, the error message displays `(version managed from X)` after the resolved version, where `X` is the version requested prior to dependency management. For example:
+
+```
++-org.slf4j:slf4j-api:1.6.0 (version managed from 1.5.0)
+```
+
 This will succeed because the highest version, 1.6.0, is selected:
 
 ```
