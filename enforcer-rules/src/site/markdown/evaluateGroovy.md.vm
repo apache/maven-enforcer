@@ -23,16 +23,18 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+# Groovy
 
-# Beanshell
+This rule evaluates a [Groovy](https://groovy-lang.org/) expression and fails unless the result is `true`.
+Maven properties in the condition (`${...}`) are interpolated before Groovy sees it, so quote them where a
+string is meant. It replaces the deprecated [evaluateBeanshell](./evaluateBeanshell.html) rule.
 
-**Deprecated.** BeanShell is being retired across Maven ([apache/maven#13207](https://github.com/apache/maven/issues/13207)) and this rule will be removed in a future major version. Use [evaluateGroovy](./evaluateGroovy.html) instead, or a built-in rule such as [requireProperty](./requireProperty.html), [requireFilesExist](./requireFilesExist.html) or [requireOS](./requireOS.html).
-
-This rule can execute a beanshell script and evaluate the result.
+Groovy is not shipped with the plugin: add `org.apache.groovy:groovy` as a dependency of the plugin
+declaration, as in the sample below. Without it the rule fails with a message saying so.
 
 The following parameters are supported by this rule:
 
-- **condition** - the beanshell statement to evaluate.
+- **condition** - the Groovy expression to evaluate; it must yield a boolean.
 - **message** - an optional message to the user if the rule fails.
 
 Sample Plugin Configuration:
@@ -46,17 +48,28 @@ Sample Plugin Configuration:
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <version>${project.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>4.0.33</version>
+          </dependency>
+        </dependencies>
         <executions>
           <execution>
-            <id>enforce-beanshell</id>
+            <id>enforce-groovy</id>
             <goals>
               <goal>enforce</goal>
             </goals>
             <configuration>
               <rules>
-                <evaluateBeanshell>
-                  <condition>\${project.artifactId} == foo</condition>
-                </evaluateBeanshell>
+                <evaluateGroovy>
+                  <condition>'\${project.artifactId}' == 'foo'</condition>
+                </evaluateGroovy>
+                <evaluateGroovy>
+                  <condition>'\${project.version}'.endsWith('-SNAPSHOT') || System.getenv('RELEASE') != null</condition>
+                  <message>Release builds must set RELEASE</message>
+                </evaluateGroovy>
               </rules>
               <fail>true</fail>
             </configuration>
@@ -69,10 +82,5 @@ Sample Plugin Configuration:
 </project>
 ```
 
-The condition can be a complex script or a simple expression. As long as it results in True, the rule will succeed. This means code can be executed as long as the last line results in true.
-
-```xml
-  <evaluateBeanshell>
-    <condition>for (int i = 0;i!=10;i++){print ("Hello World "+i);};1==1</condition>
-  </evaluateBeanshell>
-```
+Porting a BeanShell condition: BeanShell compared bare words, so `\${project.artifactId} == foo` worked once
+interpolated to `foo == foo`; Groovy needs both sides quoted, `'\${project.artifactId}' == 'foo'`.

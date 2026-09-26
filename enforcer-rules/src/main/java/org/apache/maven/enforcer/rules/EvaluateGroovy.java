@@ -23,35 +23,30 @@ import javax.inject.Named;
 
 import java.util.Objects;
 
-import bsh.EvalError;
-import bsh.Interpreter;
+import groovy.lang.GroovyShell;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 
 /**
- * Rule for Maven Enforcer using Beanshell to evaluate a conditional expression.
+ * Rule for Maven Enforcer using Groovy to evaluate a conditional expression.
+ * <p>
+ * Groovy is not shipped with the plugin: add {@code org.apache.groovy:groovy} as a dependency of the
+ * {@code maven-enforcer-plugin} declaration to use this rule.
  *
- * @author hugonnem
- * @deprecated BeanShell is being retired across Maven; the rule will be removed in a future major version. Use
- *             {@link EvaluateGroovy} ({@code evaluateGroovy}) or one of the built-in rules such as
- *             {@code requireProperty}.
+ * @since 3.6.4
  */
-@Deprecated
-@Named("evaluateBeanshell")
-public final class EvaluateBeanshell extends AbstractStandardEnforcerRule {
+@Named("evaluateGroovy")
+public final class EvaluateGroovy extends AbstractStandardEnforcerRule {
 
-    /** Beanshell interpreter. */
-    private final Interpreter interpreter = new Interpreter();
-
-    /** The condition to be evaluated.
-     * */
+    /** The condition to be evaluated. */
     private String condition;
 
     private final ExpressionEvaluator evaluator;
 
     @Inject
-    public EvaluateBeanshell(ExpressionEvaluator evaluator) {
+    public EvaluateGroovy(ExpressionEvaluator evaluator) {
         this.evaluator = Objects.requireNonNull(evaluator);
     }
 
@@ -65,15 +60,22 @@ public final class EvaluateBeanshell extends AbstractStandardEnforcerRule {
 
     @Override
     public void execute() throws EnforcerRuleException {
-        getLog().warn("The evaluateBeanshell rule is deprecated and will be removed in a future major version;"
-                + " use evaluateGroovy or a built-in rule such as requireProperty instead.");
+        if (condition == null || condition.trim().isEmpty()) {
+            throw new EnforcerRuleError("The evaluateGroovy rule requires a condition");
+        }
+        try {
+            Class.forName("groovy.lang.GroovyShell", false, getClass().getClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new EnforcerRuleError("The evaluateGroovy rule needs Groovy on the plugin classpath: add"
+                    + " org.apache.groovy:groovy as a dependency of the maven-enforcer-plugin declaration");
+        }
 
         try {
             getLog().debug("Echo condition : " + condition);
-            // Evaluate condition within Plexus Container
+            // interpolate ${...} against the project before handing the script to Groovy
             String script = (String) evaluator.evaluate(condition);
             getLog().debug("Echo script : " + script);
-            if (!evaluateCondition(script)) {
+            if (!GroovyEvaluation.evaluate(script)) {
                 String message = getMessage();
                 if (message == null || message.isEmpty()) {
                     message = "The expression \"" + condition + "\" is not true.";
@@ -85,26 +87,29 @@ public final class EvaluateBeanshell extends AbstractStandardEnforcerRule {
         }
     }
 
-    /**
-     * Evaluate expression using Beanshell.
-     *
-     * @param script the expression to be evaluated
-     * @return boolean the evaluation of the expression
-     * @throws EnforcerRuleException if the script could not be evaluated
-     */
-    private boolean evaluateCondition(String script) throws EnforcerRuleException {
-        Boolean evaluation;
-        try {
-            evaluation = (Boolean) interpreter.eval(script);
-            getLog().debug("Echo evaluating : " + evaluation);
-        } catch (EvalError ex) {
-            throw new EnforcerRuleException("Couldn't evaluate condition: " + script, ex);
-        }
-        return evaluation;
-    }
-
     @Override
     public String toString() {
-        return String.format("EvaluateBeanshell[message=%s, condition=%s]", getMessage(), condition);
+        return String.format("EvaluateGroovy[message=%s, condition=%s]", getMessage(), condition);
+    }
+
+    /**
+     * Kept apart so that the rule class itself loads without Groovy on the classpath and can report that.
+     */
+    private static final class GroovyEvaluation {
+        private GroovyEvaluation() {}
+
+        static boolean evaluate(String script) throws EnforcerRuleException {
+            Object result;
+            try {
+                result = new GroovyShell().evaluate(script);
+            } catch (RuntimeException | LinkageError ex) {
+                throw new EnforcerRuleException("Couldn't evaluate condition: " + script, ex);
+            }
+            if (!(result instanceof Boolean)) {
+                throw new EnforcerRuleException("The condition must evaluate to a boolean but gave " + result + " ("
+                        + (result == null ? "null" : result.getClass().getName()) + "): " + script);
+            }
+            return (Boolean) result;
+        }
     }
 }

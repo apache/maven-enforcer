@@ -40,7 +40,8 @@ The following built-in rules ship along with the enforcer plugin:
 - [banTransitiveDependencies](./banTransitiveDependencies.html) - enforces that project doesn't have transitive dependencies.
 - [dependencyConvergence](./dependencyConvergence.html) - ensure all dependencies converge to the same version.
 - [enforceBytecodeVersion](./enforceBytecodeVersion.html) - enforces that dependency bytecode versions do not exceed the configured maximum.
-- [evaluateBeanshell](./evaluateBeanshell.html) - evaluates a beanshell script (deprecated).
+- [evaluateBeanshell](./evaluateBeanshell.html) - evaluates a beanshell script (deprecated, use evaluateGroovy).
+- [evaluateGroovy](./evaluateGroovy.html) - evaluates a Groovy expression.
 - [externalRules](./externalRules.html) - evaluate rules from an external resource.
 - [reactorModuleConvergence](./reactorModuleConvergence.html) - enforces that a multi module build follows best practice.
 - [requireActiveProfile](./requireActiveProfile.html) - enforces one or more active profiles.
