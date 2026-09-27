@@ -27,6 +27,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
+
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
@@ -63,5 +65,56 @@ class RequireUpperBoundDepsTest {
                 .isInstanceOf(EnforcerRuleException.class)
                 .hasMessageContaining("default-group:childA:1.0.0:classifier")
                 .hasMessageContaining("default-group:childA:2.0.0:classifier");
+    }
+
+    @Test
+    void testIncludesWithGroupIdOnly() throws Exception {
+
+        rule.setLog(mock(EnforcerLogger.class));
+        rule.setIncludes(Collections.singletonList("default-group"));
+
+        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+                .thenReturn(new DependencyNodeBuilder()
+                        .withType(DependencyNodeBuilder.Type.POM)
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withGroupId("default-group")
+                                .withArtifactId("childA")
+                                .withVersion("1.0.0")
+                                .build())
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withGroupId("default-group")
+                                .withArtifactId("childA")
+                                .withVersion("2.0.0")
+                                .build())
+                        .build());
+
+        assertThatCode(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining("default-group:childA:1.0.0:classifier");
+    }
+
+    @Test
+    void testIncludesWithGroupIdOnlyExcludesOtherGroup() throws Exception {
+
+        rule.setLog(mock(EnforcerLogger.class));
+        rule.setIncludes(Collections.singletonList("other-group"));
+
+        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+                .thenReturn(new DependencyNodeBuilder()
+                        .withType(DependencyNodeBuilder.Type.POM)
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withGroupId("default-group")
+                                .withArtifactId("childA")
+                                .withVersion("1.0.0")
+                                .build())
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withGroupId("default-group")
+                                .withArtifactId("childA")
+                                .withVersion("2.0.0")
+                                .build())
+                        .build());
+
+        assertThatCode(rule::execute)
+                .doesNotThrowAnyException();
     }
 }
