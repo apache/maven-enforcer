@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class TestBanPropertyPrefix {
 
-    private static final String BANNED_PREFIX = "amiga.service";
+    private static final String BANNED_PREFIX = "secured.system";
 
     private static final String OTHER_PREFIX = "other.prefix";
 

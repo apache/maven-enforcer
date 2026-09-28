@@ -61,8 +61,8 @@ Sample Plugin Configuration:
               <rules>
                 <banPropertyPrefix>
                   <prefixes>
-                    <prefix>amiga.service</prefix>
-                    <prefix>amiga.common</prefix>
+                    <prefix>secured.system</prefix>
+                    <prefix>internal.build</prefix>
                   </prefixes>
                 </banPropertyPrefix>
               </rules>
