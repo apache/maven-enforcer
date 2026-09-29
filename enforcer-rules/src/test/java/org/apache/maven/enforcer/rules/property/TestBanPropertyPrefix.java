@@ -31,7 +31,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 /**
@@ -58,12 +59,8 @@ class TestBanPropertyPrefix {
         when(project.getProperties()).thenReturn(properties);
         rule.setPrefixes(Collections.singletonList(BANNED_PREFIX));
 
-        try {
-            rule.execute();
-            fail("Expected an exception.");
-        } catch (EnforcerRuleException e) {
-            assertThat(e.getMessage()).contains(BANNED_PREFIX + ".timeout").contains(BANNED_PREFIX);
-        }
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertThat(e.getMessage()).contains(BANNED_PREFIX + ".timeout").contains(BANNED_PREFIX);
     }
 
     @Test
@@ -72,11 +69,7 @@ class TestBanPropertyPrefix {
         when(project.getProperties()).thenReturn(properties);
         rule.setPrefixes(Collections.singletonList(BANNED_PREFIX));
 
-        try {
-            rule.execute();
-        } catch (EnforcerRuleException e) {
-            fail("This should not throw an exception");
-        }
+        assertDoesNotThrow(rule::execute);
     }
 
     @Test
@@ -84,11 +77,7 @@ class TestBanPropertyPrefix {
         when(project.getProperties()).thenReturn(properties);
         rule.setPrefixes(Collections.singletonList(BANNED_PREFIX));
 
-        try {
-            rule.execute();
-        } catch (EnforcerRuleException e) {
-            fail("This should not throw an exception");
-        }
+        assertDoesNotThrow(rule::execute);
     }
 
     @Test
@@ -97,12 +86,8 @@ class TestBanPropertyPrefix {
         when(project.getProperties()).thenReturn(properties);
         rule.setPrefixes(Arrays.asList(BANNED_PREFIX, OTHER_PREFIX));
 
-        try {
-            rule.execute();
-            fail("Expected an exception.");
-        } catch (EnforcerRuleException e) {
-            assertThat(e.getMessage()).contains(OTHER_PREFIX + ".value");
-        }
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertThat(e.getMessage()).contains(OTHER_PREFIX + ".value");
     }
 
     @Test
@@ -113,15 +98,11 @@ class TestBanPropertyPrefix {
         when(project.getProperties()).thenReturn(properties);
         rule.setPrefixes(Collections.singletonList(BANNED_PREFIX));
 
-        try {
-            rule.execute();
-            fail("Expected an exception.");
-        } catch (EnforcerRuleException e) {
-            assertThat(e.getMessage()).contains(BANNED_PREFIX + ".one", BANNED_PREFIX + ".two");
-            assertThat(e.getMessage()).containsSubsequence(BANNED_PREFIX + ".one", BANNED_PREFIX + ".two");
-            assertThat(e.getMessage()).doesNotContain("keep.me");
-            assertThat(e.getMessage()).doesNotContain("=1", "=2");
-        }
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertThat(e.getMessage()).contains(BANNED_PREFIX + ".one", BANNED_PREFIX + ".two");
+        assertThat(e.getMessage()).containsSubsequence(BANNED_PREFIX + ".one", BANNED_PREFIX + ".two");
+        assertThat(e.getMessage()).doesNotContain("keep.me");
+        assertThat(e.getMessage()).doesNotContain("=1", "=2");
     }
 
     @Test
@@ -130,12 +111,8 @@ class TestBanPropertyPrefix {
         when(project.getProperties()).thenReturn(properties);
         rule.setPrefixes(Collections.singletonList(BANNED_PREFIX + "," + OTHER_PREFIX));
 
-        try {
-            rule.execute();
-            fail("Expected an exception.");
-        } catch (EnforcerRuleException e) {
-            assertThat(e.getMessage()).contains(BANNED_PREFIX + ".timeout");
-        }
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertThat(e.getMessage()).contains(BANNED_PREFIX + ".timeout");
     }
 
     @Test
@@ -144,11 +121,7 @@ class TestBanPropertyPrefix {
         when(project.getProperties()).thenReturn(properties);
         rule.setPrefixes(Arrays.asList(" " + BANNED_PREFIX + " ", " ", " " + BANNED_PREFIX));
 
-        try {
-            rule.execute();
-        } catch (EnforcerRuleException e) {
-            fail("This should not throw an exception");
-        }
+        assertDoesNotThrow(rule::execute);
     }
 
     @Test
@@ -158,21 +131,13 @@ class TestBanPropertyPrefix {
         rule.setPrefixes(Collections.singletonList(BANNED_PREFIX));
         rule.setMessage("Custom failure message");
 
-        try {
-            rule.execute();
-            fail("Expected an exception.");
-        } catch (EnforcerRuleException e) {
-            assertThat(e.getMessage()).isEqualTo("Custom failure message");
-        }
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertThat(e.getMessage()).isEqualTo("Custom failure message");
     }
 
     @Test
     void shouldPassWhenNoPrefixesConfigured() {
-        try {
-            rule.execute();
-        } catch (EnforcerRuleException e) {
-            fail("This should not throw an exception");
-        }
+        assertDoesNotThrow(rule::execute);
     }
 
     @Test
