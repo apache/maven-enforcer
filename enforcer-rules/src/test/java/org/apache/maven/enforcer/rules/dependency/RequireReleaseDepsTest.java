@@ -34,8 +34,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.apache.maven.enforcer.rules.EnforcerTestUtils.getDependencyNodeWithMultipleSnapshots;
 import static org.apache.maven.enforcer.rules.EnforcerTestUtils.getDependencyNodeWithMultipleTestSnapshots;
+import static org.apache.maven.enforcer.rules.EnforcerTestUtils.getDependencyNodeWithOptionalSnapshot;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -74,7 +76,7 @@ class RequireReleaseDepsTest {
 
     @Test
     void testSearchTransitiveMultipleFailures() throws Exception {
-        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+        when(resolverUtil.resolveTransitiveDependencies(anyBoolean(), anyBoolean(), anyBoolean(), anyList()))
                 .thenReturn(getDependencyNodeWithMultipleSnapshots());
         rule.setSearchTransitive(true);
 
@@ -89,7 +91,7 @@ class RequireReleaseDepsTest {
     @Test
     void testSearchTransitiveNoFailures() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
-        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+        when(resolverUtil.resolveTransitiveDependencies(anyBoolean(), anyBoolean(), anyBoolean(), anyList()))
                 .thenReturn(new DependencyNodeBuilder().build());
 
         rule.setSearchTransitive(true);
@@ -110,7 +112,7 @@ class RequireReleaseDepsTest {
     @Test
     void testWildcardExcludeTests() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
-        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+        when(resolverUtil.resolveTransitiveDependencies(anyBoolean(), anyBoolean(), anyBoolean(), anyList()))
                 .thenReturn(getDependencyNodeWithMultipleTestSnapshots());
 
         rule.setExcludes(Collections.singletonList("*:*:*:*:test"));
@@ -122,7 +124,7 @@ class RequireReleaseDepsTest {
     @Test
     void testWildcardExcludeAll() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
-        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+        when(resolverUtil.resolveTransitiveDependencies(anyBoolean(), anyBoolean(), anyBoolean(), anyList()))
                 .thenReturn(getDependencyNodeWithMultipleTestSnapshots());
 
         rule.setExcludes(Collections.singletonList("*"));
@@ -133,7 +135,7 @@ class RequireReleaseDepsTest {
 
     @Test
     void testExcludesAndIncludes() throws Exception {
-        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+        when(resolverUtil.resolveTransitiveDependencies(anyBoolean(), anyBoolean(), anyBoolean(), anyList()))
                 .thenReturn(getDependencyNodeWithMultipleTestSnapshots());
 
         rule.setExcludes(Collections.singletonList("*"));
@@ -160,7 +162,7 @@ class RequireReleaseDepsTest {
     void testFailWhenParentIsSnapshot() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
         when(project.getParentArtifact()).thenReturn(ARTIFACT_STUB_FACTORY.getSnapshotArtifact());
-        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+        when(resolverUtil.resolveTransitiveDependencies(anyBoolean(), anyBoolean(), anyBoolean(), anyList()))
                 .thenReturn(new DependencyNodeBuilder().build());
 
         rule.setFailWhenParentIsSnapshot(true);
@@ -174,12 +176,25 @@ class RequireReleaseDepsTest {
     void parentShouldBeExcluded() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
         when(project.getParentArtifact()).thenReturn(ARTIFACT_STUB_FACTORY.getSnapshotArtifact());
-        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+        when(resolverUtil.resolveTransitiveDependencies(anyBoolean(), anyBoolean(), anyBoolean(), anyList()))
                 .thenReturn(new DependencyNodeBuilder().build());
 
         rule.setFailWhenParentIsSnapshot(true);
         rule.setExcludes(Collections.singletonList("testGroupId:*"));
 
         assertThatCode(rule::execute).doesNotThrowAnyException();
+    }
+
+    @Test
+    void optionalSnapshotDependencyShouldFail() throws Exception {
+        when(resolverUtil.resolveTransitiveDependencies(anyBoolean(), anyBoolean(), anyBoolean(), anyList()))
+                .thenReturn(getDependencyNodeWithOptionalSnapshot());
+
+        assertThatCode(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining(
+                        "default-group:optional-childA-snapshot:jar:classifier:1.0.0-SNAPSHOT <--- is not a release dependency")
+                .hasMessageContaining(
+                        "default-group:childB:jar:classifier:2.0.0-SNAPSHOT <--- is not a release dependency");
     }
 }
