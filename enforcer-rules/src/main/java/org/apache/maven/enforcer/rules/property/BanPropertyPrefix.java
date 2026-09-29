@@ -87,9 +87,7 @@ public final class BanPropertyPrefix extends AbstractStandardEnforcerRule {
             if (message == null) {
                 message = "Banned properties found (prefixes: " + String.join(MESSAGE_SEPARATOR, bannedPrefixes)
                         + "): "
-                        + bannedPropertiesFound.stream()
-                                .map(property -> property + "=" + properties.getProperty(property))
-                                .collect(Collectors.joining(MESSAGE_SEPARATOR));
+                        + String.join(MESSAGE_SEPARATOR, bannedPropertiesFound);
             }
             throw new EnforcerRuleException(message);
         }

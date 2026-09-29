@@ -117,9 +117,10 @@ class TestBanPropertyPrefix {
             rule.execute();
             fail("Expected an exception.");
         } catch (EnforcerRuleException e) {
-            assertThat(e.getMessage()).contains(BANNED_PREFIX + ".one=1", BANNED_PREFIX + ".two=2");
-            assertThat(e.getMessage()).containsSubsequence(BANNED_PREFIX + ".one=1", BANNED_PREFIX + ".two=2");
+            assertThat(e.getMessage()).contains(BANNED_PREFIX + ".one", BANNED_PREFIX + ".two");
+            assertThat(e.getMessage()).containsSubsequence(BANNED_PREFIX + ".one", BANNED_PREFIX + ".two");
             assertThat(e.getMessage()).doesNotContain("keep.me");
+            assertThat(e.getMessage()).doesNotContain("=1", "=2");
         }
     }
 
