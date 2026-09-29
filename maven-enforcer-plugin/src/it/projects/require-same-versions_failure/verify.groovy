@@ -18,7 +18,7 @@
  */
 def buildLog = new File(basedir, 'build.log').text
 
-assert buildLog.contains('[INFO] BUILD FAILURE')
+assert buildLog =~ /\[(INFO|ERROR)\] BUILD FAILURE/
 assert buildLog.contains('ERROR] Rule 0: org.apache.maven.enforcer.rules.RequireSameVersions failed with message:')
 assert buildLog.contains('ERROR] Rule 1: org.apache.maven.enforcer.rules.RequireSameVersions failed with message:')
 
