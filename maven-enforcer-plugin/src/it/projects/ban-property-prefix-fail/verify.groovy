@@ -18,4 +18,5 @@
  */
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.text.contains( '[ERROR] Rule 0: org.apache.maven.enforcer.rules.property.BanPropertyPrefix failed with message' )
-assert buildLog.text.contains( 'secured.system.timeout=5000' )
+assert buildLog.text.contains( 'secured.system.timeout' )
+assert !buildLog.text.contains( 'secured.system.timeout=5000' )
