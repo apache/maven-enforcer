@@ -41,3 +41,88 @@ notifications:
   commits: commits@maven.apache.org
   issues: issues@maven.apache.org
   pullrequests: issues@maven.apache.org
+
+# https://releases.apache.org/projects/maven-enforcer
+project:
+  metadata:
+    key: maven-enforcer
+    committee: maven
+    name: Apache Maven Enforcer
+    description: Enforcer is a build rule execution framework.
+    short_description: Enforcer is a build rule execution framework.
+    homepage: https://maven.apache.org/enforcer/
+    download_page: https://maven.apache.org/enforcer/download.cgi
+    bug_database: https://maven.apache.org/enforcer/issue-management.html
+    mailing_lists: https://maven.apache.org/enforcer/mailing-lists.html
+    security_contact: security@apache.org
+    repositories:
+      - https://github.com/apache/maven-enforcer
+    categories:
+      - build-management
+    programming_languages:
+      - Java
+  policy:
+    announce_release_template: |-
+      The Apache {{COMMITTEE}} project team is pleased 
+      to announce the release of {{PROJECT_NAME}} {{VERSION}}.
+
+      {{HOMEPAGE}}
+
+      You can download the appropriate sources etc. from the download page:
+      {{DOWNLOAD_PAGE}}
+
+      Release Notes - {{PROJECT_NAME}} - Version {{VERSION}}
+      https://github.com/apache/{{PROJECT_KEY}}/releases/tag/{{PROJECT_KEY}}-{{VERSION}}
+
+      Enjoy,
+      On behalf of the Apache {{COMMITTEE}} project team,
+      {{YOUR_FULL_NAME}} ({{YOUR_ASF_ID}})
+    start_vote_template: |-
+      Hello {{COMMITTEE}},
+
+      I'd like to call a vote on releasing the following artifacts as
+      Apache {{PROJECT_NAME}} {{VERSION}}. This vote is being conducted using an
+      Beta version of the Apache Trusted Releases (ATR) platform.
+      Please report any bugs or issues to the ASF Tooling team.
+
+      The release candidate page, including downloads, can be found at:
+      {{REVIEW_URL}}
+
+      The release artifacts are signed with one or more OpenPGP keys from:
+      {{KEYS_FILE}}
+
+      We solved issues:
+      https://github.com/apache/{{PROJECT_KEY}}/issues?q=milestone%3A{{VERSION}}
+
+      Staging repo:
+
+      Staging site:
+      https://maven.apache.org/enforcer-archives/enforcer-LATEST/
+
+      Guide to testing staged releases:
+      https://maven.apache.org/guides/development/guide-testing-releases.html
+
+      Please review the release candidate and vote accordingly.
+
+      [ ] +1 Release this package
+      [ ] +0 Abstain
+      [ ] -1 Do not release this package (please provide specific comments)
+
+      You can vote on ATR at the URL above, or manually by replying to this email.
+
+      The vote is open for {{DURATION}} hours.
+
+      {{RELEASE_CHECKLIST}}
+      Thanks,
+      {{YOUR_FULL_NAME}} ({{YOUR_ASF_ID}})
+    github_repository_name: maven-enforcer
+    download_path_suffix: enforcer
+    vote_recipients:
+      to: dev@maven.apache.org
+    announce_recipients:
+      to: announce@maven.apache.org
+      cc:
+        - dev@maven.apache.org
+        - users@maven.apache.org
+  features:
+    atr_sync: true
