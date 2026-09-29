@@ -28,7 +28,7 @@
   </parent>
   <groupId>org.apache.maven.enforcer</groupId>
   <artifactId>enforcer</artifactId>
-  <version>3.6.4-SNAPSHOT</version>
+  <version>3.7.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Apache Maven Enforcer</name>
@@ -81,7 +81,7 @@
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
     <javaVersion>8</javaVersion>
     <mockito.version>4.11.0</mockito.version>
-    <project.build.outputTimestamp>2026-05-15T10:38:37Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2026-09-29T15:50:31Z</project.build.outputTimestamp>
     <!-- the same as in Maven  -->
     <resolver.version>1.9.27</resolver.version>
     <version.slf4j>1.7.36</version.slf4j>
