@@ -41,7 +41,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Since Maven 3 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique. Early versions of Maven
- * 3 already warn, this rule can force to break a build for this reason.
+ * 3 already warn, this rule can force to break a build for this reason. Maven 3.10.0 and Maven 4 reject such POMs
+ * themselves, before this rule is executed.
  *
  * @author Robert Scholte
  * @since 1.3
