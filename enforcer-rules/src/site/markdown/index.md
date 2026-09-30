@@ -34,6 +34,7 @@ The following built-in rules ship along with the enforcer plugin:
 - [banDistributionManagement](./banDistributionManagement.html) - enforces that project doesn't have distributionManagement.
 - [banDuplicatePomDependencyVersions](./banDuplicatePomDependencyVersions.html) - enforces that the project doesn't have duplicate declared dependencies.
 - [banDynamicVersions](./banDynamicVersions.html) - bans all dependencies requiring version resolution at build time (i.e. version ranges, placeholders `RELEASE`/`LATEST` or SNAPSHOT versions).
+- [banPropertyPrefix](./banPropertyPrefix.html) - bans properties that start with any of the configured prefixes.
 - [bannedDependencies](./bannedDependencies.html) - enforces that excluded dependencies aren't included.
 - [bannedPlugins](./bannedPlugins.html) - enforces that specific plugins aren't included in the build.
 - [bannedRepositories](./bannedRepositories.html) - enforces to not include banned repositories.
