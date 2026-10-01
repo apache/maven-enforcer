@@ -156,7 +156,7 @@ public final class RequireNoRepositories extends AbstractStandardEnforcerRule {
         for (MavenProject mavenProject : sortedProjects) {
             getLog().debug("Scanning project: " + mavenProject.getGroupId() + ":" + mavenProject.getArtifactId()
                     + VERSION + mavenProject.getVersion());
-            models.add(mavenProject.getOriginalModel());
+            models.add(OriginalModels.read(mavenProject));
         }
 
         List<Model> badModels = new ArrayList<>();

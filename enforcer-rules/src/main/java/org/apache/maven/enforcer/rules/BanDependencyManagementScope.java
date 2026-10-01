@@ -67,7 +67,7 @@ public final class BanDependencyManagementScope extends AbstractStandardEnforcer
         // only evaluate local depMgmt, without taking into account inheritance and interpolation
         DependencyManagement depMgmt = checkEffectivePom
                 ? project.getModel().getDependencyManagement()
-                : project.getOriginalModel().getDependencyManagement();
+                : OriginalModels.read(project).getDependencyManagement();
         if (depMgmt != null && depMgmt.getDependencies() != null) {
             List<Dependency> violatingDependencies = getViolatingDependencies(depMgmt);
             if (!violatingDependencies.isEmpty()) {

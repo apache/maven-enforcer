@@ -120,7 +120,7 @@ public final class BanDistributionManagement extends AbstractStandardEnforcerRul
         private DistributionManagement distributionManagement;
 
         DistributionManagementCheck(MavenProject project) {
-            this.distributionManagement = project.getOriginalModel().getDistributionManagement();
+            this.distributionManagement = OriginalModels.read(project).getDistributionManagement();
         }
 
         public void execute(boolean isAllowRepository, boolean isAllowSnapshotRepository, boolean isAllowSite)
