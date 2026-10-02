@@ -47,7 +47,7 @@ public final class RequireExplicitDependencyScope extends AbstractStandardEnforc
     @Override
     public void execute() throws EnforcerRuleException {
         int numMissingDependencyScopes = 0;
-        List<Dependency> dependencies = project.getOriginalModel().getDependencies(); // this is the non-effective
+        List<Dependency> dependencies = OriginalModels.read(project).getDependencies(); // this is the non-effective
         // model but the original one
         // without inheritance and
         // interpolation resolved
