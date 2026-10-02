@@ -35,7 +35,8 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
  * rules.
  *
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
- * @deprecated Please see
+ * @deprecated Will be removed in Maven Enforcer 4.0.0 (the Maven 4 API line). Rules extending
+ *         {@link AbstractEnforcerRule} use injected components instead; see
  *         <a href="https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html">Writing a custom rule</a>
  */
 @Deprecated

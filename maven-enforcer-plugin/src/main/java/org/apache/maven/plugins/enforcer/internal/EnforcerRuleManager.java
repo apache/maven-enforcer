@@ -161,7 +161,7 @@ public class EnforcerRuleManager {
             EnforcerRuleBase rule = (EnforcerRuleBase) Class.forName(ruleClass).newInstance();
             log.warn(
                     "ruleName " + ruleName + " with implementation " + ruleClass
-                            + " uses the deprecated Maven Enforcer Plugin API. This will not be supported in a future version of the plugin. Please contact the rule maintainer to upgrade the rule implementation to the current API.");
+                            + " uses the deprecated Maven Enforcer Plugin API. This API will be removed in Maven Enforcer 4.0.0. Please contact the rule maintainer to migrate the rule to AbstractEnforcerRule (see https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html).");
             return new EnforcerRuleDesc(ruleName, rule);
         } catch (Exception e) {
             throw new EnforcerRuleManagerException(
