@@ -21,11 +21,10 @@ package org.apache.maven.enforcer.rules;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.MavenArtifactRepository;
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.project.MavenProject;
+import org.eclipse.aether.repository.RemoteRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,28 +58,28 @@ class TestBannedRepositories {
 
     @Test
     void testNoCheckRules() throws EnforcerRuleException {
-        ArtifactRepository repo1 = new MavenArtifactRepository("repo1", "http://repo1/", null, null, null);
-        List<ArtifactRepository> repos = new ArrayList<>();
+        RemoteRepository repo1 = new RemoteRepository.Builder("repo1", "default", "http://repo1/").build();
+        List<RemoteRepository> repos = new ArrayList<>();
         repos.add(repo1);
 
-        when(project.getRemoteArtifactRepositories()).thenReturn(repos);
-        when(project.getPluginArtifactRepositories()).thenReturn(repos);
+        when(project.getRemoteProjectRepositories()).thenReturn(repos);
+        when(project.getRemotePluginRepositories()).thenReturn(repos);
 
         rule.execute();
     }
 
     @Test
     void testBannedRepositories() {
-        ArtifactRepository repo1 = new MavenArtifactRepository("repo1", "http://repo1/", null, null, null);
-        ArtifactRepository repo2 = new MavenArtifactRepository("repo1", "http://repo1/test", null, null, null);
-        ArtifactRepository repo3 = new MavenArtifactRepository("repo1", "http://repo2/test", null, null, null);
-        List<ArtifactRepository> repos = new ArrayList<>();
+        RemoteRepository repo1 = new RemoteRepository.Builder("repo1", "default", "http://repo1/").build();
+        RemoteRepository repo2 = new RemoteRepository.Builder("repo1", "default", "http://repo1/test").build();
+        RemoteRepository repo3 = new RemoteRepository.Builder("repo1", "default", "http://repo2/test").build();
+        List<RemoteRepository> repos = new ArrayList<>();
         repos.add(repo1);
         repos.add(repo2);
         repos.add(repo3);
 
-        when(project.getRemoteArtifactRepositories()).thenReturn(repos);
-        when(project.getPluginArtifactRepositories()).thenReturn(repos);
+        when(project.getRemoteProjectRepositories()).thenReturn(repos);
+        when(project.getRemotePluginRepositories()).thenReturn(repos);
 
         List<String> bannedRepositories = new ArrayList<>();
         String pattern1 = "http://repo1/*";
@@ -98,15 +97,15 @@ class TestBannedRepositories {
 
     @Test
     void testAllowedRepositoriesAllOK() throws EnforcerRuleException {
-        ArtifactRepository repo1 = new MavenArtifactRepository("repo1", "http://repo1/", null, null, null);
-        ArtifactRepository repo2 = new MavenArtifactRepository("repo1", "http://repo1/test", null, null, null);
+        RemoteRepository repo1 = new RemoteRepository.Builder("repo1", "default", "http://repo1/").build();
+        RemoteRepository repo2 = new RemoteRepository.Builder("repo1", "default", "http://repo1/test").build();
 
-        List<ArtifactRepository> repos = new ArrayList<>();
+        List<RemoteRepository> repos = new ArrayList<>();
         repos.add(repo1);
         repos.add(repo2);
 
-        when(project.getRemoteArtifactRepositories()).thenReturn(repos);
-        when(project.getPluginArtifactRepositories()).thenReturn(repos);
+        when(project.getRemoteProjectRepositories()).thenReturn(repos);
+        when(project.getRemotePluginRepositories()).thenReturn(repos);
 
         List<String> bannedRepositories = new ArrayList<>();
         String pattern1 = "http://repo1/*";
@@ -121,16 +120,16 @@ class TestBannedRepositories {
 
     @Test
     void testAllowedRepositoriesException() {
-        ArtifactRepository repo1 = new MavenArtifactRepository("repo1", "http://repo1/", null, null, null);
-        ArtifactRepository repo2 = new MavenArtifactRepository("repo1", "http://repo1/test", null, null, null);
-        ArtifactRepository repo3 = new MavenArtifactRepository("repo1", "http://repo2/test", null, null, null);
-        List<ArtifactRepository> repos = new ArrayList<>();
+        RemoteRepository repo1 = new RemoteRepository.Builder("repo1", "default", "http://repo1/").build();
+        RemoteRepository repo2 = new RemoteRepository.Builder("repo1", "default", "http://repo1/test").build();
+        RemoteRepository repo3 = new RemoteRepository.Builder("repo1", "default", "http://repo2/test").build();
+        List<RemoteRepository> repos = new ArrayList<>();
         repos.add(repo1);
         repos.add(repo2);
         repos.add(repo3);
 
-        when(project.getRemoteArtifactRepositories()).thenReturn(repos);
-        when(project.getPluginArtifactRepositories()).thenReturn(repos);
+        when(project.getRemoteProjectRepositories()).thenReturn(repos);
+        when(project.getRemotePluginRepositories()).thenReturn(repos);
 
         List<String> patterns = new ArrayList<>();
         String pattern1 = "http://repo1/*";
@@ -152,12 +151,12 @@ class TestBannedRepositories {
         String customMessage = "Custom banned repositories message";
         rule.setMessage(customMessage);
 
-        ArtifactRepository repo1 = new MavenArtifactRepository("repo1", "http://repo1/", null, null, null);
-        List<ArtifactRepository> repos = new ArrayList<>();
+        RemoteRepository repo1 = new RemoteRepository.Builder("repo1", "default", "http://repo1/").build();
+        List<RemoteRepository> repos = new ArrayList<>();
         repos.add(repo1);
 
-        when(project.getRemoteArtifactRepositories()).thenReturn(repos);
-        when(project.getPluginArtifactRepositories()).thenReturn(repos);
+        when(project.getRemoteProjectRepositories()).thenReturn(repos);
+        when(project.getRemotePluginRepositories()).thenReturn(repos);
 
         List<String> bannedRepositories = new ArrayList<>();
         bannedRepositories.add("http://repo1/*");

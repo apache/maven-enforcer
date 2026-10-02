@@ -26,9 +26,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.project.MavenProject;
+import org.eclipse.aether.repository.RemoteRepository;
 
 /**
  * This rule checks whether this project's maven session has banned repositories.
@@ -79,11 +79,11 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
     @Override
     public void execute() throws EnforcerRuleException {
 
-        List<ArtifactRepository> resultBannedRepos = checkRepositories(
-                project.getRemoteArtifactRepositories(), this.allowedRepositories, this.bannedRepositories);
+        List<RemoteRepository> resultBannedRepos = checkRepositories(
+                project.getRemoteProjectRepositories(), this.allowedRepositories, this.bannedRepositories);
 
-        List<ArtifactRepository> resultBannedPluginRepos = checkRepositories(
-                project.getPluginArtifactRepositories(), this.allowedPluginRepositories, this.bannedPluginRepositories);
+        List<RemoteRepository> resultBannedPluginRepos = checkRepositories(
+                project.getRemotePluginRepositories(), this.allowedPluginRepositories, this.bannedPluginRepositories);
 
         String repoErrMsg = populateErrorMessage(resultBannedRepos, " ");
         String pluginRepoErrMsg = populateErrorMessage(resultBannedPluginRepos, " plugin ");
@@ -128,15 +128,15 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
      * @param excludes : 'exclude' patterns.
      * @return Banned repositories.
      */
-    private List<ArtifactRepository> checkRepositories(
-            List<ArtifactRepository> repositories, List<String> includes, List<String> excludes) {
+    private List<RemoteRepository> checkRepositories(
+            List<RemoteRepository> repositories, List<String> includes, List<String> excludes) {
 
         getLog().debug(() -> String.format(
                 "Check repositories: %s, for includes=%s and excludes=%s", repositories, includes, excludes));
 
-        List<ArtifactRepository> bannedRepos = new ArrayList<>();
+        List<RemoteRepository> bannedRepos = new ArrayList<>();
 
-        for (ArtifactRepository repo : repositories) {
+        for (RemoteRepository repo : repositories) {
             String url = repo.getUrl().trim();
             if (includes.size() > 0 && !match(url, includes)) {
                 bannedRepos.add(repo);
@@ -165,7 +165,7 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
         return text.matches(pattern.replace("?", ".?").replace("*", ".*?"));
     }
 
-    private String populateErrorMessage(List<ArtifactRepository> resultBannedRepos, String errorMessagePrefix) {
+    private String populateErrorMessage(List<RemoteRepository> resultBannedRepos, String errorMessagePrefix) {
         if (!resultBannedRepos.isEmpty()) {
             return "Current maven session contains banned" + errorMessagePrefix
                     + "repository urls, please double check your pom or settings.xml:" + System.lineSeparator()
@@ -175,9 +175,9 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
         return "";
     }
 
-    private String getRepositoryUrlString(List<ArtifactRepository> resultBannedRepos) {
+    private String getRepositoryUrlString(List<RemoteRepository> resultBannedRepos) {
         StringBuilder urls = new StringBuilder();
-        for (ArtifactRepository repo : resultBannedRepos) {
+        for (RemoteRepository repo : resultBannedRepos) {
             urls.append(repo.getId() + " - " + repo.getUrl() + System.lineSeparator());
         }
         return urls.toString();
