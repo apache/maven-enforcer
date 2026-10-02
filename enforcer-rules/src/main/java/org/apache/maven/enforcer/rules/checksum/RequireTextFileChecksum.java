@@ -89,7 +89,10 @@ public final class RequireTextFileChecksum extends RequireFileChecksum {
     protected String calculateChecksum() throws EnforcerRuleException {
         try (Reader reader = new NormalizeLineSeparatorReader(
                         Files.newBufferedReader(getFile().toPath(), encoding), normalizeLineSeparatorTo);
-                InputStream inputStream = new ReaderInputStream(reader, encoding)) {
+                InputStream inputStream = ReaderInputStream.builder()
+                        .setReader(reader)
+                        .setCharset(encoding)
+                        .get()) {
             return super.calculateChecksum(inputStream);
         } catch (IOException e) {
             throw new EnforcerRuleError("Unable to calculate checksum (with normalized line separators)", e);
