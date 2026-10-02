@@ -21,6 +21,7 @@ package org.apache.maven.enforcer.rules.utils;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -67,17 +68,37 @@ public class EnforcerRuleUtils {
         }
     }
 
+    /**
+     * Resolves expressions in the given plugins. The input plugins belong to the project model and are not changed;
+     * the result holds resolved copies.
+     *
+     * @param plugins the plugins to resolve
+     * @return resolved copies of the plugins
+     */
     public List<Plugin> resolvePlugins(List<Plugin> plugins) {
+        List<Plugin> resolved = new ArrayList<>(plugins.size());
         for (Plugin plugin : plugins) {
-            resolve(plugin);
+            Plugin copy = plugin.clone();
+            resolve(copy);
+            resolved.add(copy);
         }
-        return plugins;
+        return resolved;
     }
 
+    /**
+     * Resolves expressions in the given report plugins. The input plugins belong to the project model and are not
+     * changed; the result holds resolved copies.
+     *
+     * @param reportPlugins the report plugins to resolve
+     * @return resolved copies of the report plugins
+     */
     public List<ReportPlugin> resolveReportPlugins(List<ReportPlugin> reportPlugins) {
+        List<ReportPlugin> resolved = new ArrayList<>(reportPlugins.size());
         for (ReportPlugin plugin : reportPlugins) {
-            resolve(plugin);
+            ReportPlugin copy = plugin.clone();
+            resolve(copy);
+            resolved.add(copy);
         }
-        return reportPlugins;
+        return resolved;
     }
 }
