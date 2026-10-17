@@ -67,7 +67,8 @@ public class EnforcerRuleCache {
 
         SessionData sessionData = sessionProvider.get().getRepositorySession().getData();
 
-        synchronized (this) {
+        // Cache instances from different plugin realms share the same session data.
+        synchronized (sessionData) {
 
             // sessionData.computeIfAbsent() is available in Maven 3.9.x, so do it manually
             Map<Class<? extends AbstractEnforcerRule>, List<String>> cache =
