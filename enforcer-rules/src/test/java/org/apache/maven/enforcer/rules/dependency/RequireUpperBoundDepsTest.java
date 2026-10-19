@@ -62,7 +62,8 @@ class RequireUpperBoundDepsTest {
         assertThatCode(rule::execute)
                 .isInstanceOf(EnforcerRuleException.class)
                 .hasMessageContaining("default-group:childA:1.0.0:classifier")
-                .hasMessageContaining("default-group:childA:2.0.0:classifier");
+                .hasMessageContaining("default-group:childA:2.0.0:classifier")
+                .hasMessageContaining("<version>2.0.0</version>");
     }
 
     @Test
