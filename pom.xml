@@ -252,6 +252,13 @@
             <topSiteURL>scm:svn:https://svn.apache.org/repos/asf/maven/website/components/${maven.site.path}</topSiteURL>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.tooling</groupId>
+          <artifactId>atr-maven-plugin</artifactId>
+          <configuration>
+            <project>maven-enforcer</project>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins />
