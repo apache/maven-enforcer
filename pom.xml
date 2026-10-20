@@ -225,27 +225,6 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.apache.rat</groupId>
-          <artifactId>apache-rat-plugin</artifactId>
-          <configuration>
-            <inputExcludes combine.children="append">
-
-              <exclude>Jenkinsfile</exclude>
-              <exclude>.github/**</exclude>
-              <exclude>deploySite.bat</exclude>
-              <exclude>deploySite.sh</exclude>
-              <exclude>LICENCE</exclude>
-              <exclude>NOTICE</exclude>
-              <exclude>LICENCE</exclude>
-              <!--
-          ! Excluded the license files itself cause they do not have a license of themselves.
-          -->
-              <exclude>src/main/appended-resources/licenses/**</exclude>
-
-            </inputExcludes>
-          </configuration>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
           <configuration>
