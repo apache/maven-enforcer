@@ -135,7 +135,6 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
     private String buildErrorMessage(List<DependencyNode> conflict) {
         StringBuilder errorMessage = new StringBuilder();
-
         errorMessage
                 .append(System.lineSeparator())
                 .append("Require upper bound dependencies error for ")
@@ -143,10 +142,9 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
                 .append(". Paths to dependency are:")
                 .append(System.lineSeparator());
 
-        if (!conflict.isEmpty()) {
+        if (conflict.size() > 0) {
             errorMessage.append(buildTreeString(conflict.get(0)));
         }
-
         for (DependencyNode node : conflict.subList(1, conflict.size())) {
             errorMessage.append("and").append(System.lineSeparator());
             errorMessage.append(buildTreeString(node));
@@ -167,14 +165,12 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
         for (DependencyNode node : conflict) {
             String versionStr = DependencyManagerUtils.getPremanagedVersion(node);
-
             if (versionStr == null) {
                 org.eclipse.aether.artifact.Artifact nodeArtifact = node.getArtifact();
                 versionStr = uniqueVersions ? nodeArtifact.getVersion() : nodeArtifact.getBaseVersion();
             }
 
             ArtifactVersion version = new DefaultArtifactVersion(versionStr);
-
             if (highestVersion == null || version.compareTo(highestVersion) > 0) {
                 highestVersion = version;
             }
@@ -205,7 +201,18 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
                 .append("      <version>")
                 .append(highestVersion)
                 .append("</version>")
-                .append(System.lineSeparator())
+                .append(System.lineSeparator());
+
+        String classifier = artifact.getClassifier();
+        if (classifier != null && !classifier.isEmpty()) {
+            errorMessage
+                    .append("      <classifier>")
+                    .append(classifier)
+                    .append("</classifier>")
+                    .append(System.lineSeparator());
+        }
+
+        errorMessage
                 .append("    </dependency>")
                 .append(System.lineSeparator())
                 .append("  </dependencies>")
