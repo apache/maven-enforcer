@@ -150,7 +150,75 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
             errorMessage.append(buildTreeString(node));
         }
 
+        appendDependencyManagementSuggestion(errorMessage, conflict);
+
         return errorMessage.toString();
+    }
+
+    private void appendDependencyManagementSuggestion(StringBuilder errorMessage, List<DependencyNode> conflict) {
+        if (conflict == null || conflict.isEmpty()) {
+            return;
+        }
+
+        org.eclipse.aether.artifact.Artifact artifact = conflict.get(0).getArtifact();
+        ArtifactVersion highestVersion = null;
+
+        for (DependencyNode node : conflict) {
+            String versionStr = DependencyManagerUtils.getPremanagedVersion(node);
+            if (versionStr == null) {
+                org.eclipse.aether.artifact.Artifact nodeArtifact = node.getArtifact();
+                versionStr = uniqueVersions ? nodeArtifact.getVersion() : nodeArtifact.getBaseVersion();
+            }
+
+            ArtifactVersion version = new DefaultArtifactVersion(versionStr);
+            if (highestVersion == null || version.compareTo(highestVersion) > 0) {
+                highestVersion = version;
+            }
+        }
+
+        if (highestVersion == null) {
+            return;
+        }
+
+        errorMessage
+                .append(System.lineSeparator())
+                .append("To fix this, add the following to your <dependencyManagement> section:")
+                .append(System.lineSeparator())
+                .append("<dependencyManagement>")
+                .append(System.lineSeparator())
+                .append("  <dependencies>")
+                .append(System.lineSeparator())
+                .append("    <dependency>")
+                .append(System.lineSeparator())
+                .append("      <groupId>")
+                .append(artifact.getGroupId())
+                .append("</groupId>")
+                .append(System.lineSeparator())
+                .append("      <artifactId>")
+                .append(artifact.getArtifactId())
+                .append("</artifactId>")
+                .append(System.lineSeparator())
+                .append("      <version>")
+                .append(highestVersion)
+                .append("</version>")
+                .append(System.lineSeparator());
+
+        String classifier = artifact.getClassifier();
+        if (classifier != null && !classifier.isEmpty()) {
+            errorMessage
+                    .append("      <classifier>")
+                    .append(classifier)
+                    .append("</classifier>")
+                    .append(System.lineSeparator());
+        }
+
+        errorMessage
+                .append("    </dependency>")
+                .append(System.lineSeparator())
+                .append("  </dependencies>")
+                .append(System.lineSeparator())
+                .append("</dependencyManagement>")
+                .append(System.lineSeparator());
     }
 
     private StringBuilder buildTreeString(DependencyNode node) {
