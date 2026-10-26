@@ -23,4 +23,4 @@ assert buildLog.contains( 'Rule 0: org.apache.maven.enforcer.rules.dependency.Re
 
 assert buildLog.contains('[ERROR] Require upper bound dependencies error for org.apache.maven.plugins.enforcer.its:menforcer128_api:1.4.0 [provided]. Paths to dependency are:')
 
-assert !buildLog.contains('[ERROR] Require upper bound dependencies error for org.apache.maven.plugins.enforcer.its:menforcer138_utils:1.0.4')
+assert buildLog.contains('[ERROR] Require upper bound dependencies error for org.apache.maven.plugins.enforcer.its:menforcer138_utils:1.0.4 [test]. Paths to dependency are:')

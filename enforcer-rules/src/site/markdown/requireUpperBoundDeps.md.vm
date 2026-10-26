@@ -29,7 +29,7 @@ The following parameters are supported by this rule:
 - **uniqueVersions** - if SNAPSHOTs should be compared by their timestamped version or not. Default: `false`
 - **excludes** - specify the dependencies that will be ignored. The format is `groupId[:artifactId]`
 - **includes** - specify the dependencies that will be checked. If not empty only these will be checked. The format is `groupId[:artifactId]`
-- **excludedScopes** - a list of dependency scope which will be excluded. Default: `test`, `provided`
+- **excludedScopes** - a list of dependency scopes to exclude. A dependency is ignored only when all paths to it use an excluded scope. Test-scoped paths are still considered when the same dependency is also reached through a non-excluded scope, as they can affect Maven's version mediation. Other excluded scopes are filtered from the graph. Default: `test`, `provided`
 
 Here is a concrete example. This will cause a build to fail:
 

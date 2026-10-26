@@ -38,6 +38,7 @@ import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.enforcer.rules.utils.ParentNodeProvider;
 import org.apache.maven.enforcer.rules.utils.ParentsVisitor;
+import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
 import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
@@ -106,9 +107,14 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
     @Override
     public void execute() throws EnforcerRuleException {
-        DependencyNode node = resolverUtil.resolveTransitiveDependenciesVerbose(excludedScopes);
+        // Test-scope paths can still win mediation for a dependency also used by an included path.
+        List<String> scopesExcludedDuringResolution =
+                excludedScopes == null ? new ArrayList<>() : new ArrayList<>(excludedScopes);
+        scopesExcludedDuringResolution.removeAll(Collections.singleton(SCOPE_TEST));
+        DependencyNode node = resolverUtil.resolveTransitiveDependenciesVerbose(scopesExcludedDuringResolution);
         upperBoundDepsVisitor = new RequireUpperBoundDepsVisitor()
                 .setUniqueVersions(uniqueVersions)
+                .setExcludedScopes(excludedScopes)
                 .setIncludes(includes);
         getLog().debug(() -> resolverUtil.dumpTree(node));
         node.accept(upperBoundDepsVisitor);
@@ -274,10 +280,16 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
         private final ParentsVisitor parentsVisitor = new ParentsVisitor();
         private boolean uniqueVersions;
+        private List<String> excludedScopes = Collections.emptyList();
         private List<String> includes = null;
 
         public RequireUpperBoundDepsVisitor setUniqueVersions(boolean uniqueVersions) {
             this.uniqueVersions = uniqueVersions;
+            return this;
+        }
+
+        public RequireUpperBoundDepsVisitor setExcludedScopes(List<String> excludedScopes) {
+            this.excludedScopes = excludedScopes != null ? excludedScopes : Collections.emptyList();
             return this;
         }
 
@@ -311,7 +323,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
         public List<List<DependencyNode>> getConflicts() {
             List<List<DependencyNode>> output = new ArrayList<>();
             for (List<DependencyNodeHopCountPair> pairs : keyToPairsMap.values()) {
-                if (containsConflicts(pairs)) {
+                if (containsNonExcludedScope(pairs) && containsConflicts(pairs)) {
                     List<DependencyNode> outputSubList = new ArrayList<>(pairs.size());
                     for (DependencyNodeHopCountPair pair : pairs) {
                         outputSubList.add(pair.getNode());
@@ -320,6 +332,13 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
                 }
             }
             return output;
+        }
+
+        private boolean containsNonExcludedScope(List<DependencyNodeHopCountPair> pairs) {
+            return pairs.stream().anyMatch(pair -> {
+                Dependency dependency = pair.getNode().getDependency();
+                return dependency == null || !excludedScopes.contains(dependency.getScope());
+            });
         }
 
         private boolean containsConflicts(List<DependencyNodeHopCountPair> pairs) {
