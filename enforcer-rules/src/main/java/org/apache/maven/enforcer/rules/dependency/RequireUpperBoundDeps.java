@@ -106,10 +106,11 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
     @Override
     public void execute() throws EnforcerRuleException {
-        DependencyNode node = resolverUtil.resolveTransitiveDependenciesVerbose(excludedScopes);
+        DependencyNode node = resolverUtil.resolveTransitiveDependenciesVerbose(Collections.emptyList());
         upperBoundDepsVisitor = new RequireUpperBoundDepsVisitor()
                 .setUniqueVersions(uniqueVersions)
-                .setIncludes(includes);
+                .setIncludes(includes)
+                .setExcludedScopes(excludedScopes);
         getLog().debug(() -> resolverUtil.dumpTree(node));
         node.accept(upperBoundDepsVisitor);
         List<String> errorMessages = buildErrorMessages(upperBoundDepsVisitor.getConflicts());
@@ -207,6 +208,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
         private final ParentsVisitor parentsVisitor = new ParentsVisitor();
         private boolean uniqueVersions;
         private List<String> includes = null;
+        private List<String> excludedScopes = null;
 
         public RequireUpperBoundDepsVisitor setUniqueVersions(boolean uniqueVersions) {
             this.uniqueVersions = uniqueVersions;
@@ -215,6 +217,11 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
         public RequireUpperBoundDepsVisitor setIncludes(List<String> includes) {
             this.includes = includes;
+            return this;
+        }
+
+        public RequireUpperBoundDepsVisitor setExcludedScopes(List<String> excludedScopes) {
+            this.excludedScopes = excludedScopes;
             return this;
         }
 
@@ -259,6 +266,9 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
             ArtifactVersion resolvedVersion = resolvedPair.extractArtifactVersion(uniqueVersions, false);
 
             for (DependencyNodeHopCountPair pair : pairs) {
+                if (excludedScopes != null && excludedScopes.contains(pair.getDirectDependencyScope())) {
+                    continue;
+                }
                 ArtifactVersion version = pair.extractArtifactVersion(uniqueVersions, true);
                 if (resolvedVersion.compareTo(version) < 0) {
                     return true;
@@ -321,6 +331,20 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
         public int getHopCount() {
             return hopCount;
+        }
+
+        public String getDirectDependencyScope() {
+            DependencyNode current = node;
+            DependencyNode parent = parentNodeProvider.getParent(current);
+            if (parent == null) {
+                return null;
+            }
+            while (parentNodeProvider.getParent(parent) != null) {
+                current = parent;
+                parent = parentNodeProvider.getParent(current);
+            }
+            Artifact artifact = ArtifactUtils.toArtifact(current);
+            return artifact != null ? artifact.getScope() : null;
         }
 
         public int compareTo(DependencyNodeHopCountPair other) {

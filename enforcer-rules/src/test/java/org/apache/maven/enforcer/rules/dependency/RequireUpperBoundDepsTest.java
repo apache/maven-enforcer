@@ -84,4 +84,77 @@ class RequireUpperBoundDepsTest {
                 .isInstanceOf(EnforcerRuleException.class)
                 .hasMessageContaining("default-group:childA:1.0.0:classifier (version managed from 2.0.0)");
     }
+
+    @Test
+    void testShallowerTestScopedPathDoesNotMaskLowerVersionRequiredByCompileScope() throws Exception {
+        rule.setLog(mock(EnforcerLogger.class));
+
+        // Root project has:
+        // 1. Direct test dependency 'wiremock' -> 'validator:1.5.9' (2 hops from root)
+        // 2. Direct compile dependency 'lib-a' -> 'lib-b' -> 'validator:3.0.8' (3 hops from root)
+        // Because wiremock path is shallower (2 hops < 3 hops), Maven resolves 1.5.9, which poisons compile scope.
+        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+                .thenReturn(new DependencyNodeBuilder()
+                        .withType(DependencyNodeBuilder.Type.POM)
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withArtifactId("wiremock")
+                                .withVersion("1.0.0")
+                                .withScope("test")
+                                .withChildNode(new DependencyNodeBuilder()
+                                        .withArtifactId("validator")
+                                        .withVersion("1.5.9")
+                                        .build())
+                                .build())
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withArtifactId("lib-a")
+                                .withVersion("1.0.0")
+                                .withScope("compile")
+                                .withChildNode(new DependencyNodeBuilder()
+                                        .withArtifactId("lib-b")
+                                        .withVersion("1.0.0")
+                                        .withChildNode(new DependencyNodeBuilder()
+                                                .withArtifactId("validator")
+                                                .withVersion("3.0.8")
+                                                .build())
+                                        .build())
+                                .build())
+                        .build());
+
+        assertThatCode(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining("validator:1.5.9")
+                .hasMessageContaining("validator:3.0.8");
+    }
+
+    @Test
+    void testPureTestScopedConflictsAreIgnoredWhenTestScopeExcluded() throws Exception {
+        rule.setLog(mock(EnforcerLogger.class));
+
+        // Both conflicting paths are purely test-scoped
+        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+                .thenReturn(new DependencyNodeBuilder()
+                        .withType(DependencyNodeBuilder.Type.POM)
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withArtifactId("testA")
+                                .withVersion("1.0.0")
+                                .withScope("test")
+                                .withChildNode(new DependencyNodeBuilder()
+                                        .withArtifactId("junit")
+                                        .withVersion("4.12")
+                                        .build())
+                                .build())
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withArtifactId("testB")
+                                .withVersion("1.0.0")
+                                .withScope("test")
+                                .withChildNode(new DependencyNodeBuilder()
+                                        .withArtifactId("junit")
+                                        .withVersion("4.13")
+                                        .build())
+                                .build())
+                        .build());
+
+        // Default excludedScopes includes "test", so pure test conflict should pass without exception
+        assertThatCode(rule::execute).doesNotThrowAnyException();
+    }
 }
