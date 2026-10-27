@@ -24,13 +24,13 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
-import org.codehaus.plexus.util.StringUtils;
 
 import static java.util.Optional.ofNullable;
 
@@ -189,14 +189,16 @@ public final class ArtifactMatcher {
      * @throws NullPointerException if any of the arguments is null
      */
     public ArtifactMatcher(final Collection<String> excludeStrings, final Collection<String> includeStrings) {
-        ofNullable(excludeStrings).ifPresent(excludes -> excludes.stream()
-                .filter(StringUtils::isNotEmpty)
-                .map(Pattern::new)
-                .forEach(excludePatterns::add));
-        ofNullable(includeStrings).ifPresent(includes -> includes.stream()
-                .filter(StringUtils::isNotEmpty)
-                .map(Pattern::new)
-                .forEach(includePatterns::add));
+        ofNullable(excludeStrings)
+                .ifPresent(excludes -> excludes.stream()
+                        .filter(StringUtils::isNotEmpty)
+                        .map(Pattern::new)
+                        .forEach(excludePatterns::add));
+        ofNullable(includeStrings)
+                .ifPresent(includes -> includes.stream()
+                        .filter(StringUtils::isNotEmpty)
+                        .map(Pattern::new)
+                        .forEach(includePatterns::add));
     }
 
     private boolean match(Function<Pattern, Boolean> matcher) {

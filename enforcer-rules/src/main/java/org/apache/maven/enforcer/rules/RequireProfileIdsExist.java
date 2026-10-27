@@ -28,7 +28,6 @@ import java.util.Objects;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Ensure that all profiles mentioned on the commandline do exist.
@@ -79,12 +78,15 @@ public final class RequireProfileIdsExist extends AbstractStandardEnforcerRule {
         }
 
         StringBuilder sb = new StringBuilder();
+        if (getMessage() != null) {
+            sb.append(getMessage()).append("\n");
+        }
         if (profileIds.size() > 1) {
             sb.append("The requested profiles don't exist: ");
         } else {
             sb.append("The requested profile doesn't exist: ");
         }
-        sb.append(StringUtils.join(profileIds.iterator(), ", "));
+        sb.append(String.join(", ", profileIds));
 
         throw new EnforcerRuleException(sb.toString());
     }

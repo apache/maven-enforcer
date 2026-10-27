@@ -31,6 +31,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,6 +57,17 @@ class RequirePrerequisiteTest {
     @Test
     void testNoPrerequisite() {
         assertThrows(EnforcerRuleException.class, () -> rule.execute());
+    }
+
+    @Test
+    void shouldOutputCustomMessageWhenPrerequisiteNotSet() {
+        String customMessage = "Custom prerequisite message";
+        rule.setMessage(customMessage);
+
+        assertThatThrownBy(() -> rule.execute())
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageStartingWith(customMessage)
+                .hasMessageContaining("Requires prerequisite not set");
     }
 
     @Test

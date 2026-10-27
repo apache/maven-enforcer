@@ -1,0 +1,78 @@
+---
+title: Require Files Exist
+author: 
+  - Brian Fox
+date: 2008-08-06
+---
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+# Require Files Exist
+
+This rule checks that the specified list of files exist.
+
+File names are compared case-sensitively, whatever the filesystem reports. On a case-insensitive
+filesystem, such as the default one on Windows or macOS, a file named `pom.xml` therefore does not
+satisfy a check for `POM.xml`, so the rule behaves the same on every platform. A symbolic link is
+matched by its own name rather than by the name of its target.
+
+The following parameters are supported by this rule:
+
+- **message** - an optional message to the user if the rule fails.
+- **files** - A list of files to check.
+- **allowNulls** - If null files should be allowed. If allowed, they will be treated as if they do exist. Default is false.
+- **satisfyAny** - Allows that one of files can make the rule pass, instead of all the files. Default is false.
+
+Sample Plugin Configuration:
+
+```xml
+<project>
+  [...]
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>enforce-files-exist</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireFilesExist>
+                  <files>
+                   <file>\${project.build.outputDirectory}/foo.txt</file>
+                   <file>\${project.build.outputDirectory}/foo2.txt</file>
+                  </files>
+                </requireFilesExist>
+              </rules>
+              <fail>true</fail>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  [...]
+</project>
+```

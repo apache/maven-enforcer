@@ -50,6 +50,10 @@ public final class RequireMatchingCoordinates extends AbstractStandardEnforcerRu
     @Override
     public void execute() throws EnforcerRuleException {
         StringBuilder msgBuilder = new StringBuilder();
+        if (getMessage() != null) {
+            msgBuilder.append(getMessage()).append("\n");
+        }
+        boolean hasError = false;
         if (groupIdPattern != null
                 && !groupIdPattern.matcher(project.getGroupId()).matches()) {
             msgBuilder
@@ -57,34 +61,36 @@ public final class RequireMatchingCoordinates extends AbstractStandardEnforcerRu
                     .append(groupIdPattern)
                     .append("\" but is \"")
                     .append(project.getGroupId())
-                    .append("\"");
+                    .append("\"")
+                    .append("\n");
+            hasError = true;
         }
         if (artifactIdPattern != null
                 && !artifactIdPattern.matcher(project.getArtifactId()).matches()) {
-            if (msgBuilder.length() > 0) {
-                msgBuilder.append(System.lineSeparator());
-            }
             msgBuilder
                     .append("Artifact ID must match pattern \"")
                     .append(artifactIdPattern)
                     .append("\" but is \"")
                     .append(project.getArtifactId())
-                    .append("\"");
+                    .append("\"")
+                    .append("\n");
+            hasError = true;
         }
         if (moduleNameMustMatchArtifactId
                 && !project.isExecutionRoot()
                 && !project.getBasedir().getName().equals(project.getArtifactId())) {
-            if (msgBuilder.length() > 0) {
-                msgBuilder.append(System.lineSeparator());
-            }
             msgBuilder
                     .append("Module directory name must be equal to its artifact ID \"")
                     .append(project.getArtifactId())
                     .append("\" but is \"")
                     .append(project.getBasedir().getName())
-                    .append("\"");
+                    .append("\"")
+                    .append("\n");
+            hasError = true;
         }
-        if (msgBuilder.length() > 0) {
+        if (hasError) {
+            int len = "\n".length();
+            msgBuilder.setLength(msgBuilder.length() - len);
             throw new EnforcerRuleException(msgBuilder.toString());
         }
     }

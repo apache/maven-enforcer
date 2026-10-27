@@ -31,6 +31,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -185,6 +186,18 @@ class BanDistributionManagementTest {
         rule.setAllowSite(true);
         rule.execute();
         // intentionally no assert cause in case of an exception the test will be red.
+    }
+
+    @Test
+    void shouldOutputCustomMessageWhenBanned() {
+        String customMessage = "Custom distribution management message";
+        rule.setMessage(customMessage);
+        setupProjectWithDistributionManagement(new DeploymentRepository(), null);
+
+        assertThatThrownBy(() -> rule.execute())
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageStartingWith(customMessage)
+                .hasMessageContaining("repository in distributionManagement");
     }
 
     private void setupProjectWithoutDistributionManagement() {

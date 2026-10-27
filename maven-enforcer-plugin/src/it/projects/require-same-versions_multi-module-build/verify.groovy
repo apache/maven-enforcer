@@ -17,6 +17,6 @@
  * under the License.
  */
 File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( '[INFO] BUILD FAILURE' )
+assert buildLog.text =~ /\[(INFO|ERROR)\] BUILD FAILURE/
 assert buildLog.text.contains( '[ERROR] Rule 0: org.apache.maven.enforcer.rules.RequireSameVersions failed with message:' )
 assert buildLog.text.contains( 'Top level project has version 1.0-SNAPSHOT but current module has different version 1.1-SNAPSHOT' )

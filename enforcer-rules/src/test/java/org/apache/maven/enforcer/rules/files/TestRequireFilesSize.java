@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.UUID;
@@ -31,7 +32,7 @@ import java.util.UUID;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
-import org.apache.maven.plugin.testing.ArtifactStubFactory;
+import org.apache.maven.enforcer.rules.utils.EnforcerArtifactStubFactory;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
@@ -110,7 +112,7 @@ class TestRequireFilesSize {
 
         File f = File.createTempFile("junit", null, temporaryFolder);
 
-        ArtifactStubFactory factory = new ArtifactStubFactory();
+        EnforcerArtifactStubFactory factory = new EnforcerArtifactStubFactory();
         Artifact a = factory.getReleaseArtifact();
         a.setFile(f);
 
@@ -186,6 +188,42 @@ class TestRequireFilesSize {
     }
 
     @Test
+    void testSymbolicLinkTooSmall() throws Exception {
+        File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
+
+        rule.setFilesList(Arrays.asList(linkFile));
+        rule.setMinsize(10);
+
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+
+        assertNotNull(e.getMessage());
+    }
+
+    @Test
+    void testSymbolicLinkTooBig() throws Exception {
+        File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
+        try (BufferedWriter out = new BufferedWriter(new FileWriter(canonicalFile))) {
+            out.write("123456789101112131415");
+        }
+        assertTrue(canonicalFile.length() > 10);
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
+
+        rule.setFilesList(Arrays.asList(linkFile));
+        rule.setMaxsize(10);
+
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+
+        assertNotNull(e.getMessage());
+    }
+
+    @Test
     void testDirectoryContentOverUpperBound() throws IOException {
         Path d = Files.createTempDirectory(temporaryFolder.toPath(), "junit");
         long totalSize = d.toFile().length();
@@ -197,12 +235,10 @@ class TestRequireFilesSize {
         rule.setFilesList(Collections.singletonList(d.toFile()));
         rule.setMaxsize(totalSize - 1);
         rule.setRecursive(true);
-        try {
-            rule.execute();
-            fail("Should get exception");
-        } catch (EnforcerRuleException e) {
-            assertNotNull(e.getMessage());
-        }
+
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+
+        assertNotNull(e.getMessage());
     }
 
     @Test

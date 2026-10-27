@@ -1,0 +1,157 @@
+---
+title: External Rules
+author: 
+  - George Gastaldi
+date: 2022-08-17
+---
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+# External Rules
+
+This rule will provide rules configuration from an external resource.
+
+It can be a classpath resource present in a `maven-enforcer-plugin` dependency or a local file.
+
+Sample Plugin Configuration:
+
+```xml
+<project>
+    [...]
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${project.version}</version>
+                <dependencies>
+                    <!-- Dependency containing the enforcer/rules.xml file -->
+                    <dependency>
+                        <groupId>org.foo</groupId>
+                        <artifactId>foobar-rules</artifactId>
+                        <version>1.0.0</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <externalRules>
+                                    <!-- enforcer/rules.xml is supposed to be a classpath resource present -->
+                                    <!-- in org.foo:foobar-rules dependency of maven-enforcer-plugin defined above -->
+                                    <location>classpath:enforcer/rules.xml</location>
+                                </externalRules>
+                                <externalRules>
+                                    <!-- You can add multiple <ExternalRules> elements if you need to enforce -->
+                                    <!-- rules from multiple resources. -->
+                                    <!-- src/build/rules.xml is a local file path relative to \${project.basedir} -->
+                                    <location>src/build/rules.xml</location>
+                                </externalRules>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    [...]
+</project>
+```
+
+# The External Enforcer Rule Descriptor
+
+Here is a sample rules file. The rules element expects the same content as in the [Enforcer Mojo rules configuration](https://maven.apache.org/enforcer/maven-enforcer-plugin/enforce-mojo.html#rules):
+
+```xml
+<enforcer>
+    <rules>
+        <dependencyConvergence/>
+        <bannedDependencies>
+            <excludes>
+                <exclude>org.jboss.spec.javax.annotation:jboss-annotations-api_1.2_spec</exclude>
+            </excludes>
+            <includes>
+                <include>jakarta.xml.bind:jakarta.xml.bind-api:*:*:test</include>
+            </includes>
+        </bannedDependencies>
+    </rules>
+</enforcer>
+```
+
+# `xsltLocation`: Rule Descriptor Transformation (since Enforcer 3.6.0)
+
+In addition to `location` parameter, `externalRules` accepts another optional parameter `xsltLocation`.
+
+It is useful, when you want to consume rules defined in an external project, but you need to remove or adapt some of those for the local circumstances.
+
+`xsltLocation` specifies the location of an XSLT file used to transform the rule document available via `location` before it is applied. If it starts with `classpath:` the resource is read from the classpath. Otherwise, it is handled as a filesystem path, either absolute, or relative to `${esc.d}{project.basedir}`.
+
+Here is an example: If `location` points at the following rule set:
+
+```xml
+<enforcer>
+  <rules>
+    <bannedDependencies>
+       <excludes>
+         <exclude>com.google.code.findbugs:jsr305</exclude>
+         <exclude>com.google.guava:listenablefuture</exclude>
+       </excludes>
+    </bannedDependencies>
+  </rules>
+</enforcer>
+```
+
+and if `xsltLocation` points at the following transformation
+
+```xml
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:output omit-xml-declaration="yes"/>
+
+  <!-- Copy everything unless there is a template with a more specific matcher -->
+  <xsl:template match="node()|@*">
+    <xsl:copy>
+      <xsl:apply-templates select="node()|@*"/>
+    </xsl:copy>
+  </xsl:template>
+
+  <!-- An empty template will effectively remove the matching nodes -->
+  <xsl:template match=
+"//bannedDependencies/excludes/exclude[contains(text(), 'com.google.code.findbugs:jsr305')]"/>
+</xsl:stylesheet>
+```
+
+Then the effective rule set will look like to following:
+
+```xml
+<enforcer>
+  <rules>
+    <bannedDependencies>
+       <excludes>
+         <exclude>com.google.guava:listenablefuture</exclude>
+       </excludes>
+    </bannedDependencies>
+  </rules>
+</enforcer>
+```

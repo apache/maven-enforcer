@@ -20,6 +20,8 @@ package org.apache.maven.enforcer.rules.files;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -57,6 +59,34 @@ class TestRequireFilesExist {
     @Test
     void testFileOsIndependentExists() {
         rule.setFilesList(Collections.singletonList(new File("POM.xml")));
+
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> rule.execute());
+
+        assertNotNull(e.getMessage());
+    }
+
+    @Test
+    void testSymbolicLinkExists() throws Exception {
+        File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
+
+        rule.setFilesList(Collections.singletonList(linkFile));
+
+        rule.execute();
+    }
+
+    @Test
+    void testSymbolicLinkTargetDoesNotExist() throws Exception {
+        File canonicalFile = File.createTempFile("canonical_", null, temporaryFolder);
+        File linkFile = Files.createSymbolicLink(
+                        Paths.get(temporaryFolder.getAbsolutePath(), "symbolic.link"),
+                        Paths.get(canonicalFile.getAbsolutePath()))
+                .toFile();
+        canonicalFile.delete();
+        rule.setFilesList(Collections.singletonList(linkFile));
 
         EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> rule.execute());
 
@@ -108,6 +138,20 @@ class TestRequireFilesExist {
         EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> rule.execute());
 
         assertEquals("Some required files are missing:\n" + f.getPath() + "\n", e.getMessage());
+    }
+
+    @Test
+    void testFileExistsThroughDotDot() throws Exception {
+        File nested = new File(temporaryFolder, "src/a/b");
+        assertTrue(nested.mkdirs());
+        File readme = new File(temporaryFolder, "README.adoc");
+        Files.write(readme.toPath(), "ok".getBytes());
+
+        File viaDotDot = new File(nested, "../../../README.adoc");
+        assertTrue(viaDotDot.exists());
+
+        rule.setFilesList(Collections.singletonList(viaDotDot));
+        rule.execute();
     }
 
     @Test

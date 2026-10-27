@@ -21,6 +21,7 @@ package org.apache.maven.enforcer.rules.version;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,6 +77,8 @@ class TestRequireJavaVersion {
         assertThat(RequireJavaVersion.normalizeJDKVersion("9")).isEqualTo("9");
 
         assertThat(RequireJavaVersion.normalizeJDKVersion("17")).isEqualTo("17");
+        // 5-part runtime strings (Temurin 21.0.10.0.1) collapse to 4 tokens
+        assertThat(RequireJavaVersion.normalizeJDKVersion("21.0.10.0.1")).isEqualTo("21.0.10-0");
     }
 
     /**
@@ -92,6 +95,29 @@ class TestRequireJavaVersion {
         // test the singular version
         rule.execute();
         // intentionally no assertThat(...) because we don't expect and exception.
+    }
+
+    /**
+     * CI often pins {@code requireJavaVersion} to {@code ${java.version}}. That string can have more
+     * than four numeric tokens ({@code 21.0.10.0.1}); normalize then yields {@code 21.0.10-0}, which
+     * is not in the exact required range. The rule must accept the raw runtime string first (#967).
+     */
+    @Test
+    void exactFivePartJavaVersionIsAllowedEvenWhenNormalizedFormDiffers() throws EnforcerRuleException {
+        String exact = "21.0.10.0.1";
+        rule.enforceVersion("JDK", exact, new DefaultArtifactVersion(exact));
+    }
+
+    @Test
+    void normalizedFivePartJavaVersionIsNotInTheExactRequiredRange() {
+        assertThatThrownBy(() -> rule.enforceVersion("JDK", "21.0.10.0.1", new DefaultArtifactVersion("21.0.10-0")))
+                .isInstanceOf(EnforcerRuleException.class);
+    }
+
+    @Test
+    void settingsTheJavaVersionAsExactRuntimeVersionShouldNotFail() throws EnforcerRuleException {
+        rule.setVersion(SystemUtils.JAVA_VERSION);
+        rule.execute();
     }
 
     @Test

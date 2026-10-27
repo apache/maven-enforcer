@@ -29,6 +29,7 @@ import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
 
 import static java.util.Optional.ofNullable;
@@ -40,21 +41,26 @@ import static java.util.Optional.ofNullable;
  */
 public final class ArtifactUtils {
 
+    public static Artifact toArtifact(DependencyNode node) {
+        if (node.getDependency() == null) {
+            return RepositoryUtils.toArtifact(node.getArtifact());
+        }
+        return toArtifact(node.getDependency());
+    }
+
     /**
-     * Converts {@link DependencyNode} to {@link Artifact}; in comparison
+     * Converts {@link Dependency} to {@link Artifact}; in comparison
      * to {@link RepositoryUtils#toArtifact(org.eclipse.aether.artifact.Artifact)}, this method
      * assigns {@link Artifact#getScope()} and {@link Artifact#isOptional()} based on
      * the dependency information from the node.
      *
-     * @param node {@link DependencyNode} to convert to {@link Artifact}
+     * @param dependency {@link Dependency} to convert to {@link Artifact}
      * @return target artifact
      */
-    public static Artifact toArtifact(DependencyNode node) {
-        Artifact artifact = RepositoryUtils.toArtifact(node.getArtifact());
-        ofNullable(node.getDependency()).ifPresent(dependency -> {
-            ofNullable(dependency.getScope()).ifPresent(artifact::setScope);
-            artifact.setOptional(dependency.isOptional());
-        });
+    public static Artifact toArtifact(Dependency dependency) {
+        Artifact artifact = RepositoryUtils.toArtifact(dependency.getArtifact());
+        ofNullable(dependency.getScope()).ifPresent(artifact::setScope);
+        artifact.setOptional(dependency.isOptional());
         return artifact;
     }
 

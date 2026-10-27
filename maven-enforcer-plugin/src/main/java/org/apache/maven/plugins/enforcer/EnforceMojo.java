@@ -18,6 +18,8 @@
  */
 package org.apache.maven.plugins.enforcer;
 
+import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +42,6 @@ import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.PluginParameterExpressionEvaluator;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -152,13 +153,13 @@ public class EnforceMojo extends AbstractMojo {
     @Parameter(property = "enforcer.ignoreCache", defaultValue = "false")
     protected boolean ignoreCache = false;
 
-    @Component
+    @Inject
     private PlexusContainer container;
 
-    @Component
+    @Inject
     private EnforcerRuleManager enforcerRuleManager;
 
-    @Component
+    @Inject
     private EnforcerRuleCache ruleCache;
 
     private List<String> rulesToExecute;

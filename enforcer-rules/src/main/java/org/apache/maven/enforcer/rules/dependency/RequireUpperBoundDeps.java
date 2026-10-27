@@ -38,6 +38,7 @@ import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.enforcer.rules.utils.ParentNodeProvider;
 import org.apache.maven.enforcer.rules.utils.ParentsVisitor;
+import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
 import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
@@ -46,7 +47,7 @@ import static org.apache.maven.artifact.Artifact.SCOPE_PROVIDED;
 import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
 
 /**
- * Rule to enforce that the resolved dependency is also the most recent one of all transitive dependencies.
+ * Rule to enforce that the resolved dependency is the most recent one of all transitive dependencies.
  *
  * @author Geoffrey De Smet
  * @since 1.1
@@ -74,7 +75,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
     private List<String> includes = null;
 
     /**
-     * Scope to exclude.
+     * Scopes to exclude.
      */
     private List<String> excludedScopes = Arrays.asList(SCOPE_TEST, SCOPE_PROVIDED);
 
@@ -106,9 +107,14 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
     @Override
     public void execute() throws EnforcerRuleException {
-        DependencyNode node = resolverUtil.resolveTransitiveDependenciesVerbose(excludedScopes);
+        // Test-scope paths can still win mediation for a dependency also used by an included path.
+        List<String> scopesExcludedDuringResolution =
+                excludedScopes == null ? new ArrayList<>() : new ArrayList<>(excludedScopes);
+        scopesExcludedDuringResolution.removeAll(Collections.singleton(SCOPE_TEST));
+        DependencyNode node = resolverUtil.resolveTransitiveDependenciesVerbose(scopesExcludedDuringResolution);
         upperBoundDepsVisitor = new RequireUpperBoundDepsVisitor()
                 .setUniqueVersions(uniqueVersions)
+                .setExcludedScopes(excludedScopes)
                 .setIncludes(includes);
         getLog().debug(() -> resolverUtil.dumpTree(node));
         node.accept(upperBoundDepsVisitor);
@@ -141,6 +147,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
                 .append(getFullArtifactName(conflict.get(0), false))
                 .append(". Paths to dependency are:")
                 .append(System.lineSeparator());
+
         if (conflict.size() > 0) {
             errorMessage.append(buildTreeString(conflict.get(0)));
         }
@@ -148,7 +155,76 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
             errorMessage.append("and").append(System.lineSeparator());
             errorMessage.append(buildTreeString(node));
         }
+
+        appendDependencyManagementSuggestion(errorMessage, conflict);
+
         return errorMessage.toString();
+    }
+
+    private void appendDependencyManagementSuggestion(StringBuilder errorMessage, List<DependencyNode> conflict) {
+        if (conflict == null || conflict.isEmpty()) {
+            return;
+        }
+
+        org.eclipse.aether.artifact.Artifact artifact = conflict.get(0).getArtifact();
+        ArtifactVersion highestVersion = null;
+
+        for (DependencyNode node : conflict) {
+            String versionStr = DependencyManagerUtils.getPremanagedVersion(node);
+            if (versionStr == null) {
+                org.eclipse.aether.artifact.Artifact nodeArtifact = node.getArtifact();
+                versionStr = uniqueVersions ? nodeArtifact.getVersion() : nodeArtifact.getBaseVersion();
+            }
+
+            ArtifactVersion version = new DefaultArtifactVersion(versionStr);
+            if (highestVersion == null || version.compareTo(highestVersion) > 0) {
+                highestVersion = version;
+            }
+        }
+
+        if (highestVersion == null) {
+            return;
+        }
+
+        errorMessage
+                .append(System.lineSeparator())
+                .append("To fix this, add the following to your <dependencyManagement> section:")
+                .append(System.lineSeparator())
+                .append("<dependencyManagement>")
+                .append(System.lineSeparator())
+                .append("  <dependencies>")
+                .append(System.lineSeparator())
+                .append("    <dependency>")
+                .append(System.lineSeparator())
+                .append("      <groupId>")
+                .append(artifact.getGroupId())
+                .append("</groupId>")
+                .append(System.lineSeparator())
+                .append("      <artifactId>")
+                .append(artifact.getArtifactId())
+                .append("</artifactId>")
+                .append(System.lineSeparator())
+                .append("      <version>")
+                .append(highestVersion)
+                .append("</version>")
+                .append(System.lineSeparator());
+
+        String classifier = artifact.getClassifier();
+        if (classifier != null && !classifier.isEmpty()) {
+            errorMessage
+                    .append("      <classifier>")
+                    .append(classifier)
+                    .append("</classifier>")
+                    .append(System.lineSeparator());
+        }
+
+        errorMessage
+                .append("    </dependency>")
+                .append(System.lineSeparator())
+                .append("  </dependencies>")
+                .append(System.lineSeparator())
+                .append("</dependencyManagement>")
+                .append(System.lineSeparator());
     }
 
     private StringBuilder buildTreeString(DependencyNode node) {
@@ -158,8 +234,9 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
             StringBuilder line = new StringBuilder(getFullArtifactName(currentNode, false));
 
             if (DependencyManagerUtils.getPremanagedVersion(currentNode) != null) {
-                line.append(" (managed) <-- ");
-                line.append(getFullArtifactName(currentNode, true));
+                line.append(" (version managed from ");
+                line.append(DependencyManagerUtils.getPremanagedVersion(currentNode));
+                line.append(")");
             }
 
             loc.add(line.toString());
@@ -203,10 +280,16 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
 
         private final ParentsVisitor parentsVisitor = new ParentsVisitor();
         private boolean uniqueVersions;
+        private List<String> excludedScopes = Collections.emptyList();
         private List<String> includes = null;
 
         public RequireUpperBoundDepsVisitor setUniqueVersions(boolean uniqueVersions) {
             this.uniqueVersions = uniqueVersions;
+            return this;
+        }
+
+        public RequireUpperBoundDepsVisitor setExcludedScopes(List<String> excludedScopes) {
+            this.excludedScopes = excludedScopes != null ? excludedScopes : Collections.emptyList();
             return this;
         }
 
@@ -240,7 +323,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
         public List<List<DependencyNode>> getConflicts() {
             List<List<DependencyNode>> output = new ArrayList<>();
             for (List<DependencyNodeHopCountPair> pairs : keyToPairsMap.values()) {
-                if (containsConflicts(pairs)) {
+                if (containsNonExcludedScope(pairs) && containsConflicts(pairs)) {
                     List<DependencyNode> outputSubList = new ArrayList<>(pairs.size());
                     for (DependencyNodeHopCountPair pair : pairs) {
                         outputSubList.add(pair.getNode());
@@ -249,6 +332,13 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
                 }
             }
             return output;
+        }
+
+        private boolean containsNonExcludedScope(List<DependencyNodeHopCountPair> pairs) {
+            return pairs.stream().anyMatch(pair -> {
+                Dependency dependency = pair.getNode().getDependency();
+                return dependency == null || !excludedScopes.contains(dependency.getScope());
+            });
         }
 
         private boolean containsConflicts(List<DependencyNodeHopCountPair> pairs) {

@@ -19,17 +19,22 @@
 package org.apache.maven.enforcer.rules;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.enforcer.rules.utils.EnforcerArtifactStubFactory;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.testing.ArtifactStubFactory;
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginManagement;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +44,7 @@ import static org.mockito.Mockito.when;
  * @author <a href="mailto:brianf@apache.org">Brian Fox</a>
  */
 class TestRequireSameVersions {
-    private static final ArtifactStubFactory ARTIFACT_FACTORY = new ArtifactStubFactory();
+    private static final EnforcerArtifactStubFactory ARTIFACT_FACTORY = new EnforcerArtifactStubFactory();
 
     private MavenProject project;
     private RequireSameVersions rule;
@@ -251,6 +256,150 @@ class TestRequireSameVersions {
         when(project.getReportArtifacts()).thenReturn(reportArtifacts);
 
         assertThatCode(rule::execute).isInstanceOf(EnforcerRuleException.class);
+    }
+
+    @Test
+    void testReportPluginUsesManagedVersionWhenArtifactVersionIsRelease() throws IOException {
+        String version = "3.5.3";
+
+        Artifact buildPlugin =
+                ARTIFACT_FACTORY.createArtifact("org.apache.maven.plugins", "maven-surefire-plugin", version);
+        Artifact reportPlugin =
+                ARTIFACT_FACTORY.createArtifact("org.apache.maven.plugins", "maven-surefire-report-plugin", "RELEASE");
+
+        rule.addBuildPlugin(extractGaString(buildPlugin));
+        rule.addReportPlugin(extractGaString(reportPlugin));
+
+        HashSet<Artifact> pluginArtifacts = new HashSet<>();
+        pluginArtifacts.add(buildPlugin);
+
+        HashSet<Artifact> reportArtifacts = new HashSet<>();
+        reportArtifacts.add(reportPlugin);
+
+        when(project.getArtifacts()).thenReturn(new HashSet<>());
+        when(project.getPluginArtifacts()).thenReturn(pluginArtifacts);
+        when(project.getReportArtifacts()).thenReturn(reportArtifacts);
+
+        Plugin managedReportPlugin = new Plugin();
+        managedReportPlugin.setGroupId("org.apache.maven.plugins");
+        managedReportPlugin.setArtifactId("maven-surefire-report-plugin");
+        managedReportPlugin.setVersion(version);
+
+        Build build = new Build();
+        PluginManagement pluginManagement = new PluginManagement();
+        pluginManagement.setPlugins(Collections.singletonList(managedReportPlugin));
+        build.setPluginManagement(pluginManagement);
+
+        when(project.getBuild()).thenReturn(build);
+
+        assertThatCode(rule::execute).doesNotThrowAnyException();
+    }
+
+    @Test
+    void testReportPluginUsesBuildPluginVersionBeforeManagedVersion() throws IOException {
+        String buildPluginVersion = "3.5.3";
+        String managedVersion = "3.6.0";
+
+        Artifact buildPlugin = ARTIFACT_FACTORY.createArtifact(
+                "org.apache.maven.plugins", "maven-surefire-plugin", buildPluginVersion);
+        Artifact reportPlugin =
+                ARTIFACT_FACTORY.createArtifact("org.apache.maven.plugins", "maven-surefire-report-plugin", "RELEASE");
+
+        rule.addBuildPlugin(extractGaString(buildPlugin));
+        rule.addReportPlugin(extractGaString(reportPlugin));
+
+        HashSet<Artifact> pluginArtifacts = new HashSet<>();
+        pluginArtifacts.add(buildPlugin);
+
+        HashSet<Artifact> reportArtifacts = new HashSet<>();
+        reportArtifacts.add(reportPlugin);
+
+        when(project.getArtifacts()).thenReturn(new HashSet<>());
+        when(project.getPluginArtifacts()).thenReturn(pluginArtifacts);
+        when(project.getReportArtifacts()).thenReturn(reportArtifacts);
+
+        Plugin buildReportPlugin = new Plugin();
+        buildReportPlugin.setGroupId("org.apache.maven.plugins");
+        buildReportPlugin.setArtifactId("maven-surefire-report-plugin");
+        buildReportPlugin.setVersion(buildPluginVersion);
+
+        Plugin managedReportPlugin = new Plugin();
+        managedReportPlugin.setGroupId("org.apache.maven.plugins");
+        managedReportPlugin.setArtifactId("maven-surefire-report-plugin");
+        managedReportPlugin.setVersion(managedVersion);
+
+        Build build = new Build();
+        build.setPlugins(Collections.singletonList(buildReportPlugin));
+
+        PluginManagement pluginManagement = new PluginManagement();
+        pluginManagement.setPlugins(Collections.singletonList(managedReportPlugin));
+        build.setPluginManagement(pluginManagement);
+
+        when(project.getBuild()).thenReturn(build);
+
+        assertThatCode(rule::execute).doesNotThrowAnyException();
+    }
+
+    @Test
+    void testReportPluginFailsWhenManagedVersionDiffersFromBuildPlugin() throws IOException {
+        String buildPluginVersion = "3.5.3";
+        String managedVersion = "3.6.0";
+
+        Artifact buildPlugin = ARTIFACT_FACTORY.createArtifact(
+                "org.apache.maven.plugins", "maven-surefire-plugin", buildPluginVersion);
+        Artifact reportPlugin =
+                ARTIFACT_FACTORY.createArtifact("org.apache.maven.plugins", "maven-surefire-report-plugin", "RELEASE");
+
+        rule.addBuildPlugin(extractGaString(buildPlugin));
+        rule.addReportPlugin(extractGaString(reportPlugin));
+
+        HashSet<Artifact> pluginArtifacts = new HashSet<>();
+        pluginArtifacts.add(buildPlugin);
+
+        HashSet<Artifact> reportArtifacts = new HashSet<>();
+        reportArtifacts.add(reportPlugin);
+
+        when(project.getArtifacts()).thenReturn(new HashSet<>());
+        when(project.getPluginArtifacts()).thenReturn(pluginArtifacts);
+        when(project.getReportArtifacts()).thenReturn(reportArtifacts);
+
+        Plugin managedReportPlugin = new Plugin();
+        managedReportPlugin.setGroupId("org.apache.maven.plugins");
+        managedReportPlugin.setArtifactId("maven-surefire-report-plugin");
+        managedReportPlugin.setVersion(managedVersion);
+
+        Build build = new Build();
+        PluginManagement pluginManagement = new PluginManagement();
+        pluginManagement.setPlugins(Collections.singletonList(managedReportPlugin));
+        build.setPluginManagement(pluginManagement);
+
+        when(project.getBuild()).thenReturn(build);
+
+        assertThatThrownBy(rule::execute).isInstanceOf(EnforcerRuleException.class);
+    }
+
+    @Test
+    void shouldOutputCustomMessageWhenVersionsDiffer() throws IOException {
+        String customMessage = "Custom same versions message";
+        rule.setMessage(customMessage);
+
+        Artifact dep1 = constructArtifact("acme-dep", "1.0");
+        Artifact dep2 = constructArtifact("acme-dep2", "2.0");
+
+        HashSet<Artifact> dependencies = new HashSet<>();
+        dependencies.add(dep1);
+        dependencies.add(dep2);
+
+        when(project.getArtifacts()).thenReturn(dependencies);
+        when(project.getPluginArtifacts()).thenReturn(new HashSet<>());
+        when(project.getReportArtifacts()).thenReturn(new HashSet<>());
+
+        rule.addDependency("org.acme:acme-dep");
+        rule.addDependency("org.acme:acme-dep2");
+
+        assertThatThrownBy(() -> rule.execute())
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageStartingWith(customMessage);
     }
 
     private static Artifact constructArtifact(String artifactId, String version) throws IOException {

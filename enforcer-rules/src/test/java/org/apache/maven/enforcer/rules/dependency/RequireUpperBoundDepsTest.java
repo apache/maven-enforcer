@@ -62,6 +62,33 @@ class RequireUpperBoundDepsTest {
         assertThatCode(rule::execute)
                 .isInstanceOf(EnforcerRuleException.class)
                 .hasMessageContaining("default-group:childA:1.0.0:classifier")
-                .hasMessageContaining("default-group:childA:2.0.0:classifier");
+                .hasMessageContaining("default-group:childA:2.0.0:classifier")
+                .hasMessageContaining("<groupId>default-group</groupId>")
+                .hasMessageContaining("<artifactId>childA</artifactId>")
+                .hasMessageContaining("<version>2.0.0</version>")
+                .hasMessageContaining("<classifier>classifier</classifier>");
+    }
+
+    @Test
+    void testManagedVersion() throws Exception {
+
+        rule.setLog(mock(EnforcerLogger.class));
+
+        when(resolverUtil.resolveTransitiveDependenciesVerbose(anyList()))
+                .thenReturn(new DependencyNodeBuilder()
+                        .withType(DependencyNodeBuilder.Type.POM)
+                        .withChildNode(new DependencyNodeBuilder()
+                                .withArtifactId("childA")
+                                .withVersion("1.0.0")
+                                .withPremanagedVersion("2.0.0")
+                                .build())
+                        .build());
+
+        assertThatCode(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining("default-group:childA:1.0.0:classifier (version managed from 2.0.0)")
+                .hasMessageContaining("<groupId>default-group</groupId>")
+                .hasMessageContaining("<artifactId>childA</artifactId>")
+                .hasMessageContaining("<version>2.0.0</version>");
     }
 }

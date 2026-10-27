@@ -18,8 +18,23 @@ version: 2
 updates:
 - package-ecosystem: maven
   directory: "/"
+  exclude-paths:
+    - "enforcer-api/src/custom-rule-sample/**"
+    - "enforcer-rules/src/test/resources/**"
+    - "maven-enforcer-extension/src/it/**"
+    - "maven-enforcer-plugin/src/it/**"
   schedule:
     interval: daily
+  ignore:
+    # mrm-maven-plugin 2.x requires Java 17
+    - dependency-name: org.codehaus.mojo:mrm-maven-plugin
+      versions: [">= 2.0.0"]
+    # Mockito 5 requires Java 11; the build still runs on JDK 8
+    - dependency-name: "org.mockito:*"
+      versions: [">= 5.0.0"]
+    # Maven 3 so use SLF4J 1.7.x
+    - dependency-name: "org.slf4j:*"
+      versions: [">= 2.0.0"]
 
 - package-ecosystem: "github-actions"
   directory: "/"

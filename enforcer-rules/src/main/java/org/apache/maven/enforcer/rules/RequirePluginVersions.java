@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.BuildFailureException;
 import org.apache.maven.RepositoryUtils;
 import org.apache.maven.artifact.Artifact;
@@ -71,7 +72,6 @@ import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.codehaus.plexus.util.StringUtils;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
@@ -610,7 +610,7 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
             if (pluginsForLifecycle != null && !pluginsForLifecycle.isEmpty()) {
                 String pluginList[] = pluginsForLifecycle.split(",");
                 for (String plugin : pluginList) {
-                    plugin = StringUtils.strip(plugin);
+                    plugin = plugin == null ? null : plugin.trim();
                     getLog().debug("    plugin = " + plugin);
                     String tokens[] = plugin.split(":");
                     getLog().debug("    GAV = " + Arrays.asList(tokens));

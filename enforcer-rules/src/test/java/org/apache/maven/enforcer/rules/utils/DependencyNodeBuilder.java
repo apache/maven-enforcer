@@ -29,6 +29,7 @@ import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.graph.DefaultDependencyNode;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
 
 import static java.util.Optional.ofNullable;
 import static org.apache.maven.artifact.Artifact.SCOPE_COMPILE;
@@ -60,6 +61,8 @@ public class DependencyNodeBuilder {
 
     private String version;
 
+    private String premanagedVersion;
+
     private Type type;
 
     private String scope;
@@ -80,6 +83,11 @@ public class DependencyNodeBuilder {
 
     public DependencyNodeBuilder withVersion(String val) {
         version = val;
+        return this;
+    }
+
+    public DependencyNodeBuilder withPremanagedVersion(String val) {
+        premanagedVersion = val;
         return this;
     }
 
@@ -111,8 +119,16 @@ public class DependencyNodeBuilder {
                 ofNullable(type).map(Type::asString).orElse("pom"),
                 ofNullable(version).orElse("default-version"),
                 ofNullable(type).orElse(Type.JAR).asArtifactType());
+
         Dependency dependency = new Dependency(artifact, ofNullable(scope).orElse(SCOPE_COMPILE), optional);
-        DependencyNode instance = new DefaultDependencyNode(dependency);
+
+        DefaultDependencyNode instance = new DefaultDependencyNode(dependency);
+
+        if (premanagedVersion != null) {
+            instance.setData(DependencyManagerUtils.NODE_DATA_PREMANAGED_VERSION, premanagedVersion);
+            instance.setManagedBits(DependencyNode.MANAGED_VERSION);
+        }
+
         instance.setChildren(children);
         return instance;
     }
