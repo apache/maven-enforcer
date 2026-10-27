@@ -35,6 +35,6 @@ public final class RequireFilesDontExist extends AbstractRequireFiles {
 
     @Override
     String getErrorMsg() {
-        return "Some files should not exist:" + System.lineSeparator();
+        return "Some files should not exist:\n";
     }
 }

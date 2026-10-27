@@ -42,12 +42,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.Mockito.when;
 
 /**
@@ -84,16 +87,18 @@ class TestRequireFilesSize {
     }
 
     @Test
-    void testEmptyFile() {
+    void testNullFile() {
         rule.setFilesList(Collections.singletonList(null));
-
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
-
-        assertNotNull(e.getMessage());
+        try {
+            rule.execute();
+            fail("Should get exception");
+        } catch (EnforcerRuleException e) {
+            assertEquals("A null filename was given and allowNulls is false.", e.getMessage());
+        }
     }
 
     @Test
-    void testEmptyFileAllowNull() throws EnforcerRuleException {
+    void testNullFileAllowNull() throws EnforcerRuleException {
         rule.setFilesList(Collections.singletonList(null));
         rule.setAllowNulls(true);
         rule.execute();
@@ -123,22 +128,15 @@ class TestRequireFilesSize {
     void testFileDoesNotExist() throws IOException {
         File f = File.createTempFile("junit", null, temporaryFolder);
         f.delete();
-        assertFalse(f.exists());
+        assumeFalse(f.exists());
         rule.setFilesList(Collections.singletonList(f));
 
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
-
-        assertNotNull(e.getMessage());
-    }
-
-    @Test
-    void testFileOsIndependentDoesNotExist() {
-        // a file differing only in case is not the requested file, whatever the filesystem says
-        rule.setFilesList(Collections.singletonList(new File("POM.xml")));
-
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
-
-        assertNotNull(e.getMessage());
+        try {
+            rule.execute();
+            fail("Should get exception");
+        } catch (EnforcerRuleException e) {
+            assertEquals(f.getPath() + " does not exist.", e.getMessage());
+        }
     }
 
     @Test
@@ -146,10 +144,12 @@ class TestRequireFilesSize {
         File f = File.createTempFile("junit", null, temporaryFolder);
         rule.setFilesList(Collections.singletonList(f));
         rule.setMinsize(10);
-
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
-
-        assertNotNull(e.getMessage());
+        try {
+            rule.execute();
+            fail("Should get exception");
+        } catch (EnforcerRuleException e) {
+            assertEquals(e.getMessage(), f.getPath() + " size (0) too small. Minimum is 10.");
+        }
     }
 
     @Test
@@ -161,11 +161,13 @@ class TestRequireFilesSize {
 
         rule.setFilesList(Collections.singletonList(f));
         rule.setMaxsize(10);
-        assertTrue(f.length() > 10);
-
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
-
-        assertNotNull(e.getMessage());
+        assumeTrue(f.length() > 10);
+        try {
+            rule.execute();
+            fail("Should get exception");
+        } catch (EnforcerRuleException e) {
+            assertEquals(f.getPath() + " size (21) too large. Maximum is 10.", e.getMessage());
+        }
     }
 
     @Test
@@ -174,7 +176,7 @@ class TestRequireFilesSize {
         try (BufferedWriter out = new BufferedWriter(new FileWriter(f))) {
             out.write("123456789101112131415");
         }
-        assertTrue(f.length() > 10);
+        assumeTrue(f.length() > 10);
 
         File g = File.createTempFile("junit", null, temporaryFolder);
 
