@@ -49,6 +49,11 @@
       <artifactId>plexus-xml</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.sisu</groupId>
+      <artifactId>org.eclipse.sisu.plexus</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
