@@ -69,7 +69,8 @@ class DependencyVersionMap implements DependencyVisitor, ParentNodeProvider {
     }
 
     private String constructKey(Artifact artifact) {
-        return artifact.getGroupId() + ":" + artifact.getArtifactId();
+        return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getClassifier() + ":"
+                + artifact.getExtension();
     }
 
     public void addDependency(DependencyNode node) {
