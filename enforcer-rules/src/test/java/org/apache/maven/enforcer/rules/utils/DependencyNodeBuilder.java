@@ -63,6 +63,8 @@ public class DependencyNodeBuilder {
 
     private String premanagedVersion;
 
+    private String classifier;
+
     private Type type;
 
     private String scope;
@@ -91,6 +93,11 @@ public class DependencyNodeBuilder {
         return this;
     }
 
+    public DependencyNodeBuilder withClassifier(String val) {
+        classifier = val;
+        return this;
+    }
+
     public DependencyNodeBuilder withType(Type val) {
         type = val;
         return this;
@@ -115,7 +122,7 @@ public class DependencyNodeBuilder {
         Artifact artifact = new DefaultArtifact(
                 ofNullable(groupId).orElse("default-group"),
                 ofNullable(artifactId).orElse("default-artifact"),
-                "classifier",
+                ofNullable(classifier).orElse("classifier"),
                 ofNullable(type).map(Type::asString).orElse("pom"),
                 ofNullable(version).orElse("default-version"),
                 ofNullable(type).orElse(Type.JAR).asArtifactType());
