@@ -79,7 +79,6 @@
   <properties>
     <mavenVersion>3.10.0</mavenVersion>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
-    <javaVersion>8</javaVersion>
     <mockito.version>4.11.0</mockito.version>
     <project.build.outputTimestamp>2026-10-26T22:26:09Z</project.build.outputTimestamp>
     <!-- the same as in Maven  -->
