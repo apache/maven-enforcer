@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.maven.enforcer.rule.api.AbstractEnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerRule;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleError;
@@ -31,6 +32,7 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleHelper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.enforcer.internal.EnforcerRuleCache;
 import org.apache.maven.plugins.enforcer.internal.EnforcerRuleDesc;
 import org.apache.maven.plugins.enforcer.internal.EnforcerRuleManager;
 import org.assertj.core.api.Assertions;
@@ -62,6 +64,9 @@ class TestEnforceMojo {
 
     @Mock
     private EnforcerRuleManager ruleManager;
+
+    @Mock
+    private EnforcerRuleCache ruleCache;
 
     @Mock
     private MavenSession session;
@@ -391,6 +396,67 @@ class TestEnforceMojo {
         mojo.setCommandLineRules(Collections.emptyList());
 
         Mockito.verifyNoInteractions(logSpy);
+    }
+
+    @Test
+    void warnLevelRulesAreLoggedAsWarningsAndSkippedRulesAreNotExecuted() throws Exception {
+        mojo.setFail(true);
+        mojo.setRulesToSkip(Collections.singletonList("fail2"));
+
+        Log logSpy = setupLogSpy();
+
+        WarningRule unnamed = new WarningRule(null);
+        WarningRule named = new WarningRule("fail1");
+        WarningRule skipped = new WarningRule("fail2");
+        WarningRule last = new WarningRule("fail3");
+        when(ruleManager.createRules(any(), any()))
+                .thenReturn(Arrays.asList(
+                        new EnforcerRuleDesc("warningRule", unnamed),
+                        new EnforcerRuleDesc(named.getRuleName(), named),
+                        new EnforcerRuleDesc(skipped.getRuleName(), skipped),
+                        new EnforcerRuleDesc(last.getRuleName(), last)));
+
+        mojo.execute();
+
+        String ruleClass = WarningRule.class.getName();
+        verify(logSpy).warn(Mockito.contains("Rule 0: " + ruleClass + " warned with message:"));
+        verify(logSpy).warn(Mockito.contains("Rule 1: " + ruleClass + "(fail1) warned with message:"));
+        verify(logSpy).warn(Mockito.contains("Rule 2: " + ruleClass + "(fail3) warned with message:"));
+        verify(logSpy, Mockito.times(3)).warn(Mockito.contains(" warned with message:"));
+        assertFalse(skipped.isExecuted(), "Expected the rule named in rulesToSkip not to be executed.");
+        assertTrue(last.isExecuted(), "Expected the rule after the skipped one to be executed.");
+    }
+
+    /** A rule that always fails at {@link EnforcerLevel#WARN} level. */
+    private static class WarningRule extends AbstractEnforcerRule {
+
+        private final String ruleName;
+
+        private boolean executed;
+
+        WarningRule(String ruleName) {
+            this.ruleName = ruleName;
+        }
+
+        @Override
+        public EnforcerLevel getLevel() {
+            return EnforcerLevel.WARN;
+        }
+
+        @Override
+        public String getRuleName() {
+            return ruleName;
+        }
+
+        boolean isExecuted() {
+            return executed;
+        }
+
+        @Override
+        public void execute() throws EnforcerRuleException {
+            executed = true;
+            throw new EnforcerRuleException("Always fails!");
+        }
     }
 
     private Log setupLogSpy() {
