@@ -17,11 +17,14 @@
  * under the License.
  */
 
-File file = new File( basedir, "build.log" );
-assert file.exists();
+// require-file-checksum compares the checksum of LICENSE with line separators as checked out
+def license = new File(basedir, "LICENSE")
+license.write(license.text.normalize())
 
-String text = file.getText("utf-8");
-
-assert ! text.contains( '[INFO] Adding ignore: module-info' )
-
-return true;
+// require-files-size sums the sizes below this directory: 3 files of 4 KB
+def dir = new File(basedir, "test")
+dir.mkdir()
+def content = "A" * 4096
+for (int i = 1; i <= 3; i++) {
+    new File(dir, "file${i}.txt").text = content
+}

@@ -62,6 +62,32 @@
                                         <include>org.slf4j:slf4j-api:[1.6.2]</include>
                                     </includes>
                                 </dependencyConvergence>
+                                <!-- if everything is included, return any errors that are not excluded -->
+                                <dependencyConvergence>
+                                    <includes>
+                                        <include>*</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>org.apache.commons</exclude>
+                                        <exclude>org.slf4j:slf4j-api:[1.6.2]</exclude>
+                                    </excludes>
+                                </dependencyConvergence>
+                                <!-- if there are no includes, assume everything is included and apply excludes -->
+                                <dependencyConvergence>
+                                    <excludes>
+                                        <exclude>org.slf4j:*:[1.6.2]</exclude>
+                                    </excludes>
+                                </dependencyConvergence>
+                                <!-- if some are included, return errors for those included and not excluded -->
+                                <dependencyConvergence>
+                                    <includes>
+                                        <include>org.slf4j</include>
+                                        <include>org.apache.commons</include>
+                                    </includes>
+                                    <excludes>
+                                        <exclude>org.slf4j:*:[1.6.2]</exclude>
+                                    </excludes>
+                                </dependencyConvergence>
                             </rules>
                         </configuration>
                         <goals>

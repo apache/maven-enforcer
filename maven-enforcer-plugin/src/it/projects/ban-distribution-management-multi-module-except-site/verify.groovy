@@ -16,5 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( '[INFO] BUILD SUCCESS' )
+def buildLog = new File(basedir, 'build.log').text
+
+assert buildLog.contains('[INFO] BUILD SUCCESS')
+// the site distribution management of the parent and both modules is allowed by allowSite
+assert buildLog.count('[INFO] Rule 0: org.apache.maven.enforcer.rules.BanDistributionManagement passed') == 3

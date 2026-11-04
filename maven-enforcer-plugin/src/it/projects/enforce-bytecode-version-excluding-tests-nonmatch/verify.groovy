@@ -18,6 +18,7 @@
  */
 def buildLog = new File(basedir, 'build.log').text
 
-// rule executed
-assert buildLog.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed')
-assert buildLog.contains('[INFO] Rule 1: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed')
+// junit is a compile dependency, so ignoring the test scope does not hide it
+assert buildLog.contains('[ERROR] Rule 0: org.apache.maven.enforcer.rules.dependency.EnforceBytecodeVersion failed with message:')
+assert buildLog.contains('[ERROR] Found Banned Dependency: junit:junit:jar:4.13.2')
+assert buildLog.contains('[ERROR] Found Banned Dependency: org.hamcrest:hamcrest-core:jar:1.3')

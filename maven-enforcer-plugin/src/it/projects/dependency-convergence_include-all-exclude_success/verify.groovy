@@ -18,9 +18,7 @@
  */
 def buildLog = new File(basedir, 'build.log').text
 
-// rule executed
-assert buildLog.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum passed')
-assert buildLog.contains('[INFO] Rule 1: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum passed')
-assert buildLog.contains('[INFO] Rule 2: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum passed')
-assert buildLog.contains('[INFO] Rule 3: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum passed')
-assert buildLog.contains('[INFO] Rule 4: org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum passed')
+for (int i = 0; i < 2; i++) {
+    assert buildLog.contains("[INFO] Rule ${i}: org.apache.maven.enforcer.rules.dependency.DependencyConvergence passed".toString()) : "rule ${i} did not pass"
+}
+assert !buildLog.contains('Dependency convergence error')

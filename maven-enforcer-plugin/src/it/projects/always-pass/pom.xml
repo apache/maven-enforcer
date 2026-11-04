@@ -25,12 +25,62 @@ under the License.
   <groupId>org.apache.maven.its.enforcer</groupId>
   <artifactId>test</artifactId>
   <version>1.0</version>
+  <!-- no module resolution, no dependency jars: the rules below only read the project model -->
+  <packaging>pom</packaging>
 
   <description>
+    One passing configuration for every rule that needs no special project: the XML
+    configuration of each rule must bind and the mojo must log the rule as passed.
   </description>
+
+  <properties>
+    <other.prefix.value>ok</other.prefix.value>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>com.asual.maven.public</id>
+      <name>Asual Public Repository</name>
+      <url>http://localhost</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>plugin-repo</id>
+      <url>http://example.com/repo</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer85_api</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer192-b</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer192-c</artifactId>
+      <version>1.0</version>
+    </dependency>
+  </dependencies>
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.14</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.14</version>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
@@ -44,6 +94,167 @@ under the License.
             <configuration>
               <rules>
                 <AlwaysPass/>
+                <banDistributionManagement/>
+                <banPropertyPrefix>
+                  <prefixes>
+                    <prefix>secured.system</prefix>
+                  </prefixes>
+                </banPropertyPrefix>
+                <BannedDependencies>
+                  <excludes>
+                    <exclude>org.apache.maven.plugins.enforcer.its:menforcer72_logging</exclude>
+                  </excludes>
+                </BannedDependencies>
+                <bannedPlugins>
+                  <excludes>
+                    <exclude>org.codehaus.mojo:build-helper-maven-plugin</exclude>
+                  </excludes>
+                </bannedPlugins>
+                <DependencyConvergence/>
+                <evaluateBeanshell>
+                  <condition>${project.artifactId} == test</condition>
+                </evaluateBeanshell>
+                <evaluateBeanshell>
+                  <condition>${project.version} == 1.0</condition>
+                </evaluateBeanshell>
+                <requireEnvironmentVariable>
+                  <variableName>PATH</variableName>
+                </requireEnvironmentVariable>
+                <requireFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>md5</type>
+                  <checksum>7c5b65d44e8123e70d24d9eef17e9fa2</checksum>
+                </requireFileChecksum>
+                <requireFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>sha1</type>
+                  <checksum>278661cbaf6a1bcbd34e3877b6de0e8bd7097846</checksum>
+                </requireFileChecksum>
+                <requireFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>sha256</type>
+                  <checksum>61b825d68516541151e5ce0145e54765c48cd5802b886aee8fb8cf1953f02d10</checksum>
+                </requireFileChecksum>
+                <requireFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>sha384</type>
+                  <checksum>6f9e6b81487911c5a339c541016a459acaf8312e430ccabe5c10cb2ddf9a307f4595c78555f911377f4fb853ffe87046</checksum>
+                </requireFileChecksum>
+                <requireFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>sha512</type>
+                  <checksum>c51c3cf07c87af78dd7af4407ae3993ea1051d8a7c260cf34bbaa41c468dcd3b62d2be3d9a09807a8595d0065e2d75d1bf9ffc8276d567a983ff057f6b51b0cc</checksum>
+                </requireFileChecksum>
+                <requireFilesDontExist>
+                  <files>
+                    <file>target/unwanted.txt</file>
+                  </files>
+                </requireFilesDontExist>
+                <requireFilesExist>
+                  <files>
+                    <file>pom.xml</file>
+                    <file>../always-pass/pom.xml</file>
+                    <file>${project.basedir}/../always-pass/pom.xml</file>
+                  </files>
+                </requireFilesExist>
+                <requireFilesSize>
+                  <maxsize>102400</maxsize>
+                  <minsize>512</minsize>
+                  <files>
+                    <file>pom.xml</file>
+                  </files>
+                </requireFilesSize>
+                <!-- passes only if the sizes below the directory are summed up: 3 files of 4 KB -->
+                <requireFilesSize>
+                  <maxsize>1000000</maxsize>
+                  <minsize>12000</minsize>
+                  <recursive>true</recursive>
+                  <files>
+                    <file>test</file>
+                  </files>
+                </requireFilesSize>
+                <requireJavaVersion>
+                  <!-- implicit range -->
+                  <version>1.4</version>
+                </requireJavaVersion>
+                <requireJavaVersion>
+                  <!-- explicit range -->
+                  <version>[1.4,)</version>
+                </requireJavaVersion>
+                <requireMavenVersion>
+                  <!-- implicit range -->
+                  <version>2.0</version>
+                </requireMavenVersion>
+                <requireMavenVersion>
+                  <!-- explicit range -->
+                  <version>[2.0,)</version>
+                </requireMavenVersion>
+                <requireNoRepositories>
+                  <allowedRepositories>
+                    <allowedRepository>com.asual.maven.public</allowedRepository>
+                  </allowedRepositories>
+                  <allowedPluginRepositories>
+                    <allowedPluginRepository>plugin-repo</allowedPluginRepository>
+                  </allowedPluginRepositories>
+                </requireNoRepositories>
+                <requireOS>
+                  <display>true</display>
+                  <name>!XXX-Test-Name</name>
+                </requireOS>
+                <requireProperty>
+                  <property>basedir</property>
+                </requireProperty>
+                <requireReleaseDeps>
+                  <message>No Snapshots Allowed!</message>
+                  <!-- the snapshot dependency is excluded; the include only narrows the exclude to what it does not select -->
+                  <excludes>
+                    <exclude>org.apache.maven.plugins.enforcer.its:menforcer85_api</exclude>
+                  </excludes>
+                  <includes>
+                    <include>testgroup:testartifact</include>
+                  </includes>
+                </requireReleaseDeps>
+                <requireReleaseVersion/>
+                <requireSameVersions>
+                  <buildPlugins>
+                    <buildPlugin>org.apache.maven.plugins:maven-surefire-plugin</buildPlugin>
+                    <buildPlugin>org.apache.maven.plugins:maven-failsafe-plugin</buildPlugin>
+                  </buildPlugins>
+                  <reportPlugins>
+                    <reportPlugin>org.apache.maven.plugins:maven-surefire-report-plugin</reportPlugin>
+                  </reportPlugins>
+                </requireSameVersions>
+                <requireSameVersions>
+                  <dependencies>
+                    <dependency>org.apache.maven.plugins.enforcer.its:menforcer192-a</dependency>
+                    <dependency>org.apache.maven.plugins.enforcer.its:menforcer192-b</dependency>
+                  </dependencies>
+                </requireSameVersions>
+                <requireTextFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>md5</type>
+                  <checksum>7c5b65d44e8123e70d24d9eef17e9fa2</checksum>
+                </requireTextFileChecksum>
+                <requireTextFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>sha1</type>
+                  <checksum>278661cbaf6a1bcbd34e3877b6de0e8bd7097846</checksum>
+                </requireTextFileChecksum>
+                <requireTextFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>sha256</type>
+                  <checksum>61b825d68516541151e5ce0145e54765c48cd5802b886aee8fb8cf1953f02d10</checksum>
+                </requireTextFileChecksum>
+                <requireTextFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>sha384</type>
+                  <checksum>6f9e6b81487911c5a339c541016a459acaf8312e430ccabe5c10cb2ddf9a307f4595c78555f911377f4fb853ffe87046</checksum>
+                </requireTextFileChecksum>
+                <requireTextFileChecksum>
+                  <file>${project.basedir}/LICENSE</file>
+                  <type>sha512</type>
+                  <checksum>c51c3cf07c87af78dd7af4407ae3993ea1051d8a7c260cf34bbaa41c468dcd3b62d2be3d9a09807a8595d0065e2d75d1bf9ffc8276d567a983ff057f6b51b0cc</checksum>
+                </requireTextFileChecksum>
               </rules>
             </configuration>
           </execution>
@@ -51,4 +262,14 @@ under the License.
       </plugin>
     </plugins>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+        <version>2.14</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
