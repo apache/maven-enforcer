@@ -49,6 +49,9 @@ under the License.
               <maxJdkVersion>1.9</maxJdkVersion>
               <strict>true</strict>
             </enforceBytecodeVersion>
+            <enforceBytecodeVersion>
+              <maxJdkVersion>1.9</maxJdkVersion>
+            </enforceBytecodeVersion>
           </rules>
         </configuration>
         <executions>

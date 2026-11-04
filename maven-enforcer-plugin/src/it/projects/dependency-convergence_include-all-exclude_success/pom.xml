@@ -64,6 +64,12 @@
                                         <excludes>org.slf4j:slf4j-api:[1.6.1,1.6.2]</excludes>
                                     </excludes>
                                 </dependencyConvergence>
+                                <!-- if there are no includes, assume everything is included and apply excludes -->
+                                <dependencyConvergence>
+                                    <excludes>
+                                        <excludes>org.slf4j:*:[1.6.1,1.6.2]</excludes>
+                                    </excludes>
+                                </dependencyConvergence>
                             </rules>
                         </configuration>
                         <goals>

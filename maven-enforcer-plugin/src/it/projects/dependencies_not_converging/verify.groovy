@@ -16,7 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
- 
- def file = new File (basedir,"LICENSE")
- 
- file.write(file.text.normalize())
+def buildLog = new File(basedir, 'build.log').text
+
+assert buildLog.contains('[ERROR] Rule 0: org.apache.maven.enforcer.rules.dependency.DependencyConvergence failed with message:')
+assert buildLog =~ /Dependency convergence error for org\.slf4j:slf4j-api:jar:1\.6\.[01]\. Paths to dependency are:/
+assert buildLog.contains('org.slf4j:slf4j-jdk14:jar:1.6.1:compile')
+assert buildLog.contains('org.slf4j:slf4j-nop:jar:1.6.0:compile')

@@ -16,8 +16,52 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( '[INFO] Rule 0: org.apache.maven.enforcer.rules.AlwaysPass passed' )
+def buildLog = new File(basedir, 'build.log').text
 
+// the rules of the project pom, in the order of the configuration
+def expectedRules = [
+    'org.apache.maven.enforcer.rules.AlwaysPass',
+    'org.apache.maven.enforcer.rules.BanDistributionManagement',
+    'org.apache.maven.enforcer.rules.property.BanPropertyPrefix',
+    'org.apache.maven.enforcer.rules.dependency.BannedDependencies',
+    'org.apache.maven.enforcer.rules.BannedPlugins',
+    'org.apache.maven.enforcer.rules.dependency.DependencyConvergence',
+    'org.apache.maven.enforcer.rules.EvaluateBeanshell',
+    'org.apache.maven.enforcer.rules.EvaluateBeanshell',
+    'org.apache.maven.enforcer.rules.property.RequireEnvironmentVariable',
+    'org.apache.maven.enforcer.rules.checksum.RequireFileChecksum',
+    'org.apache.maven.enforcer.rules.checksum.RequireFileChecksum',
+    'org.apache.maven.enforcer.rules.checksum.RequireFileChecksum',
+    'org.apache.maven.enforcer.rules.checksum.RequireFileChecksum',
+    'org.apache.maven.enforcer.rules.checksum.RequireFileChecksum',
+    'org.apache.maven.enforcer.rules.files.RequireFilesDontExist',
+    'org.apache.maven.enforcer.rules.files.RequireFilesExist',
+    'org.apache.maven.enforcer.rules.files.RequireFilesSize',
+    'org.apache.maven.enforcer.rules.files.RequireFilesSize',
+    'org.apache.maven.enforcer.rules.version.RequireJavaVersion',
+    'org.apache.maven.enforcer.rules.version.RequireJavaVersion',
+    'org.apache.maven.enforcer.rules.version.RequireMavenVersion',
+    'org.apache.maven.enforcer.rules.version.RequireMavenVersion',
+    'org.apache.maven.enforcer.rules.RequireNoRepositories',
+    'org.apache.maven.enforcer.rules.RequireOS',
+    'org.apache.maven.enforcer.rules.property.RequireProperty',
+    'org.apache.maven.enforcer.rules.dependency.RequireReleaseDeps',
+    'org.apache.maven.enforcer.rules.RequireReleaseVersion',
+    'org.apache.maven.enforcer.rules.RequireSameVersions',
+    'org.apache.maven.enforcer.rules.RequireSameVersions',
+    'org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum',
+    'org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum',
+    'org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum',
+    'org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum',
+    'org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum'
+]
 
- 
+for (int i = 0; i < expectedRules.size(); i++) {
+    assert buildLog.contains("[INFO] Rule ${i}: ${expectedRules[i]} passed".toString()) : "rule ${i} ${expectedRules[i]} did not pass"
+}
+
+// no further rule is configured
+assert !buildLog.contains("[INFO] Rule ${expectedRules.size()}: ".toString())
+
+// requireOS display
+assert buildLog.contains('OS Info - Arch')

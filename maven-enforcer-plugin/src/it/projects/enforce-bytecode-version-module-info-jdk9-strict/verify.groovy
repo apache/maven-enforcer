@@ -17,12 +17,12 @@
  * under the License.
  */
 
-File file = new File( basedir, "build.log" );
-assert file.exists();
+def text = new File(basedir, "build.log").getText("utf-8")
 
-String text = file.getText("utf-8");
+assert !text.contains('[INFO] Adding ignore: module-info')
+assert !text.contains('Found Banned Dependency: org.ow2.asm:asm:jar:6.0')
 
-assert ! text.contains( '[INFO] Adding ignore: module-info' )
-assert ! text.contains( 'Found Banned Dependency: org.ow2.asm:asm:jar:6.0' )
-
-return true;
+// strict and non-strict rule
+for (int i = 0; i < 2; i++) {
+    assert text.contains("[INFO] Rule ${i}: org.apache.maven.enforcer.rules.dependency.EnforceBytecodeVersion passed".toString()) : "rule ${i} did not pass"
+}
