@@ -19,6 +19,7 @@
 package org.apache.maven.enforcer.rules.dependency;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -148,6 +149,47 @@ class RequireReleaseDepsTest {
                         "default-group:childAA:jar:classifier:1.0.0-SNAPSHOT <--- is not a release dependency")
                 .hasMessageContaining(
                         "default-group:childB:jar:classifier:2.0.0-SNAPSHOT <--- is not a release dependency");
+    }
+
+    @Test
+    void snapshotsExcludedByCoordinatesShouldPass() throws Exception {
+        when(session.getCurrentProject()).thenReturn(project);
+        when(resolverUtil.resolveTransitiveDependencies(anyBoolean(), anyBoolean(), anyBoolean(), anyList()))
+                .thenReturn(getDependencyNodeWithMultipleSnapshots());
+
+        rule.setExcludes(Arrays.asList("default-group:childAA", "default-group:childB"));
+        rule.setSearchTransitive(true);
+
+        assertThatCode(rule::execute).doesNotThrowAnyException();
+    }
+
+    @Test
+    void excludeWithNonMatchingVersionRangeShouldStillFail() throws Exception {
+        when(resolverUtil.resolveTransitiveDependencies(anyBoolean(), anyBoolean(), anyBoolean(), anyList()))
+                .thenReturn(getDependencyNodeWithMultipleSnapshots());
+
+        rule.setMessage("No Snapshots Allowed!");
+        rule.setExcludes(Arrays.asList("default-group:childAA:[2.0,)", "default-group:childB"));
+        rule.setSearchTransitive(true);
+
+        assertThatCode(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining("No Snapshots Allowed!")
+                .hasMessageContaining(
+                        "default-group:childAA:jar:classifier:1.0.0-SNAPSHOT <--- is not a release dependency")
+                .hasMessageNotContaining("childB");
+    }
+
+    @Test
+    void includesWithoutAnyDependencyShouldPass() throws Exception {
+        when(session.getCurrentProject()).thenReturn(project);
+        when(resolverUtil.resolveTransitiveDependencies(anyBoolean(), anyBoolean(), anyBoolean(), anyList()))
+                .thenReturn(new DependencyNodeBuilder().build());
+
+        rule.setIncludes(Collections.singletonList("testgroup:testartifact"));
+        rule.setSearchTransitive(true);
+
+        assertThatCode(rule::execute).doesNotThrowAnyException();
     }
 
     /**

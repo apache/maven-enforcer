@@ -84,6 +84,28 @@ class TestBannedPlugins {
     }
 
     @Test
+    void bannedPluginIsListedWithItsCoordinates() {
+        MavenProject project = mock(MavenProject.class);
+        when(session.getCurrentProject()).thenReturn(project);
+        Artifact bannedPlugin = new DefaultArtifact(
+                "org.codehaus.mojo",
+                "build-helper-maven-plugin",
+                "3.3.0",
+                "compile",
+                "maven-plugin",
+                null,
+                new DefaultArtifactHandler("maven-plugin"));
+        when(project.getPluginArtifacts()).thenReturn(new HashSet<>(Arrays.asList(bannedPlugin)));
+
+        setField("excludes", Arrays.asList("org.codehaus.mojo:build-helper-maven-plugin"));
+
+        assertThatThrownBy(() -> rule.execute())
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining(
+                        "org.codehaus.mojo:build-helper-maven-plugin:maven-plugin:3.3.0 <--- banned plugin");
+    }
+
+    @Test
     void shouldOutputCustomMessageWhenBanned() {
         String customMessage = "Custom banned plugins message";
         rule.setMessage(customMessage);

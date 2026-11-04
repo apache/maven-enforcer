@@ -19,6 +19,7 @@
 package org.apache.maven.enforcer.rules;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 
@@ -400,6 +401,31 @@ class TestRequireSameVersions {
         assertThatThrownBy(() -> rule.execute())
                 .isInstanceOf(EnforcerRuleException.class)
                 .hasMessageStartingWith(customMessage);
+    }
+
+    @Test
+    void failureMessageListsEachPluginUnderItsVersion() throws IOException {
+        Artifact surefire = constructArtifact("acme-surefire", "2.14");
+        Artifact failsafe = constructArtifact("acme-failsafe", "2.15");
+        Artifact surefireReport = constructArtifact("acme-surefire-report", "2.13");
+
+        rule.addBuildPlugin(extractGaString(surefire));
+        rule.addBuildPlugin(extractGaString(failsafe));
+        rule.addReportPlugin(extractGaString(surefireReport));
+
+        when(project.getArtifacts()).thenReturn(new HashSet<>());
+        when(project.getPluginArtifacts()).thenReturn(new HashSet<>(Arrays.asList(surefire, failsafe)));
+        when(project.getReportArtifacts()).thenReturn(Collections.singleton(surefireReport));
+
+        when(project.getReportPlugins()).thenReturn(Collections.emptyList());
+        when(project.getBuild()).thenReturn(new Build());
+
+        assertThatThrownBy(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining("Found entries with different versions")
+                .hasMessageContaining("- org.acme:acme-surefire:jar (buildPlugin)")
+                .hasMessageContaining("- org.acme:acme-failsafe:jar (buildPlugin)")
+                .hasMessageContaining("- org.acme:acme-surefire-report:jar (reportPlugin)");
     }
 
     private static Artifact constructArtifact(String artifactId, String version) throws IOException {

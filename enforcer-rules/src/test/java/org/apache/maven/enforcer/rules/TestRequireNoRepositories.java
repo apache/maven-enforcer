@@ -19,6 +19,7 @@
 package org.apache.maven.enforcer.rules;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,6 +35,7 @@ import org.apache.maven.settings.Settings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -45,6 +47,9 @@ import static org.mockito.Mockito.when;
  * @author <a href="mailto:khmarbaise@apache.org">Karl Heinz Marbaise</a>
  */
 class TestRequireNoRepositories {
+
+    private static final String PROJECT_ID =
+            "org.apache.maven.plugins.enforcer.test:no-repositories version:1.0-SNAPSHOT";
 
     private RequireNoRepositories rule;
 
@@ -344,5 +349,75 @@ class TestRequireNoRepositories {
         setupSortedProjects(Collections.singletonList(baseProject));
 
         rule.execute();
+    }
+
+    @Test
+    void failureMessageListsBannedRepository() {
+        MavenProject baseProject = createStandAloneProject();
+        addRepository(baseProject, createRepository("repo", "http://example.com/repo"));
+        setupSortedProjects(Collections.singletonList(baseProject));
+
+        assertThatThrownBy(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining("Some poms have repositories defined:")
+                .hasMessageContaining(PROJECT_ID + " has repositories [repo]")
+                .hasMessageContaining("my message");
+    }
+
+    @Test
+    void failureMessageListsBannedPluginRepository() {
+        MavenProject baseProject = createStandAloneProject();
+        addPluginRepository(baseProject, createRepository("repo", "http://example.com/repo"));
+        setupSortedProjects(Collections.singletonList(baseProject));
+
+        assertThatThrownBy(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining("Some poms have repositories defined:")
+                .hasMessageContaining(PROJECT_ID + " has plugin repositories [repo]");
+    }
+
+    @Test
+    void allowedRepositoriesDoNotAllowPluginRepositories() {
+        rule.setAllowedRepositories(Collections.singletonList("public-repo"));
+
+        MavenProject baseProject = createStandAloneProject();
+        addRepository(baseProject, createRepository("public-repo", "http://localhost"));
+        addPluginRepository(baseProject, createRepository("plugin-repo", "http://example.com/repo"));
+        setupSortedProjects(Collections.singletonList(baseProject));
+
+        assertThatThrownBy(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining(PROJECT_ID + " has plugin repositories [plugin-repo]")
+                .hasMessageNotContaining("has repositories");
+    }
+
+    @Test
+    void allowedPluginRepositoriesDoNotAllowRepositories() {
+        rule.setAllowedPluginRepositories(Collections.singletonList("plugin-repo"));
+
+        MavenProject baseProject = createStandAloneProject();
+        addRepository(baseProject, createRepository("public-repo", "http://localhost"));
+        addPluginRepository(baseProject, createRepository("plugin-repo", "http://example.com/repo"));
+        setupSortedProjects(Collections.singletonList(baseProject));
+
+        assertThatThrownBy(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining(PROJECT_ID + " has repositories [public-repo]")
+                .hasMessageNotContaining("has plugin repositories");
+    }
+
+    @Test
+    void repositoryIdInAllowedPluginRepositoriesDoesNotAllowRepository() {
+        rule.setAllowedPluginRepositories(Arrays.asList("plugin-repo", "public-repo"));
+
+        MavenProject baseProject = createStandAloneProject();
+        addRepository(baseProject, createRepository("public-repo", "http://localhost"));
+        addPluginRepository(baseProject, createRepository("plugin-repo", "http://example.com/repo"));
+        setupSortedProjects(Collections.singletonList(baseProject));
+
+        assertThatThrownBy(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining(PROJECT_ID + " has repositories [public-repo]")
+                .hasMessageNotContaining("has plugin repositories");
     }
 }
