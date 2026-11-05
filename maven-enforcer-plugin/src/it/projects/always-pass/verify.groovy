@@ -49,6 +49,7 @@ def expectedRules = [
     'org.apache.maven.enforcer.rules.RequireReleaseVersion',
     'org.apache.maven.enforcer.rules.RequireSameVersions',
     'org.apache.maven.enforcer.rules.RequireSameVersions',
+    'org.apache.maven.enforcer.rules.RequireSameVersions',
     'org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum',
     'org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum',
     'org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum',
