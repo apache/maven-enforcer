@@ -216,6 +216,12 @@ under the License.
                 </requireReleaseDeps>
                 <requireReleaseVersion/>
                 <requireSameVersions>
+                  <plugins>
+                    <plugin>org.apache.maven.plugins:maven-surefire-plugin</plugin>
+                    <plugin>org.apache.maven.plugins:maven-failsafe-plugin</plugin>
+                  </plugins>
+                </requireSameVersions>
+                <requireSameVersions>
                   <buildPlugins>
                     <buildPlugin>org.apache.maven.plugins:maven-surefire-plugin</buildPlugin>
                     <buildPlugin>org.apache.maven.plugins:maven-failsafe-plugin</buildPlugin>
