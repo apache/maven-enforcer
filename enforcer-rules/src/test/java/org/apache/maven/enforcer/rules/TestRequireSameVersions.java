@@ -428,6 +428,35 @@ class TestRequireSameVersions {
                 .hasMessageContaining("- org.acme:acme-surefire-report:jar (reportPlugin)");
     }
 
+    @Test
+    void shouldListMembersFromAllSourcesSharingAConflictingVersion() throws IOException {
+        String conflictVersion = "1.0";
+        Artifact dependencyAtConflictVersion = constructArtifact("acme-dependency", conflictVersion);
+        Artifact buildPluginAtConflictVersion = constructArtifact("acme-build-plugin", conflictVersion);
+        Artifact dependencyAtOtherVersion = constructArtifact("acme-other-dependency", "2.0");
+
+        rule.addDependency(extractGaString(dependencyAtConflictVersion));
+        rule.addDependency(extractGaString(dependencyAtOtherVersion));
+        rule.addBuildPlugin(extractGaString(buildPluginAtConflictVersion));
+
+        HashSet<Artifact> dependencies = new HashSet<>();
+        dependencies.add(dependencyAtConflictVersion);
+        dependencies.add(dependencyAtOtherVersion);
+        HashSet<Artifact> pluginArtifacts = new HashSet<>();
+        pluginArtifacts.add(buildPluginAtConflictVersion);
+
+        when(project.getArtifacts()).thenReturn(dependencies);
+        when(project.getPluginArtifacts()).thenReturn(pluginArtifacts);
+        when(project.getReportArtifacts()).thenReturn(new HashSet<>());
+
+        // Both members at the shared version must be named, not just the one from
+        // whichever source (dependency, build plugin, report plugin) was merged last.
+        assertThatThrownBy(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining("org.acme:acme-dependency")
+                .hasMessageContaining("org.acme:acme-build-plugin");
+    }
+
     private static Artifact constructArtifact(String artifactId, String version) throws IOException {
         return ARTIFACT_FACTORY.createArtifact("org.acme", artifactId, version);
     }
