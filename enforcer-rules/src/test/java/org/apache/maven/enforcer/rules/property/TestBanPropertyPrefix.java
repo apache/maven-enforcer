@@ -60,7 +60,10 @@ class TestBanPropertyPrefix {
         rule.setPrefixes(Collections.singletonList(BANNED_PREFIX));
 
         EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
-        assertThat(e.getMessage()).contains(BANNED_PREFIX + ".timeout").contains(BANNED_PREFIX);
+        assertThat(e.getMessage())
+                .contains(BANNED_PREFIX + ".timeout")
+                .contains(BANNED_PREFIX)
+                .doesNotContain("5000");
     }
 
     @Test
