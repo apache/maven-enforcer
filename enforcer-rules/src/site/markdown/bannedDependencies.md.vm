@@ -31,6 +31,7 @@ This rule checks the dependencies and fails if any of the matching excludes are 
 The following parameters are supported by this rule:
 
 - **searchTransitive** - if transitive dependencies should be checked. Default is true.
+- **ignoreOptionals** - if `true` optional dependencies of the project (and their transitive dependencies) won't be checked. Default is `false`.
 - **excludes** - a list of artifacts to ban. The format is groupId\[:artifactId\]\[:version\]\[:type\]\[:scope\]\[:classifier\] where artifactId, version, type, scope and classifier are optional. Wildcards may be used to replace an entire or just parts of a section. Examples:
     - org.apache.maven
     - org.apache.maven:badArtifact

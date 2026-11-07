@@ -19,7 +19,10 @@
 package org.apache.maven.enforcer.rules.dependency;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.utils.DependencyNodeBuilder;
 import org.apache.maven.enforcer.rules.utils.EnforcerArtifactStubFactory;
@@ -34,6 +37,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
@@ -203,6 +208,80 @@ class BannedDependenciesTest {
                         "default-group:childAA:war:classifier:1.0.0-SNAPSHOT <--- banned via the exclude/include list")
                 .hasMessageContaining(
                         "default-group:childAAA:war:classifier:1.0.0-SNAPSHOT <--- banned via the exclude/include list");
+    }
+
+    @Test
+    void optionalDependencyIsCheckedByDefaultDoNotUseTransitiveDependencies() throws Exception {
+        when(session.getCurrentProject()).thenReturn(project);
+        when(project.getDependencyArtifacts()).thenReturn(getArtifactsWithOptional());
+
+        rule.setSearchTransitive(false);
+        rule.setExcludes(Collections.singletonList("g:optional"));
+
+        assertThatCode(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining("g:optional:jar:1.0 <--- banned via the exclude/include list");
+    }
+
+    @Test
+    void ignoreOptionalsDoNotUseTransitiveDependencies() throws Exception {
+        when(session.getCurrentProject()).thenReturn(project);
+        when(project.getDependencyArtifacts()).thenReturn(getArtifactsWithOptional());
+
+        rule.setSearchTransitive(false);
+        rule.setIgnoreOptionals(true);
+        rule.setExcludes(Collections.singletonList("g:optional"));
+
+        assertThatCode(rule::execute).doesNotThrowAnyException();
+    }
+
+    @Test
+    void ignoreOptionalsStillChecksNonOptionalDoNotUseTransitiveDependencies() throws Exception {
+        when(session.getCurrentProject()).thenReturn(project);
+        when(project.getDependencyArtifacts()).thenReturn(getArtifactsWithOptional());
+
+        rule.setSearchTransitive(false);
+        rule.setIgnoreOptionals(true);
+        rule.setExcludes(Collections.singletonList("g"));
+
+        assertThatCode(rule::execute)
+                .isInstanceOf(EnforcerRuleException.class)
+                .hasMessageContaining("g:compile:jar:1.0 <--- banned via the exclude/include list")
+                .hasMessageNotContaining("g:optional");
+    }
+
+    @Test
+    void optionalDependenciesAreResolvedByDefaultUseTransitiveDependencies() throws Exception {
+        when(resolverUtil.resolveTransitiveDependencies(anyBoolean(), anyBoolean(), anyBoolean(), anyList()))
+                .thenReturn(new DependencyNodeBuilder().build());
+
+        rule.setSearchTransitive(true);
+
+        assertThatCode(rule::execute).doesNotThrowAnyException();
+
+        verify(resolverUtil).resolveTransitiveDependencies(anyBoolean(), anyBoolean(), eq(false), anyList());
+    }
+
+    @Test
+    void ignoreOptionalsUseTransitiveDependencies() throws Exception {
+        when(resolverUtil.resolveTransitiveDependencies(anyBoolean(), anyBoolean(), anyBoolean(), anyList()))
+                .thenReturn(new DependencyNodeBuilder().build());
+
+        rule.setSearchTransitive(true);
+        rule.setIgnoreOptionals(true);
+
+        assertThatCode(rule::execute).doesNotThrowAnyException();
+
+        verify(resolverUtil).resolveTransitiveDependencies(anyBoolean(), anyBoolean(), eq(true), anyList());
+    }
+
+    private static Set<Artifact> getArtifactsWithOptional() {
+        Artifact optional = ARTIFACT_STUB_FACTORY.createArtifact("g", "optional", "1.0");
+        optional.setOptional(true);
+        Set<Artifact> artifacts = new HashSet<>();
+        artifacts.add(ARTIFACT_STUB_FACTORY.createArtifact("g", "compile", "1.0"));
+        artifacts.add(optional);
+        return artifacts;
     }
 
     @Test
