@@ -28,8 +28,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.project.MavenProject;
 
@@ -42,9 +46,16 @@ import org.apache.maven.project.MavenProject;
  * <p>The rule does nothing for projects that compile no classes (such as {@code pom} aggregators or a
  * module that only carries resources), so it can be enabled ecosystem-wide without special-casing.
  * In a Maven 4 module source hierarchy every per-module output directory is checked.
+ *
+ * <p>Because the constraint is about the <em>artifact</em>, a descriptor injected after compilation
+ * counts: if the compiled output has none but the packaged artifact does, the project passes. See
+ * {@link #packagedArtifactIsModular()}.
  */
 @Named("requireExplicitModules")
 public final class RequireExplicitModules extends AbstractModuleInfoRule {
+
+    /** A descriptor in a multi-release JAR, such as {@code META-INF/versions/9/module-info.class}. */
+    private static final Pattern VERSIONED_MODULE_INFO = Pattern.compile("META-INF/versions/\\d+/module-info\\.class");
 
     @Inject
     public RequireExplicitModules(MavenProject project) {
@@ -53,8 +64,9 @@ public final class RequireExplicitModules extends AbstractModuleInfoRule {
 
     @Override
     public void execute() throws EnforcerRuleException {
+        List<ModuleOutput> outputs = moduleOutputs();
         List<String> violations = new ArrayList<>();
-        for (ModuleOutput output : moduleOutputs()) {
+        for (ModuleOutput output : outputs) {
             if (output.moduleInfo() != null) {
                 continue;
             }
@@ -64,15 +76,58 @@ public final class RequireExplicitModules extends AbstractModuleInfoRule {
             }
             violations.add(output.root().getPath());
         }
-        if (!violations.isEmpty()) {
-            String message = getMessage();
-            throw new EnforcerRuleException(
-                    message != null
-                            ? message
-                            : "Project '" + project.getArtifactId() + "' is not an explicit Java module: no "
-                                    + "module-info.class in " + String.join(", ", violations)
-                                    + ". Add a module-info.java so the "
-                                    + "artifact is a named module and never resolves as an automatic module.");
+        if (violations.isEmpty()) {
+            return;
+        }
+        // Only for the classic one-module layout: in a module source hierarchy the project's main
+        // artifact cannot stand for several modules, so an artifact level check would be ambiguous.
+        if (outputs.size() == 1 && packagedArtifactIsModular()) {
+            getLog().debug("No module-info.class in " + violations.get(0)
+                    + ", but the packaged artifact carries one; treating the project as an explicit module.");
+            return;
+        }
+        String message = getMessage();
+        throw new EnforcerRuleException(
+                message != null
+                        ? message
+                        : "Project '" + project.getArtifactId() + "' is not an explicit Java module: no "
+                                + "module-info.class in " + String.join(", ", violations)
+                                + ". Add a module-info.java so the "
+                                + "artifact is a named module and never resolves as an automatic module. "
+                                + "If the descriptor is injected into the artifact after compilation (for "
+                                + "example by Moditect), bind this rule after the package phase so the "
+                                + "artifact itself can be inspected.");
+    }
+
+    /**
+     * {@code true} if the project's packaged artifact already contains a {@code module-info.class}.
+     *
+     * <p>Tools such as <a href="https://github.com/moditect/moditect">Moditect</a> add the descriptor to
+     * the JAR after compilation — typically on a Java 8 baseline, where {@code module-info.java} cannot be
+     * compiled at all — so the output directory legitimately has none while the shipped artifact is a
+     * proper named module. This rule exists to stop the <em>artifact</em> resolving as an automatic module
+     * downstream, so such a project must pass.
+     *
+     * <p>Yields {@code false} when the rule runs before {@code package}, when the artifact is absent, or
+     * when it cannot be read as an archive; an unreadable artifact therefore keeps the stricter outcome.
+     */
+    private boolean packagedArtifactIsModular() {
+        Artifact artifact = project.getArtifact();
+        File file = artifact != null ? artifact.getFile() : null;
+        if (file == null || !file.isFile()) {
+            getLog().debug("No packaged artifact available to inspect for a module descriptor");
+            return false;
+        }
+        try (JarFile jar = new JarFile(file)) {
+            if (jar.getEntry("module-info.class") != null) {
+                return true;
+            }
+            return jar.stream()
+                    .map(JarEntry::getName)
+                    .anyMatch(name -> VERSIONED_MODULE_INFO.matcher(name).matches());
+        } catch (IOException e) {
+            getLog().debug("Could not inspect " + file + " for a module descriptor: " + e.getMessage());
+            return false;
         }
     }
 
