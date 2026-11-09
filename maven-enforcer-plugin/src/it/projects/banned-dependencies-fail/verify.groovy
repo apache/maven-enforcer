@@ -18,3 +18,4 @@
  */
 def buildLog = new File( basedir, 'build.log' ).text
 assert buildLog.contains( 'org.apache.maven.plugins.enforcer.its:menforcer128_api:jar:1.4.0 <--- banned via the exclude/include list' )
+assert buildLog.contains( 'org.apache.maven.plugins.enforcer.its:menforcer138_utils:jar:3.0 <--- banned via the exclude/include list' )

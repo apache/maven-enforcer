@@ -69,6 +69,9 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
     /** Specify if transitive dependencies should be searched (default) or only look at direct dependencies. */
     private boolean searchTransitive = true;
 
+    /** Specify if direct optional dependencies of the project, and their transitive dependencies, should be ignored. */
+    private boolean ignoreOptionals = false;
+
     private final MavenSession session;
 
     private final ResolverUtil resolverUtil;
@@ -87,6 +90,7 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
 
         if (!searchTransitive) {
             String result = session.getCurrentProject().getDependencyArtifacts().stream()
+                    .filter(a -> !(ignoreOptionals && a.isOptional()))
                     .filter(a -> !validate(a))
                     .collect(
                             StringBuilder::new,
@@ -107,7 +111,7 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
         } else {
             StringBuilder messageBuilder = new StringBuilder();
             DependencyNode rootNode =
-                    resolverUtil.resolveTransitiveDependencies(true, false, false, Collections.emptyList());
+                    resolverUtil.resolveTransitiveDependencies(true, false, ignoreOptionals, Collections.emptyList());
 
             Set<MatchingArtifact> visitedArtifacts = new HashSet<>();
             if (!validate(rootNode, 0, messageBuilder, visitedArtifacts)) {
@@ -215,5 +219,18 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
 
     public boolean isSearchTransitive() {
         return searchTransitive;
+    }
+
+    /**
+     * Sets the ignore optionals.
+     *
+     * @param ignoreOptionals if {@code true} direct optional dependencies of the project are not checked
+     */
+    public void setIgnoreOptionals(boolean ignoreOptionals) {
+        this.ignoreOptionals = ignoreOptionals;
+    }
+
+    public boolean isIgnoreOptionals() {
+        return ignoreOptionals;
     }
 }
