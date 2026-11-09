@@ -316,10 +316,13 @@ public abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRul
             // is not a module, which only requireExplicitModules has an opinion about.
             return;
         }
-        String cause = injector.map(plugin -> "the descriptor appears to be injected into the packaged artifact by "
-                        + plugin + ", which has not run yet")
-                .orElse("there are no compiled classes under " + outputDirectory());
-        getLog().warn(rule + " checked nothing: " + cause
+        // Two different findings, so two different lead-ins: with no compiled classes at all nothing was
+        // checked, whereas a descriptor still to be injected leaves a rule that reads more than the
+        // descriptor only partially effective. Claiming "checked nothing" there would mislead.
+        String finding = injector.map(plugin -> " found no module descriptor: it appears to be injected into "
+                        + "the packaged artifact by " + plugin + ", which has not run yet")
+                .orElse(" checked nothing: there are no compiled classes under " + outputDirectory());
+        getLog().warn(rule + finding
                 + ". Bind the enforce execution to a phase at which this project's module descriptor is "
                 + "already available; see " + DOCUMENTATION_BASE_URL + rule + ".html");
     }
