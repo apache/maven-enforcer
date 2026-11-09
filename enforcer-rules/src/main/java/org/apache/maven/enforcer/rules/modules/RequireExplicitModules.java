@@ -38,8 +38,9 @@ import org.apache.maven.project.MavenProject;
  * In a Maven 4 module source hierarchy every per-module output directory is checked.
  *
  * <p>Because the constraint is about the <em>artifact</em>, a descriptor injected after compilation
- * counts: if the compiled output has none but the packaged artifact does, the project passes. See
- * {@link #packagedArtifactIsModular()}.
+ * counts: if the compiled output has none but the packaged artifact does, the project passes. The
+ * fallback to the packaged artifact lives in {@link AbstractModuleInfoRule#moduleOutputs()}, so it
+ * applies to every module rule.
  */
 @Named("requireExplicitModules")
 public final class RequireExplicitModules extends AbstractModuleInfoRule {
