@@ -54,7 +54,7 @@ import static org.apache.maven.artifact.Artifact.SCOPE_TEST;
  * Resolver helper class.
  */
 @Named
-class ResolverUtil {
+public class ResolverUtil {
 
     private final RepositorySystem repositorySystem;
 
@@ -117,7 +117,7 @@ class ResolverUtil {
         return resolveTransitiveDependencies(verbose, false, excludeOptional, excludedScopes);
     }
 
-    DependencyNode resolveTransitiveDependencies(
+    public DependencyNode resolveTransitiveDependencies(
             boolean verbose, boolean resolve, boolean excludeOptional, List<String> excludedScopes)
             throws EnforcerRuleException {
 
