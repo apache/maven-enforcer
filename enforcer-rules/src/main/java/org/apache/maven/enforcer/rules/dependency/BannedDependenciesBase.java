@@ -69,7 +69,7 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
     /** Specify if transitive dependencies should be searched (default) or only look at direct dependencies. */
     private boolean searchTransitive = true;
 
-    /** Specify if optional dependencies of the project, and their transitive dependencies, should be ignored. */
+    /** Specify if direct optional dependencies of the project, and their transitive dependencies, should be ignored. */
     private boolean ignoreOptionals = false;
 
     private final MavenSession session;
@@ -224,7 +224,7 @@ abstract class BannedDependenciesBase extends AbstractStandardEnforcerRule {
     /**
      * Sets the ignore optionals.
      *
-     * @param ignoreOptionals if {@code true} optional dependencies of the project are not checked
+     * @param ignoreOptionals if {@code true} direct optional dependencies of the project are not checked
      */
     public void setIgnoreOptionals(boolean ignoreOptionals) {
         this.ignoreOptionals = ignoreOptionals;
