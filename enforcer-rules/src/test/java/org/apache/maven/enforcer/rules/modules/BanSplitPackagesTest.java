@@ -45,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -73,6 +74,21 @@ class BanSplitPackagesTest {
         rule = new BanSplitPackages(project, resolverUtil);
         rule.setLog(log);
         dependencies(); // no dependencies unless a test sets some
+    }
+
+    @Test
+    void anUnbuiltJarProjectWarnsThatNothingWasChecked() {
+        // Bound before compilation there are no packages to intersect, so the rule would otherwise
+        // report success without having looked at anything. Artifact is qualified here because the
+        // Aether one is imported for the dependency fixtures.
+        org.apache.maven.artifact.handler.ArtifactHandler handler =
+                mock(org.apache.maven.artifact.handler.ArtifactHandler.class);
+        when(handler.getExtension()).thenReturn("jar");
+        org.apache.maven.artifact.Artifact artifact = mock(org.apache.maven.artifact.Artifact.class);
+        when(artifact.getArtifactHandler()).thenReturn(handler);
+        when(project.getArtifact()).thenReturn(artifact);
+        assertDoesNotThrow(rule::execute);
+        verify(log).warn(contains("checked nothing"));
     }
 
     private void dependencies(File... files) throws Exception {

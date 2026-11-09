@@ -155,7 +155,9 @@ public final class BanSplitPackages extends AbstractModuleInfoRule {
     /** One package owner per compiled project output; also accumulates the project's {@code requires}. */
     private void collectProjectOutputs(List<PackageOwner> owners, Set<String> projectRequires)
             throws EnforcerRuleException {
-        for (ModuleOutput output : moduleOutputs()) {
+        List<ModuleOutput> outputs = moduleOutputs();
+        warnIfNothingInspected(outputs);
+        for (ModuleOutput output : outputs) {
             Set<String> packages = new TreeSet<>();
             collectOutputPackages(output.root(), "", packages);
             JavaModuleInfo module = output.moduleInfo();

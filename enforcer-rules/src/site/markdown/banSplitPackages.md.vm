@@ -34,7 +34,9 @@ The rule is a safety net, not a fix — the durable cure is placing generated or
 
 ## Reading the compiled output
 
-The project's packages are determined by walking `\${project.build.outputDirectory}` for compiled classes (not from the module descriptor, whose package list is only finalized at packaging time — offending classes are frequently added *after* compilation). The `enforce` execution must therefore run *after* compilation: bind it to a phase such as `process-classes` (the default `validate` phase runs before `compile`).
+The project's packages are determined by walking `\${project.build.outputDirectory}` for compiled classes (not from the module descriptor, whose package list is only finalized at packaging time -- offending classes are frequently added *after* compilation). The `enforce` execution must therefore run after compilation; bind it to an appropriate phase, such as `process-classes`. At the default `validate` phase nothing is compiled yet, so the rule would find no packages and report success without having checked anything; it warns in that case rather than passing quietly.
+
+The module descriptor is used for one thing only: the `requires` of the project's own modules, which decide whether an automatic module counts as being on the module path. Where the descriptor is *injected into the packaged artifact* after compilation -- as [Moditect](https://github.com/moditect/moditect) does -- bind the execution at or after `package`. Before that the `requires` are unavailable, and an overlap involving an automatic module is reported at `<classpathSeverity>` rather than as an error, so the rule under-reports instead of failing.
 
 Both output layouts are supported: the classic one (one Maven project = one Java module) and the Maven 4 *module source hierarchy* (POM model 4.1.0), where one Maven project compiles several modules, each to its own subdirectory `\${project.build.outputDirectory}/<module-name>/`. Dependency packages are read through `java.lang.module.ModuleFinder`, which handles automatic modules transparently.
 
