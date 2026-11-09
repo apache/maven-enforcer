@@ -25,6 +25,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.model.Build;
@@ -38,7 +39,10 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 // Reads module-info via java.lang.module.ModuleDescriptor, which exists only on Java 9+.
@@ -53,6 +57,7 @@ class RequireExplicitModulesTest {
 
     private final MavenProject project = mock(MavenProject.class);
     private RequireExplicitModules rule;
+    private EnforcerLogger log;
 
     @BeforeEach
     void setUp() {
@@ -60,7 +65,8 @@ class RequireExplicitModulesTest {
         when(build.getOutputDirectory()).thenReturn(outputDirectory.getAbsolutePath());
         when(project.getBuild()).thenReturn(build);
         rule = new RequireExplicitModules(project);
-        rule.setLog(mock(EnforcerLogger.class));
+        log = mock(EnforcerLogger.class);
+        rule.setLog(log);
     }
 
     @Test
@@ -167,6 +173,37 @@ class RequireExplicitModulesTest {
     }
 
     /** Give the project a packaged JAR artifact holding exactly the named entries. */
+    @Test
+    void anUnbuiltJarProjectWarnsThatNothingWasChecked() {
+        // Bound to a phase at which no classes exist yet: passing silently would be indistinguishable
+        // from a clean result, so the rule says so instead.
+        givenJarPackaging();
+        assertDoesNotThrow(rule::execute);
+        verify(log).warn(contains("checked nothing"));
+        verify(log).warn(contains("enforcer-rules/requireExplicitModules.html"));
+    }
+
+    @Test
+    void aProjectThatBuildsNoJarStaysSilent() {
+        // pom aggregators and war/ear projects compile no module descriptor by design.
+        ArtifactHandler handler = mock(ArtifactHandler.class);
+        when(handler.getExtension()).thenReturn("pom");
+        Artifact artifact = mock(Artifact.class);
+        when(artifact.getArtifactHandler()).thenReturn(handler);
+        when(project.getArtifact()).thenReturn(artifact);
+        assertDoesNotThrow(rule::execute);
+        verify(log, never()).warn(contains("checked nothing"));
+    }
+
+    /** Make the project look like one that builds a JAR, the precondition for the "nothing checked" warning. */
+    private void givenJarPackaging() {
+        ArtifactHandler handler = mock(ArtifactHandler.class);
+        when(handler.getExtension()).thenReturn("jar");
+        Artifact artifact = mock(Artifact.class);
+        when(artifact.getArtifactHandler()).thenReturn(handler);
+        when(project.getArtifact()).thenReturn(artifact);
+    }
+
     private void givenPackagedArtifact(String... entries) throws IOException {
         File jar = new File(artifactDirectory, "artifact.jar");
         try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(jar.toPath()))) {

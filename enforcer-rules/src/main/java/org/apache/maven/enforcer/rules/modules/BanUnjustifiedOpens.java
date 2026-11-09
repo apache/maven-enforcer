@@ -53,7 +53,9 @@ public final class BanUnjustifiedOpens extends AbstractModuleInfoRule {
 
     @Override
     public void execute() throws EnforcerRuleException {
-        for (ModuleOutput output : moduleOutputs()) {
+        List<ModuleOutput> outputs = moduleOutputs();
+        warnIfNothingInspected(outputs);
+        for (ModuleOutput output : outputs) {
             JavaModuleInfo module = output.moduleInfo();
             if (module != null) {
                 checkModule(module);

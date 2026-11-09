@@ -21,12 +21,17 @@ package org.apache.maven.enforcer.rules.modules;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
 import org.apache.maven.project.MavenProject;
@@ -47,6 +52,9 @@ import org.apache.maven.project.MavenProject;
  * {@link ModuleOutput}.
  */
 public abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRule {
+
+    /** Base URL of the published rule documentation, for pointing users at the phase binding advice. */
+    private static final String DOCUMENTATION_BASE_URL = "https://maven.apache.org/enforcer/enforcer-rules/";
 
     protected final MavenProject project;
 
@@ -177,6 +185,72 @@ public abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRul
         } catch (IOException e) {
             throw new EnforcerRuleException("Failed to read " + moduleInfo + ": " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * {@code true} if the directory holds at least one compiled class other than the module descriptor.
+     *
+     * @throws EnforcerRuleException if the directory cannot be scanned
+     */
+    protected static boolean hasCompiledClasses(File outputDirectory) throws EnforcerRuleException {
+        Path root = outputDirectory.toPath();
+        if (!Files.isDirectory(root)) {
+            return false;
+        }
+        try (Stream<Path> paths = Files.walk(root)) {
+            return paths.filter(Files::isRegularFile)
+                    .map(path -> path.getFileName().toString())
+                    .anyMatch(name -> name.endsWith(".class") && !name.equals("module-info.class"));
+        } catch (UncheckedIOException | IOException e) {
+            throw new EnforcerRuleException("Failed to scan " + outputDirectory + ": " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Warn when the rule had nothing at all to inspect, so that it cannot report success silently.
+     *
+     * <p>These rules read the compiled module descriptor, which only exists once the project has been
+     * built, and -- where a plugin injects the descriptor into the packaged artifact -- only once it has
+     * been packaged. An {@code enforce} execution bound too early therefore finds nothing and passes
+     * without having checked anything, which is indistinguishable from a clean result in the log.
+     *
+     * <p>Stays silent where having nothing to inspect is the documented, correct outcome: a project
+     * that builds no JAR (a {@code pom} aggregator compiles no classes, and no other packaging can carry
+     * a module descriptor), and any project that was built but is simply not modular -- recognised by
+     * the presence of compiled classes.
+     */
+    protected void warnIfNothingInspected(List<ModuleOutput> outputs) throws EnforcerRuleException {
+        if (!buildsJarArtifact()) {
+            return;
+        }
+        for (ModuleOutput output : outputs) {
+            if (output.moduleInfo() != null || hasCompiledClasses(output.root())) {
+                return;
+            }
+        }
+        String rule = configurationName();
+        getLog().warn(rule + " found no compiled classes under " + outputDirectory()
+                + " and therefore checked nothing. Bind the enforce execution to a phase at which this "
+                + "project's module descriptor is already available; see " + DOCUMENTATION_BASE_URL + rule
+                + ".html");
+    }
+
+    /**
+     * {@code true} if the project builds a JAR, the only kind of artifact that can carry a Java module
+     * descriptor. Derived from the artifact handler rather than a list of packaging names, so packagings
+     * that produce a JAR under another name -- {@code maven-plugin}, {@code bundle}, {@code ejb} -- are
+     * covered, while {@code pom}, {@code war} and {@code ear} are not.
+     */
+    private boolean buildsJarArtifact() {
+        Artifact artifact = project.getArtifact();
+        ArtifactHandler handler = artifact != null ? artifact.getArtifactHandler() : null;
+        return handler != null && "jar".equals(handler.getExtension());
+    }
+
+    /** The rule's name as it is written in a plugin configuration, such as {@code requireMinimalExports}. */
+    private String configurationName() {
+        String name = ruleName();
+        return Character.toLowerCase(name.charAt(0)) + name.substring(1);
     }
 
     /** Short rule name for log messages, such as {@code RequireMinimalExports}. */

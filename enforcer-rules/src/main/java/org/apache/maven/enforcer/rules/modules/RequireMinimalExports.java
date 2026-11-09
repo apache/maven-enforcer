@@ -79,7 +79,9 @@ public final class RequireMinimalExports extends AbstractModuleInfoRule {
         // Look up allowed packages by hash rather than scanning the list for every export (O(1) vs
         // O(n) per export).
         Set<String> allowed = new HashSet<>(allowedExports);
-        for (ModuleOutput output : moduleOutputs()) {
+        List<ModuleOutput> outputs = moduleOutputs();
+        warnIfNothingInspected(outputs);
+        for (ModuleOutput output : outputs) {
             JavaModuleInfo module = output.moduleInfo();
             if (module == null) {
                 continue;

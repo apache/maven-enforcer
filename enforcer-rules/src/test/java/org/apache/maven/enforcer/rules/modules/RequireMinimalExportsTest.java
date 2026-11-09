@@ -21,6 +21,8 @@ package org.apache.maven.enforcer.rules.modules;
 import java.io.File;
 import java.util.Arrays;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.model.Build;
@@ -34,7 +36,10 @@ import org.junit.jupiter.api.io.TempDir;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 // Reads module-info via java.lang.module.ModuleDescriptor, which exists only on Java 9+.
@@ -46,6 +51,7 @@ class RequireMinimalExportsTest {
 
     private final MavenProject project = mock(MavenProject.class);
     private RequireMinimalExports rule;
+    private EnforcerLogger log;
 
     @BeforeEach
     void setUp() {
@@ -53,7 +59,8 @@ class RequireMinimalExportsTest {
         when(build.getOutputDirectory()).thenReturn(outputDirectory.getAbsolutePath());
         when(project.getBuild()).thenReturn(build);
         rule = new RequireMinimalExports(project);
-        rule.setLog(mock(EnforcerLogger.class));
+        log = mock(EnforcerLogger.class);
+        rule.setLog(log);
     }
 
     @Test
@@ -138,5 +145,32 @@ class RequireMinimalExportsTest {
                 .writeTo(new File(outputDirectory, "com.example.core"));
         EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
         assertTrue(e.getMessage().contains("com.example.core.internal"), e.getMessage());
+    }
+
+    @Test
+    void anUnbuiltJarProjectWarnsThatNothingWasChecked() {
+        givenJarPackaging();
+        assertDoesNotThrow(rule::execute);
+        verify(log).warn(contains("checked nothing"));
+        verify(log).warn(contains("enforcer-rules/requireMinimalExports.html"));
+    }
+
+    @Test
+    void aBuiltButNonModularProjectStaysSilent() throws Exception {
+        // Compiled classes without a descriptor: the project simply is not a module, which this rule
+        // does not police -- warning here would fire on every non-modular project in the build.
+        givenJarPackaging();
+        ModuleInfoFixtures.writeDummyClass(outputDirectory, "com.example.foo.Bar");
+        assertDoesNotThrow(rule::execute);
+        verify(log, never()).warn(contains("checked nothing"));
+    }
+
+    /** Make the project look like one that builds a JAR, the precondition for the "nothing checked" warning. */
+    private void givenJarPackaging() {
+        ArtifactHandler handler = mock(ArtifactHandler.class);
+        when(handler.getExtension()).thenReturn("jar");
+        Artifact artifact = mock(Artifact.class);
+        when(artifact.getArtifactHandler()).thenReturn(handler);
+        when(project.getArtifact()).thenReturn(artifact);
     }
 }

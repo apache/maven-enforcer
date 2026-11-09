@@ -23,15 +23,11 @@ import javax.inject.Named;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
@@ -77,6 +73,7 @@ public final class RequireExplicitModules extends AbstractModuleInfoRule {
             violations.add(output.root().getPath());
         }
         if (violations.isEmpty()) {
+            warnIfNothingInspected(outputs);
             return;
         }
         // Only for the classic one-module layout: in a module source hierarchy the project's main
@@ -128,21 +125,6 @@ public final class RequireExplicitModules extends AbstractModuleInfoRule {
         } catch (IOException e) {
             getLog().debug("Could not inspect " + file + " for a module descriptor: " + e.getMessage());
             return false;
-        }
-    }
-
-    /** {@code true} if the output directory holds at least one compiled class other than the module descriptor. */
-    private static boolean hasCompiledClasses(File outputDirectory) throws EnforcerRuleException {
-        Path root = outputDirectory.toPath();
-        if (!Files.isDirectory(root)) {
-            return false;
-        }
-        try (Stream<Path> paths = Files.walk(root)) {
-            return paths.filter(Files::isRegularFile)
-                    .map(path -> path.getFileName().toString())
-                    .anyMatch(name -> name.endsWith(".class") && !name.equals("module-info.class"));
-        } catch (UncheckedIOException | IOException e) {
-            throw new EnforcerRuleException("Failed to scan " + outputDirectory + ": " + e.getMessage(), e);
         }
     }
 

@@ -30,9 +30,13 @@ This rule bans unqualified deep-reflection access into a Java module. A bare `op
 
 Packages that genuinely must be opened to the whole world can be listed in `allowedOpens` to pass the check. The rule does nothing for non-modular projects (no `module-info.class`).
 
-## Reading the module descriptor
+## Choosing the phase
 
-This rule inspects the compiled `module-info.class` under `\${project.build.outputDirectory}`, so its `enforce` execution must run *after* compilation. Bind it to a phase such as `process-classes` (the default `validate` phase runs before `compile`, when no `module-info.class` exists yet).
+This rule inspects the compiled `module-info.class` under `\${project.build.outputDirectory}`, which exists only once the project has been built. Bind the `enforce` execution to an appropriate phase: the default `validate` phase runs before any class is compiled, so an execution left there finds nothing and reports success without having checked anything. For an ordinary project `process-classes` is the earliest phase that works.
+
+Where the descriptor is *injected into the packaged artifact* after compilation -- as [Moditect](https://github.com/moditect/moditect) does -- the output directory never holds one and this rule cannot inspect it at any phase. Use [requireExplicitModules](./requireExplicitModules.html), which falls back to the packaged artifact, to assert that such a project ships a named module at all.
+
+When the rule finds nothing at all to inspect it emits a warning naming this page, so a misbound execution cannot pass unnoticed.
 
 Both output layouts are supported: the classic one (the descriptor directly in the output directory, one Maven project = one Java module) and the Maven 4 *module source hierarchy* (POM model 4.1.0), where one Maven project compiles several modules, each to its own subdirectory `\${project.build.outputDirectory}/<module-name>/`.
 
