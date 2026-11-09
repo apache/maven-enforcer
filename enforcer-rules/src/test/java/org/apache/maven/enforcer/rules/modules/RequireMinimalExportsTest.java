@@ -19,13 +19,19 @@
 package org.apache.maven.enforcer.rules.modules;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.model.Build;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +54,9 @@ class RequireMinimalExportsTest {
 
     @TempDir
     File outputDirectory;
+
+    @TempDir
+    File artifactDirectory;
 
     private final MavenProject project = mock(MavenProject.class);
     private RequireMinimalExports rule;
@@ -165,12 +174,53 @@ class RequireMinimalExportsTest {
         verify(log, never()).warn(contains("checked nothing"));
     }
 
-    /** Make the project look like one that builds a JAR, the precondition for the "nothing checked" warning. */
+    @Test
+    void anExportFoundOnlyInAnInjectedDescriptorIsStillChecked() throws Exception {
+        // Moditect-style project: nothing in target/classes, the descriptor lives in the packaged JAR.
+        // Bound at or after package the rule reads it from there, so the check is not quietly skipped.
+        givenJarArtifactCarrying(ModuleInfoFixtures.module("com.example.foo")
+                .exports("com.example.foo.internal")
+                .toBytes());
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertTrue(e.getMessage().contains("com.example.foo.internal"), e.getMessage());
+    }
+
+    @Test
+    void aConfiguredDescriptorInjectorIsNamedInTheWarning() throws Exception {
+        // Bound before package with Moditect in the build: there are classes but no descriptor anywhere,
+        // and no artifact yet -- the one case the "no compiled classes" guard cannot recognise.
+        Plugin moditect = new Plugin();
+        moditect.setGroupId("org.moditect");
+        moditect.setArtifactId("moditect-maven-plugin");
+        when(project.getBuildPlugins()).thenReturn(Collections.singletonList(moditect));
+        givenJarPackaging();
+        ModuleInfoFixtures.writeDummyClass(outputDirectory, "com.example.foo.Bar");
+        assertDoesNotThrow(rule::execute);
+        verify(log).warn(contains("moditect-maven-plugin"));
+    }
+
+    /** Make the project look like one that builds a JAR, the precondition for the "checked nothing" warning. */
     private void givenJarPackaging() {
         ArtifactHandler handler = mock(ArtifactHandler.class);
         when(handler.getExtension()).thenReturn("jar");
         Artifact artifact = mock(Artifact.class);
         when(artifact.getArtifactHandler()).thenReturn(handler);
+        when(project.getArtifact()).thenReturn(artifact);
+    }
+
+    /** A packaged artifact carrying the given {@code module-info.class}, as a descriptor injector leaves it. */
+    private void givenJarArtifactCarrying(byte[] descriptor) throws IOException {
+        File jar = new File(artifactDirectory, "artifact.jar");
+        try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(jar.toPath()))) {
+            out.putNextEntry(new JarEntry("module-info.class"));
+            out.write(descriptor);
+            out.closeEntry();
+        }
+        ArtifactHandler handler = mock(ArtifactHandler.class);
+        when(handler.getExtension()).thenReturn("jar");
+        Artifact artifact = mock(Artifact.class);
+        when(artifact.getArtifactHandler()).thenReturn(handler);
+        when(artifact.getFile()).thenReturn(jar);
         when(project.getArtifact()).thenReturn(artifact);
     }
 }

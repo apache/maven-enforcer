@@ -34,9 +34,9 @@ Qualified exports (`exports a.b.c to some.friend;`) are ignored by default, beca
 
 This rule inspects the compiled `module-info.class` under `\${project.build.outputDirectory}`, which exists only once the project has been built. Bind the `enforce` execution to an appropriate phase: the default `validate` phase runs before any class is compiled, so an execution left there finds nothing and reports success without having checked anything. For an ordinary project `process-classes` is the earliest phase that works.
 
-Where the descriptor is *injected into the packaged artifact* after compilation -- as [Moditect](https://github.com/moditect/moditect) does -- the output directory never holds one and this rule cannot inspect it at any phase. Use [requireExplicitModules](./requireExplicitModules.html), which falls back to the packaged artifact, to assert that such a project ships a named module at all.
+If the module descriptor is *injected into the packaged artifact* after compilation -- as [Moditect](https://github.com/moditect/moditect) does, typically on a Java 8 baseline where a `module-info.java` cannot be compiled at all -- then `\${project.build.outputDirectory}` legitimately never holds one, and `process-classes` is too early. Bind the execution at or after `package` instead, for example to `verify`: the rule then reads the descriptor from the packaged artifact, including a multi-release one under `META-INF/versions/<n>/`. A descriptor that cannot be parsed counts as absent, so an unreadable artifact keeps the stricter outcome.
 
-When the rule finds nothing at all to inspect it emits a warning naming this page, so a misbound execution cannot pass unnoticed.
+When the rule finds nothing at all to inspect it emits a warning naming this page, so a misbound execution cannot pass unnoticed. Where a plugin known to inject descriptors is configured but has not run yet, the warning names that plugin.
 
 Both output layouts are supported: the classic one (the descriptor directly in the output directory, one Maven project = one Java module) and the Maven 4 *module source hierarchy* (POM model 4.1.0), where one Maven project compiles several modules, each to its own subdirectory `\${project.build.outputDirectory}/<module-name>/`.
 

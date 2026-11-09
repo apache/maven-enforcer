@@ -204,11 +204,38 @@ class RequireExplicitModulesTest {
         when(project.getArtifact()).thenReturn(artifact);
     }
 
+    @Test
+    void anUnreadableDescriptorInTheArtifactCountsAsAbsent() throws Exception {
+        // The descriptor is parsed, not merely found by name: a corrupt one keeps the stricter outcome
+        // rather than passing the project off as an explicit module.
+        when(project.getArtifactId()).thenReturn("foo");
+        File jar = new File(artifactDirectory, "artifact.jar");
+        try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(jar.toPath()))) {
+            out.putNextEntry(new JarEntry("module-info.class"));
+            out.write("not a class file".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            out.closeEntry();
+        }
+        Artifact artifact = mock(Artifact.class);
+        when(artifact.getFile()).thenReturn(jar);
+        when(project.getArtifact()).thenReturn(artifact);
+        ModuleInfoFixtures.writeDummyClass(outputDirectory, "com.example.foo.Bar");
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertTrue(e.getMessage().contains("automatic module"), e.getMessage());
+    }
+
     private void givenPackagedArtifact(String... entries) throws IOException {
         File jar = new File(artifactDirectory, "artifact.jar");
+        byte[] descriptor = ModuleInfoFixtures.module("com.example.foo")
+                .exports("com.example.foo")
+                .toBytes();
         try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(jar.toPath()))) {
             for (String entry : entries) {
                 out.putNextEntry(new JarEntry(entry));
+                // A descriptor entry must carry a readable module-info.class: the rule parses it rather
+                // than trusting the entry name, so an unreadable one counts as no descriptor at all.
+                if (entry.endsWith("module-info.class")) {
+                    out.write(descriptor);
+                }
                 out.closeEntry();
             }
         }

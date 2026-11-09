@@ -28,12 +28,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginExecution;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -55,6 +62,21 @@ public abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRul
 
     /** Base URL of the published rule documentation, for pointing users at the phase binding advice. */
     private static final String DOCUMENTATION_BASE_URL = "https://maven.apache.org/enforcer/enforcer-rules/";
+
+    /** Descriptor of a multi-release JAR, as {@code META-INF/versions/<n>/module-info.class}. */
+    private static final Pattern VERSIONED_MODULE_INFO =
+            Pattern.compile("META-INF/versions/(\\d+)/module-info\\.class");
+
+    /**
+     * Plugins known to inject a module descriptor into the packaged artifact after compilation, by
+     * {@code groupId:artifactId}. Used only to word a warning more precisely -- never to decide whether
+     * a rule passes -- so an injector missing from this list costs a less specific hint, nothing more.
+     */
+    private static final List<String> DESCRIPTOR_INJECTING_PLUGINS =
+            Collections.singletonList("org.moditect:moditect-maven-plugin");
+
+    /** Goal of a descriptor-injecting plugin, matched alongside the coordinates so a fork is still recognised. */
+    private static final String DESCRIPTOR_INJECTING_GOAL = "add-module-info";
 
     protected final MavenProject project;
 
@@ -122,7 +144,64 @@ public abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRul
                 return outputs;
             }
         }
-        return Collections.singletonList(new ModuleOutput(outputDirectory, null));
+        // Nothing in the output directory. A plugin such as Moditect injects the descriptor into the
+        // packaged artifact and never writes target/classes, so the artifact is the only place left to
+        // look. Only reached for the classic one-module layout: a module source hierarchy returns above,
+        // since one main artifact cannot stand for several modules.
+        JavaModuleInfo packaged = readPackagedArtifactModuleInfo();
+        if (packaged != null) {
+            getLog().debug("No module-info.class below " + outputDirectory
+                    + ", using the descriptor carried by the packaged artifact");
+        }
+        return Collections.singletonList(new ModuleOutput(outputDirectory, packaged));
+    }
+
+    /**
+     * Read the module descriptor from the project's packaged artifact, for projects whose descriptor is
+     * injected after compilation. Prefers the root {@code module-info.class} and otherwise takes the
+     * highest-versioned multi-release descriptor.
+     *
+     * @return the parsed descriptor, or {@code null} when there is no artifact to inspect (the rule runs
+     *         before {@code package}), it carries no descriptor, or it cannot be read as an archive --
+     *         an unreadable artifact therefore keeps the stricter outcome
+     */
+    private JavaModuleInfo readPackagedArtifactModuleInfo() throws EnforcerRuleException {
+        Artifact artifact = project.getArtifact();
+        File file = artifact != null ? artifact.getFile() : null;
+        if (file == null || !file.isFile()) {
+            getLog().debug("No packaged artifact available to inspect for a module descriptor");
+            return null;
+        }
+        try (JarFile jar = new JarFile(file)) {
+            JarEntry entry = descriptorEntry(jar);
+            if (entry == null) {
+                return null;
+            }
+            requireJava9Runtime();
+            try (InputStream in = jar.getInputStream(entry)) {
+                return JavaModuleInfoReader.read(in);
+            }
+        } catch (IOException e) {
+            getLog().debug("Could not read a module descriptor from " + file + ": " + e.getMessage());
+            return null;
+        }
+    }
+
+    /** The module descriptor entry of a JAR: the root one, else the highest-versioned one, else {@code null}. */
+    private static JarEntry descriptorEntry(JarFile jar) {
+        JarEntry root = jar.getJarEntry("module-info.class");
+        if (root != null) {
+            return root;
+        }
+        return jar.stream()
+                .map(candidate -> {
+                    Matcher matcher = VERSIONED_MODULE_INFO.matcher(candidate.getName());
+                    return matcher.matches() ? new Object[] {Integer.valueOf(matcher.group(1)), candidate} : null;
+                })
+                .filter(java.util.Objects::nonNull)
+                .max(java.util.Comparator.comparingInt(pair -> (Integer) pair[0]))
+                .map(pair -> (JarEntry) pair[1])
+                .orElse(null);
     }
 
     /**
@@ -223,16 +302,44 @@ public abstract class AbstractModuleInfoRule extends AbstractStandardEnforcerRul
         if (!buildsJarArtifact()) {
             return;
         }
+        boolean anyClasses = false;
         for (ModuleOutput output : outputs) {
-            if (output.moduleInfo() != null || hasCompiledClasses(output.root())) {
+            if (output.moduleInfo() != null) {
                 return;
             }
+            anyClasses |= hasCompiledClasses(output.root());
         }
         String rule = configurationName();
-        getLog().warn(rule + " found no compiled classes under " + outputDirectory()
-                + " and therefore checked nothing. Bind the enforce execution to a phase at which this "
-                + "project's module descriptor is already available; see " + DOCUMENTATION_BASE_URL + rule
-                + ".html");
+        Optional<String> injector = descriptorInjectingPlugin();
+        if (anyClasses && !injector.isPresent()) {
+            // Built, no descriptor anywhere, nothing suggests one is injected later: the project simply
+            // is not a module, which only requireExplicitModules has an opinion about.
+            return;
+        }
+        String cause = injector.map(plugin -> "the descriptor appears to be injected into the packaged artifact by "
+                        + plugin + ", which has not run yet")
+                .orElse("there are no compiled classes under " + outputDirectory());
+        getLog().warn(rule + " checked nothing: " + cause
+                + ". Bind the enforce execution to a phase at which this project's module descriptor is "
+                + "already available; see " + DOCUMENTATION_BASE_URL + rule + ".html");
+    }
+
+    /**
+     * The {@code artifactId} of a configured plugin known to inject a module descriptor after compilation,
+     * recognised by coordinates or by its goal. Affects only the wording of a warning, never a verdict.
+     */
+    private Optional<String> descriptorInjectingPlugin() {
+        for (Plugin plugin : project.getBuildPlugins()) {
+            if (DESCRIPTOR_INJECTING_PLUGINS.contains(plugin.getKey())) {
+                return Optional.of(plugin.getArtifactId());
+            }
+            for (PluginExecution execution : plugin.getExecutions()) {
+                if (execution.getGoals().contains(DESCRIPTOR_INJECTING_GOAL)) {
+                    return Optional.of(plugin.getArtifactId());
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     /**
