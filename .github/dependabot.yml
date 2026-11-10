@@ -35,6 +35,23 @@ updates:
     # Maven 3 so use SLF4J 1.7.x
     - dependency-name: "org.slf4j:*"
       versions: [">= 2.0.0"]
+    # Baseline is Maven 3.9 with Resolver 1.9; Maven 3.10 pulls Resolver 2.x.
+    # Excludes the Maven artifacts this plugin uses.
+    - dependency-name: "org.apache.maven:maven-artifact"
+      versions: [">= 3.10.0"]
+    - dependency-name: "org.apache.maven:maven-core"
+      versions: [">= 3.10.0"]
+    - dependency-name: "org.apache.maven:maven-model"
+      versions: [">= 3.10.0"]
+    - dependency-name: "org.apache.maven:maven-model-builder"
+      versions: [">= 3.10.0"]
+    - dependency-name: "org.apache.maven:maven-plugin-api"
+      versions: [">= 3.10.0"]
+    - dependency-name: "org.apache.maven:maven-settings"
+      versions: [">= 3.10.0"]
+    # Resolver 2.x is not part of the Maven 3.9 baseline.
+    - dependency-name: "org.apache.maven.resolver:*"
+      versions: [">= 2.0.0"]
 
 - package-ecosystem: "github-actions"
   directory: "/"
