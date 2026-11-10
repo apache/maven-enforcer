@@ -77,7 +77,7 @@
   </distributionManagement>
 
   <properties>
-    <mavenVersion>3.10.0</mavenVersion>
+    <mavenVersion>3.9.16</mavenVersion>
     <maven.site.path>enforcer-archives/enforcer-LATEST</maven.site.path>
     <mockito.version>4.11.0</mockito.version>
     <project.build.outputTimestamp>2026-10-26T22:26:09Z</project.build.outputTimestamp>
