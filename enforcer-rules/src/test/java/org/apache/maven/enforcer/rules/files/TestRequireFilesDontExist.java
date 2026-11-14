@@ -29,11 +29,13 @@ import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Test the "require files don't exist" rule.
@@ -52,10 +54,14 @@ class TestRequireFilesDontExist {
 
         rule.setFilesList(Collections.singletonList(f));
 
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
-
-        assertNotNull(e.getMessage());
-        f.delete();
+        try {
+            rule.execute();
+            fail("Expected an Exception.");
+        } catch (EnforcerRuleException e) {
+            assertEquals("Some files should not exist:\n" + f.getPath() + "\n", e.getMessage());
+        } finally {
+            f.delete();
+        }
     }
 
     @Test
@@ -64,6 +70,28 @@ class TestRequireFilesDontExist {
         rule.setFilesList(Collections.singletonList(new File("POM.xml")));
 
         rule.execute();
+    }
+
+    @Test
+    void testNullFile() {
+        rule.setFilesList(Collections.singletonList(null));
+        try {
+            rule.execute();
+            fail("Should get exception");
+        } catch (EnforcerRuleException e) {
+            assertEquals("A null filename was given and allowNulls is false.", e.getMessage());
+        }
+    }
+
+    @Test
+    void testNullFileAllowed() {
+        rule.setFilesList(Collections.singletonList(null));
+        rule.setAllowNulls(true);
+        try {
+            rule.execute();
+        } catch (EnforcerRuleException e) {
+            fail("Unexpected Exception:" + e.getLocalizedMessage(), e);
+        }
     }
 
     @Test
@@ -86,10 +114,12 @@ class TestRequireFilesDontExist {
     void testEmptyFileList() {
         rule.setFilesList(Collections.emptyList());
         assertTrue(rule.getFiles().isEmpty());
-
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
-
-        assertNotNull(e.getMessage());
+        try {
+            rule.execute();
+            fail("Should get exception");
+        } catch (EnforcerRuleException e) {
+            assertEquals("The file list is empty, and null files are disabled.", e.getMessage());
+        }
     }
 
     @Test
@@ -97,6 +127,22 @@ class TestRequireFilesDontExist {
         rule.setFilesList(Collections.emptyList());
         assertTrue(rule.getFiles().isEmpty());
         rule.setAllowNulls(true);
+        try {
+            rule.execute();
+        } catch (EnforcerRuleException e) {
+            fail("Unexpected Exception:" + e.getLocalizedMessage());
+        }
+    }
+
+    @Test
+    void testFileDoesNotExist() throws EnforcerRuleException, IOException {
+        File f = File.createTempFile("junit", null, temporaryFolder);
+        f.delete();
+
+        assumeFalse(f.exists());
+
+        rule.setFilesList(Collections.singletonList(f));
+
         rule.execute();
     }
 
@@ -160,11 +206,11 @@ class TestRequireFilesDontExist {
         File f = File.createTempFile("junit", null, temporaryFolder);
         f.delete();
 
-        assertFalse(f.exists());
+        assumeFalse(f.exists());
 
         File g = File.createTempFile("junit", null, temporaryFolder);
 
-        assertTrue(g.exists());
+        assumeTrue(g.exists());
 
         rule.setFilesList(Arrays.asList(f, g.getCanonicalFile()));
         rule.setSatisfyAny(true);
