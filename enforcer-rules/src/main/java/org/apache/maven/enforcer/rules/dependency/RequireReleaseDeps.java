@@ -136,11 +136,12 @@ public final class RequireReleaseDeps extends BannedDependenciesBase {
     @Override
     public String toString() {
         return String.format(
-                "RequireReleaseDeps[message=%s, excludes=%s, includes=%s, searchTransitive=%b, onlyWhenRelease=%b, failWhenParentIsSnapshot=%b]",
+                "RequireReleaseDeps[message=%s, excludes=%s, includes=%s, searchTransitive=%b, ignoreOptionals=%b, onlyWhenRelease=%b, failWhenParentIsSnapshot=%b]",
                 getMessage(),
                 getExcludes(),
                 getIncludes(),
                 isSearchTransitive(),
+                isIgnoreOptionals(),
                 onlyWhenRelease,
                 failWhenParentIsSnapshot);
     }

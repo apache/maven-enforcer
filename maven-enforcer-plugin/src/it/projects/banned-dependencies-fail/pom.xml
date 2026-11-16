@@ -35,6 +35,12 @@ under the License.
       <artifactId>menforcer128_api</artifactId>
       <version>1.4.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugins.enforcer.its</groupId>
+      <artifactId>menforcer138_io</artifactId>
+      <version>2.0.3</version>
+      <optional>true</optional>
+    </dependency>
   </dependencies>
 
   <build>
@@ -54,6 +60,8 @@ under the License.
                 <BannedDependencies>
                   <excludes>
                     <exclude>org.apache.maven.plugins.enforcer.its:menforcer128_api</exclude>
+                    <!-- transitive dependency of optional menforcer138_io -->
+                    <exclude>org.apache.maven.plugins.enforcer.its:menforcer138_utils</exclude>
                   </excludes>
                 </BannedDependencies>
               </rules>
