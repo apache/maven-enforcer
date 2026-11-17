@@ -410,6 +410,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
             return hopCount;
         }
 
+        @Override
         public int compareTo(DependencyNodeHopCountPair other) {
             return Integer.compare(hopCount, other.getHopCount());
         }

@@ -44,6 +44,7 @@ public class DisplayInfoMojo extends AbstractMojo {
     /**
      * Entry point to the mojo
      */
+    @Override
     public void execute() {
         String mavenVersion = session.getSystemProperties().getProperty("maven.version");
         String javaVersion = System.getProperty("java.version");
