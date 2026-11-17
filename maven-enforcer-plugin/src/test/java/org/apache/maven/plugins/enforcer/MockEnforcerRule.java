@@ -48,6 +48,7 @@ public class MockEnforcerRule implements EnforcerRule {
         this.cacheId = cacheId;
     }
 
+    @Override
     public void execute(EnforcerRuleHelper helper) throws EnforcerRuleException {
         executed = true;
         if (isFailRule()) {
@@ -73,6 +74,7 @@ public class MockEnforcerRule implements EnforcerRule {
      * (non-Javadoc)
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#getCacheId()
      */
+    @Override
     public String getCacheId() {
         return cacheId;
     }
@@ -81,6 +83,7 @@ public class MockEnforcerRule implements EnforcerRule {
      * (non-Javadoc)
      * @see org.apache.maven.enforcer.rule.api.EnforcerRule#isCacheable()
      */
+    @Override
     public boolean isCacheable() {
         return isCacheable;
     }
@@ -90,6 +93,7 @@ public class MockEnforcerRule implements EnforcerRule {
      * @see
      * org.apache.maven.enforcer.rule.api.EnforcerRule#isResultValid(org.apache.maven.enforcer.rule.api.EnforcerRule)
      */
+    @Override
     public boolean isResultValid(EnforcerRule theCachedRule) {
         return isResultValid;
     }
