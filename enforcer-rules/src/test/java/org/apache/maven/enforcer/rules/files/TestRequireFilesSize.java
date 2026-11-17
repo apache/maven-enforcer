@@ -21,7 +21,6 @@ package org.apache.maven.enforcer.rules.files;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -75,7 +74,7 @@ class TestRequireFilesSize {
     }
 
     @Test
-    void testFileExists() throws EnforcerRuleException, IOException {
+    void testFileExists() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
 
         rule.setFilesList(Collections.singletonList(f));
@@ -93,14 +92,14 @@ class TestRequireFilesSize {
     }
 
     @Test
-    void testEmptyFileAllowNull() throws EnforcerRuleException {
+    void testEmptyFileAllowNull() throws Exception {
         rule.setFilesList(Collections.singletonList(null));
         rule.setAllowNulls(true);
         rule.execute();
     }
 
     @Test
-    void testEmptyFileList() throws EnforcerRuleException, IOException {
+    void testEmptyFileList() throws Exception {
         rule.setFilesList(Collections.emptyList());
 
         assertTrue(rule.getFiles().isEmpty());
@@ -120,7 +119,7 @@ class TestRequireFilesSize {
     }
 
     @Test
-    void testFileDoesNotExist() throws IOException {
+    void testFileDoesNotExist() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
         f.delete();
         assertFalse(f.exists());
@@ -142,7 +141,7 @@ class TestRequireFilesSize {
     }
 
     @Test
-    void testFileTooSmall() throws IOException {
+    void testFileTooSmall() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
         rule.setFilesList(Collections.singletonList(f));
         rule.setMinsize(10);
@@ -153,7 +152,7 @@ class TestRequireFilesSize {
     }
 
     @Test
-    void testFileTooBig() throws IOException {
+    void testFileTooBig() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
         try (BufferedWriter out = new BufferedWriter(new FileWriter(f))) {
             out.write("123456789101112131415");
@@ -169,7 +168,7 @@ class TestRequireFilesSize {
     }
 
     @Test
-    void testRequireFilesSizeSatisfyAny() throws EnforcerRuleException, IOException {
+    void testRequireFilesSizeSatisfyAny() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
         try (BufferedWriter out = new BufferedWriter(new FileWriter(f))) {
             out.write("123456789101112131415");
@@ -222,7 +221,7 @@ class TestRequireFilesSize {
     }
 
     @Test
-    void testDirectoryContentOverUpperBound() throws IOException {
+    void testDirectoryContentOverUpperBound() throws Exception {
         Path d = Files.createTempDirectory(temporaryFolder.toPath(), "junit");
         long totalSize = d.toFile().length();
         for (int i = 0; i < 3; i++) {
@@ -240,7 +239,7 @@ class TestRequireFilesSize {
     }
 
     @Test
-    void testDirectoryContentUnderLowerBound() throws IOException, EnforcerRuleException {
+    void testDirectoryContentUnderLowerBound() throws Exception {
         Path d = Files.createTempDirectory(temporaryFolder.toPath(), "junit");
         long totalSize = d.toFile().length();
         for (int i = 0; i < 3; i++) {

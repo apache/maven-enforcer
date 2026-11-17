@@ -59,7 +59,7 @@ class TestBannedPlugins {
     }
 
     @Test
-    void shouldPassWhenNoPlugins() throws EnforcerRuleException {
+    void shouldPassWhenNoPlugins() throws Exception {
         MavenProject project = mock(MavenProject.class);
         when(session.getCurrentProject()).thenReturn(project);
         when(project.getPluginArtifacts()).thenReturn(Collections.emptySet());
@@ -125,7 +125,7 @@ class TestBannedPlugins {
     }
 
     @Test
-    void shouldPassWhenPluginIsIncluded() throws EnforcerRuleException {
+    void shouldPassWhenPluginIsIncluded() throws Exception {
         MavenProject project = mock(MavenProject.class);
         when(session.getCurrentProject()).thenReturn(project);
 

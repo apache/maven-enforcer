@@ -19,13 +19,11 @@
 package org.apache.maven.enforcer.rules.checksum;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
-import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.checksum.NormalizeLineSeparatorReader.LineSeparator;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
@@ -64,7 +62,7 @@ class TestRequireTextFileChecksum {
     }
 
     @Test
-    void testFileChecksumMd5NormalizedFromUnixToWindows() throws IOException, EnforcerRuleException {
+    void testFileChecksumMd5NormalizedFromUnixToWindows() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite(f, "line1\nline2\n");
 
@@ -78,7 +76,7 @@ class TestRequireTextFileChecksum {
     }
 
     @Test
-    void testFileChecksumMd5NormalizedFromWindowsToWindows() throws IOException, EnforcerRuleException {
+    void testFileChecksumMd5NormalizedFromWindowsToWindows() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite(f, "line1\r\nline2\r\n");
 
@@ -92,7 +90,7 @@ class TestRequireTextFileChecksum {
     }
 
     @Test
-    void testFileChecksumMd5NormalizedFromWindowsToUnix() throws IOException, EnforcerRuleException {
+    void testFileChecksumMd5NormalizedFromWindowsToUnix() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite(f, "line1\r\nline2\r\n");
 
@@ -106,7 +104,7 @@ class TestRequireTextFileChecksum {
     }
 
     @Test
-    void testFileChecksumMd5NormalizedFromUnixToUnix() throws IOException, EnforcerRuleException {
+    void testFileChecksumMd5NormalizedFromUnixToUnix() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite(f, "line1\nline2\n");
 
@@ -120,7 +118,7 @@ class TestRequireTextFileChecksum {
     }
 
     @Test
-    void testFileChecksumMd5NormalizedWithMissingFileCharsetParameter() throws IOException, EnforcerRuleException {
+    void testFileChecksumMd5NormalizedWithMissingFileCharsetParameter() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
         FileUtils.fileWrite(f, "line1\nline2\n");
 

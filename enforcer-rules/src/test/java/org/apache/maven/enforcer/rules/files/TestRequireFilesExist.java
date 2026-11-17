@@ -19,7 +19,6 @@
 package org.apache.maven.enforcer.rules.files;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -153,7 +152,7 @@ class TestRequireFilesExist {
     }
 
     @Test
-    void testFileExistsSatisfyAny() throws EnforcerRuleException, IOException {
+    void testFileExistsSatisfyAny() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
         f.delete();
 

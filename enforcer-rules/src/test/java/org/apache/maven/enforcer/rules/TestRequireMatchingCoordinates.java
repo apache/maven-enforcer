@@ -60,7 +60,7 @@ class TestRequireMatchingCoordinates {
     }
 
     @Test
-    void shouldPassWhenCoordinatesMatch() throws EnforcerRuleException {
+    void shouldPassWhenCoordinatesMatch() throws Exception {
         rule.setGroupIdPattern("com\\.example\\..*");
         when(project.getGroupId()).thenReturn("com.example.app");
 

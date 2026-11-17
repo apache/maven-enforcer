@@ -57,7 +57,7 @@ class TestBannedRepositories {
     }
 
     @Test
-    void testNoCheckRules() throws EnforcerRuleException {
+    void testNoCheckRules() throws Exception {
         RemoteRepository repo1 = new RemoteRepository.Builder("repo1", "default", "http://repo1/").build();
         List<RemoteRepository> repos = new ArrayList<>();
         repos.add(repo1);
@@ -96,7 +96,7 @@ class TestBannedRepositories {
     }
 
     @Test
-    void testAllowedRepositoriesAllOK() throws EnforcerRuleException {
+    void testAllowedRepositoriesAllOK() throws Exception {
         RemoteRepository repo1 = new RemoteRepository.Builder("repo1", "default", "http://repo1/").build();
         RemoteRepository repo2 = new RemoteRepository.Builder("repo1", "default", "http://repo1/test").build();
 
