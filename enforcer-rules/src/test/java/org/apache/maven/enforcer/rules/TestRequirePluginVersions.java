@@ -20,6 +20,7 @@ package org.apache.maven.enforcer.rules;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,7 +33,9 @@ import org.apache.maven.enforcer.rules.utils.ExpressionEvaluator;
 import org.apache.maven.enforcer.rules.utils.PluginWrapper;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.lifecycle.DefaultLifecycles;
+import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.PluginManager;
 import org.apache.maven.project.MavenProject;
@@ -52,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
@@ -242,6 +246,31 @@ class TestRequirePluginVersions {
         // release versions should pass everything
         source.setArtifactId("b-artifact");
         assertTrue(rule.hasValidVersionSpecified(source, pluginWrappers));
+    }
+
+    /**
+     * Test that plugins declared in active profiles with a property-based artifactId are resolved before being
+     * matched against the (already-resolved) plugin entries gathered elsewhere, instead of being compared by their
+     * raw, unresolved artifactId (see issue #870 / MENFORCER-518).
+     */
+    @Test
+    void testGetProfilePluginsResolvesPropertyBasedArtifactId() {
+        Plugin unresolved = EnforcerTestUtils.newPlugin("group", "${myArtifactIdProp}", "1.0");
+        Plugin resolved = EnforcerTestUtils.newPlugin("group", "real-artifact", "1.0");
+
+        BuildBase build = new BuildBase();
+        build.setPlugins(Collections.singletonList(unresolved));
+
+        Profile profile = new Profile();
+        profile.setBuild(build);
+
+        when(project.getActiveProfiles()).thenReturn(Collections.singletonList(profile));
+        when(utils.resolvePlugins(anyList())).thenReturn(Collections.singletonList(resolved));
+
+        Set<Plugin> result = rule.getProfilePlugins(project);
+
+        assertEquals(1, result.size());
+        assertEquals("real-artifact", result.iterator().next().getArtifactId());
     }
 
     /**

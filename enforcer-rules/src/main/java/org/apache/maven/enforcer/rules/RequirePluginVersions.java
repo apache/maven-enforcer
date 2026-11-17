@@ -420,7 +420,10 @@ public final class RequirePluginVersions extends AbstractStandardEnforcerRule {
                 if (b != null) {
                     List<Plugin> plugins = b.getPlugins();
                     if (plugins != null) {
-                        result.addAll(plugins);
+                        // resolve groupId/artifactId/version expressions, same as getAllPluginEntries()'s
+                        // profile plugins below: otherwise a property-based artifactId here never matches
+                        // the resolved artifactId isMatchingPlugin() compares it against.
+                        result.addAll(utils.resolvePlugins(plugins));
                     }
                 }
             }
