@@ -87,10 +87,10 @@ public final class RequireFilesSize extends AbstractRequireFiles {
         if (fileExists(file)) {
             long length = computeLength(file);
             if (length < minsize) {
-                this.errorMsg = (file + " size (" + length + ") too small. Min. is " + minsize);
+                this.errorMsg = file + " size (" + length + ") too small. Min. is " + minsize;
                 return false;
             } else if (length > maxsize) {
-                this.errorMsg = (file + " size (" + length + ") too large. Max. is " + maxsize);
+                this.errorMsg = file + " size (" + length + ") too large. Max. is " + maxsize;
                 return false;
             } else {
 
@@ -106,7 +106,7 @@ public final class RequireFilesSize extends AbstractRequireFiles {
                 return true;
             }
         } else {
-            this.errorMsg = (file + " does not exist!");
+            this.errorMsg = file + " does not exist!";
             return false;
         }
     }

@@ -148,7 +148,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
                 .append(". Paths to dependency are:")
                 .append(System.lineSeparator());
 
-        if (conflict.size() > 0) {
+        if (!conflict.isEmpty()) {
             errorMessage.append(buildTreeString(conflict.get(0)));
         }
         for (DependencyNode node : conflict.subList(1, conflict.size())) {
@@ -360,7 +360,7 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
         }
     }
 
-    private static class DependencyNodeHopCountPair implements Comparable<DependencyNodeHopCountPair> {
+    private static final class DependencyNodeHopCountPair implements Comparable<DependencyNodeHopCountPair> {
         private final DependencyNode node;
         private int hopCount;
         private final ParentNodeProvider parentNodeProvider;

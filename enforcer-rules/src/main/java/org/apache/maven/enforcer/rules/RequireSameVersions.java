@@ -122,8 +122,10 @@ public final class RequireSameVersions extends AbstractStandardEnforcerRule {
                 if (getMessage() != null) {
                     builder.append(getMessage()).append("\n");
                 }
-                builder.append("Top level project has version " + topLevelProject.getVersion()
-                        + " but current module has different version " + project.getVersion());
+                builder.append("Top level project has version ")
+                        .append(topLevelProject.getVersion())
+                        .append(" but current module has different version ")
+                        .append(project.getVersion());
                 throw new EnforcerRuleException(builder.toString());
             }
         }

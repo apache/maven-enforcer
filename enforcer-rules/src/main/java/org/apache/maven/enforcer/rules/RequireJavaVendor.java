@@ -56,15 +56,15 @@ public final class RequireJavaVendor extends AbstractStandardEnforcerRule {
         String result = "";
 
         if (includes != null) {
-            result += "" + includes.hashCode();
+            result += String.valueOf(includes.hashCode());
         }
 
         if (excludes != null) {
-            result += "" + excludes.hashCode();
+            result += String.valueOf(excludes.hashCode());
         }
 
         if (getMessage() != null) {
-            result += "" + getMessage().hashCode();
+            result += String.valueOf(getMessage().hashCode());
         }
 
         return result;

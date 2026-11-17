@@ -112,7 +112,7 @@ public final class DependencyConvergence extends AbstractStandardEnforcerRule {
                 .append(nodeList.get(0).getArtifact().toString())
                 .append(". Paths to dependency are:")
                 .append(System.lineSeparator());
-        if (nodeList.size() > 0) {
+        if (!nodeList.isEmpty()) {
             builder.append(buildTreeString(nodeList.get(0)));
         }
         for (DependencyNode node : nodeList.subList(1, nodeList.size())) {

@@ -138,12 +138,12 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
 
         for (RemoteRepository repo : repositories) {
             String url = repo.getUrl().trim();
-            if (includes.size() > 0 && !match(url, includes)) {
+            if (!includes.isEmpty() && !match(url, includes)) {
                 bannedRepos.add(repo);
                 continue;
             }
 
-            if (excludes.size() > 0 && match(url, excludes)) {
+            if (!excludes.isEmpty() && match(url, excludes)) {
                 bannedRepos.add(repo);
             }
         }
@@ -178,7 +178,7 @@ public final class BannedRepositories extends AbstractStandardEnforcerRule {
     private String getRepositoryUrlString(List<RemoteRepository> resultBannedRepos) {
         StringBuilder urls = new StringBuilder();
         for (RemoteRepository repo : resultBannedRepos) {
-            urls.append(repo.getId() + " - " + repo.getUrl() + System.lineSeparator());
+            urls.append(repo.getId() + " - ").append(repo.getUrl()).append(System.lineSeparator());
         }
         return urls.toString();
     }

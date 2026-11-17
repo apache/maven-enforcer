@@ -48,7 +48,7 @@ class NormalizeLineSeparatorReader extends FilterReader {
         enum MatchResult {
             NO_MATCH,
             POTENTIAL_MATCH,
-            MATCH;
+            MATCH
         }
 
         /**

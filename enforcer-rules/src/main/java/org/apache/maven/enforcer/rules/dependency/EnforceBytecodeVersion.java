@@ -343,7 +343,7 @@ public class EnforceBytecodeVersion extends AbstractStandardEnforcerRule {
      * may be different. Hence, we create a "key" out of config and dependency path, and if already inspected, we
      * skip on doing same job over and over again.
      */
-    private static class ChecksOptions {
+    private static final class ChecksOptions {
         private final String id;
         private final File file;
         private final List<String> ignorableClasses;
