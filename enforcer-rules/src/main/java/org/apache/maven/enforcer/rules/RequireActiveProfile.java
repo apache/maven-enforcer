@@ -90,14 +90,11 @@ public final class RequireActiveProfile extends AbstractStandardEnforcerRule {
                 String message = getMessage();
                 StringBuilder buf = new StringBuilder();
                 if (message != null) {
-                    buf.append(message).append(System.lineSeparator());
+                    buf.append(message + System.lineSeparator());
                 }
 
                 for (String profile : missingProfiles) {
-                    buf.append("Profile \"")
-                            .append(profile)
-                            .append("\" is not activated.")
-                            .append(System.lineSeparator());
+                    buf.append("Profile \"" + profile + "\" is not activated." + System.lineSeparator());
                 }
 
                 throw new EnforcerRuleException(buf.toString());

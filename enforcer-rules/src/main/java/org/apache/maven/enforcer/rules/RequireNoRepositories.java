@@ -172,12 +172,8 @@ public final class RequireNoRepositories extends AbstractStandardEnforcerRule {
                             findBannedRepositories(repos, allowedRepositories, allowSnapshotRepositories);
                     if (!bannedRepos.isEmpty()) {
                         badModels.add(model);
-                        newMsg.append(model.getGroupId() + ":")
-                                .append(model.getArtifactId())
-                                .append(VERSION)
-                                .append(model.getVersion())
-                                .append(" has repositories ")
-                                .append(bannedRepos);
+                        newMsg.append(model.getGroupId() + ":" + model.getArtifactId() + VERSION + model.getVersion()
+                                + " has repositories " + bannedRepos);
                     }
                 }
             }
@@ -188,12 +184,8 @@ public final class RequireNoRepositories extends AbstractStandardEnforcerRule {
                             findBannedRepositories(repos, allowedPluginRepositories, allowSnapshotPluginRepositories);
                     if (!bannedRepos.isEmpty()) {
                         badModels.add(model);
-                        newMsg.append(model.getGroupId() + ":")
-                                .append(model.getArtifactId())
-                                .append(VERSION)
-                                .append(model.getVersion())
-                                .append(" has plugin repositories ")
-                                .append(bannedRepos);
+                        newMsg.append(model.getGroupId() + ":" + model.getArtifactId() + VERSION + model.getVersion()
+                                + " has plugin repositories " + bannedRepos);
                     }
                 }
             }
