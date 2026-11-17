@@ -116,8 +116,10 @@ public final class RequirePrerequisite extends AbstractStandardEnforcerRule {
                     if (getMessage() != null) {
                         buf.append(getMessage()).append("\n");
                     }
-                    buf.append("The specified Maven prerequisite( " + specifiedVersion
-                            + " ) doesn't match the required version: " + mavenVersion);
+                    buf.append("The specified Maven prerequisite( ")
+                            .append(specifiedVersion)
+                            .append(" ) doesn't match the required version: ")
+                            .append(mavenVersion);
                     throw new EnforcerRuleException(buf.toString());
                 }
             }

@@ -71,9 +71,13 @@ public final class RequireExplicitDependencyScope extends AbstractStandardEnforc
             if (getMessage() != null) {
                 buf.append(getMessage()).append("\n");
             }
-            buf.append("Found " + numMissingDependencyScopes + " missing dependency "
-                    + scopesFormat.format(numMissingDependencyScopes)
-                    + ". Look at the " + logCategory + " emitted above for the details.");
+            buf.append("Found ")
+                    .append(numMissingDependencyScopes)
+                    .append(" missing dependency ")
+                    .append(scopesFormat.format(numMissingDependencyScopes))
+                    .append(". Look at the ")
+                    .append(logCategory)
+                    .append(" emitted above for the details.");
             throw new EnforcerRuleException(buf.toString());
         }
     }

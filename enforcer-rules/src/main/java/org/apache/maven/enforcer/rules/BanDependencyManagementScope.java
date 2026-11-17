@@ -76,7 +76,7 @@ public final class BanDependencyManagementScope extends AbstractStandardEnforcer
                 if (message == null) {
                     message = "Scope other than 'import' is not allowed in 'dependencyManagement'";
                 }
-                buf.append(message + System.lineSeparator());
+                buf.append(message).append(System.lineSeparator());
                 for (Dependency violatingDependency : violatingDependencies) {
                     buf.append(getErrorMessage(project, violatingDependency));
                 }

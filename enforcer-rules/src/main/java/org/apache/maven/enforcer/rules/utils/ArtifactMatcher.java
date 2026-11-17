@@ -255,19 +255,16 @@ public final class ArtifactMatcher {
         String artifactString;
 
         public MatchingArtifact(Artifact artifact) {
-            artifactString = new StringBuilder()
-                    .append(artifact.getGroupId())
-                    .append(":")
-                    .append(artifact.getArtifactId())
-                    .append(":")
-                    .append(artifact.getVersion())
-                    .append(":")
-                    .append(artifact.getType())
-                    .append(":")
-                    .append(artifact.getScope())
-                    .append(":")
-                    .append(artifact.getClassifier())
-                    .toString();
+            artifactString = artifact.getGroupId() + ":"
+                    + artifact.getArtifactId()
+                    + ":"
+                    + artifact.getVersion()
+                    + ":"
+                    + artifact.getType()
+                    + ":"
+                    + artifact.getScope()
+                    + ":"
+                    + artifact.getClassifier();
         }
 
         @Override

@@ -49,17 +49,17 @@ public abstract class AbstractStandardEnforcerRule extends AbstractEnforcerRule 
         StringBuilder buffer = new StringBuilder(128);
 
         buffer.append(
-                (project.getGroupId() != null && project.getGroupId().length() > 0)
+                project.getGroupId() != null && project.getGroupId().length() > 0
                         ? project.getGroupId()
                         : "[unknown-group-id]");
         buffer.append(':');
         buffer.append(
-                (project.getArtifactId() != null && project.getArtifactId().length() > 0)
+                project.getArtifactId() != null && project.getArtifactId().length() > 0
                         ? project.getArtifactId()
                         : "[unknown-artifact-id]");
         buffer.append(':');
         buffer.append(
-                (project.getVersion() != null && project.getVersion().length() > 0)
+                project.getVersion() != null && project.getVersion().length() > 0
                         ? project.getVersion()
                         : "[unknown-version]");
 

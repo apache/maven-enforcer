@@ -161,7 +161,7 @@ public final class RequireOS extends AbstractStandardEnforcerRule {
      */
     public boolean isAllowed() {
         // empty lambda as problems collector
-        return activator.isActive(createProfile(), profileActivationContext, (req -> {}));
+        return activator.isActive(createProfile(), profileActivationContext, req -> {});
     }
 
     /**

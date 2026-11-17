@@ -106,7 +106,7 @@ abstract class AbstractVersionEnforcer extends AbstractStandardEnforcerRule {
     public String getCacheId() {
         if (version != null && !version.isEmpty()) {
             // return the hash codes of the parameter that matters
-            return "" + version.hashCode();
+            return String.valueOf(version.hashCode());
         } else {
             return "0";
         }

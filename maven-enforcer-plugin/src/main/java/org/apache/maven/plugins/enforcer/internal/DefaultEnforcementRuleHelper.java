@@ -125,6 +125,6 @@ public class DefaultEnforcementRuleHelper implements EnforcerRuleHelper {
 
     @Override
     public Object getCache(String key, Supplier<?> producer) {
-        return cache.computeIfAbsent(key, (x) -> producer.get());
+        return cache.computeIfAbsent(key, x -> producer.get());
     }
 }

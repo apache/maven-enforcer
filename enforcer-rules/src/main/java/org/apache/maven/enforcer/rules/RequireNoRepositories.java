@@ -162,7 +162,7 @@ public final class RequireNoRepositories extends AbstractStandardEnforcerRule {
         List<Model> badModels = new ArrayList<>();
 
         StringBuilder newMsg = new StringBuilder();
-        newMsg.append("Some poms have repositories defined:" + System.lineSeparator());
+        newMsg.append("Some poms have repositories defined:").append(System.lineSeparator());
 
         for (Model model : models) {
             if (banRepositories) {
@@ -172,8 +172,12 @@ public final class RequireNoRepositories extends AbstractStandardEnforcerRule {
                             findBannedRepositories(repos, allowedRepositories, allowSnapshotRepositories);
                     if (!bannedRepos.isEmpty()) {
                         badModels.add(model);
-                        newMsg.append(model.getGroupId() + ":" + model.getArtifactId() + VERSION + model.getVersion()
-                                + " has repositories " + bannedRepos);
+                        newMsg.append(model.getGroupId() + ":")
+                                .append(model.getArtifactId())
+                                .append(VERSION)
+                                .append(model.getVersion())
+                                .append(" has repositories ")
+                                .append(bannedRepos);
                     }
                 }
             }
@@ -184,8 +188,12 @@ public final class RequireNoRepositories extends AbstractStandardEnforcerRule {
                             findBannedRepositories(repos, allowedPluginRepositories, allowSnapshotPluginRepositories);
                     if (!bannedRepos.isEmpty()) {
                         badModels.add(model);
-                        newMsg.append(model.getGroupId() + ":" + model.getArtifactId() + VERSION + model.getVersion()
-                                + " has plugin repositories " + bannedRepos);
+                        newMsg.append(model.getGroupId() + ":")
+                                .append(model.getArtifactId())
+                                .append(VERSION)
+                                .append(model.getVersion())
+                                .append(" has plugin repositories ")
+                                .append(bannedRepos);
                     }
                 }
             }

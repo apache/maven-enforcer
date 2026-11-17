@@ -125,7 +125,8 @@ public final class BanDuplicatePomDependencyVersions extends AbstractStandardEnf
             }
             message.append("Found ").append(duplicates).append(" duplicate dependency ");
             message.append(duplicateDependencies.size() == 1 ? "declaration" : "declarations")
-                    .append(" in this project:" + System.lineSeparator());
+                    .append(" in this project:")
+                    .append(System.lineSeparator());
             message.append(summary);
             throw new EnforcerRuleException(message.toString());
         }
@@ -140,7 +141,8 @@ public final class BanDuplicatePomDependencyVersions extends AbstractStandardEnf
                         .append(entry.getKey())
                         .append("] (")
                         .append(entry.getValue())
-                        .append(" times)" + System.lineSeparator());
+                        .append(" times)")
+                        .append(System.lineSeparator());
             }
         }
     }

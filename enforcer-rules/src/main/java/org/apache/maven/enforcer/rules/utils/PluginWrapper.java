@@ -32,7 +32,7 @@ import org.apache.maven.model.ReportPlugin;
  * @author Brian Fox
  *
  */
-public class PluginWrapper {
+public final class PluginWrapper {
     private final String groupId;
 
     private final String artifactId;

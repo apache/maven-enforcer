@@ -58,7 +58,7 @@ class TestRequireFilesExist {
     void testFileOsIndependentExists() {
         rule.setFilesList(Collections.singletonList(new File("POM.xml")));
 
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> rule.execute());
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
 
         assertNotNull(e.getMessage());
     }
@@ -95,7 +95,7 @@ class TestRequireFilesExist {
     void testEmptyFile() {
         rule.setFilesList(Collections.singletonList(null));
 
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> rule.execute());
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
 
         assertNotNull(e.getMessage());
     }
@@ -112,7 +112,7 @@ class TestRequireFilesExist {
         rule.setFilesList(Collections.emptyList());
         assertTrue(rule.getFiles().isEmpty());
 
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> rule.execute());
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
 
         assertNotNull(e.getMessage());
     }
@@ -133,7 +133,7 @@ class TestRequireFilesExist {
         assertFalse(f.exists());
         rule.setFilesList(Collections.singletonList(f));
 
-        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, () -> rule.execute());
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
 
         assertNotNull(e.getMessage());
     }
