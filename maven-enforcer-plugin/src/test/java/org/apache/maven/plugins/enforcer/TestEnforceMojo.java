@@ -350,7 +350,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testFailIfNoTests() throws MojoExecutionException {
+    void testFailIfNoTests() throws Exception {
         mojo.setFail(false);
         mojo.setFailIfNoRules(false);
 
@@ -363,7 +363,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testFailIfBothRuleOverridePropertiesAreSet() throws MojoExecutionException {
+    void testFailIfBothRuleOverridePropertiesAreSet() throws Exception {
         mojo.setFail(false);
 
         List<String> rules = Arrays.asList("rule1", "rule2");
@@ -376,7 +376,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testShouldPrintWarnWhenUsingDeprecatedRulesProperty() throws MojoExecutionException {
+    void testShouldPrintWarnWhenUsingDeprecatedRulesProperty() throws Exception {
         mojo.setFail(false);
 
         Log logSpy = setupLogSpy();
@@ -388,7 +388,7 @@ class TestEnforceMojo {
     }
 
     @Test
-    void testShouldNotPrintWarnWhenDeprecatedRulesPropertyIsEmpty() throws MojoExecutionException {
+    void testShouldNotPrintWarnWhenDeprecatedRulesPropertyIsEmpty() throws Exception {
         mojo.setFail(false);
 
         Log logSpy = setupLogSpy();

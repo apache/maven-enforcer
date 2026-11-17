@@ -49,13 +49,13 @@ class RequireActiveProfileTest {
     private RequireActiveProfile rule;
 
     @Test
-    void testNoActiveProfilesInProjectAndNoProfilesExpectedToBeActivated() throws EnforcerRuleException {
+    void testNoActiveProfilesInProjectAndNoProfilesExpectedToBeActivated() throws Exception {
 
         rule.execute();
     }
 
     @Test
-    void testActiveProfileAndExpectedActiveProfile() throws EnforcerRuleException {
+    void testActiveProfileAndExpectedActiveProfile() throws Exception {
         Map<String, List<String>> profiles = Collections.singletonMap("pom", Arrays.asList("profile-2"));
 
         when(project.getInjectedProfileIds()).thenReturn(profiles);
@@ -93,7 +93,7 @@ class RequireActiveProfileTest {
     }
 
     @Test
-    void testTwoActiveProfilesWithOneRequiredProfile() throws EnforcerRuleException {
+    void testTwoActiveProfilesWithOneRequiredProfile() throws Exception {
         Map<String, List<String>> profiles = Collections.singletonMap("pom", Arrays.asList("profile-1", "profile-2"));
 
         when(project.getInjectedProfileIds()).thenReturn(profiles);
@@ -104,7 +104,7 @@ class RequireActiveProfileTest {
     }
 
     @Test
-    void testTwoActiveProfilesWhereOneProfileIsRequiredToBeActivated() throws EnforcerRuleException {
+    void testTwoActiveProfilesWhereOneProfileIsRequiredToBeActivated() throws Exception {
         Map<String, List<String>> profiles = Collections.singletonMap("pom", Arrays.asList("profile-1", "profile-2"));
 
         when(project.getInjectedProfileIds()).thenReturn(profiles);
@@ -149,7 +149,7 @@ class RequireActiveProfileTest {
     }
 
     @Test
-    void testOneActiveProfileWithTwoProfilesButNotAll() throws EnforcerRuleException {
+    void testOneActiveProfileWithTwoProfilesButNotAll() throws Exception {
         Map<String, List<String>> profiles = Collections.singletonMap("pom", Arrays.asList("profile-X"));
 
         when(project.getInjectedProfileIds()).thenReturn(profiles);

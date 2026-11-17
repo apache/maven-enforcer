@@ -61,14 +61,14 @@ class ReactorModuleConvergenceTest {
     }
 
     @Test
-    void shouldNotFailWithNoProject() throws EnforcerRuleException {
+    void shouldNotFailWithNoProject() throws Exception {
         setupSortedProjects(Collections.emptyList());
 
         rule.execute();
     }
 
     @Test
-    void shouldNotFailWithAValidProject() throws EnforcerRuleException {
+    void shouldNotFailWithAValidProject() throws Exception {
         MavenProject mp1 = createProjectParent();
         MavenProject mp2 = createProjectChild1(mp1);
         MavenProject mp3 = createProjectChild2(mp1);
@@ -124,7 +124,7 @@ class ReactorModuleConvergenceTest {
     }
 
     @Test
-    void shouldNotFailWithACompanyParent() throws EnforcerRuleException {
+    void shouldNotFailWithACompanyParent() throws Exception {
         MavenProject companyParent = createCompanyParent();
         MavenProject mp1 = createProjectParent(companyParent);
 
@@ -178,7 +178,7 @@ class ReactorModuleConvergenceTest {
     }
 
     @Test
-    void shouldNotFailWithDependencyInReactory() throws EnforcerRuleException {
+    void shouldNotFailWithDependencyInReactory() throws Exception {
         MavenProject mp1 = createProjectParent();
         MavenProject mp2 = createProjectChild1(mp1);
 

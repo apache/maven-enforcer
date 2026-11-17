@@ -88,7 +88,7 @@ class TestExternalRules {
     }
 
     @Test
-    void shouldLoadRulesFromClassPath() throws EnforcerRuleException {
+    void shouldLoadRulesFromClassPath() throws Exception {
         MojoDescriptor mojoDescriptor = new MojoDescriptor();
         mojoDescriptor.setRealm(EnforcerTestUtils.getTestClassRealm());
         when(mojoExecution.getMojoDescriptor()).thenReturn(mojoDescriptor);
@@ -100,7 +100,7 @@ class TestExternalRules {
     }
 
     @Test
-    void shouldFilterRules() throws EnforcerRuleException {
+    void shouldFilterRules() throws Exception {
         MojoDescriptor mojoDescriptor = new MojoDescriptor();
         mojoDescriptor.setRealm(EnforcerTestUtils.getTestClassRealm());
         when(mojoExecution.getMojoDescriptor()).thenReturn(mojoDescriptor);

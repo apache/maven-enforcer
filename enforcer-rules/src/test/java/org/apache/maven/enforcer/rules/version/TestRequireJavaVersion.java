@@ -87,7 +87,7 @@ class TestRequireJavaVersion {
      * @throws EnforcerRuleException the enforcer rule exception
      */
     @Test
-    void settingsTheJavaVersionAsNormalizedVersionShouldNotFail() throws EnforcerRuleException {
+    void settingsTheJavaVersionAsNormalizedVersionShouldNotFail() throws Exception {
         String normalizedJDKVersion = RequireJavaVersion.normalizeJDKVersion(SystemUtils.JAVA_VERSION);
 
         rule.setVersion(normalizedJDKVersion);
@@ -103,7 +103,7 @@ class TestRequireJavaVersion {
      * is not in the exact required range. The rule must accept the raw runtime string first (#967).
      */
     @Test
-    void exactFivePartJavaVersionIsAllowedEvenWhenNormalizedFormDiffers() throws EnforcerRuleException {
+    void exactFivePartJavaVersionIsAllowedEvenWhenNormalizedFormDiffers() throws Exception {
         String exact = "21.0.10.0.1";
         rule.enforceVersion("JDK", exact, new DefaultArtifactVersion(exact));
     }
@@ -115,7 +115,7 @@ class TestRequireJavaVersion {
     }
 
     @Test
-    void settingsTheJavaVersionAsExactRuntimeVersionShouldNotFail() throws EnforcerRuleException {
+    void settingsTheJavaVersionAsExactRuntimeVersionShouldNotFail() throws Exception {
         rule.setVersion(SystemUtils.JAVA_VERSION);
         rule.execute();
     }

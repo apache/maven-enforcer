@@ -19,7 +19,6 @@
 package org.apache.maven.enforcer.rules.files;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -47,7 +46,7 @@ class TestRequireFilesDontExist {
     private final RequireFilesDontExist rule = new RequireFilesDontExist();
 
     @Test
-    void testFileExists() throws IOException {
+    void testFileExists() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
 
         rule.setFilesList(Collections.singletonList(f));
@@ -59,7 +58,7 @@ class TestRequireFilesDontExist {
     }
 
     @Test
-    void testFileOsIndependentDoesNotExist() throws EnforcerRuleException {
+    void testFileOsIndependentDoesNotExist() throws Exception {
         // a file differing only in case is not the requested file, whatever the filesystem says
         rule.setFilesList(Collections.singletonList(new File("POM.xml")));
 
@@ -76,7 +75,7 @@ class TestRequireFilesDontExist {
     }
 
     @Test
-    void testEmptyFileAllowNull() throws EnforcerRuleException {
+    void testEmptyFileAllowNull() throws Exception {
         rule.setFilesList(Collections.singletonList(null));
         rule.setAllowNulls(true);
         rule.execute();
@@ -93,7 +92,7 @@ class TestRequireFilesDontExist {
     }
 
     @Test
-    void testEmptyFileListAllowNull() throws EnforcerRuleException {
+    void testEmptyFileListAllowNull() throws Exception {
         rule.setFilesList(Collections.emptyList());
         assertTrue(rule.getFiles().isEmpty());
         rule.setAllowNulls(true);
@@ -101,7 +100,7 @@ class TestRequireFilesDontExist {
     }
 
     @Test
-    void testDeletedFileDetected() throws EnforcerRuleException, IOException {
+    void testDeletedFileDetected() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
         rule.setFilesList(Collections.singletonList(f));
 
@@ -156,7 +155,7 @@ class TestRequireFilesDontExist {
     }
 
     @Test
-    void testDeletedFileDetectedSatisfyAny() throws EnforcerRuleException, IOException {
+    void testDeletedFileDetectedSatisfyAny() throws Exception {
         File f = File.createTempFile("junit", null, temporaryFolder);
         f.delete();
 

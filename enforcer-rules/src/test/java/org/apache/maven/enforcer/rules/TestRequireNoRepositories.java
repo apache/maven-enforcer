@@ -162,7 +162,7 @@ class TestRequireNoRepositories {
      * This model contains a single module maven project without any repository.
      */
     @Test
-    void testAllBannedNoRepositories() throws EnforcerRuleException {
+    void testAllBannedNoRepositories() throws Exception {
         MavenProject baseProject = createStandAloneProject();
         setupSortedProjects(Collections.singletonList(baseProject));
 
@@ -201,7 +201,7 @@ class TestRequireNoRepositories {
      * The model contains a single repository which is allowed by setting allowedRepositories to the id.
      */
     @Test
-    void testAllBannedWithAllowedRepositories() throws EnforcerRuleException {
+    void testAllBannedWithAllowedRepositories() throws Exception {
         final String repositoryId = "repo";
         rule.setAllowedRepositories(Collections.singletonList(repositoryId));
 
@@ -216,7 +216,7 @@ class TestRequireNoRepositories {
      * The model contains a single repository. Turned off ban repositories.
      */
     @Test
-    void testRepositoriesNotBannedWithSingleRepository() throws EnforcerRuleException {
+    void testRepositoriesNotBannedWithSingleRepository() throws Exception {
         final String repositoryId = "repo";
 
         rule.setBanRepositories(false);
@@ -232,7 +232,7 @@ class TestRequireNoRepositories {
      * The model contains no repository at all. Turned off ban repositories.
      */
     @Test
-    void testRepositoriesNotBannedWithOutAnyRepository() throws EnforcerRuleException {
+    void testRepositoriesNotBannedWithOutAnyRepository() throws Exception {
         rule.setBanRepositories(false);
 
         MavenProject baseProject = createStandAloneProject();
@@ -246,7 +246,7 @@ class TestRequireNoRepositories {
      * plugin repositories.
      */
     @Test
-    void testAllBannedWithAllowedPluginRepositories() throws EnforcerRuleException {
+    void testAllBannedWithAllowedPluginRepositories() throws Exception {
         final String repositoryId = "repo";
         rule.setAllowedPluginRepositories(Collections.singletonList(repositoryId));
 
@@ -261,7 +261,7 @@ class TestRequireNoRepositories {
      * The model contains a single plugin repository. Turned off ban plugin repositories.
      */
     @Test
-    void testPluginRepositoriesNotBannedWithSinglePluginRepository() throws EnforcerRuleException {
+    void testPluginRepositoriesNotBannedWithSinglePluginRepository() throws Exception {
         final String repositoryId = "repo";
 
         rule.setBanPluginRepositories(false);
@@ -277,7 +277,7 @@ class TestRequireNoRepositories {
      * The model contains no repository at all. Turned off ban plugin repositories.
      */
     @Test
-    void testPluginRepositoriesNotBannedWithOutAnyRepository() throws EnforcerRuleException {
+    void testPluginRepositoriesNotBannedWithOutAnyRepository() throws Exception {
         rule.setBanPluginRepositories(false);
 
         MavenProject baseProject = createStandAloneProject();
@@ -298,7 +298,7 @@ class TestRequireNoRepositories {
     }
 
     @Test
-    void testAllBannedWithSnapshotRepositoryAllowedRepositories() throws EnforcerRuleException {
+    void testAllBannedWithSnapshotRepositoryAllowedRepositories() throws Exception {
         final String repositoryId = "repo";
         rule.setAllowedRepositories(Collections.singletonList(repositoryId));
 
@@ -310,7 +310,7 @@ class TestRequireNoRepositories {
     }
 
     @Test
-    void testAllBannedWithSnapshotRepositoryAndSetAllowSnapshotRepositories() throws EnforcerRuleException {
+    void testAllBannedWithSnapshotRepositoryAndSetAllowSnapshotRepositories() throws Exception {
         final String repositoryId = "repo";
         rule.setAllowSnapshotRepositories(true);
 
@@ -322,7 +322,7 @@ class TestRequireNoRepositories {
     }
 
     @Test
-    void testAllBannedWithSnapshotPluginRepositoryAndSetAllowSnapshotPluginRepositories() throws EnforcerRuleException {
+    void testAllBannedWithSnapshotPluginRepositoryAndSetAllowSnapshotPluginRepositories() throws Exception {
         final String repositoryId = "repo";
         rule.setAllowSnapshotPluginRepositories(true);
 
@@ -334,7 +334,7 @@ class TestRequireNoRepositories {
     }
 
     @Test
-    void testAllBannedWithEmptyRepository() throws EnforcerRuleException {
+    void testAllBannedWithEmptyRepository() throws Exception {
         MavenProject baseProject = createStandAloneProject();
         addEmptyRepository(baseProject);
         setupSortedProjects(Collections.singletonList(baseProject));
@@ -343,7 +343,7 @@ class TestRequireNoRepositories {
     }
 
     @Test
-    void testAllBannedWithEmptyPluginRepository() throws EnforcerRuleException {
+    void testAllBannedWithEmptyPluginRepository() throws Exception {
         MavenProject baseProject = createStandAloneProject();
         addEmptyPluginRepository(baseProject);
         setupSortedProjects(Collections.singletonList(baseProject));

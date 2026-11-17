@@ -73,7 +73,7 @@ class TestArtifactMatcher {
     }
 
     @Test
-    void testPattern() throws InvalidVersionSpecificationException {
+    void testPattern() throws Exception {
         assertPatternDoesMatch("groupId:artifactId:1.0:jar:compile", "groupId", "artifactId", "1.0", "compile", "jar");
 
         assertPatternDoesMatch("groupId:artifactId:1.0:jar:compile", "groupId", "artifactId", "1.0", "", "");
@@ -200,7 +200,7 @@ class TestArtifactMatcher {
      * @throws InvalidVersionSpecificationException the invalid version specification exception
      */
     @Test
-    void testContainsVersion() throws InvalidVersionSpecificationException {
+    void testContainsVersion() throws Exception {
         ArtifactVersion version = new DefaultArtifactVersion("2.0.5");
         // test ranges
         assertTrue(ArtifactMatcher.containsVersion(VersionRange.createFromVersionSpec("[2.0.5,)"), version));

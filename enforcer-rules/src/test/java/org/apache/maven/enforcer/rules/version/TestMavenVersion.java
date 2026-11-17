@@ -60,7 +60,7 @@ class TestMavenVersion {
      * @throws EnforcerRuleException the enforcer rule exception
      */
     @Test
-    void testRule() throws EnforcerRuleException {
+    void testRule() throws Exception {
 
         when(runtimeInformation.getMavenVersion()).thenReturn("3.0");
 
@@ -90,7 +90,7 @@ class TestMavenVersion {
      * @throws EnforcerRuleException the enforcer rule exception
      */
     @Test
-    void checkRequireVersionMatrix() throws EnforcerRuleException {
+    void checkRequireVersionMatrix() throws Exception {
 
         when(runtimeInformation.getMavenVersion()).thenReturn("3.6.1");
         rule.setVersion("3.6.0");

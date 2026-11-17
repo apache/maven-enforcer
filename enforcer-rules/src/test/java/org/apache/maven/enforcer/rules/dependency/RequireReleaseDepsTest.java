@@ -18,7 +18,6 @@
  */
 package org.apache.maven.enforcer.rules.dependency;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -65,7 +64,7 @@ class RequireReleaseDepsTest {
     private RequireReleaseDeps rule;
 
     @Test
-    void testSearchNonTransitive() throws IOException {
+    void testSearchNonTransitive() throws Exception {
         when(session.getCurrentProject()).thenReturn(project);
         when(project.getDependencyArtifacts()).thenReturn(ARTIFACT_STUB_FACTORY.getScopedArtifacts());
         rule.setSearchTransitive(false);
