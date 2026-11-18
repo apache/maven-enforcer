@@ -30,6 +30,7 @@ The following parameters are supported by this rule:
 - **excludes** - specify the dependencies that will be ignored. The format is `groupId[:artifactId]`
 - **includes** - specify the dependencies that will be checked. If not empty only these will be checked. The format is `groupId[:artifactId]`
 - **excludedScopes** - a list of dependency scopes to exclude. A dependency is ignored only when all paths to it use an excluded scope. Test-scoped paths are still considered when the same dependency is also reached through a non-excluded scope, as they can affect Maven's version mediation. Other excluded scopes are filtered from the graph. Default: `test`, `provided`
+- **failWhenManagedVersionIsAboveRequested** - fail when a version set in the project's own `dependencyManagement` (or in its parents') is above every version requested in the dependency tree, e.g. after a bot bumped it. Versions managed by an imported BOM and dependencies the project declares directly are not checked. A version kept higher on purpose can be listed in `excludes`. Default: `false`
 
 Here is a concrete example. This will cause a build to fail:
 
@@ -120,6 +121,8 @@ Here is how a project should be set up to use this rule:
                     <include>com.google.guava:guava</include>
                   </includes>
                   -->
+                  <!-- 'failWhenManagedVersionIsAboveRequested' (default:false) can be set to true to fail when a managed version is above every requested version -->
+                  <!-- <failWhenManagedVersionIsAboveRequested>true</failWhenManagedVersionIsAboveRequested> -->
                   <!-- only artifacts with provided scope will be excluded
                   <excludedScopes>
                     <excludedScope>provided</excludedScope>
