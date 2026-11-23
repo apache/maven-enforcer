@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.maven.enforcer.rule.api.EnforcerLevel;
 import org.apache.maven.enforcer.rule.api.EnforcerLogger;
@@ -40,6 +41,7 @@ import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ComponentConfigurator;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
+import org.codehaus.plexus.component.repository.ComponentDescriptor;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 
@@ -139,7 +141,9 @@ public class EnforcerRuleManager {
 
         if (plexusContainer.hasComponent(EnforcerRuleBase.class, ruleName)) {
             try {
-                return new EnforcerRuleDesc(ruleName, plexusContainer.lookup(EnforcerRuleBase.class, ruleName));
+                EnforcerRuleBase rule = plexusContainer.lookup(EnforcerRuleBase.class, ruleName);
+                checkAmbiguousRuleName(ruleName, rule, log);
+                return new EnforcerRuleDesc(ruleName, rule);
             } catch (ComponentLookupException e) {
                 throw new EnforcerRuleManagerException(e);
             }
@@ -166,6 +170,30 @@ public class EnforcerRuleManager {
         } catch (Exception e) {
             throw new EnforcerRuleManagerException(
                     "Failed to create enforcer rules with name: " + ruleName + " or for class: " + ruleClass, e);
+        }
+    }
+
+    /**
+     * Report when more than one rule implementation is registered under the same name,
+     * e.g. a built-in rule and a rule with the same name from an external rules library.
+     */
+    private void checkAmbiguousRuleName(String ruleName, EnforcerRuleBase selectedRule, Log log) {
+        List<String> implementations =
+                plexusContainer
+                        .getComponentDescriptorList(EnforcerRuleBase.class, EnforcerRuleBase.class.getName())
+                        .stream()
+                        .filter(descriptor -> ruleName.equals(descriptor.getRoleHint()))
+                        .map(ComponentDescriptor::getImplementation)
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .collect(Collectors.toList());
+
+        if (implementations.size() > 1) {
+            log.warn(
+                    "Rule name " + ruleName + " is ambiguous - found implementations: "
+                            + String.join(", ", implementations) + ", the used one is: "
+                            + selectedRule.getClass().getName()
+                            + ". Please check the plugin dependencies and remove rules libraries providing a rule with the same name.");
         }
     }
 }

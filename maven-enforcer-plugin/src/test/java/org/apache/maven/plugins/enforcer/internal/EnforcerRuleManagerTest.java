@@ -20,6 +20,7 @@ package org.apache.maven.plugins.enforcer.internal;
 
 import javax.inject.Provider;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -35,6 +36,7 @@ import org.apache.maven.plugins.enforcer.TestRule2;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ComponentConfigurator;
+import org.codehaus.plexus.component.repository.ComponentDescriptor;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 import org.codehaus.plexus.configuration.DefaultPlexusConfiguration;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
@@ -194,6 +196,54 @@ class EnforcerRuleManagerTest {
                 .hasExactlyElementsOfTypes(TestRule1.class, TestRule2.class);
 
         assertThat(rules).hasSize(2).map(EnforcerRuleDesc::getName).containsExactly("testRule1", "testRule2");
+    }
+
+    private static ComponentDescriptor<EnforcerRuleBase> ruleDescriptor(String hint, Class<?> implementation) {
+        ComponentDescriptor<EnforcerRuleBase> descriptor = new ComponentDescriptor<>();
+        descriptor.setRoleHint(hint);
+        descriptor.setImplementationClass(implementation);
+        return descriptor;
+    }
+
+    @Test
+    void ambiguousRuleNameShouldBeReported() throws Exception {
+
+        setupMocks(true);
+        Mockito.doReturn(new TestRule1()).when(plexusContainer).lookup(EnforcerRuleBase.class, "testRule1");
+        when(plexusContainer.getComponentDescriptorList(EnforcerRuleBase.class, EnforcerRuleBase.class.getName()))
+                .thenReturn(Arrays.asList(
+                        ruleDescriptor("testRule1", TestRule1.class),
+                        ruleDescriptor("testRule1", TestRule2.class),
+                        ruleDescriptor("testRule2", TestRule2.class)));
+
+        PlexusConfiguration configuration = new DefaultPlexusConfiguration("rules").addChild("testRule1", null);
+
+        List<EnforcerRuleDesc> rules = enforcerRuleManager.createRules(configuration, mojoLog);
+
+        assertThat(rules).hasSize(1).map(EnforcerRuleDesc::getRule).hasExactlyElementsOfTypes(TestRule1.class);
+
+        ArgumentCaptor<String> warnCaptor = ArgumentCaptor.forClass(String.class);
+        verify(mojoLog).warn(warnCaptor.capture());
+        assertThat(warnCaptor.getValue())
+                .startsWith("Rule name testRule1 is ambiguous - found implementations: "
+                        + TestRule1.class.getName() + ", " + TestRule2.class.getName() + ", the used one is: "
+                        + TestRule1.class.getName());
+    }
+
+    @Test
+    void uniqueRuleNameShouldNotBeReported() throws Exception {
+
+        setupMocks(true);
+        Mockito.doReturn(new TestRule1()).when(plexusContainer).lookup(EnforcerRuleBase.class, "testRule1");
+        when(plexusContainer.getComponentDescriptorList(EnforcerRuleBase.class, EnforcerRuleBase.class.getName()))
+                .thenReturn(Arrays.asList(
+                        ruleDescriptor("testRule1", TestRule1.class), ruleDescriptor("testRule2", TestRule2.class)));
+
+        PlexusConfiguration configuration = new DefaultPlexusConfiguration("rules").addChild("testRule1", null);
+
+        enforcerRuleManager.createRules(configuration, mojoLog);
+
+        verify(mojoLog, never()).warn(anyString());
     }
 
     @Test
