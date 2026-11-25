@@ -16,5 +16,5 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( '[INFO] Rule 0: org.apache.maven.enforcer.rules.RequireNoRepositories passed' )
+File buildLog = new File(basedir, 'build.log')
+assert buildLog.text.contains('[INFO] Rule 0: org.apache.maven.enforcer.rules.RequireNoRepositories passed')

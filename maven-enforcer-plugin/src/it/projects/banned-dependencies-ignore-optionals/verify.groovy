@@ -16,6 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-def buildLog = new File( basedir, 'build.log' ).text
-assert buildLog.contains( 'Rule 0: org.apache.maven.enforcer.rules.dependency.BannedDependencies passed' )
-assert !buildLog.contains( 'banned via the exclude/include list' )
+def buildLog = new File(basedir, 'build.log').text
+assert buildLog.contains('Rule 0: org.apache.maven.enforcer.rules.dependency.BannedDependencies passed')
+assert !buildLog.contains('banned via the exclude/include list')

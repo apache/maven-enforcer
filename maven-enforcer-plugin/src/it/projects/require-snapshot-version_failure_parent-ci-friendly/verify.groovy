@@ -16,6 +16,5 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( 'This project cannot be a release:org.apache.maven.its.enforcer:menforcer-346-parent:pom:1.0' )
- 
+File buildLog = new File(basedir, 'build.log')
+assert buildLog.text.contains('This project cannot be a release:org.apache.maven.its.enforcer:menforcer-346-parent:pom:1.0')

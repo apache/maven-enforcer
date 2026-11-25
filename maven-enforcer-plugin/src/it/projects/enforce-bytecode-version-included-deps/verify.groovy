@@ -17,10 +17,10 @@
  * under the License.
  */
 
-File file = new File( basedir, "build.log" );
-assert file.exists();
+File file = new File(basedir, "build.log")
+assert file.exists()
 
-String text = file.getText("utf-8");
+String text = file.getText("utf-8")
 
 // the wide exclude is overridden by the include, so only commons-lang3 is analysed;
 // the version must not be pinned here: bumping the fixture in pom.xml

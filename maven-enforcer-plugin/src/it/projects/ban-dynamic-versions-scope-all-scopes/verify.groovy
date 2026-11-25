@@ -16,8 +16,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( '[ERROR] Dependency org.apache.maven.plugins.enforcer.its:menforcer138_archiver:jar:2.1.1 (provided) is referenced with a banned dynamic version [1.3,2.1.1]' )
-assert buildLog.text.contains( 'Dependency org.apache.maven.plugins.enforcer.its:menforcer138_utils:jar:3.0 (test) is referenced with a banned dynamic version [1.0,5]' )
-assert buildLog.text.contains( '[ERROR] Rule 0: org.apache.maven.enforcer.rules.dependency.BanDynamicVersions failed with message' )
-assert buildLog.text.contains( 'ERROR] Found 2 dependencies with dynamic versions.' )
+File buildLog = new File(basedir, 'build.log')
+assert buildLog.text.contains('[ERROR] Dependency org.apache.maven.plugins.enforcer.its:menforcer138_archiver:jar:2.1.1 (provided) is referenced with a banned dynamic version [1.3,2.1.1]')
+assert buildLog.text.contains('Dependency org.apache.maven.plugins.enforcer.its:menforcer138_utils:jar:3.0 (test) is referenced with a banned dynamic version [1.0,5]')
+assert buildLog.text.contains('[ERROR] Rule 0: org.apache.maven.enforcer.rules.dependency.BanDynamicVersions failed with message')
+assert buildLog.text.contains('ERROR] Found 2 dependencies with dynamic versions.')

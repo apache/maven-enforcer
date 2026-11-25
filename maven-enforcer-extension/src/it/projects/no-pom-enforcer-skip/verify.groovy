@@ -16,9 +16,9 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 
-assert buildLog.text.contains( 'BUILD SUCCESS' )
-assert !buildLog.text.contains( 'MissingProjectException' )
-assert !buildLog.text.contains( 'Rule 0:' )
+assert buildLog.text.contains('BUILD SUCCESS')
+assert !buildLog.text.contains('MissingProjectException')
+assert !buildLog.text.contains('Rule 0:')
 return true

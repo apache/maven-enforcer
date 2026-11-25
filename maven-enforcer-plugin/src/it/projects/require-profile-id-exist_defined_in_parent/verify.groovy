@@ -17,6 +17,6 @@
  * under the License.
  */
 
-def buildLog = new File( basedir, 'build.log' )
-assert !( buildLog.text.contains( "The requested profile doesn't exist: a" ) )
-assert !( buildLog.text.contains( "The requested profile doesn't exist: b" ) )
+def buildLog = new File(basedir, 'build.log')
+assert !(buildLog.text.contains("The requested profile doesn't exist: a"))
+assert !(buildLog.text.contains("The requested profile doesn't exist: b"))

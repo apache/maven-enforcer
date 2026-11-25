@@ -57,7 +57,7 @@ def expectedRules = [
     'org.apache.maven.enforcer.rules.checksum.RequireTextFileChecksum'
 ]
 
-for (int i = 0; i < expectedRules.size(); i++) {
+for (int i = 0; i <expectedRules.size(); i++) {
     assert buildLog.contains("[INFO] Rule ${i}: ${expectedRules[i]} passed".toString()) : "rule ${i} ${expectedRules[i]} did not pass"
 }
 

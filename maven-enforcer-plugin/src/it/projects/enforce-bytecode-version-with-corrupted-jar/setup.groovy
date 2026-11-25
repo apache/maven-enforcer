@@ -17,7 +17,7 @@
  * under the License.
  */
 
-File file = new File( localRepositoryPath, "junit/junit/4.13.2/junit-4.13.2.jar" );
+File file = new File(localRepositoryPath, "junit/junit/4.13.2/junit-4.13.2.jar")
 if (file.exists()) {
     file.delete()
 }
