@@ -18,7 +18,7 @@
  */
 
 File log = new File(basedir, 'build.log')
- assert log.exists()
+assert log.exists()
 
 // we do not log skips; check they were not analyzed instead
 assert !log.getText().contains('[DEBUG] Analyzing junit:junit:jar:4.13.2')

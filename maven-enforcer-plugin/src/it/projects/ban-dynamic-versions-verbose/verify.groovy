@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( '[ERROR] Dependency org.apache.maven.plugins.enforcer.its:menforcer494_dependency:jar:1.0-SNAPSHOT (compile) via org.apache.maven.plugins.enforcer.its:menforcer494_project:jar:1.0-SNAPSHOT is referenced with a banned dynamic version 1.0-SNAPSHOT' )
-assert buildLog.text.contains( '[ERROR] Rule 0: org.apache.maven.enforcer.rules.dependency.BanDynamicVersions failed with message' )
-assert buildLog.text.contains( '[ERROR] Found 1 dependency with dynamic versions.' )
+File buildLog = new File(basedir, 'build.log')
+assert buildLog.text.contains('[ERROR] Dependency org.apache.maven.plugins.enforcer.its:menforcer494_dependency:jar:1.0-SNAPSHOT (compile) via org.apache.maven.plugins.enforcer.its:menforcer494_project:jar:1.0-SNAPSHOT is referenced with a banned dynamic version 1.0-SNAPSHOT')
+assert buildLog.text.contains('[ERROR] Rule 0: org.apache.maven.enforcer.rules.dependency.BanDynamicVersions failed with message')
+assert buildLog.text.contains('[ERROR] Found 1 dependency with dynamic versions.')

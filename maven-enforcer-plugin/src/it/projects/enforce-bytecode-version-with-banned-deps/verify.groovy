@@ -17,10 +17,10 @@
  * under the License.
  */
 
-File file = new File( basedir, "build.log" );
-assert file.exists();
+File file = new File(basedir, "build.log")
+assert file.exists()
 
-String text = file.getText("utf-8");
+String text = file.getText("utf-8")
 
 assert text.contains("Found Banned Dependency: org.hibernate:hibernate-annotations:jar:3.4.0.GA")
 assert text.contains("Found Banned Dependency: org.hibernate:ejb3-persistence:jar:1.0.2.GA")
@@ -32,4 +32,4 @@ assert text.contains("Found Banned Dependency: dom4j:dom4j:jar:1.6.1")
 assert text.contains("Restricted to JDK 1.2 yet org.hibernate:hibernate-commons-annotations:jar:3.1.0.GA contains org/hibernate/annotations/common/AssertionFailure.class targeted to JDK 1.5")
 assert text.contains("Restricted to JDK 1.2 yet dom4j:dom4j:jar:1.6.1 contains org/dom4j/Attribute.class targeted to JDK 1.3")
 
-return true;
+return true

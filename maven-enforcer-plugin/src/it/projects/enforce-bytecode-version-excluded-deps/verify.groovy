@@ -17,10 +17,10 @@
  * under the License.
  */
 
-File file = new File( basedir, "build.log" );
-assert file.exists();
+File file = new File(basedir, "build.log")
+assert file.exists()
 
-String text = file.getText("utf-8");
+String text = file.getText("utf-8")
 
 // commons-lang3 targets JDK 1.8 but is excluded, jsr305 targets JDK 1.5 and is analysed
 assert !text.contains("Found Banned Dependency")

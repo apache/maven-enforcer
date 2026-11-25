@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-def LS = System.getProperty( "line.separator" )
-File buildLog = new File( basedir, 'build.log' )
+def LS = System.getProperty("line.separator")
+File buildLog = new File(basedir, 'build.log')
 
-assert buildLog.text.contains( 'Ignoring requireUpperBoundDeps in org.apache.maven.plugins.enforcer.its:menforcer128_api' )
+assert buildLog.text.contains('Ignoring requireUpperBoundDeps in org.apache.maven.plugins.enforcer.its:menforcer128_api')

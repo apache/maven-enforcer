@@ -16,5 +16,5 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-def buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( "The requested profile doesn't exist: c" )
+def buildLog = new File(basedir, 'build.log')
+assert buildLog.text.contains("The requested profile doesn't exist: c")

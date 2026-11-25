@@ -16,6 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( 'Rule 0: org.apache.maven.enforcer.rules.dependency.RequireUpperBoundDeps failed with message:' )
-assert buildLog.text.contains( 'Require upper bound dependencies error for org.apache.maven.plugins.enforcer.its:menforcer134_model:1.0-20130423.042904-7222. Paths to dependency are:' )
+File buildLog = new File(basedir, 'build.log')
+assert buildLog.text.contains('Rule 0: org.apache.maven.enforcer.rules.dependency.RequireUpperBoundDeps failed with message:')
+assert buildLog.text.contains('Require upper bound dependencies error for org.apache.maven.plugins.enforcer.its:menforcer134_model:1.0-20130423.042904-7222. Paths to dependency are:')

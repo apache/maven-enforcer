@@ -16,16 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-def LS = System.getProperty( "line.separator" )
-File buildLog = new File( basedir, 'build.log' )
+def LS = System.getProperty("line.separator")
+File buildLog = new File(basedir, 'build.log')
 
-assert buildLog.text.contains( 'Rule 0: org.apache.maven.enforcer.rules.dependency.RequireUpperBoundDeps failed with message:' )
-def message = 
-'Require upper bound dependencies error for org.apache.maven.plugins.enforcer.its:menforcer128_api:1.4.0 [runtime]. Paths to dependency are:'+LS+
-'+-org.apache.maven.plugins.enforcer.its:menforcer313:1.0-SNAPSHOT'+LS+
-'  +-org.apache.maven.plugins.enforcer.its:menforcer128_api:1.4.0 [runtime]'+LS+
-'and'+LS+
-'+-org.apache.maven.plugins.enforcer.its:menforcer313:1.0-SNAPSHOT'+LS+
-'  +-org.apache.maven.plugins.enforcer.its:menforcer128_classic:0.9.9'+LS+
-'    +-org.apache.maven.plugins.enforcer.its:menforcer128_api:1.5.0'+LS
-assert buildLog.text.contains( message )
+assert buildLog.text.contains('Rule 0: org.apache.maven.enforcer.rules.dependency.RequireUpperBoundDeps failed with message:')
+def message =
+        'Require upper bound dependencies error for org.apache.maven.plugins.enforcer.its:menforcer128_api:1.4.0 [runtime]. Paths to dependency are:'+LS+
+        '+-org.apache.maven.plugins.enforcer.its:menforcer313:1.0-SNAPSHOT'+LS+
+        '  +-org.apache.maven.plugins.enforcer.its:menforcer128_api:1.4.0 [runtime]'+LS+
+        'and'+LS+
+        '+-org.apache.maven.plugins.enforcer.its:menforcer313:1.0-SNAPSHOT'+LS+
+        '  +-org.apache.maven.plugins.enforcer.its:menforcer128_classic:0.9.9'+LS+
+        '    +-org.apache.maven.plugins.enforcer.its:menforcer128_api:1.5.0'+LS
+assert buildLog.text.contains(message)

@@ -16,25 +16,25 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-def LS = System.getProperty( "line.separator" )
-File buildLog = new File( basedir, 'build.log' )
-assert buildLog.text.contains( 'Rule 0: org.apache.maven.enforcer.rules.dependency.RequireUpperBoundDeps failed with message:' )
+def LS = System.getProperty("line.separator")
+File buildLog = new File(basedir, 'build.log')
+assert buildLog.text.contains('Rule 0: org.apache.maven.enforcer.rules.dependency.RequireUpperBoundDeps failed with message:')
 
 def message = 'Failed while enforcing RequireUpperBoundDeps. The error(s) are [' + LS+
-'Require upper bound dependencies error for org.apache.maven.plugins.enforcer.its:menforcer146-x:1.1. Paths to dependency are:' + LS+
-'+-org.apache.maven.enforcer.its:menforcer146-a:1.0-SNAPSHOT' + LS+
-'  +-org.apache.maven.plugins.enforcer.its:menforcer146-b:1.0' + LS+
-'    +-org.apache.maven.plugins.enforcer.its:menforcer146-x:1.1 (version managed from 2.1)' + LS+
-LS+
-'To fix this, add the following to your <dependencyManagement> section:' + LS+
-'<dependencyManagement>' + LS+
-'  <dependencies>' + LS+
-'    <dependency>' + LS+
-'      <groupId>org.apache.maven.plugins.enforcer.its</groupId>' + LS+
-'      <artifactId>menforcer146-x</artifactId>' + LS+
-'      <version>2.1</version>' + LS+
-'    </dependency>' + LS+
-'  </dependencies>' + LS+
-'</dependencyManagement>' + LS+
-']' + LS
-assert buildLog.text.contains( message )
+        'Require upper bound dependencies error for org.apache.maven.plugins.enforcer.its:menforcer146-x:1.1. Paths to dependency are:' + LS+
+        '+-org.apache.maven.enforcer.its:menforcer146-a:1.0-SNAPSHOT' + LS+
+        '  +-org.apache.maven.plugins.enforcer.its:menforcer146-b:1.0' + LS+
+        '    +-org.apache.maven.plugins.enforcer.its:menforcer146-x:1.1 (version managed from 2.1)' + LS+
+        LS+
+        'To fix this, add the following to your <dependencyManagement> section:' + LS+
+        '<dependencyManagement>' + LS+
+        '  <dependencies>' + LS+
+        '    <dependency>' + LS+
+        '      <groupId>org.apache.maven.plugins.enforcer.its</groupId>' + LS+
+        '      <artifactId>menforcer146-x</artifactId>' + LS+
+        '      <version>2.1</version>' + LS+
+        '    </dependency>' + LS+
+        '  </dependencies>' + LS+
+        '</dependencyManagement>' + LS+
+        ']' + LS
+assert buildLog.text.contains(message)

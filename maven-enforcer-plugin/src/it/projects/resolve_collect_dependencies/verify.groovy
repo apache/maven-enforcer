@@ -16,5 +16,5 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-assert new File( basedir, 'target/resolve_collect_dependencies-1.0-extjars.zip' ).isFile()
+assert new File(basedir, 'target/resolve_collect_dependencies-1.0-extjars.zip').isFile()
 
