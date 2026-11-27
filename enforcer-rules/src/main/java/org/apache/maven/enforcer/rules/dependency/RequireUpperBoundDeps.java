@@ -25,19 +25,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.OverConstrainedVersionException;
+import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
 import org.apache.maven.enforcer.rules.AbstractStandardEnforcerRule;
 import org.apache.maven.enforcer.rules.utils.ArtifactUtils;
 import org.apache.maven.enforcer.rules.utils.ParentNodeProvider;
 import org.apache.maven.enforcer.rules.utils.ParentsVisitor;
+import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.model.InputLocation;
+import org.apache.maven.model.Model;
+import org.apache.maven.project.MavenProject;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.graph.DependencyVisitor;
@@ -79,13 +88,25 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
      */
     private List<String> excludedScopes = Arrays.asList(SCOPE_TEST, SCOPE_PROVIDED);
 
+    /**
+     * Fail when a version set in the project's own {@code dependencyManagement} (or its parents') is above every
+     * version requested in the dependency tree. Versions managed by an imported BOM and dependencies declared
+     * directly by the project are not checked.
+     *
+     * @since 3.7.1
+     */
+    private boolean failWhenManagedVersionIsAboveRequested;
+
     private RequireUpperBoundDepsVisitor upperBoundDepsVisitor;
 
     private final ResolverUtil resolverUtil;
 
+    private final MavenProject project;
+
     @Inject
-    public RequireUpperBoundDeps(ResolverUtil resolverUtil) {
+    public RequireUpperBoundDeps(ResolverUtil resolverUtil, MavenProject project) {
         this.resolverUtil = Objects.requireNonNull(resolverUtil);
+        this.project = Objects.requireNonNull(project);
     }
 
     /**
@@ -105,6 +126,15 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
         this.includes = includes;
     }
 
+    /**
+     * Sets whether to fail when a version managed by the project is above every requested version.
+     *
+     * @param failWhenManagedVersionIsAboveRequested {@code true} to fail in that case
+     */
+    public void setFailWhenManagedVersionIsAboveRequested(boolean failWhenManagedVersionIsAboveRequested) {
+        this.failWhenManagedVersionIsAboveRequested = failWhenManagedVersionIsAboveRequested;
+    }
+
     @Override
     public void execute() throws EnforcerRuleException {
         // Test-scope paths can still win mediation for a dependency also used by an included path.
@@ -119,6 +149,9 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
         getLog().debug(() -> resolverUtil.dumpTree(node));
         node.accept(upperBoundDepsVisitor);
         List<String> errorMessages = buildErrorMessages(upperBoundDepsVisitor.getConflicts());
+        if (failWhenManagedVersionIsAboveRequested) {
+            errorMessages.addAll(buildManagedVersionAboveRequestedErrorMessages(node));
+        }
         if (!errorMessages.isEmpty()) {
             throw new EnforcerRuleException(
                     "Failed while enforcing RequireUpperBoundDeps. The error(s) are " + errorMessages);
@@ -133,18 +166,82 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
             if (excludes != null && excludes.contains(groupArt)) {
                 getLog().info("Ignoring requireUpperBoundDeps in " + groupArt);
             } else {
-                errorMessages.add(buildErrorMessage(conflict));
+                errorMessages.add(buildErrorMessage(conflict, ""));
             }
         }
         return errorMessages;
     }
 
-    private String buildErrorMessage(List<DependencyNode> conflict) {
+    private List<String> buildManagedVersionAboveRequestedErrorMessages(DependencyNode root) {
+        DependencyManagement dependencyManagement = project.getDependencyManagement();
+        if (dependencyManagement == null) {
+            return Collections.emptyList();
+        }
+        Set<String> directDependencyKeys = root.getChildren().stream()
+                .map(child -> child.getArtifact().getGroupId() + ":"
+                        + child.getArtifact().getArtifactId())
+                .collect(Collectors.toSet());
+        Set<String> projectModelIds = collectProjectModelIds();
+        List<String> errorMessages = new ArrayList<>();
+        for (org.apache.maven.model.Dependency managedDependency : dependencyManagement.getDependencies()) {
+            String key = managedDependency.getGroupId() + ":" + managedDependency.getArtifactId();
+            if (directDependencyKeys.contains(key) || !isManagedBy(managedDependency, projectModelIds)) {
+                continue;
+            }
+            List<DependencyNode> nodes =
+                    upperBoundDepsVisitor.findNodesManagedAboveRequestedVersions(managedDependency);
+            if (nodes.isEmpty()) {
+                continue;
+            }
+            if (excludes != null && excludes.contains(key)) {
+                getLog().info("Ignoring requireUpperBoundDeps in " + key);
+                continue;
+            }
+            errorMessages.add(buildErrorMessage(nodes, ". The managed version is above every requested version"));
+        }
+        return errorMessages;
+    }
+
+    private Set<String> collectProjectModelIds() {
+        Set<String> modelIds = new HashSet<>();
+        for (MavenProject lineageProject = project;
+                lineageProject != null;
+                lineageProject = lineageProject.getParent()) {
+            modelIds.add(toModelId(lineageProject.getOriginalModel()));
+        }
+        return modelIds;
+    }
+
+    /**
+     * Builds the id Maven gives a raw model in the input locations it tracks.
+     */
+    private String toModelId(Model model) {
+        String groupId = model.getGroupId();
+        if (groupId == null && model.getParent() != null) {
+            groupId = model.getParent().getGroupId();
+        }
+        String version = model.getVersion();
+        if (version == null && model.getParent() != null) {
+            version = model.getParent().getVersion();
+        }
+        return groupId + ":" + model.getArtifactId() + ":" + version;
+    }
+
+    private boolean isManagedBy(org.apache.maven.model.Dependency managedDependency, Set<String> modelIds) {
+        InputLocation location = managedDependency.getLocation("version");
+        if (location == null || location.getSource() == null) {
+            return true;
+        }
+        return modelIds.contains(location.getSource().getModelId());
+    }
+
+    private String buildErrorMessage(List<DependencyNode> conflict, String diagnosis) {
         StringBuilder errorMessage = new StringBuilder();
         errorMessage
                 .append(System.lineSeparator())
                 .append("Require upper bound dependencies error for ")
                 .append(getFullArtifactName(conflict.get(0), false))
+                .append(diagnosis)
                 .append(". Paths to dependency are:")
                 .append(System.lineSeparator());
 
@@ -334,6 +431,30 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
             return output;
         }
 
+        /**
+         * Finds the nodes managed to the version of {@code managedDependency} when that version is above
+         * every version they request.
+         *
+         * @return the managed nodes, or an empty list when one of them requests the managed version or above
+         */
+        List<DependencyNode> findNodesManagedAboveRequestedVersions(
+                org.apache.maven.model.Dependency managedDependency) {
+            String key = managedDependency.getGroupId() + ":" + managedDependency.getArtifactId();
+            String classifier = Objects.toString(managedDependency.getClassifier(), "");
+            List<DependencyNodeHopCountPair> pairs = keyToPairsMap.getOrDefault(key, Collections.emptyList()).stream()
+                    .filter(pair ->
+                            classifier.equals(pair.getNode().getArtifact().getClassifier()))
+                    .collect(Collectors.toList());
+            if (pairs.isEmpty() || !containsNonExcludedScope(pairs)) {
+                return Collections.emptyList();
+            }
+            ArtifactVersion managedVersion = new DefaultArtifactVersion(managedDependency.getVersion());
+            if (pairs.stream().anyMatch(pair -> pair.requestsAtLeast(managedVersion, uniqueVersions))) {
+                return Collections.emptyList();
+            }
+            return pairs.stream().map(DependencyNodeHopCountPair::getNode).collect(Collectors.toList());
+        }
+
         private boolean containsNonExcludedScope(List<DependencyNodeHopCountPair> pairs) {
             return pairs.stream().anyMatch(pair -> {
                 Dependency dependency = pair.getNode().getDependency();
@@ -404,6 +525,23 @@ public final class RequireUpperBoundDeps extends AbstractStandardEnforcerRule {
             } catch (OverConstrainedVersionException e) {
                 throw new RuntimeException("Version ranges problem with " + node.getArtifact(), e);
             }
+        }
+
+        private boolean requestsAtLeast(ArtifactVersion managedVersion, boolean uniqueVersions) {
+            String premanagedVersion = DependencyManagerUtils.getPremanagedVersion(node);
+            if (premanagedVersion == null) {
+                return extractArtifactVersion(uniqueVersions, false).compareTo(managedVersion) >= 0;
+            }
+            VersionRange requestedRange;
+            try {
+                requestedRange = VersionRange.createFromVersionSpec(premanagedVersion);
+            } catch (InvalidVersionSpecificationException e) {
+                throw new RuntimeException("Invalid version " + premanagedVersion + " requested for " + node, e);
+            }
+            if (requestedRange.getRecommendedVersion() == null) {
+                return requestedRange.containsVersion(managedVersion);
+            }
+            return requestedRange.getRecommendedVersion().compareTo(managedVersion) >= 0;
         }
 
         public int getHopCount() {
