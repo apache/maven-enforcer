@@ -1,0 +1,246 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.apache.maven.enforcer.rules.modules;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.handler.ArtifactHandler;
+import org.apache.maven.enforcer.rule.api.EnforcerLogger;
+import org.apache.maven.enforcer.rule.api.EnforcerRuleException;
+import org.apache.maven.model.Build;
+import org.apache.maven.project.MavenProject;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
+import org.junit.jupiter.api.io.TempDir;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+// Reads module-info via java.lang.module.ModuleDescriptor, which exists only on Java 9+.
+@EnabledForJreRange(min = JRE.JAVA_9)
+class RequireExplicitModulesTest {
+
+    @TempDir
+    File outputDirectory;
+
+    @TempDir
+    File artifactDirectory;
+
+    private final MavenProject project = mock(MavenProject.class);
+    private RequireExplicitModules rule;
+    private EnforcerLogger log;
+
+    @BeforeEach
+    void setUp() {
+        Build build = mock(Build.class);
+        when(build.getOutputDirectory()).thenReturn(outputDirectory.getAbsolutePath());
+        when(project.getBuild()).thenReturn(build);
+        rule = new RequireExplicitModules(project);
+        log = mock(EnforcerLogger.class);
+        rule.setLog(log);
+    }
+
+    @Test
+    void aModularProjectWithClassesPasses() throws Exception {
+        ModuleInfoFixtures.writeDummyClass(outputDirectory, "com.example.foo.Bar");
+        ModuleInfoFixtures.module("com.example.foo").exports("com.example.foo").writeTo(outputDirectory);
+        assertDoesNotThrow(rule::execute);
+    }
+
+    @Test
+    void compiledClassesWithoutModuleInfoFail() throws Exception {
+        when(project.getArtifactId()).thenReturn("foo");
+        ModuleInfoFixtures.writeDummyClass(outputDirectory, "com.example.foo.Bar");
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertTrue(e.getMessage().contains("automatic module"), e.getMessage());
+    }
+
+    @Test
+    void aProjectWithNoCompiledClassesPasses() {
+        assertDoesNotThrow(rule::execute);
+    }
+
+    @Test
+    void anOutputWithOnlyModuleInfoPasses() throws Exception {
+        // module-info.class but no other classes: nothing to encapsulate, so the rule stays silent.
+        ModuleInfoFixtures.module("com.example.foo").writeTo(outputDirectory);
+        assertDoesNotThrow(rule::execute);
+    }
+
+    @Test
+    void aModuleSourceHierarchyWithExplicitModulesPasses() throws Exception {
+        // Maven 4 module source hierarchy: each module compiles to its own subdirectory.
+        File api = new File(outputDirectory, "com.example.api");
+        ModuleInfoFixtures.writeDummyClass(api, "com.example.api.Service");
+        ModuleInfoFixtures.module("com.example.api").exports("com.example.api").writeTo(api);
+        File core = new File(outputDirectory, "com.example.core");
+        ModuleInfoFixtures.writeDummyClass(core, "com.example.core.Impl");
+        ModuleInfoFixtures.module("com.example.core")
+                .requires("com.example.api")
+                .writeTo(core);
+        assertDoesNotThrow(rule::execute);
+    }
+
+    @Test
+    void aModuleSourceHierarchyWithANonModularOutputFails() throws Exception {
+        when(project.getArtifactId()).thenReturn("foo");
+        File api = new File(outputDirectory, "com.example.api");
+        ModuleInfoFixtures.writeDummyClass(api, "com.example.api.Service");
+        ModuleInfoFixtures.module("com.example.api").exports("com.example.api").writeTo(api);
+        // sibling output with classes but no module descriptor
+        File legacy = new File(outputDirectory, "com.example.legacy");
+        ModuleInfoFixtures.writeDummyClass(legacy, "com.example.legacy.Old");
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertTrue(e.getMessage().contains("com.example.legacy"), e.getMessage());
+    }
+
+    @Test
+    void aCustomMessageIsUsed() throws Exception {
+        when(project.getArtifactId()).thenReturn("foo");
+        ModuleInfoFixtures.writeDummyClass(outputDirectory, "com.example.foo.Bar");
+        rule.setMessage("please add module-info.java");
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertTrue(e.getMessage().contains("please add module-info.java"), e.getMessage());
+    }
+
+    @Test
+    void aDescriptorInjectedIntoTheArtifactPasses() throws Exception {
+        // Moditect and similar tools add module-info.class to the JAR after compilation, so the
+        // output directory has none while the shipped artifact is a proper named module.
+        ModuleInfoFixtures.writeDummyClass(outputDirectory, "com.example.foo.Bar");
+        givenPackagedArtifact("com/example/foo/Bar.class", "module-info.class");
+        assertDoesNotThrow(rule::execute);
+    }
+
+    @Test
+    void aDescriptorInjectedIntoAMultiReleaseArtifactPasses() throws Exception {
+        ModuleInfoFixtures.writeDummyClass(outputDirectory, "com.example.foo.Bar");
+        givenPackagedArtifact("com/example/foo/Bar.class", "META-INF/versions/9/module-info.class");
+        assertDoesNotThrow(rule::execute);
+    }
+
+    @Test
+    void anArtifactWithoutADescriptorStillFails() throws Exception {
+        when(project.getArtifactId()).thenReturn("foo");
+        ModuleInfoFixtures.writeDummyClass(outputDirectory, "com.example.foo.Bar");
+        givenPackagedArtifact("com/example/foo/Bar.class");
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertTrue(e.getMessage().contains("automatic module"), e.getMessage());
+    }
+
+    @Test
+    void aModuleSourceHierarchyIgnoresThePackagedArtifact() throws Exception {
+        // The main artifact cannot stand for several modules, so the artifact level fallback does
+        // not apply and the non-modular output is still reported.
+        when(project.getArtifactId()).thenReturn("foo");
+        File api = new File(outputDirectory, "com.example.api");
+        ModuleInfoFixtures.writeDummyClass(api, "com.example.api.Service");
+        ModuleInfoFixtures.module("com.example.api").exports("com.example.api").writeTo(api);
+        File legacy = new File(outputDirectory, "com.example.legacy");
+        ModuleInfoFixtures.writeDummyClass(legacy, "com.example.legacy.Old");
+        givenPackagedArtifact("module-info.class");
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertTrue(e.getMessage().contains("com.example.legacy"), e.getMessage());
+    }
+
+    /** Give the project a packaged JAR artifact holding exactly the named entries. */
+    @Test
+    void anUnbuiltJarProjectWarnsThatNothingWasChecked() {
+        // Bound to a phase at which no classes exist yet: passing silently would be indistinguishable
+        // from a clean result, so the rule says so instead.
+        givenJarPackaging();
+        assertDoesNotThrow(rule::execute);
+        verify(log).warn(contains("checked nothing"));
+        verify(log).warn(contains("enforcer-rules/requireExplicitModules.html"));
+    }
+
+    @Test
+    void aProjectThatBuildsNoJarStaysSilent() {
+        // pom aggregators and war/ear projects compile no module descriptor by design.
+        ArtifactHandler handler = mock(ArtifactHandler.class);
+        when(handler.getExtension()).thenReturn("pom");
+        Artifact artifact = mock(Artifact.class);
+        when(artifact.getArtifactHandler()).thenReturn(handler);
+        when(project.getArtifact()).thenReturn(artifact);
+        assertDoesNotThrow(rule::execute);
+        verify(log, never()).warn(contains("checked nothing"));
+    }
+
+    /** Make the project look like one that builds a JAR, the precondition for the "nothing checked" warning. */
+    private void givenJarPackaging() {
+        ArtifactHandler handler = mock(ArtifactHandler.class);
+        when(handler.getExtension()).thenReturn("jar");
+        Artifact artifact = mock(Artifact.class);
+        when(artifact.getArtifactHandler()).thenReturn(handler);
+        when(project.getArtifact()).thenReturn(artifact);
+    }
+
+    @Test
+    void anUnreadableDescriptorInTheArtifactCountsAsAbsent() throws Exception {
+        // The descriptor is parsed, not merely found by name: a corrupt one keeps the stricter outcome
+        // rather than passing the project off as an explicit module.
+        when(project.getArtifactId()).thenReturn("foo");
+        File jar = new File(artifactDirectory, "artifact.jar");
+        try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(jar.toPath()))) {
+            out.putNextEntry(new JarEntry("module-info.class"));
+            out.write("not a class file".getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            out.closeEntry();
+        }
+        Artifact artifact = mock(Artifact.class);
+        when(artifact.getFile()).thenReturn(jar);
+        when(project.getArtifact()).thenReturn(artifact);
+        ModuleInfoFixtures.writeDummyClass(outputDirectory, "com.example.foo.Bar");
+        EnforcerRuleException e = assertThrows(EnforcerRuleException.class, rule::execute);
+        assertTrue(e.getMessage().contains("automatic module"), e.getMessage());
+    }
+
+    private void givenPackagedArtifact(String... entries) throws IOException {
+        File jar = new File(artifactDirectory, "artifact.jar");
+        byte[] descriptor = ModuleInfoFixtures.module("com.example.foo")
+                .exports("com.example.foo")
+                .toBytes();
+        try (JarOutputStream out = new JarOutputStream(Files.newOutputStream(jar.toPath()))) {
+            for (String entry : entries) {
+                out.putNextEntry(new JarEntry(entry));
+                // A descriptor entry must carry a readable module-info.class: the rule parses it rather
+                // than trusting the entry name, so an unreadable one counts as no descriptor at all.
+                if (entry.endsWith("module-info.class")) {
+                    out.write(descriptor);
+                }
+                out.closeEntry();
+            }
+        }
+        Artifact artifact = mock(Artifact.class);
+        when(artifact.getFile()).thenReturn(jar);
+        when(project.getArtifact()).thenReturn(artifact);
+    }
+}
